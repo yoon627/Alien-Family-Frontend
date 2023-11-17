@@ -19,7 +19,7 @@ const Stack = createStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator initialRouteName="MainDrawer">
         <Stack.Screen name="Login" component={Login}/>
         <Stack.Screen name="KaKaoLogin" component={KaKaoLogin}/>
         {/* <Stack.Screen name="KaKaoLoginTest" component={KaKaoLoginTest}/> */}
