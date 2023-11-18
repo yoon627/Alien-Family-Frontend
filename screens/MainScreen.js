@@ -13,8 +13,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Album from "./Album";
 import Home from "./Home";
 import Chatting from "./Chatting";
-import Calendar from "./Calendar";
 import Etc from "./Etc";
+import CalendarScreen from "./CalendarScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -24,7 +24,7 @@ export default function MainScreen({ navigation }) {
       <Tab.Screen name="Home" component={Home} options={{headerShown:false}}/>
       <Tab.Screen name="Album" component={Album} options={{headerShown:false}}/>
       <Tab.Screen name="Chatting" component={Chatting} options={{headerShown:false}}/>
-      <Tab.Screen name="Calendar" component={Calendar} options={{headerShown:false}}/>
+      <Tab.Screen name="Calendar" component={CalendarScreen} options={{headerShown:false}}/>
     </Tab.Navigator>
   );
 }

@@ -13,6 +13,7 @@ import MiniGames from "./screens/MiniGames";
 import MainDrawer from "./screens/MainDrawer";
 import KaKaoLogin from "./screens/KaKaoLogin";
 import KaKaoLoginTest from "./screens/KaKaoLoginTest";
+import ClickBox from "./ClickBox";
 
 const Stack = createStackNavigator();
 
@@ -26,8 +27,9 @@ export default function App() {
         <Stack.Screen name="First Register" component={FirstRegister} />
         <Stack.Screen name="Choose Character" component={ChooseCharacter} />
         <Stack.Screen name="Invitation" component={InvitationScreen} />
+        <Stack.Screen name="ClickBox" component={ClickBox}/>
         <Stack.Screen name="MainDrawer" component={MainDrawer} options={{headerShown:false}}/>
-        <Stack.Screen name="FirstStart" component={FirstStart} />
+        <Stack.Screen name="First Start" component={FirstStart} />
         <Stack.Screen name="Mini Games" component={MiniGames} options={{headerShown:false}}/>
       </Stack.Navigator>
     </NavigationContainer>

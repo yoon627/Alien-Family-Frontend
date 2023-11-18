@@ -14,7 +14,7 @@ const InvitationScreen = ({ navigation }) => {
         />
       <Button
           title="No Invitation?"
-          onPress={() => navigation.navigate("FirstStart")}
+          onPress={() => navigation.navigate("ClickBox")}
         />
     </View>
   );
