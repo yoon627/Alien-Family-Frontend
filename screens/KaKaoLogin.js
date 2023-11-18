@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import {
@@ -16,22 +16,29 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const REST_API_KEY = "53a4c1ed38ca9033bd5c086437b40943";
-const REDIRECT_URI = "http://143.248.61.143:8081";
+const REDIRECT_URI = "http://143.248.226.88:8081";
 const INJECTED_JAVASCRIPT = `window.ReactNativeWebView.postMessage('message from webView')`;
+const SERVER_ADDRESS = "43.200.3.232:8080";
 
 export default function KaKaoLogin({ navigation }) {
+  const [AccessToken, setAccessToken] = useState("");
   function KaKaoLoginWebView(data) {
     const exp = "code=";
     var condition = data.indexOf(exp);
     if (condition != -1) {
       var authorize_code = data.substring(condition + exp.length);
-      requestToken(authorize_code);
+      requestToken(authorize_code).then(async () => {
+        const test = await AsyncStorage.getItem("AToken");
+        console.log(test);
+      });
     }
   }
 
   const requestToken = async (authorize_code) => {
     var AccessToken = "none";
-    axios({
+    var JWT = "none";
+
+    await axios({
       method: "post",
       url: "https://kauth.kakao.com/oauth/token",
       params: {
@@ -43,39 +50,82 @@ export default function KaKaoLogin({ navigation }) {
     })
       .then((response) => {
         AccessToken = response.data.access_token;
-        // requestUserInfo(AccessToken);
-        // console.log(AccessToken);
-        // axios
-        //   .post("http://13.209.76.237:8080/api/login/kakao", AccessToken)
-        //   .then((response) => {
-        //     console.log(response.data.accessToken);
-        //   })
-        //   .catch(function (error) {
-        //     console.log("error", error);
-        //   });
-        // console.log(AccessToken);
-        storeData(AccessToken);
-        // const r = async()=>{
-        //     try{
-        //         const AT = await AsyncStorage.getItem("userAccessToken");
-        //         console.log(AT)
-        //     }catch(error){
+        storeAccessToken(AccessToken);
+        console.log(AccessToken);
+      })
+      .catch(function (error) {
+        console.log("kakao error", error);
+      });
+    // await axios
+    //   .post("http://" + SERVER_ADDRESS + "/api/login/kakao", AccessToken)
+    //   .then((resp) => {
+    //     JWT = resp.data.data.accessToken;
+    //     console.log(JWT);
+    //   })
+    //   .catch(function (error) {
+    //     console.log("server error", error);
+    //   });
+    // await axios({
+    //   method:'POST',
+    //   url: 'http://'+SERVER_ADDRESS+'/api/register',
+    //   headers:{
+    //     Authorization: `Bearer: ${JWT}`
+    //   },
+    //   data:{
+    //     "nickname" : "ㅇㅈㅇ",
+    //     "birthdate" : "1996-06-27",
+    //     "title" : "아들"
+    //     }
+    // }).then((response)=>{
+    //   // console.log(response.data);
+    // }).catch(function(error){
+    //   console.log('error',error);
+    // })
+    navigation.navigate("First Register");
+  };
 
-        //     }
-        // }
-        // r();
+  const storeAccessToken = async (myAccessToken) => {
+    try {
+      await AsyncStorage.setItem("AToken", JSON.stringify(myAccessToken));
+      const test = await AsyncStorage.getItem("AToken");
+    } catch (error) {}
+  };
+
+  const getLocalAccessToken = async () => {
+    var AT = "none";
+    try {
+      AT = await AsyncStorage.getItem("AToken");
+    } catch (error) {}
+    return JSON.parse(AT);
+  };
+
+  const getJWT = async (AccessToken) => {
+    var JWT = "none";
+    await axios
+      .post("http://" + SERVER_ADDRESS + "/api/login/kakao", AccessToken)
+      .then((resp) => {
+        JWT = resp.data.accessToken;
       })
       .catch(function (error) {
         console.log("error", error);
       });
-    navigation.navigate("First Register");
+    return JWT;
   };
 
-  const storeData = async (returnValue) => {
+  const storeJWT = async (myJWT) => {
     try {
-      await AsyncStorage.setItem("userAccessToken", returnValue);
+      await AsyncStorage.setItem("JToken", JSON.stringify(myJWT));
     } catch (error) {}
   };
+
+  const getLocalJWT = async () => {
+    var AT = "none";
+    try {
+      AT = await AsyncStorage.getItem("JToken");
+    } catch (error) {}
+    return JSON.parse(AT);
+  };
+
   return (
     <View style={Styles.container}>
       <WebView
