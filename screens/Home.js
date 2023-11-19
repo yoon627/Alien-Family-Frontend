@@ -37,14 +37,14 @@ export default function Home({ navigation }) {
       y: SCREEN_HEIGHT/2+150,
     })
   ).current;
-  
+
   const handlePress = (event) => {
     const { locationX, locationY } = event.nativeEvent;
     Animated.timing(POSITION, {
       toValue: { x: locationX, y: locationY },
       useNativeDriver: true,
     }).start();
-    console.log(`X: ${locationX}, Y: ${locationY}`);
+    // console.log(`X: ${locationX}, Y: ${locationY}`);
   };
 
   return (

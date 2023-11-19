@@ -1,26 +1,87 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   Button,
   StyleSheet,
-  ScrollView,
   Dimensions,
   TextInput,
 } from "react-native";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRoute } from "@react-navigation/native";
+import * as Clipboard from 'expo-clipboard';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
-export default function FirstStart({ navigation }) {
+const FirstStart = ({ navigation }) => {
+  const [plantName, setPlantName] = useState("");
+  const [ufoName, setUfoName] = useState("");
+  const onChangePlantName = (payload) => setPlantName(payload);
+  const onChangeUfoName = (payload) => setUfoName(payload);
+  const route = useRoute();
+  const familyCode = route.params;
+  const copyToClipboard = async() => {
+    try {
+      Clipboard.setStringAsync(familyCode);
+      alert("초대코드가 클립보드에 복사되었습니다.");
+    } catch {
+      alert("초대코드가 없습니다.");
+    }
+    await Clipboard.setStringAsync(familyCode);
+  };
   return (
     <View style={styles.container}>
-      <TextInput placeholder='새싹이 이름을 입력해주세요' style={styles.input}/>
-      <TextInput placeholder='우주선 이름을 입력해주세요' style={styles.input}/>
-      <Text>초대코드:ABCDE</Text>
-      <Button title="Go" onPress={() => navigation.navigate("MainDrawer")} />
+      <TextInput
+        value={plantName}
+        placeholder="새싹이 이름을 입력해주세요"
+        style={styles.input}
+        onChangeText={onChangePlantName}
+      />
+      <TextInput
+        value={ufoName}
+        placeholder="우주선 이름을 입력해주세요"
+        style={styles.input}
+        onChangeText={onChangeUfoName}
+      />
+      {/* <Text>{familyCode}</Text> */}
+      <Button
+        title="초대코드 복사하기"
+        onPress={
+          copyToClipboard
+        }
+      />
+      <Button
+        title="Go"
+        onPress={async () => {
+          const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
+          const ServerAccessToken = await AsyncStorage.getItem(
+            "ServerAccessToken"
+          );
+          await axios({
+            method: "POST",
+            url: SERVER_ADDRESS + "/api/register/newFamily",
+            headers: {
+              Authorization: "Bearer: " + ServerAccessToken,
+            },
+            data: {
+              ufoName: ufoName,
+              plantName: plantName,
+              code: familyCode,
+            },
+          })
+            .then((resp) => {
+              console.log(resp);
+              navigation.navigate("MainDrawer");
+            })
+            .catch(function (error) {
+              console.log("server error", error);
+            });
+        }}
+      />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -54,3 +115,5 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
 });
+
+export default FirstStart;

@@ -9,40 +9,40 @@ import {
 } from "react-native";
 import axios from "axios";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
-const SERVER_ADDRESS = "43.200.3.232:8080";
-
 const ChooseCharacter = ({ navigation }) => {
-  const [AlienType, setAlienType] = useState(0);
-  const [AlienColor, setAlienColor] = useState("red");
+  const [AlienType, setAlienType] = useState("CHILD");
+  const [AlienColor, setAlienColor] = useState("black");
   const Characters = [1, 2, 3, 4];
 
   const ChooseType = (event) => {
     const { width } = Dimensions.get("window");
     const offset = event.nativeEvent.contentOffset.x;
     const page = Math.round(offset / width);
-    // console.log(page)
-    setAlienType(page + 1);
-  };
-  const ChooseColor = (event) => {
-    const { width } = Dimensions.get("window");
-    const offset = event.nativeEvent.contentOffset.x;
-    const page = Math.round(offset / width);
-    // console.log(page)
-    setAlienColor(page + 1);
+    if(page === 0){
+      setAlienType("CHILD");
+    }else if(page === 1){
+      setAlienType("YOUTH");
+    }else if(page === 2){
+      setAlienType("ADULT");
+    }else{
+      setAlienType("SENIOR");
+    }
   };
   const color1 = () => {
-    setAlienColor("red");
+    setAlienColor("black");
   };
   const color2 = () => {
-    setAlienColor("blue");
+    setAlienColor("white");
   };
   const color3 = () => {
-    setAlienColor("green");
+    setAlienColor("red");
   };
   const color4 = () => {
-    setAlienColor("black");
+    setAlienColor("blue");
   };
   return (
     <View style={styles.container}>
@@ -55,76 +55,70 @@ const ChooseCharacter = ({ navigation }) => {
       >
         {Characters.map((Character, index) => (
           <View key={index} style={styles.character}>
-            <Text style={{...styles.characterFont,color:AlienColor}}>{Character}</Text>
+            <Text style={{ ...styles.characterFont, color: AlienColor }}>
+              {Character}
+            </Text>
           </View>
         ))}
       </ScrollView>
-      {/* <ScrollView
-        indicatorStyle="black"
-        pagingEnabled
-        horizontal
-        onScroll={ChooseColor}
-      >
-        {Characters.map((Character, index) => (
-          <View key={index} style={styles.character}>
-            <Text style={styles.characterFont}>{Character}</Text>
-          </View>
-        ))}
-      </ScrollView>       */}
       <View style={styles.buttongroup}>
         <TouchableOpacity
-          style={{ ...styles.colorbtn, backgroundColor: "red" }}
+          style={{ ...styles.colorbtn, backgroundColor: "black" }}
           onPress={color1}
         >
-          <Text style={styles.colortxt}>RED</Text>
+          <Text style={styles.colortxt}>BLACK</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={{ ...styles.colorbtn, backgroundColor: "blue" }}
+          style={{ ...styles.colorbtn, backgroundColor: "white" }}
           onPress={color2}
         >
-          <Text style={styles.colortxt}>BLUE</Text>
+          <Text style={{color:"black"}}>WHITE</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={{ ...styles.colorbtn, backgroundColor: "green" }}
+          style={{ ...styles.colorbtn, backgroundColor: "red" }}
           onPress={color3}
         >
           <Text style={styles.colortxt}>GREEN</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={{ ...styles.colorbtn, backgroundColor: "black" }}
+          style={{ ...styles.colorbtn, backgroundColor: "blue" }}
           onPress={color4}
         >
           <Text style={styles.colortxt}>BLACK</Text>
         </TouchableOpacity>
       </View>
       <Button
-        title="Invitation"
+        title="그냥 넘어가기 Invitation"
         onPress={() => {
-          console.log(AlienType);
           navigation.navigate("Invitation");
         }}
       />
-      {/* <Button
-          title="Invitation"
-          onPress={async() => 
-                (await axios({
-                  method:'POST',
-                  url:"http://" + SERVER_ADDRESS + "/api/register/alien",
-                  headers:{
-                    Authorization: `Bearer: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiQVVUSE9SSVRJRVNfS0VZIjoiUk9MRV9HVUVTVCIsImV4cCI6MTcwMDMxMjI2MH0.0JVHZpy_69t4-OXNPX65anTE7znhgMBEW5dZi5Pw0OM`
-                  },
-                  data:{
-                    "AlienColor":AlienColor,
-                    "AlienType":AlienType,
-                  }
-                })
-      .then((resp) => {
-        navigation.navigate("Invitation")
-      })
-      .catch(function (error) {
-        console.log("server error", error);
-      }))}
-        /> */}
+      <Button
+        title="Invitation"
+        onPress={async () => {
+          const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
+          const ServerAccessToken = await AsyncStorage.getItem("ServerAccessToken");
+          console.log("serveraddress: "+SERVER_ADDRESS);
+          console.log("SAT: "+ServerAccessToken);
+          await axios({
+            method: "POST",
+            url: SERVER_ADDRESS + "/api/register/alien",
+            headers: {
+              Authorization: 'Bearer: '+ ServerAccessToken,
+            },
+            data: {
+              color: AlienColor.toUpperCase(),
+              type: AlienType,
+            },
+          })
+            .then((resp) => {
+              navigation.navigate("Invitation");
+            })
+            .catch(function (error) {
+              console.log("server error", error);
+            });
+        }}
+      />
     </View>
   );
 };

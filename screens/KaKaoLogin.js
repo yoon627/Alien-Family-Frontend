@@ -14,30 +14,27 @@ import {
 import { WebView } from "react-native-webview";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useSelector } from "react-redux";
 
 const REST_API_KEY = "53a4c1ed38ca9033bd5c086437b40943";
-const REDIRECT_URI = "http://143.248.226.88:8081";
+const REDIRECT_URI = "http://143.248.226.110:8081";
 const INJECTED_JAVASCRIPT = `window.ReactNativeWebView.postMessage('message from webView')`;
-const SERVER_ADDRESS = "43.200.3.232:8080";
 
 export default function KaKaoLogin({ navigation }) {
-  const [AccessToken, setAccessToken] = useState("");
   function KaKaoLoginWebView(data) {
     const exp = "code=";
     var condition = data.indexOf(exp);
     if (condition != -1) {
       var authorize_code = data.substring(condition + exp.length);
-      requestToken(authorize_code).then(async () => {
-        const test = await AsyncStorage.getItem("AToken");
-        console.log(test);
-      });
+      requestToken(authorize_code);
     }
   }
 
   const requestToken = async (authorize_code) => {
-    var AccessToken = "none";
-    var JWT = "none";
-
+    var KAT = "none";
+    var SAT = "none";
+    const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
+    console.log(SERVER_ADDRESS);
     await axios({
       method: "post",
       url: "https://kauth.kakao.com/oauth/token",
@@ -48,82 +45,24 @@ export default function KaKaoLogin({ navigation }) {
         code: authorize_code,
       },
     })
-      .then((response) => {
-        AccessToken = response.data.access_token;
-        storeAccessToken(AccessToken);
-        console.log(AccessToken);
+      .then(async (response) => {
+        KAT = response.data.access_token;
+        await AsyncStorage.setItem("KakaoAccessToken", KAT);
       })
       .catch(function (error) {
         console.log("kakao error", error);
       });
-    // await axios
-    //   .post("http://" + SERVER_ADDRESS + "/api/login/kakao", AccessToken)
-    //   .then((resp) => {
-    //     JWT = resp.data.data.accessToken;
-    //     console.log(JWT);
-    //   })
-    //   .catch(function (error) {
-    //     console.log("server error", error);
-    //   });
-    // await axios({
-    //   method:'POST',
-    //   url: 'http://'+SERVER_ADDRESS+'/api/register',
-    //   headers:{
-    //     Authorization: `Bearer: ${JWT}`
-    //   },
-    //   data:{
-    //     "nickname" : "ㅇㅈㅇ",
-    //     "birthdate" : "1996-06-27",
-    //     "title" : "아들"
-    //     }
-    // }).then((response)=>{
-    //   // console.log(response.data);
-    // }).catch(function(error){
-    //   console.log('error',error);
-    // })
-    navigation.navigate("First Register");
-  };
-
-  const storeAccessToken = async (myAccessToken) => {
-    try {
-      await AsyncStorage.setItem("AToken", JSON.stringify(myAccessToken));
-      const test = await AsyncStorage.getItem("AToken");
-    } catch (error) {}
-  };
-
-  const getLocalAccessToken = async () => {
-    var AT = "none";
-    try {
-      AT = await AsyncStorage.getItem("AToken");
-    } catch (error) {}
-    return JSON.parse(AT);
-  };
-
-  const getJWT = async (AccessToken) => {
-    var JWT = "none";
     await axios
-      .post("http://" + SERVER_ADDRESS + "/api/login/kakao", AccessToken)
-      .then((resp) => {
-        JWT = resp.data.accessToken;
+      .post(SERVER_ADDRESS + "/api/login/kakao", KAT)
+      .then(async(resp) => {
+        SAT = resp.data.data.accessToken;
+        await AsyncStorage.setItem("ServerAccessToken", SAT);
+        navigation.navigate("First Register");
       })
       .catch(function (error) {
-        console.log("error", error);
+        console.log("server error", error);
       });
-    return JWT;
-  };
-
-  const storeJWT = async (myJWT) => {
-    try {
-      await AsyncStorage.setItem("JToken", JSON.stringify(myJWT));
-    } catch (error) {}
-  };
-
-  const getLocalJWT = async () => {
-    var AT = "none";
-    try {
-      AT = await AsyncStorage.getItem("JToken");
-    } catch (error) {}
-    return JSON.parse(AT);
+    // navigation.navigate("First Register");
   };
 
   return (

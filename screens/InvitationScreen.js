@@ -1,21 +1,55 @@
-import React from "react";
-import { View, Text, Button, StyleSheet, ScrollView, Dimensions,TextInput } from "react-native";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  Button,
+  StyleSheet,
+  ScrollView,
+  Dimensions,
+  TextInput,
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 const InvitationScreen = ({ navigation }) => {
-  const Characters = [1, 2, 3, 4, 5];
+  const [InvitationCode, setInvitationCode] = useState("");
+  const onChangeInvitationCode = (payload) => setInvitationCode(payload);
   return (
     <View style={styles.container}>
-      <TextInput placeholder='초대코드를 입력해주세요' style={styles.input}/>
+      <TextInput
+        placeholder="초대코드를 입력해주세요"
+        style={styles.input}
+        value={InvitationCode}
+        onChangeText={onChangeInvitationCode}
+      />
       <Button
-          title="Go"
-          onPress={() => navigation.navigate("MainDrawer")}
-        />
+        title="Go"
+        onPress={async () => {
+          const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
+          const ServerAccessToken = await AsyncStorage.getItem("ServerAccessToken");
+          await axios({
+            method: "GET",
+            url:
+              SERVER_ADDRESS + "/api/register/currentFamily/" + InvitationCode,
+            headers: {
+              Authorization: 'Bearer: '+ServerAccessToken,
+            },
+          })
+            .then((resp) => {
+              console.log(resp)
+              navigation.navigate("MainDrawer");
+            })
+            .catch(function (error) {
+              console.log("server error", error);
+            });
+        }}
+      />
       <Button
-          title="No Invitation?"
-          onPress={() => navigation.navigate("ClickBox")}
-        />
+        title="No Invitation?"
+        onPress={() => navigation.navigate("ClickBox")}
+      />
     </View>
   );
 };
@@ -34,12 +68,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginTop: "auto",
   },
-  character:{
+  character: {
     width: SCREEN_WIDTH,
     alignItems: "flex-start",
     paddingHorizontal: 20,
   },
-  characterFont:{
+  characterFont: {
     fontSize: 500,
   },
   input: {
