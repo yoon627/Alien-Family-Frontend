@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import {
@@ -14,9 +14,10 @@ import {
 import { WebView } from "react-native-webview";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useSelector } from "react-redux";
 
 const REST_API_KEY = "53a4c1ed38ca9033bd5c086437b40943";
-const REDIRECT_URI = "http://143.248.61.143:8081";
+const REDIRECT_URI = "http://143.248.226.110:8081";
 const INJECTED_JAVASCRIPT = `window.ReactNativeWebView.postMessage('message from webView')`;
 
 export default function KaKaoLogin({ navigation }) {
@@ -30,8 +31,10 @@ export default function KaKaoLogin({ navigation }) {
   }
 
   const requestToken = async (authorize_code) => {
-    var AccessToken = "none";
-    axios({
+    var KAT = "none";
+    var SAT = "none";
+    const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
+    await axios({
       method: "post",
       url: "https://kauth.kakao.com/oauth/token",
       params: {
@@ -41,41 +44,26 @@ export default function KaKaoLogin({ navigation }) {
         code: authorize_code,
       },
     })
-      .then((response) => {
-        AccessToken = response.data.access_token;
-        // requestUserInfo(AccessToken);
-        // console.log(AccessToken);
-        // axios
-        //   .post("http://13.209.76.237:8080/api/login/kakao", AccessToken)
-        //   .then((response) => {
-        //     console.log(response.data.accessToken);
-        //   })
-        //   .catch(function (error) {
-        //     console.log("error", error);
-        //   });
-        // console.log(AccessToken);
-        storeData(AccessToken);
-        // const r = async()=>{
-        //     try{
-        //         const AT = await AsyncStorage.getItem("userAccessToken");
-        //         console.log(AT)
-        //     }catch(error){
-
-        //     }
-        // }
-        // r();
+      .then(async (response) => {
+        KAT = response.data.access_token;
+        await AsyncStorage.setItem("KakaoAccessToken", KAT);
       })
       .catch(function (error) {
-        console.log("error", error);
+        console.log("kakao error", error);
       });
-    navigation.navigate("First Register");
+    await axios
+      .post(SERVER_ADDRESS + "/api/login/kakao", KAT)
+      .then(async(resp) => {
+        SAT = resp.data.data.accessToken;
+        await AsyncStorage.setItem("ServerAccessToken", SAT);
+        navigation.navigate("First Register");
+      })
+      .catch(function (error) {
+        console.log("server error", error);
+      });
+    // navigation.navigate("First Register");
   };
 
-  const storeData = async (returnValue) => {
-    try {
-      await AsyncStorage.setItem("userAccessToken", returnValue);
-    } catch (error) {}
-  };
   return (
     <View style={Styles.container}>
       <WebView

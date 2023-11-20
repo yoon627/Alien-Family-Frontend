@@ -1,15 +1,25 @@
-import React from "react";
+import React,{useState} from "react";
 import { View, Text, Button, StyleSheet, ScrollView, Dimensions,TextInput } from "react-native";
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 // import MainScreen from "./MainScreen";
+import {Calendar,LocaleConfig} from 'react-native-calendars';
+
 
 const Tab = createBottomTabNavigator();
 
-export default function Calendar({navigation}){
+export default function CalendarScreen({navigation}){
+  const [selected, setSelected] = useState('');
   return (
-    <View style={styles.container}>
-      <Text>Calendar</Text>
+    <View>
+    <Calendar
+      onDayPress={day => {
+        setSelected(day.dateString);
+      }}
+      markedDates={{
+        [selected]: {selected: true, disableTouchEvent: true, selectedDotColor: 'orange'}
+      }}
+    />      
     </View>
   );
 };
