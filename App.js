@@ -11,6 +11,7 @@ import MiniGames from "./screens/MiniGames";
 import MainDrawer from "./screens/MainDrawer";
 import KaKaoLogin from "./screens/KaKaoLogin";
 import ClickBox from "./screens/ClickBox";
+import Home from "./screens/Home";
 
 import store from "./redux/config/configStore";
 import { Provider } from "react-redux";
@@ -21,7 +22,7 @@ export default function App() {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Login">
+        <Stack.Navigator initialRouteName="MainDrawer">
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="KaKaoLogin" component={KaKaoLogin} />
           <Stack.Screen name="First Register" component={FirstRegister} />
@@ -37,6 +38,11 @@ export default function App() {
           <Stack.Screen
             name="Mini Games"
             component={MiniGames}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Home"
+            component={MainDrawer}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
