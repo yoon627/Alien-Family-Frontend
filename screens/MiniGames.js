@@ -92,7 +92,6 @@ export default function MiniGames({ navigation }) {
               loop
             />
         </TouchableWithoutFeedback>
-          {/* </Animated.View> */}
 
         <View style={{
           left: characterPosition.x,
