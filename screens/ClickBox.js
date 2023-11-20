@@ -22,7 +22,6 @@ const ClickBox = ({ navigation }) => {
             })
               .then(async(resp) => {
                 const familyCode = resp.data
-                console.log("clickbox: "+familyCode)
                 await AsyncStorage.setItem("familyCode",familyCode)
                 navigation.navigate("First Start",familyCode);
               })

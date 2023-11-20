@@ -34,7 +34,6 @@ export default function KaKaoLogin({ navigation }) {
     var KAT = "none";
     var SAT = "none";
     const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
-    console.log(SERVER_ADDRESS);
     await axios({
       method: "post",
       url: "https://kauth.kakao.com/oauth/token",

@@ -70,8 +70,11 @@ const FirstStart = ({ navigation }) => {
               code: familyCode,
             },
           })
-            .then((resp) => {
-              console.log(resp);
+            .then(async(resp) => {
+              const UserServerAccessToken = resp.data.data.tokenInfo.accessToken;
+              const UserServerRefreshToken = resp.data.data.tokenInfo.refreshToken;
+              await AsyncStorage.setItem("UserServerAccessToken",UserServerAccessToken);
+              await AsyncStorage.setItem("UserServerRefreshToken",UserServerRefreshToken);
               navigation.navigate("MainDrawer");
             })
             .catch(function (error) {

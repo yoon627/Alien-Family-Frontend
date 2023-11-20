@@ -33,7 +33,7 @@ const Login = ({ navigation }) => {
         <Button
           title="로그인"
           onPress={async () =>{
-          const test = await AsyncStorage.getItem("ServerAccessToken");
+          const test = await AsyncStorage.getItem("UserServerAccessToken");
           if(test){
             navigation.navigate("MainDrawer");
           }else{

@@ -98,8 +98,6 @@ const ChooseCharacter = ({ navigation }) => {
         onPress={async () => {
           const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
           const ServerAccessToken = await AsyncStorage.getItem("ServerAccessToken");
-          console.log("serveraddress: "+SERVER_ADDRESS);
-          console.log("SAT: "+ServerAccessToken);
           await axios({
             method: "POST",
             url: SERVER_ADDRESS + "/api/register/alien",

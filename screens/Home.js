@@ -41,10 +41,9 @@ export default function Home({ navigation }) {
   const handlePress = (event) => {
     const { locationX, locationY } = event.nativeEvent;
     Animated.timing(POSITION, {
-      toValue: { x: locationX, y: locationY },
+      toValue: { x: locationX-25, y: locationY-25 },
       useNativeDriver: true,
     }).start();
-    // console.log(`X: ${locationX}, Y: ${locationY}`);
   };
 
   return (
