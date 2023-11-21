@@ -22,7 +22,7 @@ export default function App() {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Login">
+        <Stack.Navigator initialRouteName="Home">
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="KaKaoLogin" component={KaKaoLogin} />
           <Stack.Screen name="First Register" component={FirstRegister} />

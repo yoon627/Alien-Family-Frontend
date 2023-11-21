@@ -18,7 +18,7 @@ const FirstRegister = ({ navigation }) => {
   const onChangeName = (payload) => setName(payload);
   const onChangeBirthDay = (payload) => setBirthDay(payload);
   const onChangeTitle = (payload) => setTitle(payload);
-
+  var test = ""
   return (
       <View style={styles.container}>
         <View
@@ -50,8 +50,7 @@ const FirstRegister = ({ navigation }) => {
               textColor="white"
               value={birthday}
               onChange={(value) => {
-                setBirthDay(JSON.stringify(value).slice(1, 11));
-                // onChangeBirthDay
+                test = JSON.stringify(value).slice(1, 11);
               }}
             />
           </View>
@@ -79,7 +78,7 @@ const FirstRegister = ({ navigation }) => {
                 },
                 data: {
                   nickname: name,
-                  birthdate: birthday,
+                  birthdate: test,
                   title: title,
                 },
               })

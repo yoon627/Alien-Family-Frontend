@@ -147,7 +147,7 @@ const FirstStart = ({ navigation }) => {
             },
           })
             .then(async (resp) => {
-              console.log(resp.data.data.familyResponseDto.members[0]);
+              // console.log(resp.data.data.familyResponseDto.members[0]);
               const UserServerAccessToken =
                 resp.data.data.tokenInfo.accessToken;
               const UserServerRefreshToken =
