@@ -48,5 +48,5 @@ export default function AlienSvg() {
 </g>
 </svg>    
 `
-    return <SvgXml xml={alien} width="30%" height="30%" />
+    return <SvgXml xml={alien} width="50%" height="50%" />
 }
