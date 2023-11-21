@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   Pressable,
   Modal,
+  Alert,
 } from "react-native";
 import styled from "styled-components/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -27,6 +28,8 @@ const Container = styled.View`
 `;
 
 export default function Home({ navigation }) {
+  const [TMI, setTMI] = useState("");
+  const onChangeTMI = (payload) => setTMI(payload);
   const [modalVisible, setModalVisible] = useState(false);
   const movingObject = () => {
     const movingValue = useRef(new Animated.Value(0)).current;
@@ -214,27 +217,42 @@ export default function Home({ navigation }) {
               </Text>
             </TouchableOpacity>
           </View>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-              Alert.alert("Modal has been closed.");
-              setModalVisible(!modalVisible);
-            }}
-          >
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <Text style={styles.modalText}>Hello World!</Text>
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={() => setModalVisible(!modalVisible)}
-                >
-                  <Text style={styles.textStyle}>Hide Modal</Text>
-                </Pressable>
+          <View style={styles.centeredView}>
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => {
+                Alert.alert("Modal has been closed.");
+                setModalVisible(!modalVisible);
+              }}
+            >
+              <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                  <TextInput
+                    
+                    value={TMI}
+                    placeholder="당신의 TMI를 알려주세요"
+                    onChangeText={onChangeTMI}
+                  />
+                  <View style={{ flexDirection: "row" }}>
+                    <Pressable
+                      style={[styles.button, styles.buttonClose]}
+                      onPress={() => setModalVisible(!modalVisible)}
+                    >
+                      <Text style={styles.textStyle}>작성</Text>
+                    </Pressable>
+                    <Pressable
+                      style={[styles.button, styles.buttonClose]}
+                      onPress={() => setModalVisible(!modalVisible)}
+                    >
+                      <Text style={styles.textStyle}>취소</Text>
+                    </Pressable>
+                  </View>
+                </View>
               </View>
-            </View>
-          </Modal>
+            </Modal>
+          </View>
           <View style={{ marginHorizontal: 10, marginVertical: 20 }}>
             <TouchableOpacity
               onPress={() => navigation.navigate("Attendance")}
@@ -262,5 +280,48 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    color:"black"
+  },
+  buttonOpen: {
+    backgroundColor: "black",
+  },
+  buttonClose: {
+    backgroundColor: "black",
+    marginHorizontal: 10,
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
   },
 });
