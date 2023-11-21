@@ -15,6 +15,7 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 export default function MiniGames({ navigation }) {
   const [characterPosition, setCharacterPosition] = useState({ x: 200, y: 200 });
   const [show, setShow] = useState(false);
+  const imageRef = useRef(null);
 
   // 캐릭터 이동시키는 로직
   const handleJoystickMove = (e) => {
@@ -32,20 +33,20 @@ export default function MiniGames({ navigation }) {
     }));
 
     // 이동하다가 게임 이미지 만나면 setShow 갱신
-    // if (imageRef.current) {
-    //   imageRef.current.measure((x,y,width,height,pageX,pageY) => {
-    //     if (pageX + 50 > characterPosition.x && pageX-50 < characterPosition.x && pageY + 50 > characterPosition.y && pageY-50 < characterPosition.y) {
-    //       setShow(true);
-    //     } else
-    //       setShow(false);
-    //   });
-    // }
+    if (imageRef.current) {
+      imageRef.current.measure((x,y,width,height,pageX,pageY) => {
+        if (pageX + 50 > characterPosition.x && pageX-50 < characterPosition.x && pageY + 50 > characterPosition.y && pageY-50 < characterPosition.y) {
+          setShow(true);
+        } else
+          setShow(false);
+      });
+    }
   };
 
   return (
       <View style={styles.container}>
         <ImageBackground
-            source={require('../assets/img/Background.png')}
+            // source={require('../assets/img/Background.png')}
             style={styles.bgImage}
         >
           <View style={styles.doorForm}>
@@ -142,7 +143,7 @@ const styles = StyleSheet.create({
   bgImage: {
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT,
-    // backgroundColor: "#000000",
+    backgroundColor: "#000000",
   },
   ladderForm: {
     position: "absolute",
