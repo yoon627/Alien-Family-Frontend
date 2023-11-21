@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
   doorForm: {
     position: "absolute",
     right: -SCREEN_WIDTH*0.02,
-    bottom: SCREEN_HEIGHT * 0.1,
+    bottom: SCREEN_HEIGHT * 0.05,
   },
   door: {
     width: SCREEN_WIDTH * 0.15,
