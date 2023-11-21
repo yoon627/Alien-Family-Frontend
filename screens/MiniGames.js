@@ -30,7 +30,7 @@ export default function MiniGames({ navigation }) {
         roulette: false,
     });
 
-    const SOME_THRESHOLD = 200;
+    const SOME_THRESHOLD = 160;
 
     const handleJoystickMove = (e) => {
         const angleInRadian = e.angle.radian;
@@ -47,20 +47,22 @@ export default function MiniGames({ navigation }) {
     };
 
     useLayoutEffect(() => {
-        const ladderPosition = { x: SCREEN_WIDTH * 0.018, y: SCREEN_HEIGHT * 0.1 };
-        const molePosition = { x: SCREEN_WIDTH * 0.95, y: SCREEN_HEIGHT * 0.2 };
-        const roulettePosition = { x: SCREEN_WIDTH * 0.3, y: SCREEN_HEIGHT * 0.7 };
+        const buttonPosition = {
+            ladder: { x: SCREEN_WIDTH * 0.018, y: SCREEN_HEIGHT * 0.1 },
+            mole: { x: SCREEN_WIDTH * 0.95, y: SCREEN_HEIGHT * 0.2 },
+            roulette: { x: SCREEN_WIDTH * 0.3, y: SCREEN_HEIGHT * 0.5 },
+        };
 
-        const distanceToLadder = calculateDistance(characterPosition, ladderPosition);
-        const distanceToMole = calculateDistance(characterPosition, molePosition);
-        const distanceToRoulette = calculateDistance(characterPosition, roulettePosition);
+        const updatedShowButton = {};
 
-        setShowButton({
-            ladder: distanceToLadder < SOME_THRESHOLD,
-            mole: distanceToMole < SOME_THRESHOLD,
-            roulette: distanceToRoulette < SOME_THRESHOLD,
+        Object.keys(buttonPosition).forEach((button) => {
+            const distance = calculateDistance(characterPosition, buttonPosition[button]);
+            updatedShowButton[button] = distance < SOME_THRESHOLD;
         });
+
+        setShowButton(updatedShowButton);
     }, [characterPosition]);
+
 
     return (
         <View style={styles.container}>
