@@ -7,6 +7,7 @@ import {
   ScrollView,
   Dimensions,
   TextInput,
+  TouchableOpacity,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -18,41 +19,156 @@ const InvitationScreen = ({ navigation }) => {
   const onChangeInvitationCode = (payload) => setInvitationCode(payload);
   return (
     <View style={styles.container}>
-      <TextInput
-        placeholder="초대코드를 입력해주세요"
-        style={styles.input}
-        value={InvitationCode}
-        onChangeText={onChangeInvitationCode}
-      />
-      <Button
+      <View
+        style={{
+          marginVertical: 30,
+          backgroundColor: "black",
+          borderRadius: 30,
+          paddingHorizontal: 30,
+          paddingVertical: 30,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <TextInput
+          placeholder="초대코드를 입력해주세요"
+          style={styles.input}
+          value={InvitationCode}
+          onChangeText={onChangeInvitationCode}
+        />
+      </View>
+      {/* <Button
         title="Go"
         onPress={async () => {
           const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
-          const ServerAccessToken = await AsyncStorage.getItem("ServerAccessToken");
+          const ServerAccessToken = await AsyncStorage.getItem(
+            "ServerAccessToken"
+          );
           await axios({
             method: "GET",
             url:
               SERVER_ADDRESS + "/api/register/currentFamily/" + InvitationCode,
             headers: {
-              Authorization: 'Bearer: '+ServerAccessToken,
+              Authorization: "Bearer: " + ServerAccessToken,
             },
           })
-            .then(async(resp) => {
-              const UserServerAccessToken = resp.data.data.tokenInfo.accessToken;
-              const UserServerRefreshToken = resp.data.data.tokenInfo.refreshToken;
-              await AsyncStorage.setItem("UserServerAccessToken",UserServerAccessToken);
-              await AsyncStorage.setItem("UserServerRefreshToken",UserServerRefreshToken);
+            .then(async (resp) => {
+              const UserServerAccessToken =
+                resp.data.data.tokenInfo.accessToken;
+              const UserServerRefreshToken =
+                resp.data.data.tokenInfo.refreshToken;
+              await AsyncStorage.setItem(
+                "UserServerAccessToken",
+                UserServerAccessToken
+              );
+              await AsyncStorage.setItem(
+                "UserServerRefreshToken",
+                UserServerRefreshToken
+              );
               navigation.navigate("MainDrawer");
             })
             .catch(function (error) {
               console.log("server error", error);
             });
         }}
-      />
-      <Button
-        title="No Invitation?"
+      /> */}
+      <TouchableOpacity
+        onPress={async () => {
+          const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
+          const ServerAccessToken = await AsyncStorage.getItem(
+            "ServerAccessToken"
+          );
+          await axios({
+            method: "GET",
+            url:
+              SERVER_ADDRESS + "/api/register/currentFamily/" + InvitationCode,
+            headers: {
+              Authorization: "Bearer: " + ServerAccessToken,
+            },
+          })
+            .then(async (resp) => {
+              const UserServerAccessToken =
+                resp.data.data.tokenInfo.accessToken;
+              const UserServerRefreshToken =
+                resp.data.data.tokenInfo.refreshToken;
+              await AsyncStorage.setItem(
+                "UserServerAccessToken",
+                UserServerAccessToken
+              );
+              await AsyncStorage.setItem(
+                "UserServerRefreshToken",
+                UserServerRefreshToken
+              );
+              navigation.navigate("MainDrawer");
+            })
+            .catch(function (error) {
+              console.log("server error", error);
+            });
+        }}
+        style={{
+          backgroundColor: "black",
+          borderRadius: 50,
+          alignItems: "center",
+          justifyContent: "center",
+          marginVertical: 20,
+        }}
+      >
+        <Text
+          style={{
+            color: "white",
+            marginHorizontal: 30,
+            marginVertical: 30,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          GO!
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
         onPress={() => navigation.navigate("ClickBox")}
-      />
+        style={{
+          backgroundColor: "black",
+          borderRadius: 50,
+          alignItems: "center",
+          justifyContent: "center",
+          marginVertical: 20,
+        }}
+      >
+        <Text
+          style={{
+            color: "white",
+            marginHorizontal: 30,
+            marginVertical: 30,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          초대코드가 없으신가요?
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("ClickBox")}
+        style={{
+          backgroundColor: "black",
+          borderRadius: 50,
+          alignItems: "center",
+          justifyContent: "center",
+          marginVertical: 20,
+        }}
+      >
+        <Text
+          style={{
+            color: "white",
+            marginHorizontal: 30,
+            marginVertical: 30,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          다음페이지로
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };

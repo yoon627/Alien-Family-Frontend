@@ -6,11 +6,12 @@ import {
   StyleSheet,
   Dimensions,
   TextInput,
+  TouchableOpacity,
 } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRoute } from "@react-navigation/native";
-import * as Clipboard from 'expo-clipboard';
+import * as Clipboard from "expo-clipboard";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -21,7 +22,7 @@ const FirstStart = ({ navigation }) => {
   const onChangeUfoName = (payload) => setUfoName(payload);
   const route = useRoute();
   const familyCode = route.params;
-  const copyToClipboard = async() => {
+  const copyToClipboard = async () => {
     try {
       Clipboard.setStringAsync(familyCode);
       alert("초대코드가 클립보드에 복사되었습니다.");
@@ -32,26 +33,55 @@ const FirstStart = ({ navigation }) => {
   };
   return (
     <View style={styles.container}>
-      <TextInput
-        value={plantName}
-        placeholder="새싹이 이름을 입력해주세요"
-        style={styles.input}
-        onChangeText={onChangePlantName}
-      />
-      <TextInput
-        value={ufoName}
-        placeholder="우주선 이름을 입력해주세요"
-        style={styles.input}
-        onChangeText={onChangeUfoName}
-      />
-      {/* <Text>{familyCode}</Text> */}
-      <Button
-        title="초대코드 복사하기"
-        onPress={
-          copyToClipboard
-        }
-      />
-      <Button
+      <View
+        style={{
+          marginVertical: 30,
+          backgroundColor: "black",
+          borderRadius: 30,
+          paddingHorizontal: 30,
+          paddingVertical: 30,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <TextInput
+          value={plantName}
+          placeholder="새싹이 이름을 입력해주세요"
+          style={styles.input}
+          onChangeText={onChangePlantName}
+        />
+        <TextInput
+          value={ufoName}
+          placeholder="우주선 이름을 입력해주세요"
+          style={styles.input}
+          onChangeText={onChangeUfoName}
+        />
+      </View>
+      <Text>{familyCode}</Text>
+      {/* <Button title="초대코드 복사하기" onPress={copyToClipboard} /> */}
+      <TouchableOpacity
+        onPress={copyToClipboard}
+        style={{
+          backgroundColor: "black",
+          borderRadius: 50,
+          alignItems: "center",
+          justifyContent: "center",
+          marginVertical: 20,
+        }}
+      >
+        <Text
+          style={{
+            color: "white",
+            marginHorizontal: 30,
+            marginVertical: 30,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          초대코드 복사하기
+        </Text>
+      </TouchableOpacity>
+      {/* <Button
         title="Go"
         onPress={async () => {
           const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
@@ -70,18 +100,133 @@ const FirstStart = ({ navigation }) => {
               code: familyCode,
             },
           })
-            .then(async(resp) => {
-              const UserServerAccessToken = resp.data.data.tokenInfo.accessToken;
-              const UserServerRefreshToken = resp.data.data.tokenInfo.refreshToken;
-              await AsyncStorage.setItem("UserServerAccessToken",UserServerAccessToken);
-              await AsyncStorage.setItem("UserServerRefreshToken",UserServerRefreshToken);
+            .then(async (resp) => {
+              console.log(resp.data.data.familyResponseDto.members[0]);
+              const UserServerAccessToken =
+                resp.data.data.tokenInfo.accessToken;
+              const UserServerRefreshToken =
+                resp.data.data.tokenInfo.refreshToken;
+              await AsyncStorage.setItem(
+                "UserServerAccessToken",
+                UserServerAccessToken
+              );
+              await AsyncStorage.setItem(
+                "UserServerRefreshToken",
+                UserServerRefreshToken
+              );
+              const members = resp.data.data.familyResponseDto.members;
+              for (i = 0; i < members.length; i++) {
+                await AsyncStorage.setItem(
+                  members[i].title,
+                  JSON.stringify(members[i])
+                );
+              }
               navigation.navigate("MainDrawer");
             })
             .catch(function (error) {
               console.log("server error", error);
             });
         }}
-      />
+      /> */}
+      <TouchableOpacity
+        onPress={async () => {
+          const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
+          const ServerAccessToken = await AsyncStorage.getItem(
+            "ServerAccessToken"
+          );
+          await axios({
+            method: "POST",
+            url: SERVER_ADDRESS + "/api/register/newFamily",
+            headers: {
+              Authorization: "Bearer: " + ServerAccessToken,
+            },
+            data: {
+              ufoName: ufoName,
+              plantName: plantName,
+              code: familyCode,
+            },
+          })
+            .then(async (resp) => {
+              // console.log(resp.data.data.familyResponseDto.members[0]);
+              const UserServerAccessToken =
+                resp.data.data.tokenInfo.accessToken;
+              const UserServerRefreshToken =
+                resp.data.data.tokenInfo.refreshToken;
+              await AsyncStorage.setItem(
+                "UserServerAccessToken",
+                UserServerAccessToken
+              );
+              await AsyncStorage.setItem(
+                "UserServerRefreshToken",
+                UserServerRefreshToken
+              );
+              const members = resp.data.data.familyResponseDto.members;
+              for (i = 0; i < members.length; i++) {
+                await AsyncStorage.setItem(
+                  members[i].title,
+                  JSON.stringify(members[i])
+                );
+              }
+              navigation.navigate("MainDrawer");
+            })
+            .catch(function (error) {
+              console.log("server error", error);
+            });
+        }}
+        style={{
+          backgroundColor: "black",
+          borderRadius: 50,
+          alignItems: "center",
+          justifyContent: "center",
+          marginVertical: 20,
+        }}
+      >
+        <Text
+          style={{
+            color: "white",
+            marginHorizontal: 30,
+            marginVertical: 30,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          GO!
+        </Text>
+      </TouchableOpacity>
+      {/* <Button
+        title="테스트"
+        onPress={async (resp) => {
+          const members = resp.data.data.familyResponseDto.members;
+          for (i = 0; i < members.length; i++) {
+            await AsyncStorage.setItem(
+              members[i].title,
+              JSON.stringify(members[i])
+            );
+          }
+        }}
+      /> */}
+      <TouchableOpacity
+        onPress={() => navigation.navigate("MainDrawer")}
+        style={{
+          backgroundColor: "black",
+          borderRadius: 50,
+          alignItems: "center",
+          justifyContent: "center",
+          marginVertical: 20,
+        }}
+      >
+        <Text
+          style={{
+            color: "white",
+            marginHorizontal: 30,
+            marginVertical: 30,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          다음페이지로
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };

@@ -1,71 +1,144 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { View, Text, Button, StyleSheet, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  Button,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import DatePicker from "@dietime/react-native-date-picker";
 const FirstRegister = ({ navigation }) => {
   const [name, setName] = useState("");
-  const [birthday, setBirthDay] = useState("");
-  const [position, setPosition] = useState("");
+  const [birthday, setBirthDay] = useState(Date.now());
+  const [title, setTitle] = useState("");
   const onChangeName = (payload) => setName(payload);
   const onChangeBirthDay = (payload) => setBirthDay(payload);
-  const onChangePosition = (payload) => setPosition(payload);
+  const onChangeTitle = (payload) => setTitle(payload);
+  var test = ""
   return (
-    <View style={styles.container}>
-      <Text style={styles.loginText}>First Register Screen</Text>
-      <TextInput
-        value={name}
-        placeholder="닉네임을 입력해주세요"
-        style={styles.input}
-        onChangeText={onChangeName}
-      />
-      <TextInput
-        value={birthday}
-        placeholder="생년월일을 입력해주세요"
-        style={styles.input}
-        onChangeText={onChangeBirthDay}
-      />
-      <TextInput
-        value={position}
-        placeholder="역할을 입력해주세요"
-        style={styles.input}
-        onChangeText={onChangePosition}
-      />
-      <View style={styles.footer}>
-        <Button
-          title="Choose Character"
-          onPress={async () =>
-            {
-              const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
-              const ServerAccessToken = await AsyncStorage.getItem("ServerAccessToken");
+      <View style={styles.container}>
+        <View
+          style={{
+            marginVertical: 30,
+            backgroundColor: "black",
+            borderRadius: 30,
+            paddingHorizontal: 30,
+            paddingVertical: 30,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <TextInput
+            value={name}
+            placeholder="닉네임을 입력해주세요"
+            style={styles.input}
+            onChangeText={onChangeName}
+          />
+          {/* <TextInput
+          value={birthday}
+          placeholder="생년월일을 입력해주세요"
+          style={styles.input}
+          onChangeText={onChangeBirthDay}
+        /> */}
+        <Text style={{color:"white",fontSize:25}}>생년월일을 입력해주세요</Text>
+          <View>
+            <DatePicker
+              textColor="white"
+              value={birthday}
+              onChange={(value) => {
+                test = JSON.stringify(value).slice(1, 11);
+              }}
+            />
+          </View>
+          <TextInput
+            value={title}
+            placeholder="역할을 입력해주세요"
+            style={styles.input}
+            onChangeText={onChangeTitle}
+          />
+        </View>
+        <View style={styles.footer}>
+          <TouchableOpacity
+            onPress={async () => {
+              const SERVER_ADDRESS = await AsyncStorage.getItem(
+                "ServerAddress"
+              );
+              const ServerAccessToken = await AsyncStorage.getItem(
+                "ServerAccessToken"
+              );
               await axios({
-              method: "POST",
-              url: SERVER_ADDRESS + "/api/register/user",
-              headers: {
-                Authorization: 'Bearer: '+ServerAccessToken,
-              },
-              data: {
-                nickname: name,
-                birthdate: birthday,
-                title: position,
-              },
-            })
-              .then((resp) => {
-                navigation.navigate("Choose Character");
+                method: "POST",
+                url: SERVER_ADDRESS + "/api/register/user",
+                headers: {
+                  Authorization: "Bearer: " + ServerAccessToken,
+                },
+                data: {
+                  nickname: name,
+                  birthdate: test,
+                  title: title,
+                },
               })
-              .catch(function (error) {
-                console.log("server error", error);
-              })}
-          }
-        />
+                .then((resp) => {
+                  navigation.navigate("Choose Character");
+                })
+                .catch(function (error) {
+                  console.log("server error", error);
+                });
+            }}
+            style={{
+              backgroundColor: "black",
+              borderRadius: 50,
+              alignItems: "center",
+              justifyContent: "center",
+              marginVertical: 20,
+            }}
+          >
+            <Text
+              style={{
+                color: "white",
+                marginHorizontal: 30,
+                marginVertical: 10,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              제출하기
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("Choose Character")}
+            style={{
+              backgroundColor: "black",
+              borderRadius: 50,
+              alignItems: "center",
+              justifyContent: "center",
+              marginVertical: 5,
+            }}
+          >
+            <Text
+              style={{
+                color: "white",
+                marginHorizontal: 30,
+                marginVertical: 10,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              다음페이지로
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 2,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -74,8 +147,10 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   footer: {
-    flexDirection: "row",
-    marginTop: "auto",
+    flex: 0.5,
+    marginBottom: 5,
+    // flexDirection: "row",
+    // marginTop: "auto",
   },
   input: {
     backgroundColor: "white",
@@ -84,7 +159,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     marginTop: 20,
     fontSize: 18,
-    marginVertical: 20,
+    marginVertical: 5,
   },
 });
 

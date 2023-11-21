@@ -48,6 +48,7 @@ export default function Home({ navigation }) {
 
   return (
     <Container>
+      
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <TouchableOpacity onPress={handlePress} style={{backgroundColor:'transparent'}}activeOpacity={1}>
           <AnimatedBox
@@ -75,10 +76,27 @@ export default function Home({ navigation }) {
       <View
         style={{ flex: 1, justifyContent: "flex-end", alignItems: "center" }}
       >
-        <Button
-          title="Mini Games"
-          onPress={() => navigation.navigate("Mini Games")}
-        />
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "flex-end",
+          alignItems: "center",
+          marginBottom: 50,
+        }}
+      >
+        <TouchableOpacity
+          onPress={async () =>
+            console.log(await AsyncStorage.getItem("UserServerAccessToken"))
+          }
+          style={{ backgroundColor: "black", borderRadius: 50 }}
+        >
+          <Text
+            style={{ color: "white", marginHorizontal: 30, marginVertical: 20 }}
+          >
+            TEST
+          </Text>
+        </TouchableOpacity>
+        </View>
       </View>
     </Container>
   );
