@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { Text, Button, StyleSheet, View, Image, Animated, Dimensions, ImageBackground, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { Text, Button, StyleSheet, View, Image, Animated, Dimensions, ImageBackground, TouchableOpacity, TouchableWithoutFeedback, Alert } from 'react-native';
 import LottieView from 'lottie-react-native';
 import AlienSvg from '../AlienSvg';
 import { KorolJoystick } from "korol-joystick";
@@ -14,10 +14,6 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 export default function MiniGames({ navigation }) {
   const [characterPosition, setCharacterPosition] = useState({ x: 200, y: 200 });
-
-  const handlePress = () => {
-    navigation.navigate("Roulette");
-  };
 
   // 캐릭터 이동시키는 로직
   const handleJoystickMove = (e) => {
@@ -41,8 +37,18 @@ export default function MiniGames({ navigation }) {
       >
         <View style={styles.doorForm}>
           <TouchableOpacity onPress={
-            () => navigation.navigate("Home")
-          }>
+            () => {
+              Alert.alert("맵을 나가시겠습니까?", null, [
+                {
+                  text: "취소",
+                  style: "cancel",
+                },
+                {
+                  text: "나가기",
+                  onPress: () => { navigation.navigate("Home") }
+                },
+              ]);
+            }}>
             <Image
               style={styles.door}
               source={require('../assets/img/door.png')} />
@@ -81,17 +87,19 @@ export default function MiniGames({ navigation }) {
           />
         </GestureHandlerRootView>
 
-        <Animated.View/>
-        <TouchableWithoutFeedback onPress={
-          () => navigation.navigate("Roulette")
-        }>
+        <Animated.View style={styles.rouletteForm}>
+          <TouchableOpacity onPress={
+            () => {
+              navigation.navigate("Roulette")
+            }}>
             <LottieView
               style={styles.roulette}
               source={require('../assets/json/roulette.json')}
               autoPlay
               loop
             />
-        </TouchableWithoutFeedback>
+          </TouchableOpacity>
+        </Animated.View>
 
         <View style={{
           left: characterPosition.x,
@@ -119,49 +127,49 @@ const styles = StyleSheet.create({
     height: SCREEN_HEIGHT,
     backgroundColor: "#000000",
   },
-  alienForm: {},
-  alien: {},
   ladderForm: {
     position: "absolute",
-    top: -SCREEN_HEIGHT * 0.3,
-    left: -SCREEN_WIDTH * 0.025,
+    left: -SCREEN_WIDTH*0.018,
+    top: SCREEN_HEIGHT * 0.1,
   },
   ladder: {
     width: SCREEN_WIDTH * 0.2,
-    height: SCREEN_HEIGHT,
+    height: SCREEN_HEIGHT * 0.15,
     resizeMode: "contain",
   },
   moleForm: {
     position: "absolute",
-    bottom: SCREEN_HEIGHT * 0.2,
-    right: 10,
+    right: SCREEN_WIDTH * 0.05,
+    top: SCREEN_HEIGHT * 0.2,
   },
   mole: {
     width: SCREEN_WIDTH * 0.1,
-    height: SCREEN_HEIGHT,
+    height: SCREEN_HEIGHT * 0.13,
     resizeMode: "contain",
   },
-  roulette: {
+  rouletteForm: {
     position: "absolute",
-    left: SCREEN_WIDTH * 0.15,
-    bottom: -SCREEN_HEIGHT * 0.1,
-    width: SCREEN_WIDTH * 0.15,
-    height: SCREEN_HEIGHT,
+    left: SCREEN_WIDTH * 0.3,
+    bottom: SCREEN_HEIGHT * 0.3,
+  },
+  roulette: {
+    width: SCREEN_WIDTH * 0.1,
+    height: SCREEN_HEIGHT * 0.1,
     resizeMode: "contain",
   },
   joystick: {
     position: "absolute",
     left: 30,
-    bottom: 30
+    bottom: 30,
   },
   doorForm: {
     position: "absolute",
-    top: SCREEN_HEIGHT * 0.4,
-    right: 0,
+    right: -SCREEN_WIDTH*0.02,
+    bottom: SCREEN_HEIGHT * 0.1,
   },
   door: {
-    width: SCREEN_WIDTH * 0.1,
-    height: SCREEN_HEIGHT,
+    width: SCREEN_WIDTH * 0.15,
+    height: SCREEN_HEIGHT * 0.15,
     resizeMode: "contain",
-  }
+  },
 });
