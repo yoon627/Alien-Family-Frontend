@@ -18,7 +18,7 @@ import KaKaoLogin from "./KaKaoLogin";
 
 const saveServer = async () => {
   try {
-    await AsyncStorage.setItem("ServerAddress", "http://3.35.234.254:8080");
+    await AsyncStorage.setItem("ServerAddress", "http://43.202.241.133:8080");
   } catch (error) {
     console.log(error);
   }
@@ -28,31 +28,102 @@ const Login = ({ navigation }) => {
   saveServer();
   return (
     <View style={styles.container}>
-      <Text style={styles.loginText}>Login Screen</Text>
       <View>
-        <Button
-          title="로그인"
-          onPress={async () =>{
-          const test = await AsyncStorage.getItem("UserServerAccessToken");
-          if(test){
-            navigation.navigate("MainDrawer");
-          }else{
-            Alert.alert("회원가입해주세요");
-          }
+        <TouchableOpacity
+          onPress={async () => {
+            const test = await AsyncStorage.getItem("UserServerAccessToken");
+            if (test) {
+              navigation.navigate("MainDrawer");
+            } else {
+              Alert.alert("회원가입해주세요");
+            }
           }}
-        />
-        <Button
-          title="카카오계정으로 회원 가입"
+          style={{
+            backgroundColor: "black",
+            borderRadius: 50,
+            alignItems: "center",
+            justifyContent: "center",
+            marginVertical:20,
+          }}
+        >
+          <Text
+            style={{
+              color: "white",
+              marginHorizontal: 30,
+              marginVertical: 30,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            로그인
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
           onPress={() => navigation.navigate("KaKaoLogin")}
-        />
-        <Button
-          title="First Register"
+          style={{
+            backgroundColor: "black",
+            borderRadius: 50,
+            alignItems: "center",
+            justifyContent: "center",
+            marginVertical:20,
+          }}
+        >
+          <Text
+            style={{
+              color: "white",
+              marginHorizontal: 30,
+              marginVertical: 30,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            카카오계정으로 회원가입
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
           onPress={() => navigation.navigate("First Register")}
-        />
-        <Button
-          title="Main Screen"
+          style={{
+            backgroundColor: "black",
+            borderRadius: 50,
+            alignItems: "center",
+            justifyContent: "center",
+            marginVertical:20,
+          }}
+        >
+          <Text
+            style={{
+              color: "white",
+              marginHorizontal: 30,
+              marginVertical: 30,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            다음페이지로
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
           onPress={() => navigation.navigate("MainDrawer")}
-        />
+          style={{
+            backgroundColor: "black",
+            borderRadius: 50,
+            alignItems: "center",
+            justifyContent: "center",
+            marginVertical:20,
+          }}
+        >
+          <Text
+            style={{
+              color: "white",
+              marginHorizontal: 30,
+              marginVertical: 30,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            메인페이지로
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
