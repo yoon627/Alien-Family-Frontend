@@ -14,105 +14,122 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 export default function MiniGames({ navigation }) {
   const [characterPosition, setCharacterPosition] = useState({ x: 200, y: 200 });
+  const [show, setShow] = useState(false);
 
   // 캐릭터 이동시키는 로직
   const handleJoystickMove = (e) => {
+    console.log(e);
     // 각도를 이용하여 이동 방향 계산
     const angleInRadian = e.angle.radian;
     const deltaX = e.force * Math.cos(angleInRadian) * 4;
     const deltaY = e.force * Math.sin(angleInRadian) * 4;
+    console.log(deltaX, deltaY);
 
     // 현재 캐릭터 위치에서 이동
     setCharacterPosition((prevPosition) => ({
       x: Math.max(0, Math.min(prevPosition.x + deltaX, SCREEN_WIDTH - SCREEN_WIDTH * 0.12)),
       y: Math.max(0, Math.min(prevPosition.y - deltaY, SCREEN_HEIGHT - SCREEN_HEIGHT * 0.1)),
     }));
+
+    // 이동하다가 게임 이미지 만나면 setShow 갱신
+    // if (imageRef.current) {
+    //   imageRef.current.measure((x,y,width,height,pageX,pageY) => {
+    //     if (pageX + 50 > characterPosition.x && pageX-50 < characterPosition.x && pageY + 50 > characterPosition.y && pageY-50 < characterPosition.y) {
+    //       setShow(true);
+    //     } else
+    //       setShow(false);
+    //   });
+    // }
   };
 
   return (
-    <View style={styles.container}>
-      <ImageBackground
-        // source={{ uri: "https://i.pinimg.com/564x/1a/9f/fa/1a9ffa739e7eb822606f7d8f74d14c26.jpg" }}
-        style={styles.bgImage}
-      >
-        <View style={styles.doorForm}>
-          <TouchableOpacity onPress={
-            () => {
-              Alert.alert("맵을 나가시겠습니까?", null, [
-                {
-                  text: "취소",
-                  style: "cancel",
-                },
-                {
-                  text: "나가기",
-                  onPress: () => { navigation.navigate("Home") }
-                },
-              ]);
-            }}>
-            <Image
-              style={styles.door}
-              source={require('../assets/img/door.png')} />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.ladderForm}>
-          <TouchableOpacity onPress={
-            () => navigation.navigate("Ladder")
-          }>
-            <Image
-              style={styles.ladder}
-              source={require('../assets/img/ladder.png')}
-            />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.moleForm}>
-          <TouchableOpacity onPress={
-            () => navigation.navigate("Mole")
-          }>
-            <Image
-              style={styles.mole}
-              source={require('../assets/img/mole.png')}
-            />
-          </TouchableOpacity>
-        </View>
-
-        <GestureHandlerRootView
-          style={styles.joystick}
+      <View style={styles.container}>
+        <ImageBackground
+            source={require('../assets/img/Background.png')}
+            style={styles.bgImage}
         >
-          <KorolJoystick
-            color="#FFFFFF"
-            radius={70}
-            onMove={handleJoystickMove}
-          />
-        </GestureHandlerRootView>
+          <View style={styles.doorForm}>
+            <TouchableOpacity onPress={
+              () => {
+                Alert.alert("맵을 나가시겠습니까?", null, [
+                  {
+                    text: "취소",
+                    style: "cancel",
+                  },
+                  {
+                    text: "나가기",
+                    onPress: () => { navigation.navigate("Home") }
+                  },
+                ]);
+              }}>
+              <Image
+                  style={styles.door}
+                  source={require('../assets/img/door.png')} />
+            </TouchableOpacity>
+          </View>
 
-        <Animated.View style={styles.rouletteForm}>
-          <TouchableOpacity onPress={
-            () => {
-              navigation.navigate("Roulette")
-            }}>
-            <LottieView
-              style={styles.roulette}
-              source={require('../assets/json/roulette.json')}
-              autoPlay
-              loop
+          <View style={styles.ladderForm}>
+            <TouchableOpacity onPress={
+              () => navigation.navigate("Ladder")
+            }>
+              <Image
+                  style={styles.ladder}
+                  source={require('../assets/img/ladder.png')}
+              />
+              {show ? <Button title='게임 접속하기'
+                              onPress={
+                                () => { navigation.navigate("Ladder") }
+                              }/> : null}
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.moleForm}>
+            <TouchableOpacity onPress={
+              () => navigation.navigate("Mole")
+            }>
+              <Image
+                  style={styles.mole}
+                  source={require('../assets/img/mole.png')}
+              />
+            </TouchableOpacity>
+          </View>
+
+          <GestureHandlerRootView
+              style={styles.joystick}
+          >
+            <KorolJoystick
+                color="#FFFFFF"
+                radius={70}
+                onMove={handleJoystickMove}
             />
-          </TouchableOpacity>
-        </Animated.View>
+          </GestureHandlerRootView>
 
-        <View style={{
-          left: characterPosition.x,
-          top: characterPosition.y,
-          width: SCREEN_WIDTH * 0.4,
-          resizeMode: "contain"
-        }}>
-          <AlienSvg />
-        </View>
+          <Animated.View style={styles.rouletteForm}>
+            <TouchableOpacity onPress={
+              () => {
+                navigation.navigate("Roulette")
+              }}>
+              <LottieView
+                  style={styles.roulette}
+                  source={require('../assets/json/roulette.json')}
+                  autoPlay
+                  loop
+              />
+            </TouchableOpacity>
+          </Animated.View>
 
-        <StatusBar style="auto" />
-      </ImageBackground>
-    </View>
+          <View style={{
+            left: characterPosition.x,
+            top: characterPosition.y,
+            width: SCREEN_WIDTH * 0.4,
+            resizeMode: "contain"
+          }}>
+            <AlienSvg />
+          </View>
+
+          <StatusBar style="auto" />
+        </ImageBackground>
+      </View>
   );
 };
 
@@ -125,7 +142,7 @@ const styles = StyleSheet.create({
   bgImage: {
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT,
-    backgroundColor: "#000000",
+    // backgroundColor: "#000000",
   },
   ladderForm: {
     position: "absolute",
