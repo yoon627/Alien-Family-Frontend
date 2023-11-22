@@ -11,7 +11,6 @@ import MiniGames from "./screens/MiniGames";
 import MainDrawer from "./screens/MainDrawer";
 import KaKaoLogin from "./screens/KaKaoLogin";
 import ClickBox from "./screens/ClickBox";
-
 import store from "./redux/config/configStore";
 import { Provider } from "react-redux";
 import LadderScreen from "./views/LadderScreen";
