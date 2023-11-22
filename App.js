@@ -18,7 +18,7 @@ import LadderScreen from "./views/LadderScreen";
 import RouletteScreen from "./views/RouletteScreen";
 import NewGame from "./views/NewGame";
 import ChatRoom from "./views/chatScreen";
-
+import MainScreen from "./screens/MainScreen";
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -55,6 +55,7 @@ export default function App() {
             component={MainDrawer}
             options={{ headerShown: false }}
           />
+          <Stack.Screen name="MainScreen" component={MainScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
