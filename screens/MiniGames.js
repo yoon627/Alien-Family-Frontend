@@ -1,5 +1,5 @@
 import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
-import { StatusBar } from 'expo-status-bar';
+import {StatusBar} from 'expo-status-bar';
 import {
     Alert,
     Animated,
@@ -7,56 +7,59 @@ import {
     Dimensions,
     Image,
     ImageBackground,
-    StyleSheet,
+    StyleSheet, Text,
     TouchableOpacity,
     View
 } from 'react-native';
 import LottieView from 'lottie-react-native';
 import AlienSvg from '../AlienSvg';
-import { KorolJoystick } from "korol-joystick";
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {KorolJoystick} from "korol-joystick";
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import ladderScreen from "../views/LadderScreen";
 
 const Tab = createBottomTabNavigator();
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
 
-export default function MiniGames({ navigation }) {
-    const [characterPosition, setCharacterPosition] = useState({ x: 0, y: 0 });
+export default function MiniGames({navigation}) {
+    const [characterPosition, setCharacterPosition] = useState({x: 200, y: 200});
     const [showButton, setShowButton] = useState({
         ladder: false,
         mole: false,
         roulette: false,
     });
 
-    const SOME_THRESHOLD = 160;
+    const SOME_THRESHOLD = 100;
 
     const handleJoystickMove = (e) => {
         const angleInRadian = e.angle.radian;
         const deltaX = e.force * Math.cos(angleInRadian) * 4;
         const deltaY = e.force * Math.sin(angleInRadian) * 4;
 
+        // 캐릭터 화면 밖으로 나가지 않도록 제한
         setCharacterPosition((prevPosition) => ({
             x: Math.max(0, Math.min(prevPosition.x + deltaX, SCREEN_WIDTH - SCREEN_WIDTH * 0.12)),
             y: Math.max(0, Math.min(prevPosition.y - deltaY, SCREEN_HEIGHT - SCREEN_HEIGHT * 0.1)),
         }));
     };
+
+    // 게임 이미지 & 캐릭터 사이 거리 계산
     const calculateDistance = (pos1, pos2) => {
         return Math.sqrt(Math.pow(pos1.x - pos2.x, 2) + Math.pow(pos1.y - pos2.y, 2));
     };
 
     useLayoutEffect(() => {
-        const buttonPosition = {
-            ladder: { x: SCREEN_WIDTH * 0.018, y: SCREEN_HEIGHT * 0.1 },
-            mole: { x: SCREEN_WIDTH * 0.95, y: SCREEN_HEIGHT * 0.2 },
-            roulette: { x: SCREEN_WIDTH * 0.3, y: SCREEN_HEIGHT * 0.5 },
+        const gameImgPosition = {
+            ladder: {x: SCREEN_WIDTH * 0.018, y: SCREEN_HEIGHT * 0.1},
+            mole: {x: SCREEN_WIDTH * 0.95, y: SCREEN_HEIGHT * 0.2},
+            roulette: {x: SCREEN_WIDTH * 0.3, y: SCREEN_HEIGHT * 0.5},
         };
 
         const updatedShowButton = {};
 
-        Object.keys(buttonPosition).forEach((button) => {
-            const distance = calculateDistance(characterPosition, buttonPosition[button]);
+        Object.keys(gameImgPosition).forEach((button) => {
+            const distance = calculateDistance(characterPosition, gameImgPosition[button]);
             updatedShowButton[button] = distance < SOME_THRESHOLD;
         });
 
@@ -88,7 +91,7 @@ export default function MiniGames({ navigation }) {
                         }}>
                         <Image
                             style={styles.door}
-                            source={require('../assets/img/door.png')} />
+                            source={require('../assets/img/door.png')}/>
                     </TouchableOpacity>
                 </View>
 
@@ -100,16 +103,28 @@ export default function MiniGames({ navigation }) {
                             style={styles.ladder}
                             source={require('../assets/img/ladder.png')}
                         />
-                        {showButton.ladder ? (
-                            <Button
-                                title='게임 접속하기'
-                                onPress={() => {
-                                    navigation.navigate("Ladder")
-                                }}
-                            />
-                        ) : null}
                     </TouchableOpacity>
                 </View>
+
+                {showButton.ladder ? (
+                    <Animated.View style={styles.spaceshipForm}>
+                        <TouchableOpacity onPress={
+                            () => {
+                                navigation.navigate("Ladder")
+                            }}>
+                            <LottieView
+                                style={styles.spaceship}
+                                source={require('../assets/json/spaceship.json')}
+                                autoPlay
+                                loop
+                            />
+                            <Text
+                                style={styles.buttonText}>
+                                게임 접속
+                            </Text>
+                        </TouchableOpacity>
+                    </Animated.View>
+                ) : null}
 
                 <View style={styles.moleForm}>
                     <TouchableOpacity onPress={
@@ -119,16 +134,28 @@ export default function MiniGames({ navigation }) {
                             style={styles.mole}
                             source={require('../assets/img/mole.png')}
                         />
-                        {showButton.mole ? (
-                            <Button
-                                title='게임 접속하기'
-                                onPress={() => {
-                                    navigation.navigate("Mole")
-                                }}
-                            />
-                        ) : null}
                     </TouchableOpacity>
                 </View>
+
+                {showButton.mole ? (
+                    <Animated.View style={styles.spaceshipForm}>
+                        <TouchableOpacity onPress={
+                            () => {
+                                navigation.navigate("Mole")
+                            }}>
+                            <LottieView
+                                style={styles.spaceship}
+                                source={require('../assets/json/spaceship.json')}
+                                autoPlay
+                                loop
+                            />
+                            <Text
+                                style={styles.buttonText}>
+                                게임 접속
+                            </Text>
+                        </TouchableOpacity>
+                    </Animated.View>
+                ) : null}
 
                 <GestureHandlerRootView
                     style={styles.joystick}
@@ -151,16 +178,28 @@ export default function MiniGames({ navigation }) {
                             autoPlay
                             loop
                         />
-                        {showButton.roulette ? (
-                            <Button
-                                title='게임 접속하기'
-                                onPress={() => {
-                                    navigation.navigate("Roulette")
-                                }}
-                            />
-                        ) : null}
                     </TouchableOpacity>
                 </Animated.View>
+
+                {showButton.roulette ? (
+                    <Animated.View style={styles.spaceshipForm}>
+                        <TouchableOpacity onPress={
+                            () => {
+                                navigation.navigate("Roulette")
+                            }}>
+                            <LottieView
+                                style={styles.spaceship}
+                                source={require('../assets/json/spaceship.json')}
+                                autoPlay
+                                loop
+                            />
+                            <Text
+                                style={styles.buttonText}>
+                                게임 접속
+                            </Text>
+                        </TouchableOpacity>
+                    </Animated.View>
+                ) : null}
 
                 <View style={{
                     left: characterPosition.x,
@@ -169,10 +208,10 @@ export default function MiniGames({ navigation }) {
                     height: SCREEN_WIDTH * 0.1,
                     resizeMode: "contain"
                 }}>
-                    <AlienSvg />
+                    <AlienSvg/>
                 </View>
 
-                <StatusBar style="auto" />
+                <StatusBar style="auto"/>
             </ImageBackground>
         </View>
     );
@@ -219,19 +258,36 @@ const styles = StyleSheet.create({
         height: SCREEN_HEIGHT * 0.1,
         resizeMode: "contain",
     },
-    joystick: {
-        position: "absolute",
-        left: 30,
-        bottom: 30,
-    },
     doorForm: {
         position: "absolute",
         right: -SCREEN_WIDTH * 0.02,
-        bottom: SCREEN_HEIGHT * 0.05,
+        bottom: SCREEN_HEIGHT * 0.25,
     },
     door: {
         width: SCREEN_WIDTH * 0.17,
         height: SCREEN_HEIGHT * 0.17,
         resizeMode: "contain",
     },
+    joystick: {
+        position: "absolute",
+        left: 30,
+        bottom: 30,
+    },
+    spaceshipForm: {
+        position: "absolute",
+        right: 30,
+        bottom: 30,
+    },
+    spaceship: {
+        width: SCREEN_WIDTH * 0.1,
+        height: SCREEN_HEIGHT * 0.1,
+        resizeMode: "contain",
+    },
+    buttonText: {
+        position: "absolute",
+        right: "12%",
+        bottom: "10%",
+        color: "red",
+        fontWeight: "bold"
+    }
 });
