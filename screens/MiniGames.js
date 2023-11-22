@@ -96,65 +96,51 @@ export default function MiniGames({navigation}) {
                 </View>
 
                 <View style={styles.ladderForm}>
-                    <TouchableOpacity onPress={
-                        () => navigation.navigate("Ladder")
-                    }>
-                        <Image
-                            style={styles.ladder}
-                            source={require('../assets/img/ladder.png')}
-                        />
-                    </TouchableOpacity>
+                    <Image
+                        style={styles.ladder}
+                        source={require('../assets/img/ladder.png')}
+                    />
                 </View>
 
                 {showButton.ladder ? (
-                    <Animated.View style={styles.spaceshipForm}>
+                    <View style={styles.spaceshipForm}>
                         <TouchableOpacity onPress={
                             () => {
                                 navigation.navigate("Ladder")
                             }}>
-                            <LottieView
-                                style={styles.spaceship}
-                                source={require('../assets/json/spaceship.json')}
-                                autoPlay
-                                loop
+                            <Image
+                                style={styles.ladder}
+                                source={require('../assets/img/ladder.png')}
                             />
                             <Text
                                 style={styles.buttonText}>
-                                게임 접속
                             </Text>
                         </TouchableOpacity>
-                    </Animated.View>
+                    </View>
                 ) : null}
 
                 <View style={styles.moleForm}>
-                    <TouchableOpacity onPress={
-                        () => navigation.navigate("Mole")
-                    }>
-                        <Image
-                            style={styles.mole}
-                            source={require('../assets/img/mole.png')}
-                        />
-                    </TouchableOpacity>
+                    <Image
+                        style={styles.mole}
+                        source={require('../assets/img/mole.png')}
+                    />
                 </View>
 
                 {showButton.mole ? (
-                    <Animated.View style={styles.spaceshipForm}>
+                    <View style={styles.spaceshipForm}>
                         <TouchableOpacity onPress={
                             () => {
                                 navigation.navigate("Mole")
                             }}>
-                            <LottieView
+                            <Image
                                 style={styles.spaceship}
-                                source={require('../assets/json/spaceship.json')}
-                                autoPlay
-                                loop
+                                source={require('../assets/img/mole.png')}
                             />
                             <Text
                                 style={styles.buttonText}>
-                                게임 접속
                             </Text>
                         </TouchableOpacity>
-                    </Animated.View>
+                    </View>
                 ) : null}
 
                 <GestureHandlerRootView
@@ -168,37 +154,31 @@ export default function MiniGames({navigation}) {
                 </GestureHandlerRootView>
 
                 <Animated.View style={styles.rouletteForm}>
-                    <TouchableOpacity onPress={
-                        () => {
-                            navigation.navigate("Roulette")
-                        }}>
-                        <LottieView
-                            style={styles.roulette}
-                            source={require('../assets/json/roulette.json')}
-                            autoPlay
-                            loop
-                        />
-                    </TouchableOpacity>
+                    <LottieView
+                        style={styles.roulette}
+                        source={require('../assets/json/roulette.json')}
+                        autoPlay
+                        loop
+                    />
                 </Animated.View>
 
                 {showButton.roulette ? (
-                    <Animated.View style={styles.spaceshipForm}>
+                    <View style={styles.spaceshipForm}>
                         <TouchableOpacity onPress={
                             () => {
                                 navigation.navigate("Roulette")
                             }}>
                             <LottieView
                                 style={styles.spaceship}
-                                source={require('../assets/json/spaceship.json')}
+                                source={require('../assets/json/roulette.json')}
                                 autoPlay
                                 loop
                             />
                             <Text
                                 style={styles.buttonText}>
-                                게임 접속
                             </Text>
                         </TouchableOpacity>
-                    </Animated.View>
+                    </View>
                 ) : null}
 
                 <View style={{
@@ -244,8 +224,8 @@ const styles = StyleSheet.create({
         top: SCREEN_HEIGHT * 0.2,
     },
     mole: {
-        width: SCREEN_WIDTH * 0.1,
-        height: SCREEN_HEIGHT * 0.15,
+        width: SCREEN_WIDTH * 0.15,
+        height: SCREEN_HEIGHT * 0.2,
         resizeMode: "contain",
     },
     rouletteForm: {
@@ -270,13 +250,13 @@ const styles = StyleSheet.create({
     },
     joystick: {
         position: "absolute",
-        left: 30,
-        bottom: 30,
+        left: "5%",
+        bottom: "5%",
     },
     spaceshipForm: {
         position: "absolute",
-        right: 30,
-        bottom: 30,
+        right: "10%",
+        bottom: "7%",
     },
     spaceship: {
         width: SCREEN_WIDTH * 0.1,
