@@ -200,23 +200,6 @@ export default function Home({ navigation }) {
           marginBottom: 50,
         }}
       >
-        <View style={{ flexDirection: "row" }}>
-          <View style={{ marginHorizontal: 10, marginVertical: 20 }}>
-            <TouchableOpacity
-              onPress={() => setModalVisible(true)}
-              style={{ backgroundColor: "black", borderRadius: 50 }}
-            >
-              <Text
-                style={{
-                  color: "white",
-                  marginHorizontal: 30,
-                  marginVertical: 20,
-                }}
-              >
-                TMI 작성
-              </Text>
-            </TouchableOpacity>
-          </View>
           <View style={styles.centeredView}>
             <Modal
               animationType="slide"
@@ -230,12 +213,12 @@ export default function Home({ navigation }) {
               <View style={styles.centeredView}>
                 <View style={styles.modalView}>
                   <TextInput
-                    
+                    style={styles.input}
                     value={TMI}
                     placeholder="당신의 TMI를 알려주세요"
                     onChangeText={onChangeTMI}
                   />
-                  <View style={{ flexDirection: "row" }}>
+                  <View style={{ flexDirection: "row",marginVertical:10 }}>
                     <Pressable
                       style={[styles.button, styles.buttonClose]}
                       onPress={() => setModalVisible(!modalVisible)}
@@ -252,6 +235,23 @@ export default function Home({ navigation }) {
                 </View>
               </View>
             </Modal>
+          </View>
+        <View style={{ flexDirection: "row" }}>
+          <View style={{ marginHorizontal: 10, marginVertical: 20 }}>
+            <TouchableOpacity
+              onPress={() => setModalVisible(true)}
+              style={{ backgroundColor: "black", borderRadius: 50 }}
+            >
+              <Text
+                style={{
+                  color: "white",
+                  marginHorizontal: 30,
+                  marginVertical: 20,
+                }}
+              >
+                TMI 작성
+              </Text>
+            </TouchableOpacity>
           </View>
           <View style={{ marginHorizontal: 10, marginVertical: 20 }}>
             <TouchableOpacity
@@ -323,5 +323,13 @@ const styles = StyleSheet.create({
   modalText: {
     marginBottom: 15,
     textAlign: "center",
+  },
+  input: {
+    height: 40,
+    width: 200,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 10,
   },
 });

@@ -19,7 +19,7 @@ const Drawer = createDrawerNavigator();
 export default function MainDrawer({ navigation }) {
   return (
     <Drawer.Navigator>
-      <Drawer.Screen name="MainScreen" component={MainScreen} opt/>
+      <Drawer.Screen name="MainScreen" component={MainScreen} options={{headershown:false}}/>
       <Drawer.Screen name="TMI" component={TMI}/>
       <Drawer.Screen name="Settings" component={Settings}/>
       <Drawer.Screen name="Logout" component={Logout}/>
