@@ -28,5 +28,5 @@ export default function AlienSvg() {
 \tC360.315,258.986,350.622,226.148,338.659,226.148z"/>
 </svg>  
 `
-    return <SvgXml xml={alien} width="100%" height="100%" />
+    return <SvgXml xml={alien} width="120%" height="120%" />
 }

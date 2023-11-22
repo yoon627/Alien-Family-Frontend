@@ -3,7 +3,6 @@ import {StatusBar} from 'expo-status-bar';
 import {
     Alert,
     Animated,
-    Button,
     Dimensions,
     Image,
     ImageBackground,
@@ -16,7 +15,6 @@ import AlienSvg from '../AlienSvg';
 import {KorolJoystick} from "korol-joystick";
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import ladderScreen from "../views/LadderScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -28,6 +26,7 @@ export default function MiniGames({navigation}) {
         ladder: false,
         mole: false,
         roulette: false,
+        door: false,
     });
 
     const SOME_THRESHOLD = 100;
@@ -51,9 +50,10 @@ export default function MiniGames({navigation}) {
 
     useLayoutEffect(() => {
         const gameImgPosition = {
-            ladder: {x: SCREEN_WIDTH * 0.018, y: SCREEN_HEIGHT * 0.1},
-            mole: {x: SCREEN_WIDTH * 0.95, y: SCREEN_HEIGHT * 0.2},
-            roulette: {x: SCREEN_WIDTH * 0.3, y: SCREEN_HEIGHT * 0.5},
+            ladder: {x: SCREEN_WIDTH * 0.018, y: SCREEN_HEIGHT * 0.14},
+            mole: {x: SCREEN_WIDTH * 0.9, y: SCREEN_HEIGHT * 0.3},
+            roulette: {x: SCREEN_WIDTH * 0.3, y: SCREEN_HEIGHT * 0.6},
+            door: {x: SCREEN_WIDTH * 0.95, y: SCREEN_HEIGHT * 0.65}
         };
 
         const updatedShowButton = {};
@@ -74,26 +74,33 @@ export default function MiniGames({navigation}) {
                 style={styles.bgImage}
             >
                 <View style={styles.doorForm}>
-                    <TouchableOpacity onPress={
-                        () => {
-                            Alert.alert("맵을 나가시겠습니까?", null, [
-                                {
-                                    text: "취소",
-                                    style: "cancel",
-                                },
-                                {
-                                    text: "나가기",
-                                    onPress: () => {
-                                        navigation.navigate("Home")
-                                    }
-                                },
-                            ]);
-                        }}>
-                        <Image
-                            style={styles.door}
-                            source={require('../assets/img/door.png')}/>
-                    </TouchableOpacity>
+                    <Image
+                        style={styles.door}
+                        source={require('../assets/img/door.png')}/>
                 </View>
+                {showButton.door ? (
+                    <View style={styles.spaceshipForm}>
+                        <TouchableOpacity onPress={
+                            () => {
+                                Alert.alert("맵을 나가시겠습니까?", null, [
+                                    {
+                                        text: "취소",
+                                        style: "cancel",
+                                    },
+                                    {
+                                        text: "나가기",
+                                        onPress: () => {
+                                            navigation.navigate("Home")
+                                        }
+                                    },
+                                ]);
+                            }}>
+                            <Image
+                                style={styles.spaceship}
+                                source={require('../assets/img/door.png')}/>
+                        </TouchableOpacity>
+                    </View>
+                ) : null}
 
                 <View style={styles.ladderForm}>
                     <Image
@@ -256,18 +263,18 @@ const styles = StyleSheet.create({
     spaceshipForm: {
         position: "absolute",
         right: "10%",
-        bottom: "7%",
+        bottom: "4%",
     },
     spaceship: {
         width: SCREEN_WIDTH * 0.1,
         height: SCREEN_HEIGHT * 0.1,
         resizeMode: "contain",
     },
-    buttonText: {
-        position: "absolute",
-        right: "12%",
-        bottom: "10%",
-        color: "red",
-        fontWeight: "bold"
-    }
+    // buttonText: {
+    //     position: "absolute",
+    //     right: "12%",
+    //     bottom: "10%",
+    //     color: "red",
+    //     fontWeight: "bold"
+    // }
 });
