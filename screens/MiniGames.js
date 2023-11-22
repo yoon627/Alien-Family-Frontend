@@ -14,7 +14,6 @@ import {
 import LottieView from 'lottie-react-native';
 import AlienSvg from '../AlienSvg';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import Joystick from "../components/joystick";
 
 const Tab = createBottomTabNavigator();
 

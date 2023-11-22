@@ -103,7 +103,7 @@ const MoleGame = () => {
     }, [gameActive]);
 
     useEffect(() => {
-        if (!gameActive) {
+        if (!gameActive && gameStarted) {
             Alert.alert("게임 종료!", `당신의 점수는 ${score}점입니다.`);
         }
     }, [gameActive, score]);
@@ -156,32 +156,25 @@ const MoleGame = () => {
 
         // 애니메이션 재시작
         Animated.timing(timerLeft, {
-            toValue: 0,
-            duration: GAME_DURATION,
-            useNativeDriver: false
+            toValue: 0, duration: GAME_DURATION, useNativeDriver: false
         }).start();
     };
 
     return (<View style={styles.container}>
-        {!gameActive && (
-            <Button title={gameStarted ? "게임 재시작" : "게임 시작"} onPress={gameStarted ? restartGame : startGame} />
-        )}
 
-        {gameStarted && (
-            <>
-                <View style={styles.timeGaugeContainer}>
-                    <Animated.View style={[styles.timeGauge, {width: timeGaugeWidth, right: 0}]} />
-                </View>
-                <Animated.Image
-                    source={{uri: gifImageUri}}
-                    style={[styles.gifImage, {left: gifPosition}]}
-                />
+        {gameStarted && (<>
+            <View style={styles.timeGaugeContainer}>
+                <Animated.View style={[styles.timeGauge, {width: timeGaugeWidth, right: 0}]}/>
+            </View>
+            <Animated.Image
+                source={{uri: gifImageUri}}
+                style={[styles.gifImage, {left: gifPosition}]}
+            />
 
-                <Text style={styles.timerText}>남은 시간: {Math.round(timeLeft / 1000)}초</Text>
-                <Text style={styles.scoreText}>점수: {score}</Text>
+            <Text style={styles.timerText}>남은 시간: {Math.round(timeLeft / 1000)}초</Text>
+            <Text style={styles.scoreText}>점수: {score}</Text>
 
-            </>
-        )}
+        </>)}
         <View style={[styles.grid, {width: gridWidth, height: gridWidth}]}>
             {[...Array(GRID_SIZE * GRID_SIZE)].map((_, index) => (<TouchableOpacity
                 key={index}
@@ -201,6 +194,10 @@ const MoleGame = () => {
                     <Image source={{uri: specialBlockImageUri}} style={styles.moleImage}/>)}
             </TouchableOpacity>))}
         </View>
+
+        {!gameActive && (
+            <Button title={gameStarted ? "게임 재시작" : "게임 시작"} onPress={gameStarted ? restartGame : startGame}/>)}
+
     </View>);
 };
 
