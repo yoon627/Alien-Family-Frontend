@@ -4802,6 +4802,14 @@ kleur@^3.0.3:
   resolved "https://registry.yarnpkg.com/kleur/-/kleur-3.0.3.tgz#a79c9ecc86ee1ce3fa6206d1216c501f147fc07e"
   integrity sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==
 
+korol-joystick-custom@^1.7.1:
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/korol-joystick-custom/-/korol-joystick-custom-1.7.1.tgz#22fbf24bb9828ec0c43017a787ebf16d59fdc5f4"
+  integrity sha512-l/XA7DvYWAyIBrAm5MeJ1opdnC9BbldATYpGDjdHyKFOfvuT7XAs+NTEAFKxKF91j4DIDOIxQljuAMCqDXWJZw==
+  dependencies:
+    react-native "^0.70.1"
+    react-native-gesture-handler "^2.6.0"
+
 korol-joystick@^1.7.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/korol-joystick/-/korol-joystick-1.7.0.tgz#c90f925870e5d4fe299cfccf075e7f3675fcf8ca"
