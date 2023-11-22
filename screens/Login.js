@@ -30,7 +30,7 @@ const Login = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <MaterialCommunityIcons name="ufo-outline" size={35} color="black" />
-      <Text style={{ fontSize: 50, fontWeight: 500 }}>UFO</Text>
+      <Text style={{ fontSize: 50, fontWeight: 500, marginBottom:75}}>UFO</Text>
       <View>
         <TouchableOpacity
           onPress={async () => {
