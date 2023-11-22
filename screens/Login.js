@@ -15,6 +15,7 @@ import { WebView } from "react-native-webview";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import KaKaoLogin from "./KaKaoLogin";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const saveServer = async () => {
   try {
@@ -28,6 +29,8 @@ const Login = ({ navigation }) => {
   saveServer();
   return (
     <View style={styles.container}>
+      <MaterialCommunityIcons name="ufo-outline" size={35} color="black" />
+      <Text style={{ fontSize: 50, fontWeight: 500 }}>UFO</Text>
       <View>
         <TouchableOpacity
           onPress={async () => {
@@ -43,14 +46,14 @@ const Login = ({ navigation }) => {
             borderRadius: 50,
             alignItems: "center",
             justifyContent: "center",
-            marginVertical:20,
+            marginVertical: 20,
           }}
         >
           <Text
             style={{
               color: "white",
-              marginHorizontal: 30,
-              marginVertical: 30,
+              marginHorizontal: 20,
+              marginVertical: 15,
               alignItems: "center",
               justifyContent: "center",
             }}
@@ -65,14 +68,14 @@ const Login = ({ navigation }) => {
             borderRadius: 50,
             alignItems: "center",
             justifyContent: "center",
-            marginVertical:20,
+            marginVertical: 20,
           }}
         >
           <Text
             style={{
               color: "white",
               marginHorizontal: 30,
-              marginVertical: 30,
+              marginVertical: 15,
               alignItems: "center",
               justifyContent: "center",
             }}
@@ -87,14 +90,14 @@ const Login = ({ navigation }) => {
             borderRadius: 50,
             alignItems: "center",
             justifyContent: "center",
-            marginVertical:20,
+            marginVertical: 20,
           }}
         >
           <Text
             style={{
               color: "white",
               marginHorizontal: 30,
-              marginVertical: 30,
+              marginVertical: 15,
               alignItems: "center",
               justifyContent: "center",
             }}
@@ -109,14 +112,14 @@ const Login = ({ navigation }) => {
             borderRadius: 50,
             alignItems: "center",
             justifyContent: "center",
-            marginVertical:20,
+            marginVertical: 20,
           }}
         >
           <Text
             style={{
               color: "white",
               marginHorizontal: 30,
-              marginVertical: 30,
+              marginVertical: 15,
               alignItems: "center",
               justifyContent: "center",
             }}

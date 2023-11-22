@@ -138,8 +138,8 @@ const ChooseCharacter = ({ navigation }) => {
         <Text
           style={{
             color: "white",
-            marginHorizontal: 30,
-            marginVertical: 30,
+            marginHorizontal: 35,
+            marginVertical: 10,
             alignItems: "center",
             justifyContent: "center",
           }}
@@ -154,14 +154,14 @@ const ChooseCharacter = ({ navigation }) => {
           borderRadius: 50,
           alignItems: "center",
           justifyContent: "center",
-          marginVertical: 20,
+          marginVertical: 10,
         }}
       >
         <Text
           style={{
             color: "white",
-            marginHorizontal: 30,
-            marginVertical: 30,
+            marginHorizontal: 25,
+            marginVertical: 10,
             alignItems: "center",
             justifyContent: "center",
           }}

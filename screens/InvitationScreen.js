@@ -78,6 +78,7 @@ const InvitationScreen = ({ navigation }) => {
           const ServerAccessToken = await AsyncStorage.getItem(
             "ServerAccessToken"
           );
+          await AsyncStorage.setItem("familyCode", InvitationCode);
           await axios({
             method: "GET",
             url:
@@ -99,6 +100,14 @@ const InvitationScreen = ({ navigation }) => {
                 "UserServerRefreshToken",
                 UserServerRefreshToken
               );
+              const members = resp.data.data.familyResponseDto.members;
+              var myDB = {};
+              for (i = 0; i < members.length; i++) {
+                const newkey = members[i].memberId;
+                console.log(members[i].memberId);
+                myDB[newkey] = members[i];
+              }
+              await AsyncStorage.setItem("myDB", JSON.stringify(myDB));
               navigation.navigate("MainDrawer");
             })
             .catch(function (error) {
@@ -139,7 +148,7 @@ const InvitationScreen = ({ navigation }) => {
           style={{
             color: "white",
             marginHorizontal: 30,
-            marginVertical: 30,
+            marginVertical: 10,
             alignItems: "center",
             justifyContent: "center",
           }}
@@ -161,7 +170,7 @@ const InvitationScreen = ({ navigation }) => {
           style={{
             color: "white",
             marginHorizontal: 30,
-            marginVertical: 30,
+            marginVertical: 10,
             alignItems: "center",
             justifyContent: "center",
           }}

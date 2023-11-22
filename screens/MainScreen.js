@@ -76,6 +76,7 @@ export default function MainScreen({navigation}) {
                 tabBarVisible: false, //hide tab bar on this screen
             }}
         />
+
         <Tab.Screen
             name="Ladder"
             component={LadderScreen}
@@ -107,4 +108,5 @@ export default function MainScreen({navigation}) {
             }}
         />
     </Tab.Navigator>);
+
 }

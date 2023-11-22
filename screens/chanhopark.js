@@ -1,7 +1,7 @@
 import { Text } from "react-native";
 
 export default function Chanhopark (){
-    return <Text>제가 LA에 있을때는 말이죠 정말 제가 꿈에 무대인 메이저리그로 진출해서
+    return <Text>박찬호: 제가 LA에 있을때는 말이죠 정말 제가 꿈에 무대인 메이저리그로 진출해서
     가는 식당마다 싸인해달라 기자들은 항상 붙어다니며 취재하고 제가 그 머~
     어~ 대통령이 된 기분이였어요 그런데 17일만에 17일만에 마이너리그로
     떨어졌어요 못던져서 그만두고 그냥 확 한국으로 가버리고 싶었어요 그래서
