@@ -1,5 +1,5 @@
 import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
-import { StatusBar } from 'expo-status-bar';
+import {StatusBar} from 'expo-status-bar';
 import {
     Alert,
     Animated,
@@ -7,25 +7,22 @@ import {
     Dimensions,
     Image,
     ImageBackground,
+    PanResponder,
     StyleSheet,
     TouchableOpacity,
-    PanResponder,
     View
 } from 'react-native';
 import LottieView from 'lottie-react-native';
 import AlienSvg from '../AlienSvg';
-import { KorolJoystick } from "korol-joystick";
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import ladderScreen from "../views/LadderScreen";
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 const Tab = createBottomTabNavigator();
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
 
-export default function MiniGames({ navigation }) {
+export default function MiniGames({navigation}) {
 
-    const [characterPosition, setCharacterPosition] = useState({ x: 0, y: 0 });
+    const [characterPosition, setCharacterPosition] = useState({x: 0, y: 0});
     const [showButton, setShowButton] = useState({
         ladder: false,
         mole: false,
@@ -33,23 +30,25 @@ export default function MiniGames({ navigation }) {
     });
 
     const SOME_THRESHOLD = 160;
-
+    const maxDistance = 30;
     const sensitivity = 1;  // 조이스틱 민감도 조절 (낮을수록 더 민감)
 
     const joystickPosition = useRef(new Animated.ValueXY()).current;
     const panResponder = useRef(
         PanResponder.create({
             onStartShouldSetPanResponder: () => true,
-            onPanResponderMove: Animated.event([
-                null,
-                { dx: joystickPosition.x, dy: joystickPosition.y }
-            ], { useNativeDriver: false }),
+            onPanResponderMove: (evt, gestureState) => {
+                // 조이스틱이 최대 거리를 넘지 않도록 제한
+                const distance = Math.sqrt(Math.pow(gestureState.dx, 2) + Math.pow(gestureState.dy, 2));
+                const angle = Math.atan2(gestureState.dy, gestureState.dx);
+                const x = distance > maxDistance ? maxDistance * Math.cos(angle) : gestureState.dx;
+                const y = distance > maxDistance ? maxDistance * Math.sin(angle) : gestureState.dy;
+
+                joystickPosition.setValue({x, y});
+            },
             onPanResponderRelease: () => {
-
-                console.log("x =",joystickPosition.x,"y = " ,joystickPosition.y);
-
                 Animated.spring(joystickPosition, {
-                    toValue: { x: 0, y: 0 },
+                    toValue: {x: 0, y: 0},
                     friction: 5,
                     useNativeDriver: false
                 }).start();
@@ -80,9 +79,9 @@ export default function MiniGames({ navigation }) {
 
     useLayoutEffect(() => {
         const buttonPosition = {
-            ladder: { x: SCREEN_WIDTH * 0.018, y: SCREEN_HEIGHT * 0.1 },
-            mole: { x: SCREEN_WIDTH * 0.95, y: SCREEN_HEIGHT * 0.2 },
-            roulette: { x: SCREEN_WIDTH * 0.3, y: SCREEN_HEIGHT * 0.5 },
+            ladder: {x: SCREEN_WIDTH * 0.018, y: SCREEN_HEIGHT * 0.1},
+            mole: {x: SCREEN_WIDTH * 0.95, y: SCREEN_HEIGHT * 0.2},
+            roulette: {x: SCREEN_WIDTH * 0.3, y: SCREEN_HEIGHT * 0.5},
         };
 
         const updatedShowButton = {};
@@ -120,7 +119,7 @@ export default function MiniGames({ navigation }) {
                         }}>
                         <Image
                             style={styles.door}
-                            source={require('../assets/img/door.png')} />
+                            source={require('../assets/img/door.png')}/>
                     </TouchableOpacity>
                 </View>
 
@@ -163,6 +162,7 @@ export default function MiniGames({ navigation }) {
                 </View>
 
                 <View style={styles.joystickArea}>
+                    <View style={styles.joystickBackgroundCircle}/>
                     <Animated.View
                         {...panResponder.panHandlers}
                         style={[joystickPosition.getLayout(), styles.joystick]}
@@ -198,10 +198,10 @@ export default function MiniGames({ navigation }) {
                     height: SCREEN_WIDTH * 0.1,
                     resizeMode: "contain"
                 }}>
-                    <AlienSvg />
+                    <AlienSvg/>
                 </View>
 
-                <StatusBar style="auto" />
+                <StatusBar style="auto"/>
             </ImageBackground>
         </View>
     );
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: '#FFFFFF', // 조이스틱 테두리 색상
         shadowColor: '#000000', // 그림자 색상
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: {width: 0, height: 2},
         shadowOpacity: 0.8,
         shadowRadius: 6,
         elevation: 5,
@@ -280,5 +280,15 @@ const styles = StyleSheet.create({
         width: SCREEN_WIDTH * 0.17,
         height: SCREEN_HEIGHT * 0.17,
         resizeMode: "contain",
+    },
+    joystickBackgroundCircle: {
+        position: 'absolute',
+        left: -25,
+        bottom: 125,
+        width: 100,  // 반지름이 25인 원의 지름
+        height: 100, // 반지름이 25인 원의 지름
+        borderRadius: 100,
+        borderWidth: 1,  // 원의 두께
+        borderColor: 'white',  // 원의 색상
     },
 });

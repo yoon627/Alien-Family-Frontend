@@ -4,13 +4,13 @@ import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {AntDesign, Entypo, FontAwesome, MaterialIcons,} from "@expo/vector-icons";
 import Album from "./Album";
 import Home from "./Home";
-import Chatting from "./Chatting";
 import CalendarScreen from "./CalendarScreen";
 import Feed from "./Feed";
 import Attendance from "./Attendance";
 import LadderScreen from "../views/LadderScreen";
 import RouletteScreen from "../views/RouletteScreen";
 import NewGame from "../views/NewGame";
+import ChatRoom from "./Chatting";
 
 const Tab = createBottomTabNavigator();
 
@@ -38,7 +38,7 @@ export default function MainScreen({navigation}) {
         />
         <Tab.Screen
             name="Chatting"
-            component={Chatting}
+            component={ChatRoom}
             options={{
                 headerShown: false,
                 tabBarIcon: () => <Entypo name="chat" size={24} color="black"/>,
