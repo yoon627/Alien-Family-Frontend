@@ -103,15 +103,16 @@ export default function Home({ navigation }) {
         <TouchableOpacity
           onPress={async () => {
             const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
-            const ServerAccessToken = await AsyncStorage.getItem(
-              "ServerAccessToken"
+            const UserServerAccessToken = await AsyncStorage.getItem(
+              "UserServerAccessToken"
             );
             const familyId = await AsyncStorage.getItem("familyId");
             await axios({
               method: "GET",
-              url: SERVER_ADDRESS + "/tmi/" + familyId,
+              url: SERVER_ADDRESS + "/familyTmi",
+
               headers: {
-                Authorization: "Bearer: " + ServerAccessToken,
+                Authorization: "Bearer: " + UserServerAccessToken,
               },
             })
               .then((resp) => {
@@ -183,14 +184,14 @@ export default function Home({ navigation }) {
                       const SERVER_ADDRESS = await AsyncStorage.getItem(
                         "ServerAddress"
                       );
-                      const ServerAccessToken = await AsyncStorage.getItem(
-                        "ServerAccessToken"
+                      const UserServerAccessToken = await AsyncStorage.getItem(
+                        "UserServerAccessToken"
                       );
                       await axios({
                         method: "POST",
                         url: SERVER_ADDRESS + "/tmi",
                         headers: {
-                          Authorization: "Bearer: " + ServerAccessToken,
+                          Authorization: "Bearer: " + UserServerAccessToken,
                         },
                         data: {
                           content: TMI,

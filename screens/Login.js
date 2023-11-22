@@ -52,8 +52,8 @@ const Login = ({ navigation }) => {
           <Text
             style={{
               color: "white",
-              marginHorizontal: 30,
-              marginVertical: 30,
+              marginHorizontal: 20,
+              marginVertical: 15,
               alignItems: "center",
               justifyContent: "center",
             }}
@@ -75,7 +75,7 @@ const Login = ({ navigation }) => {
             style={{
               color: "white",
               marginHorizontal: 30,
-              marginVertical: 30,
+              marginVertical: 15,
               alignItems: "center",
               justifyContent: "center",
             }}
@@ -97,7 +97,7 @@ const Login = ({ navigation }) => {
             style={{
               color: "white",
               marginHorizontal: 30,
-              marginVertical: 30,
+              marginVertical: 15,
               alignItems: "center",
               justifyContent: "center",
             }}
@@ -119,7 +119,7 @@ const Login = ({ navigation }) => {
             style={{
               color: "white",
               marginHorizontal: 30,
-              marginVertical: 30,
+              marginVertical: 15,
               alignItems: "center",
               justifyContent: "center",
             }}

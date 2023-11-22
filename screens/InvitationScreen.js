@@ -148,7 +148,7 @@ const InvitationScreen = ({ navigation }) => {
           style={{
             color: "white",
             marginHorizontal: 30,
-            marginVertical: 30,
+            marginVertical: 10,
             alignItems: "center",
             justifyContent: "center",
           }}
@@ -170,7 +170,7 @@ const InvitationScreen = ({ navigation }) => {
           style={{
             color: "white",
             marginHorizontal: 30,
-            marginVertical: 30,
+            marginVertical: 10,
             alignItems: "center",
             justifyContent: "center",
           }}

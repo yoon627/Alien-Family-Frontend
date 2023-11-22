@@ -72,7 +72,7 @@ const FirstStart = ({ navigation }) => {
           style={{
             color: "white",
             marginHorizontal: 30,
-            marginVertical: 30,
+            marginVertical: 10,
             alignItems: "center",
             justifyContent: "center",
           }}
@@ -160,7 +160,7 @@ const FirstStart = ({ navigation }) => {
           style={{
             color: "white",
             marginHorizontal: 30,
-            marginVertical: 30,
+            marginVertical: 10,
             alignItems: "center",
             justifyContent: "center",
           }}
