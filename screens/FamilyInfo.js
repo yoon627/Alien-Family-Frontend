@@ -30,7 +30,7 @@ export default function FamilyInfo({ navigation }) {
         {Object.keys(Family).map((key) => (
           <View key={key} style={{flexDirection:"row"}}>
             <View style={{alignItems:"center",justifyContent:"center"}}>
-            <Text style={{fontSize:20}}>Name: {Family[key].name}</Text>
+            <Text style={{fontSize:20}}>Nickname: {Family[key].nickname}</Text>
             <Text style={{fontSize:20}}>Title: {Family[key].title}</Text>
             </View>
             <View>

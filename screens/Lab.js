@@ -12,50 +12,7 @@ export default function Lab() {
   return (
     <TouchableOpacity
       onPress={async () => {
-        const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
-        const ServerAccessToken = await AsyncStorage.getItem(
-          "ServerAccessToken"
-        );
-        await axios({
-          method: "POST",
-          url: SERVER_ADDRESS + "/api/register/newFamily",
-          headers: {
-            Authorization: "Bearer: " + ServerAccessToken,
-          },
-          data: {
-            ufoName: "ㅇㅇㅇ",
-            plantName: "ㅇㅇㅇ",
-            code: "ABC",
-          },
-        })
-          .then(async (resp) => {
-            const UserServerAccessToken = resp.data.data.tokenInfo.accessToken;
-            const UserServerRefreshToken =
-              resp.data.data.tokenInfo.refreshToken;
-            await AsyncStorage.setItem(
-              "UserServerAccessToken",
-              UserServerAccessToken
-            );
-            await AsyncStorage.setItem(
-              "UserServerRefreshToken",
-              UserServerRefreshToken
-            );
-            const familyid = resp.data.data;
-            console.log(familyid);
-            const members = resp.data.data.familyResponseDto.members;
-            var myDB = {};
-            for (i = 0; i < members.length; i++) {
-              const newkey = members[i].memberId;
-              console.log(members[i].memberId)
-              myDB[newkey] = members[i];
-            }
-            await AsyncStorage.setItem("myDB", JSON.stringify(myDB));
-          })
-          .catch(function (error) {
-            console.log("server error", error);
-          });
-        const test = await AsyncStorage.getItem("myDB");
-        console.log(test);
+        console.log(JSON.stringify(new Date(Date.now())).slice(1,11));
       }}
       style={{
         backgroundColor: "black",
