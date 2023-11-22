@@ -113,9 +113,33 @@ export default function MainScreen({ navigation }) {
             tabBarVisible: false, //hide tab bar on this screen
           }}
         />
-        <Tab.Screen name="Ladder" component={LadderScreen} />
-        <Tab.Screen name="Roulette" component={RouletteScreen} />
-        <Tab.Screen name="Mole" component={NewGame} />
+        <Tab.Screen
+          name="Ladder"
+          component={LadderScreen}
+          options={{
+            headerShown: false,
+            tabBarShowLabel: false,
+            tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,
+          }}
+        />
+        <Tab.Screen
+          name="Roulette"
+          component={RouletteScreen}
+          options={{
+            headerShown: false,
+            tabBarShowLabel: false,
+            tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,
+          }}
+        />
+        <Tab.Screen
+          name="Mole"
+          component={NewGame}
+          options={{
+            headerShown: false,
+            tabBarShowLabel: false,
+            tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,
+          }}
+        />
       </Tab.Navigator>
     </NavigationContainer>
   );
