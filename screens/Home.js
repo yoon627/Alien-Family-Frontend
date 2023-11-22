@@ -33,6 +33,34 @@ export default function Home({ navigation }) {
   const [TMI, setTMI] = useState("");
   const onChangeTMI = (payload) => setTMI(payload);
   const [modalVisible, setModalVisible] = useState(false);
+  const [todayTMI, setTodayTMI] = useState("");
+  const [flower, setFlower] = useState(false);
+  useEffect(() => {
+    async function fetchData() {
+      const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
+      const UserServerAccessToken = await AsyncStorage.getItem(
+        "UserServerAccessToken"
+      );
+      const familyId = await AsyncStorage.getItem("familyId");
+      await axios({
+        method: "GET",
+        url: SERVER_ADDRESS + "/familyTmi",
+
+        headers: {
+          Authorization: "Bearer: " + UserServerAccessToken,
+        },
+      }).then((resp) => {
+        console.log(resp.data);
+        const tmis = resp.data;
+        var mytmi = "";
+        for (i = 0; i < tmis.length; i++) {
+          mytmi = mytmi + tmis[i].writer + ": " + tmis[i].content + "  ";
+        }
+        setTodayTMI(mytmi);
+      });
+    }
+    fetchData();
+  });
   const movingObject = () => {
     const movingValue = useRef(new Animated.Value(0)).current;
 
@@ -60,7 +88,6 @@ export default function Home({ navigation }) {
         ])
       ).start();
     }, []);
-
     const interpolated = movingValue.interpolate({
       inputRange: [-1, 1],
       outputRange: [-1, 1],
@@ -96,10 +123,11 @@ export default function Home({ navigation }) {
           loop={true}
           delay={1000}
         >
-          <Chanhopark />
+          {todayTMI}
+          {/* {Object.keys(TMI).map((key)=>(<Text>TMI[key] </Text>))} */}
         </MarqueeText>
       </View>
-      <View style={{ marginHorizontal: 3, marginVertical: 3 }}>
+      {/* <View style={{ marginHorizontal: 3, marginVertical: 3 }}>
         <TouchableOpacity
           onPress={async () => {
             const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
@@ -116,7 +144,15 @@ export default function Home({ navigation }) {
               },
             })
               .then((resp) => {
-                console.log(resp);
+                console.log(resp.data);
+                const tmis = resp.data;
+                var mytmi = "";
+                for (i = 0; i < tmis.length; i++) {
+                  mytmi =
+                    mytmi + tmis[i].writer + ": " + tmis[i].content + "  ";
+                }
+                console.log(mytmi);
+                setTodayTMI(mytmi);
               })
               .catch(function (error) {
                 console.log("server error", error);
@@ -134,12 +170,16 @@ export default function Home({ navigation }) {
             새로고침
           </Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
       <View
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
       ></View>
       <View style={styles.centeredView}>{movingObject()}</View>
-      <MaterialCommunityIcons name="sprout" size={100} color="black" />
+      {flower ? (
+        <MaterialCommunityIcons name="flower" size={100} color="black" />
+      ) : (
+        <MaterialCommunityIcons name="sprout" size={100} color="black" />
+      )}
       <View
         style={{
           flex: 1,
@@ -197,9 +237,12 @@ export default function Home({ navigation }) {
                           content: TMI,
                         },
                       })
-                        .then((resp) => {
+                        .then(async (resp) => {
                           // console.log("TMI SUCCESS");
                           // console.log(resp.data.message);
+                          //todo
+                          const writer = await AsyncStorage.getItem("nickname");
+                          setTodayTMI(writer + ": " + TMI + "  " + todayTMI);
                         })
                         .catch(function (error) {
                           console.log("server error", error);
@@ -246,25 +289,38 @@ export default function Home({ navigation }) {
                 const UserServerAccessToken = await AsyncStorage.getItem(
                   "UserServerAccessToken"
                 );
-                // await axios({
-                //   method: "GET",
-                //   url: SERVER_ADDRESS + "/tmi/check",
-                //   headers: {
-                //     Authorization: "Bearer: " + UserServerAccessToken,
-                //   },
-                // })
-                //   .then((resp) => {console.log(resp.data.message)})
-                //   .catch((e) => console.log(e));//오늘의 tmi를 작성했습니다.
                 await axios({
                   method: "GET",
-                  url: SERVER_ADDRESS + "/attendance",
+                  url: SERVER_ADDRESS + "/tmi/check",
                   headers: {
                     Authorization: "Bearer: " + UserServerAccessToken,
                   },
                 })
-                  .then((resp) => console.log(resp.data.message))
+                  .then(async (resp) => {
+                    // console.log(resp.data.message);
+                    if (resp.data.message != "오늘의 tmi를 작성했습니다.") {
+                      Alert.alert("출석을 위해 TMI를 작성해주세요!");
+                    } else {
+                      await axios({
+                        method: "GET",
+                        url: SERVER_ADDRESS + "/attendance",
+                        headers: {
+                          Authorization: "Bearer: " + UserServerAccessToken,
+                        },
+                      })
+                        .then((resp) => {
+                          Alert.alert(resp.data.message);
+                          if (flower){
+                            setFlower(false);
+                          }else{
+                            setFlower(true);
+                          }
+                        })
+                        .catch((e) => console.log(e));
+                    }
+                  })
                   .catch((e) => console.log(e));
-              }}//출석 완료!
+              }}
               style={{ backgroundColor: "black", borderRadius: 50 }}
             >
               <Text
