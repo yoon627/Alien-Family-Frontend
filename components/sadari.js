@@ -21,11 +21,12 @@ const Sadari = ({cnt}) => {
     };
 
     const renderModalContent = () => {
+        // userName 가져오기
         return finalIndexes.map((finalIndex, i) => {
             // 유효한 결과를 확인하고, 해당하는 텍스트를 표시
             const resultText = finalIndex !== null && userTexts[finalIndex] ? userTexts[finalIndex] : "No result";
             return (<View key={`result-${i}`} style={styles.resultRow}>
-                <Text>Column {i} goes to: {resultText}</Text>
+                <Text>{i} goes to: {resultText}</Text>
             </View>);
         });
     };
