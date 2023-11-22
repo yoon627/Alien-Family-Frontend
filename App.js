@@ -1,7 +1,7 @@
-import {StyleSheet} from "react-native";
+import { StyleSheet } from "react-native";
 import React from "react";
-import {NavigationContainer} from "@react-navigation/native";
-import {createStackNavigator} from "@react-navigation/stack";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
 import Login from "./screens/Login";
 import FirstRegister from "./screens/FirstRegister";
 import ChooseCharacter from "./screens/ChooseCharacter";
@@ -13,7 +13,7 @@ import KaKaoLogin from "./screens/KaKaoLogin";
 import ClickBox from "./screens/ClickBox";
 
 import store from "./redux/config/configStore";
-import {Provider} from "react-redux";
+import { Provider } from "react-redux";
 import LadderScreen from "./views/LadderScreen";
 import RouletteScreen from "./views/RouletteScreen";
 import NewGame from "./views/NewGame";
@@ -22,42 +22,50 @@ import ChatRoom from "./views/chatScreen";
 const Stack = createStackNavigator();
 
 export default function App() {
-    return (<Provider store={store}>
-        <NavigationContainer>
-            <Stack.Navigator initialRouteName="MainDrawer" screenOptions={{headerShown: false}}>
-                <Stack.Screen name="Login" component={Login}/>
-                <Stack.Screen name="KaKaoLogin" component={KaKaoLogin}/>
-                <Stack.Screen name="First Register" component={FirstRegister}/>
-                <Stack.Screen name="Choose Character" component={ChooseCharacter}/>
-                <Stack.Screen name="Invitation" component={InvitationScreen}/>
-                <Stack.Screen name="ClickBox" component={ClickBox}/>
-                <Stack.Screen name="Ladder" component={LadderScreen}/>
-                <Stack.Screen name="Roulette" component={RouletteScreen}/>
-                <Stack.Screen name="Mole" component={NewGame}/>
-                <Stack.Screen name="Chat" component={ChatRoom}/>
-                <Stack.Screen
-                    name="MainDrawer"
-                    component={MainDrawer}
-                    options={{headerShown: false}}
-                />
-                <Stack.Screen name="First Start" component={FirstStart}/>
-                <Stack.Screen
-                    name="Mini Games"
-                    component={MiniGames}
-                    options={{headerShown: false}}
-                />
-                <Stack.Screen
-                    name="Home"
-                    component={MainDrawer}
-                    options={{headerShown: false}}
-                />
-            </Stack.Navigator>
-        </NavigationContainer>
-    </Provider>);
+  return (
+    <Provider store={store}>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="MainDrawer"
+          screenOptions={{ headerShown: false }}
+        >
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="KaKaoLogin" component={KaKaoLogin} />
+          <Stack.Screen name="First Register" component={FirstRegister} />
+          <Stack.Screen name="Choose Character" component={ChooseCharacter} />
+          <Stack.Screen name="Invitation" component={InvitationScreen} />
+          <Stack.Screen name="ClickBox" component={ClickBox} />
+          <Stack.Screen name="Ladder" component={LadderScreen} />
+          <Stack.Screen name="Roulette" component={RouletteScreen} />
+          <Stack.Screen name="Mole" component={NewGame} />
+          <Stack.Screen name="Chat" component={ChatRoom} />
+          <Stack.Screen
+            name="MainDrawer"
+            component={MainDrawer}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen name="First Start" component={FirstStart} />
+          <Stack.Screen
+            name="Mini Games"
+            component={MiniGames}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Home"
+            component={MainDrawer}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1, backgroundColor: "#fff", alignItems: "center", justifyContent: "center",
-    },
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });

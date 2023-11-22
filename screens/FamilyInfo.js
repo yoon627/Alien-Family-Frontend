@@ -1,10 +1,10 @@
 import React from "react";
 import { View, Text, Button, StyleSheet, ScrollView, Dimensions,TextInput } from "react-native";
 
-export default function Settings({navigation}){
+export default function FamilyInfo({navigation}){
   return (
     <View style={styles.container}>
-      <Text>Settings</Text>
+      <Text>FamilyInfo</Text>
     </View>
   );
 };

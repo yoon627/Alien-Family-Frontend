@@ -26,6 +26,11 @@ import CalendarScreen from "./CalendarScreen";
 import Lab from "./Lab";
 import MiniGames from "./MiniGames";
 import Feed from "./Feed";
+import Attendance from "./Attendance";
+import LadderScreen from "../views/LadderScreen";
+import RouletteScreen from "../views/RouletteScreen";
+import NewGame from "../views/NewGame";
+
 const Tab = createBottomTabNavigator();
 
 export default function MainScreen({ navigation }) {
@@ -91,7 +96,49 @@ export default function MainScreen({ navigation }) {
         <Tab.Screen
           name="Mini Games"
           component={MiniGames}
-          options={{ headerShown: false }}
+          options={{
+            headerShown: false,
+            tabBarShowLabel: false,
+            tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,
+            tabBarVisible: false, //hide tab bar on this screen
+          }}
+        />
+        <Tab.Screen
+          name="Attendance"
+          component={Attendance}
+          options={{
+            headerShown: false,
+            tabBarShowLabel: false,
+            tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,
+            tabBarVisible: false, //hide tab bar on this screen
+          }}
+        />
+        <Tab.Screen
+          name="Ladder"
+          component={LadderScreen}
+          options={{
+            headerShown: false,
+            tabBarShowLabel: false,
+            tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,
+          }}
+        />
+        <Tab.Screen
+          name="Roulette"
+          component={RouletteScreen}
+          options={{
+            headerShown: false,
+            tabBarShowLabel: false,
+            tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,
+          }}
+        />
+        <Tab.Screen
+          name="Mole"
+          component={NewGame}
+          options={{
+            headerShown: false,
+            tabBarShowLabel: false,
+            tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,
+          }}
         />
       </Tab.Navigator>
     </NavigationContainer>
