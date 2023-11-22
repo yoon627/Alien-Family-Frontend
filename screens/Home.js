@@ -198,7 +198,8 @@ export default function Home({ navigation }) {
                         },
                       })
                         .then((resp) => {
-                          console.log("TMI SUCCESS");
+                          // console.log("TMI SUCCESS");
+                          // console.log(resp.data.message);
                         })
                         .catch(function (error) {
                           console.log("server error", error);
@@ -238,7 +239,32 @@ export default function Home({ navigation }) {
           </View>
           <View style={{ marginHorizontal: 10, marginVertical: 20 }}>
             <TouchableOpacity
-              onPress={() => navigation.navigate("Attendance")}
+              onPress={async () => {
+                const SERVER_ADDRESS = await AsyncStorage.getItem(
+                  "ServerAddress"
+                );
+                const UserServerAccessToken = await AsyncStorage.getItem(
+                  "UserServerAccessToken"
+                );
+                // await axios({
+                //   method: "GET",
+                //   url: SERVER_ADDRESS + "/tmi/check",
+                //   headers: {
+                //     Authorization: "Bearer: " + UserServerAccessToken,
+                //   },
+                // })
+                //   .then((resp) => {console.log(resp.data.message)})
+                //   .catch((e) => console.log(e));//오늘의 tmi를 작성했습니다.
+                await axios({
+                  method: "GET",
+                  url: SERVER_ADDRESS + "/attendance",
+                  headers: {
+                    Authorization: "Bearer: " + UserServerAccessToken,
+                  },
+                })
+                  .then((resp) => console.log(resp.data.message))
+                  .catch((e) => console.log(e));
+              }}//출석 완료!
               style={{ backgroundColor: "black", borderRadius: 50 }}
             >
               <Text
