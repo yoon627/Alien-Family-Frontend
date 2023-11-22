@@ -51,6 +51,7 @@ const FirstRegister = ({ navigation }) => {
               value={birthday}
               onChange={(value) => {
                 test = JSON.stringify(value).slice(1, 11);
+                setBirthDay(JSON.stringify(value).slice(1, 11))
               }}
             />
           </View>
@@ -78,7 +79,7 @@ const FirstRegister = ({ navigation }) => {
                 },
                 data: {
                   nickname: name,
-                  birthdate: test,
+                  birthdate: birthday,
                   title: title,
                 },
               })

@@ -111,14 +111,15 @@ const FirstStart = ({ navigation }) => {
                 "UserServerRefreshToken",
                 UserServerRefreshToken
               );
-              //todo
+              const familyid = resp.data.data;
+              console.log(familyid);
               const members = resp.data.data.familyResponseDto.members;
+              var myDB = {};
               for (i = 0; i < members.length; i++) {
-                await AsyncStorage.setItem(
-                  members[i].title,
-                  JSON.stringify(members[i])
-                );
+                const newkey = members[i].memberId;
+                myDB[newkey] = members[i];
               }
+              await AsyncStorage.setItem("myDB", JSON.stringify(myDB));
               navigation.navigate("MainDrawer");
             })
             .catch(function (error) {
