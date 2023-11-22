@@ -25,7 +25,7 @@ export default function App() {
     <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator
-          initialRouteName="MainDrawer"
+          initialRouteName="Login"
           screenOptions={{ headerShown: false }}
         >
           <Stack.Screen name="Login" component={Login} />

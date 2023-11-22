@@ -46,13 +46,11 @@ const ChatRoom = () => {
         const client = new Client({
             brokerURL: 'ws://43.202.241.133:8080/ws',
             connectHeaders: {
-                Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyMyIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE3MDA4NzY4MjB9.-UP0pA8PUyJ2rNWLITJAfMf8YkBE7sFeZyzHqH9SNsY'
+                Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNDEiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZmFtaWx5IjoiMzQ5IiwiZXhwIjoxNzAwOTczMjEzfQ.IeHipzx60fWJRD2ZGs8SCKwpOjfSpN837Rjq2qrTli4'
             },
-
             onConnect: () => {
                 console.log('Connected to the WebSocket server');
-
-                client.subscribe('/sub/chat/room/44', (message) => {
+                client.subscribe('/sub/chat/room/343', (message) => {
                     const receivedMessage = JSON.parse(message.body);
                     setMessages(prevMessages => [...prevMessages, receivedMessage]);
                 });
@@ -62,12 +60,18 @@ const ChatRoom = () => {
                 console.error('Additional details:', frame.body);
             },
         });
-
-        client.activate();
+        const interval = setInterval(() => {
+            if (!client.connected) {
+                client.activate();
+            }
+        }, 1000); // 1초마다 연결 상태 체크
         setStompClient(client);
 
         return () => {
-            client.deactivate();
+            clearInterval(interval);
+            if (client) {
+                client.deactivate();
+            }
         };
     }, []);
 

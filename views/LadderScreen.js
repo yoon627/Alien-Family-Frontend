@@ -15,7 +15,7 @@ function LadderScreen() {
 
     return (
 
-        <View style={{flex: 1, alignItems: 'center', top: 50}}>
+        <View style={{flex: 1, alignItems: 'center', top: 10}}>
             <Text>사다리 게임 ㅋㅋ 사람수 ㅋㅋ {cnt}</Text>
 
             <View style={{flexDirection: 'row', justifyContent: 'flex-start',}}>
@@ -40,8 +40,8 @@ function LadderScreen() {
 const styles = StyleSheet.create({
     button: {
         backgroundColor: '#264b62', // 버튼 색상
-        paddingVertical: 20,         // 세로 패딩
-        paddingHorizontal: 20,       // 가로 패딩
+        paddingVertical: 10,         // 세로 패딩
+        paddingHorizontal: 10,       // 가로 패딩
         borderRadius: 5,             // 테두리 둥글게
         alignItems: 'center',
         marginVertical: 5,           // 버튼 간의 수직 마진

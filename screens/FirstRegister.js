@@ -13,7 +13,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import DatePicker from "@dietime/react-native-date-picker";
 const FirstRegister = ({ navigation }) => {
   const [name, setName] = useState("");
-  const [birthday, setBirthDay] = useState(Date.now());
+  const [birthday, setBirthDay] = useState(JSON.stringify(new Date(Date.now())).slice(1,11));
   const [title, setTitle] = useState("");
   const onChangeName = (payload) => setName(payload);
   const onChangeBirthDay = (payload) => setBirthDay(payload);
@@ -51,6 +51,7 @@ const FirstRegister = ({ navigation }) => {
               value={birthday}
               onChange={(value) => {
                 test = JSON.stringify(value).slice(1, 11);
+                setBirthDay(JSON.stringify(value).slice(1, 11))
               }}
             />
           </View>
@@ -78,7 +79,7 @@ const FirstRegister = ({ navigation }) => {
                 },
                 data: {
                   nickname: name,
-                  birthdate: test,
+                  birthdate: birthday,
                   title: title,
                 },
               })

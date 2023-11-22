@@ -21,6 +21,7 @@ import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
 import MarqueeText from "react-native-marquee";
 import Chanhopark from "./chanhopark";
 import MiniGames from "./MiniGames";
+import axios from "axios";
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const Container = styled.View`
   flex: 1;
@@ -40,20 +41,20 @@ export default function Home({ navigation }) {
         Animated.sequence([
           Animated.timing(movingValue, {
             toValue: 100,
-            duration: 500,
+            duration: 5000,
             useNativeDriver: true,
           }),
           Animated.timing(movingValue, {
-            duration: 400,
+            duration: 5000,
             useNativeDriver: true,
           }),
           Animated.timing(movingValue, {
             toValue: -100,
-            duration: 500,
+            duration: 5000,
             useNativeDriver: true,
           }),
           Animated.timing(movingValue, {
-            duration: 400,
+            duration: 5000,
             useNativeDriver: true,
           }),
         ])
@@ -98,6 +99,42 @@ export default function Home({ navigation }) {
           <Chanhopark />
         </MarqueeText>
       </View>
+      <View style={{ marginHorizontal: 3, marginVertical: 3 }}>
+        <TouchableOpacity
+          onPress={async () => {
+            const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
+            const UserServerAccessToken = await AsyncStorage.getItem(
+              "UserServerAccessToken"
+            );
+            const familyId = await AsyncStorage.getItem("familyId");
+            await axios({
+              method: "GET",
+              url: SERVER_ADDRESS + "/familyTmi",
+
+              headers: {
+                Authorization: "Bearer: " + UserServerAccessToken,
+              },
+            })
+              .then((resp) => {
+                console.log(resp);
+              })
+              .catch(function (error) {
+                console.log("server error", error);
+              });
+          }}
+          style={{ backgroundColor: "black", borderRadius: 50 }}
+        >
+          <Text
+            style={{
+              color: "white",
+              marginHorizontal: 10,
+              marginVertical: 5,
+            }}
+          >
+            새로고침
+          </Text>
+        </TouchableOpacity>
+      </View>
       <View
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
       ></View>
@@ -125,7 +162,7 @@ export default function Home({ navigation }) {
               <View style={styles.modalView}>
                 <TextInput
                   value={TMI}
-                  placeholder="               당신의 TMI를 알려주세요!"
+                  placeholder="당신의 TMI를 알려주세요!"
                   onChangeText={onChangeTMI}
                   multiline={true}
                   numberOfLines={3}
@@ -137,12 +174,38 @@ export default function Home({ navigation }) {
                     borderColor: "black",
                     height: 100,
                     width: 300,
+                    textAlign: "center",
                   }}
                 />
                 <View style={{ flexDirection: "row", marginVertical: 10 }}>
                   <Pressable
                     style={[styles.button, styles.buttonClose]}
-                    onPress={() => setModalVisible(!modalVisible)}
+                    onPress={async () => {
+                      const SERVER_ADDRESS = await AsyncStorage.getItem(
+                        "ServerAddress"
+                      );
+                      const UserServerAccessToken = await AsyncStorage.getItem(
+                        "UserServerAccessToken"
+                      );
+                      await axios({
+                        method: "POST",
+                        url: SERVER_ADDRESS + "/tmi",
+                        headers: {
+                          Authorization: "Bearer: " + UserServerAccessToken,
+                        },
+                        data: {
+                          content: TMI,
+                        },
+                      })
+                        .then((resp) => {
+                          // console.log("TMI SUCCESS");
+                          // console.log(resp.data.message);
+                        })
+                        .catch(function (error) {
+                          console.log("server error", error);
+                        });
+                      setModalVisible(!modalVisible);
+                    }}
                   >
                     <Text style={styles.textStyle}>작성</Text>
                   </Pressable>
@@ -176,7 +239,32 @@ export default function Home({ navigation }) {
           </View>
           <View style={{ marginHorizontal: 10, marginVertical: 20 }}>
             <TouchableOpacity
-              onPress={() => navigation.navigate("Attendance")}
+              onPress={async () => {
+                const SERVER_ADDRESS = await AsyncStorage.getItem(
+                  "ServerAddress"
+                );
+                const UserServerAccessToken = await AsyncStorage.getItem(
+                  "UserServerAccessToken"
+                );
+                // await axios({
+                //   method: "GET",
+                //   url: SERVER_ADDRESS + "/tmi/check",
+                //   headers: {
+                //     Authorization: "Bearer: " + UserServerAccessToken,
+                //   },
+                // })
+                //   .then((resp) => {console.log(resp.data.message)})
+                //   .catch((e) => console.log(e));//오늘의 tmi를 작성했습니다.
+                await axios({
+                  method: "GET",
+                  url: SERVER_ADDRESS + "/attendance",
+                  headers: {
+                    Authorization: "Bearer: " + UserServerAccessToken,
+                  },
+                })
+                  .then((resp) => console.log(resp.data.message))
+                  .catch((e) => console.log(e));
+              }}//출석 완료!
               style={{ backgroundColor: "black", borderRadius: 50 }}
             >
               <Text
@@ -209,10 +297,10 @@ const styles = StyleSheet.create({
     marginTop: 22,
   },
   modalView: {
-    margin: 20,
+    margin: 5,
     backgroundColor: "white",
     borderRadius: 20,
-    padding: 35,
+    padding: 10,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {

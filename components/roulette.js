@@ -89,7 +89,7 @@ const RouletteGame = ({cnt}) => {
 
 
     return (<View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <View style={{position: 'absolute', top: 150}}>
+        <View style={{position: 'absolute', top: 20}}>
             <Svg height="30" width="30" viewBox="-15 -15 30 30">
                 <Polygon points="0,10 -10,-10 10,-10" fill="black"/>
             </Svg>
