@@ -19,7 +19,7 @@ export default function FamilyInfo({ navigation }) {
       .then((resp) => {
         setFamily(JSON.parse(resp));
       })
-      .catch((e) => consol.log(e));
+      .catch((e) => console.log(e));
   };
   useEffect(() => {
     viewFamily();

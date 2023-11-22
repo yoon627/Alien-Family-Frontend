@@ -64,7 +64,7 @@ const FirstRegister = ({ navigation }) => {
         </View>
         <View style={styles.footer}>
           <TouchableOpacity
-            onPress={async () => {
+            onPress={async () => { await AsyncStorage.setItem("MyName", name);
               const SERVER_ADDRESS = await AsyncStorage.getItem(
                 "ServerAddress"
               );

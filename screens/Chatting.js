@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {Button, ScrollView, Text, TextInput, View} from 'react-native';
 import {Client} from '@stomp/stompjs';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import _ from "lodash";
 
 const TextEncodingPolyfill = require('text-encoding');
 
@@ -12,9 +14,20 @@ const ChatRoom = () => {
     const [stompClient, setStompClient] = useState(null);
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
+    const [myname, setMyname] = useState(null);
 
-    const myName = "아빠";
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const test = await AsyncStorage.getItem("MyName");
+                setMyname(test);
+            } catch (error) {
+                console.log("null");
+            }
+        };
+        fetchData();
+    }, []);
 
     useEffect(() => {
         const client = new Client({
@@ -34,6 +47,7 @@ const ChatRoom = () => {
         });
         const interval = setInterval(() => {
             if (!client.connected) {
+                console.log("연결시도중");
                 client.activate();
             }
         }, 1000); // 1초마다 연결 상태 체크
@@ -48,10 +62,9 @@ const ChatRoom = () => {
     }, []);
 
     const sendMessage = () => {
-
         if (stompClient && message) {
             const messageData = {
-                type: "TALK", roomId: "348", sender: "대장", memberId: "23",        // 적절한 멤버 ID 설정
+                type: "TALK", roomId: "348", sender: myname, memberId: "23",        // 적절한 멤버 ID 설정
                 content: message, time: new Date().toISOString()
             };
             const headerData = {
@@ -72,7 +85,7 @@ const ChatRoom = () => {
             {messages.map((msg, index) => (<View
                 key={index}
                 style={{
-                    alignSelf: msg.sender === myName ? 'flex-end' : 'flex-start', marginBottom: 10,
+                    alignSelf: msg.sender === myname ? 'flex-end' : 'flex-start', marginBottom: 10,
                 }}>
                 <Text>
                     {msg.sender}: {msg.content}
