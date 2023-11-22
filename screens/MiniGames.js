@@ -1,5 +1,5 @@
-import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
-import { StatusBar } from 'expo-status-bar';
+import React, {useLayoutEffect, useState} from 'react';
+import {StatusBar} from 'expo-status-bar';
 import {
     Alert,
     Animated,
@@ -13,17 +13,17 @@ import {
 } from 'react-native';
 import LottieView from 'lottie-react-native';
 import AlienSvg from '../AlienSvg';
-import { KorolJoystick } from "korol-joystick";
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import ladderScreen from "../views/LadderScreen";
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import Joystick from "../components/joystick";
 
 const Tab = createBottomTabNavigator();
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
 
-export default function MiniGames({ navigation }) {
-    const [characterPosition, setCharacterPosition] = useState({ x: 0, y: 0 });
+export default function MiniGames({navigation}) {
+
+
+    const [characterPosition, setCharacterPosition] = useState({x: 0, y: 0});
     const [showButton, setShowButton] = useState({
         ladder: false,
         mole: false,
@@ -48,9 +48,9 @@ export default function MiniGames({ navigation }) {
 
     useLayoutEffect(() => {
         const buttonPosition = {
-            ladder: { x: SCREEN_WIDTH * 0.018, y: SCREEN_HEIGHT * 0.1 },
-            mole: { x: SCREEN_WIDTH * 0.95, y: SCREEN_HEIGHT * 0.2 },
-            roulette: { x: SCREEN_WIDTH * 0.3, y: SCREEN_HEIGHT * 0.5 },
+            ladder: {x: SCREEN_WIDTH * 0.018, y: SCREEN_HEIGHT * 0.1},
+            mole: {x: SCREEN_WIDTH * 0.95, y: SCREEN_HEIGHT * 0.2},
+            roulette: {x: SCREEN_WIDTH * 0.3, y: SCREEN_HEIGHT * 0.5},
         };
 
         const updatedShowButton = {};
@@ -88,7 +88,7 @@ export default function MiniGames({ navigation }) {
                         }}>
                         <Image
                             style={styles.door}
-                            source={require('../assets/img/door.png')} />
+                            source={require('../assets/img/door.png')}/>
                     </TouchableOpacity>
                 </View>
 
@@ -130,15 +130,7 @@ export default function MiniGames({ navigation }) {
                     </TouchableOpacity>
                 </View>
 
-                <GestureHandlerRootView
-                    style={styles.joystick}
-                >
-                    <KorolJoystick
-                        color="#FFFFFF"
-                        radius={70}
-                        onMove={handleJoystickMove}
-                    />
-                </GestureHandlerRootView>
+                {/*<Joystick onMove={handleJoystickMove} style={styles.joystick}/>*/}
 
                 <Animated.View style={styles.rouletteForm}>
                     <TouchableOpacity onPress={
@@ -169,10 +161,10 @@ export default function MiniGames({ navigation }) {
                     height: SCREEN_WIDTH * 0.1,
                     resizeMode: "contain"
                 }}>
-                    <AlienSvg />
+                    <AlienSvg/>
                 </View>
 
-                <StatusBar style="auto" />
+                <StatusBar style="auto"/>
             </ImageBackground>
         </View>
     );
