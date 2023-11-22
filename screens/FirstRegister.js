@@ -71,6 +71,7 @@ const FirstRegister = ({ navigation }) => {
               const ServerAccessToken = await AsyncStorage.getItem(
                 "ServerAccessToken"
               );
+              await AsyncStorage.setItem("nickname",name);
               await axios({
                 method: "POST",
                 url: SERVER_ADDRESS + "/api/register/user",
