@@ -142,7 +142,7 @@ const MoleGame = () => {
     });
 
     const gifPosition = timerLeft.interpolate({
-        inputRange: [0, GAME_DURATION], outputRange: [-50, gaugeContainerWidth - 50], // GIF 이미지 크기의 절반만큼 보정
+        inputRange: [0, GAME_DURATION], outputRange: [-25, gaugeContainerWidth - 25], // GIF 이미지 크기의 절반만큼 보정
         extrapolate: 'clamp'
     });
 
@@ -212,10 +212,7 @@ const styles = StyleSheet.create({
         fontSize: 24, marginBottom: 20
     }, grid: {
         flexDirection: 'row', flexWrap: 'wrap', // width: 600, // 격자 크기 조정
-        // height: 600
     }, moleHole: {
-        // width: '16.66%', // 6x6 격자의 각 구멍 크기
-        // height: '16.66%',
         borderWidth: 1, borderColor: 'black'
     }, moleImage: {
         width: '100%', height: '100%'
@@ -224,7 +221,7 @@ const styles = StyleSheet.create({
     }, timerText: {
         fontSize: 20, marginBottom: 10
     }, gifImage: {
-        width: 50, height: 50, position: 'absolute', top: 75, // 게이지 바 위에 위치
+        width: 50, height: 50, position: 'absolute', top: 100, // 게이지 바 위에 위치
         right: 0
     }
 });

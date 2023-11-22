@@ -9,7 +9,7 @@ const Sadari = ({cnt}) => {
     const [horizontalLines, setHorizontalLines] = useState([]);
     const [columnsWithHorizontalLines, setColumnsWithHorizontalLines] = useState([]);
     const [finalIndexes, setFinalIndexes] = useState(Array(cnt).fill(null)); // 각 세로줄의 최종 lineIndex를 저장하는 state
-    const columnWidth = windowWidth / (1.5 * cnt);
+    const columnWidth = windowWidth / (1 * cnt);
     const ladderHeight = windowHeight * 0.5;
     const imageUriArray = ['https://i.namu.wiki/i/NB_qC6YRjH7hv6elNznBIBOBZ5AwE-PKYEWKcU03aFzGsc60bOt9KLxocyvB01OxAbOG8joW9mgkShFmTaTKsQ.webp'];
     const [userTexts, setUserTexts] = useState(Array(cnt).fill("걸림ㅋㅋ"));
@@ -23,14 +23,10 @@ const Sadari = ({cnt}) => {
     const renderModalContent = () => {
         return finalIndexes.map((finalIndex, i) => {
             // 유효한 결과를 확인하고, 해당하는 텍스트를 표시
-            const resultText = finalIndex !== null && userTexts[finalIndex]
-                ? userTexts[finalIndex]
-                : "No result";
-            return (
-                <View key={`result-${i}`} style={styles.resultRow}>
-                    <Text>Column {i} goes to: {resultText}</Text>
-                </View>
-            );
+            const resultText = finalIndex !== null && userTexts[finalIndex] ? userTexts[finalIndex] : "No result";
+            return (<View key={`result-${i}`} style={styles.resultRow}>
+                <Text>Column {i} goes to: {resultText}</Text>
+            </View>);
         });
     };
 
@@ -182,100 +178,92 @@ const Sadari = ({cnt}) => {
                     left: columnWidth / 2 - 5,
                     top: 90
                 }}/>
-            </View>
-        ));
+            </View>));
     };
 
     // 이미지를 렌더링하는 함수
     const renderImages = () => {
-        return positions.map((position, i) => (
-            <TouchableOpacity key={`image-${i}`} onPress={() => moveImage(i)}>
-                <Animated.View style={{transform: [{translateX: position.x}, {translateY: position.y}]}}>
-                    <Image
-                        source={{uri: imageUriArray[i % imageUriArray.length]}}
-                        style={{width: 50, height: 50, margin: 5}}
-                    />
-                </Animated.View>
-            </TouchableOpacity>
-        ));
+        return positions.map((position, i) => (<TouchableOpacity key={`image-${i}`} onPress={() => moveImage(i)}>
+            <Animated.View style={{transform: [{translateX: position.x}, {translateY: position.y}]}}>
+                <Image
+                    source={{uri: imageUriArray[i % imageUriArray.length]}}
+                    style={{width: 50, height: 50, margin: 5}}
+                />
+            </Animated.View>
+        </TouchableOpacity>));
     };
 
 
-    return (
-        <View style={{flex: 1, flexDirection: 'column'}}>
-            <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 50}}>
-                {positions.map((position, i) => (
-                    <View key={`player-${i}`} style={{position: 'relative', width: columnWidth, alignItems: 'center'}}>
-                        {renderHorizontalLine(i)}
-                        <View style={{
+    return (<View style={{flex: 1, flexDirection: 'column'}}>
+        <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 50}}>
+            {positions.map((position, i) => (
+                <View key={`player-${i}`} style={{position: 'relative', width: columnWidth, alignItems: 'center'}}>
+                    {renderHorizontalLine(i)}
+                    <View style={{
+                        position: 'absolute',
+                        width: 10,
+                        height: ladderHeight,
+                        backgroundColor: 'black',
+                        left: columnWidth / 2 - 5,
+                        top: 90
+                    }}/>
+
+                    <TouchableOpacity onPress={() => moveImage(i)}>
+                        <Animated.View style={{transform: [{translateX: position.x}, {translateY: position.y}]}}>
+                            <Image
+                                source={{uri: imageUriArray[i % imageUriArray.length]}}
+                                style={{width: 50, height: 50, margin: 5}}
+                            />
+                        </Animated.View>
+                    </TouchableOpacity>
+                    <TextInput
+                        style={{
                             position: 'absolute',
-                            width: 10,
-                            height: ladderHeight,
-                            backgroundColor: 'black',
-                            left: columnWidth / 2 - 5,
-                            top: 90
-                        }}/>
+                            top: ladderHeight + 100,
+                            left: columnWidth / 2 - 10,
+                            color: 'black',
+                            width: 100,
+                            height: 40,
+                            borderColor: 'black',
+                            borderWidth: 0
+                        }}
+                        onChangeText={(text) => handleUserTextChange(text, i)}
+                        value={userTexts[i]}
+                    />
+                </View>))}
+        </View>
+        <View style={{top: windowHeight - 360, alignItems: 'left', left: 50}}>
 
-                        <TouchableOpacity onPress={() => moveImage(i)}>
-                            <Animated.View style={{transform: [{translateX: position.x}, {translateY: position.y}]}}>
-                                <Image
-                                    source={{uri: imageUriArray[i % imageUriArray.length]}}
-                                    style={{width: 50, height: 50, margin: 5}}
-                                />
-                            </Animated.View>
-                        </TouchableOpacity>
-                        <TextInput
-                            style={{
-                                position: 'absolute',
-                                top: ladderHeight + 100,
-                                left: columnWidth / 2 - 10,
-                                color: 'black',
-                                width: 100,
-                                height: 40,
-                                borderColor: 'black',
-                                borderWidth: 0
-                            }}
-                            onChangeText={(text) => handleUserTextChange(text, i)}
-                            value={userTexts[i]}
-                        />
-                    </View>))}
-            </View>
-            <View style={{top : windowHeight-380}}>
-                <TouchableOpacity onPress={moveAllImages} style={{top : 35, left:200}} >
-                    <Text style={{color: 'blue', marginTop: 20}}>한방에 움직이기</Text>
-                </TouchableOpacity>
+            <TouchableOpacity onPress={moveAllImages} style={{top: 33, left: 200}}>
+                <Text style={{color: 'black'}}>한방에 움직이기</Text>
+            </TouchableOpacity>
 
-                <TouchableOpacity style={{marginTop: 20}} onPress={openModal}>
-                    <Text>결과 공개</Text>
-                </TouchableOpacity>
+            <TouchableOpacity style={{marginTop: 20}} onPress={openModal}>
+                <Text>결과 공개</Text>
+            </TouchableOpacity>
 
-                <Modal
-                    animationType="slide"
-                    transparent={true}
-                    visible={isModalVisible}
-                    onRequestClose={() => setIsModalVisible(false)}
-                >
-                    <View style={styles.modalContent}>
-                        {renderModalContent()}
-                        <TouchableOpacity onPress={() => setIsModalVisible(false)}>
-                            <Text>Close</Text>
-                        </TouchableOpacity>
-                    </View>
-                </Modal>
-            </View>
-        </View>);
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={isModalVisible}
+                onRequestClose={() => setIsModalVisible(false)}
+            >
+                <View style={styles.modalContent}>
+                    {renderModalContent()}
+                    <TouchableOpacity onPress={() => setIsModalVisible(false)}>
+                        <Text>Close</Text>
+                    </TouchableOpacity>
+                </View>
+            </Modal>
+        </View>
+    </View>);
 };
 
 
 const styles = StyleSheet.create({
     modalContent: {
-        top:100,
-        backgroundColor: 'white',
-        padding: 20,
-        margin: 50,
-        borderRadius: 10,
-    },
-    resultRow: {
+        top: 100, backgroundColor: 'white', padding: 20, margin: 50, borderRadius: 10,
+    }, resultRow: {
         marginBottom: 10,
     },
 });
