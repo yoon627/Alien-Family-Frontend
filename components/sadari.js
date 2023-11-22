@@ -2,15 +2,17 @@ import React, {useEffect, useState} from 'react';
 import {Animated, Dimensions, Image, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 
 const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height; // 디바이스의 높이
 
 const Sadari = ({cnt}) => {
     const [positions, setPositions] = useState([]);
     const [horizontalLines, setHorizontalLines] = useState([]);
     const [columnsWithHorizontalLines, setColumnsWithHorizontalLines] = useState([]);
     const [finalIndexes, setFinalIndexes] = useState(Array(cnt).fill(null)); // 각 세로줄의 최종 lineIndex를 저장하는 state
-    const columnWidth = windowWidth / (1.5 * cnt);
+    const columnWidth = windowWidth / (1 * cnt);
+    const ladderHeight = windowHeight * 0.5;
     const imageUriArray = ['https://i.namu.wiki/i/NB_qC6YRjH7hv6elNznBIBOBZ5AwE-PKYEWKcU03aFzGsc60bOt9KLxocyvB01OxAbOG8joW9mgkShFmTaTKsQ.webp'];
-    const [userTexts, setUserTexts] = useState(Array(cnt).fill("??"));
+    const [userTexts, setUserTexts] = useState(Array(cnt).fill("걸림ㅋㅋ"));
 
     const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -19,19 +21,15 @@ const Sadari = ({cnt}) => {
     };
 
     const renderModalContent = () => {
+        // userName 가져오기
         return finalIndexes.map((finalIndex, i) => {
             // 유효한 결과를 확인하고, 해당하는 텍스트를 표시
-            const resultText = finalIndex !== null && userTexts[finalIndex]
-                ? userTexts[finalIndex]
-                : "No result";
-            return (
-                <View key={`result-${i}`} style={styles.resultRow}>
-                    <Text>Column {i} goes to: {resultText}</Text>
-                </View>
-            );
+            const resultText = finalIndex !== null && userTexts[finalIndex] ? userTexts[finalIndex] : "No result";
+            return (<View key={`result-${i}`} style={styles.resultRow}>
+                <Text>{i} goes to: {resultText}</Text>
+            </View>);
         });
     };
-
 
 
     useEffect(() => {
@@ -46,7 +44,8 @@ const Sadari = ({cnt}) => {
             const randomLineCnt = Math.floor(Math.random() * 3) + 1;
             let lastYPosition = 100; // 각 세로선에 대한 초기 yPosition 설정
             for (let j = 0; j < randomLineCnt; j++) { // 각 세로선당 3개의 가로선
-                const yPosition = lastYPosition + Math.floor(Math.random() * 150) + 50;
+                // const yPosition = lastYPosition + Math.floor(Math.random() * 150) + 50;
+                const yPosition = lastYPosition + Math.random() * (ladderHeight * 0.7) / randomLineCnt + 20;
                 lastYPosition = yPosition;
                 newHorizontalLines.push({
                     fromColumn: i, toColumn: i + 1, yPosition: yPosition,
@@ -64,7 +63,7 @@ const Sadari = ({cnt}) => {
             }
             setUserTexts(prevTexts => {
                 const newTexts = [...prevTexts];
-                newTexts[i + 1] = "??";
+                newTexts[i + 1] = "생존";
                 return newTexts;
             });
         }
@@ -93,7 +92,7 @@ const Sadari = ({cnt}) => {
         let movto = 0;
         let lineIndex = index;
 
-        while (currentY !== 600) {
+        while (currentY !== 9999) {
             let nowpos = 0;
             for (let j = 0; j < columnsWithHorizontalLines[lineIndex].length; j++) {
                 if (columnsWithHorizontalLines[lineIndex][j].yPosition > currentY) {
@@ -134,9 +133,9 @@ const Sadari = ({cnt}) => {
 
             if (currentY === columnsWithHorizontalLines[lineIndex][lastidx].yPosition) {
                 sequence.push(Animated.timing(positions[index].y, {
-                    toValue: 600, duration: (500 - currentY) * 1, useNativeDriver: true
+                    toValue: ladderHeight + 50, duration: (500 - currentY) * 1, useNativeDriver: true
                 }));
-                currentY = 600;
+                currentY = 9999;
                 break;
             }
         }
@@ -180,69 +179,69 @@ const Sadari = ({cnt}) => {
                     left: columnWidth / 2 - 5,
                     top: 90
                 }}/>
-            </View>
-        ));
+            </View>));
     };
 
     // 이미지를 렌더링하는 함수
     const renderImages = () => {
-        return positions.map((position, i) => (
-            <TouchableOpacity key={`image-${i}`} onPress={() => moveImage(i)}>
-                <Animated.View style={{transform: [{translateX: position.x}, {translateY: position.y}]}}>
-                    <Image
-                        source={{uri: imageUriArray[i % imageUriArray.length]}}
-                        style={{width: 50, height: 50, margin: 5}}
-                    />
-                </Animated.View>
-            </TouchableOpacity>
-        ));
+        return positions.map((position, i) => (<TouchableOpacity key={`image-${i}`} onPress={() => moveImage(i)}>
+            <Animated.View style={{transform: [{translateX: position.x}, {translateY: position.y}]}}>
+                <Image
+                    source={{uri: imageUriArray[i % imageUriArray.length]}}
+                    style={{width: 50, height: 50, margin: 5}}
+                />
+            </Animated.View>
+        </TouchableOpacity>));
     };
 
 
-    return (<View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 100}}>
-        {positions.map((position, i) => (
-            <View key={`player-${i}`} style={{position: 'relative', width: columnWidth, alignItems: 'center'}}>
-                {renderHorizontalLine(i)}
-                <View style={{
-                    position: 'absolute',
-                    width: 10,
-                    height: 600,
-                    backgroundColor: 'black',
-                    left: columnWidth / 2 - 5,
-                    top: 90
-                }}/>
-
-                <TouchableOpacity onPress={() => moveImage(i)}>
-                    <Animated.View style={{transform: [{translateX: position.x}, {translateY: position.y}]}}>
-                        <Image
-                            source={{uri: imageUriArray[i % imageUriArray.length]}}
-                            style={{width: 50, height: 50, margin: 5}}
-                        />
-                    </Animated.View>
-                </TouchableOpacity>
-                <TextInput
-                    style={{
+    return (<View style={{flex: 1, flexDirection: 'column'}}>
+        <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 50}}>
+            {positions.map((position, i) => (
+                <View key={`player-${i}`} style={{position: 'relative', width: columnWidth, alignItems: 'center'}}>
+                    {renderHorizontalLine(i)}
+                    <View style={{
                         position: 'absolute',
-                        top: 700,
-                        left: columnWidth / 2,
-                        color: 'black',
-                        width: 100,
-                        height: 40,
-                        borderColor: 'gray',
-                        borderWidth: 1
-                    }}
-                    onChangeText={(text) => handleUserTextChange(text, i)}
-                    value={userTexts[i]}
-                />
-            </View>))}
-        <View>
-        <TouchableOpacity onPress={moveAllImages}>
-            <Text style={{color: 'blue', marginTop: 20}}>모든 이미지 함께 움직이기</Text>
-        </TouchableOpacity>
+                        width: 10,
+                        height: ladderHeight,
+                        backgroundColor: 'black',
+                        left: columnWidth / 2 - 5,
+                        top: 90
+                    }}/>
 
-        <TouchableOpacity style={{marginTop: 20}} onPress={openModal}>
-            <Text>View All Results</Text>
-        </TouchableOpacity>
+                    <TouchableOpacity onPress={() => moveImage(i)}>
+                        <Animated.View style={{transform: [{translateX: position.x}, {translateY: position.y}]}}>
+                            <Image
+                                source={{uri: imageUriArray[i % imageUriArray.length]}}
+                                style={{width: 50, height: 50, margin: 5}}
+                            />
+                        </Animated.View>
+                    </TouchableOpacity>
+                    <TextInput
+                        style={{
+                            position: 'absolute',
+                            top: ladderHeight + 100,
+                            left: columnWidth / 2 - 10,
+                            color: 'black',
+                            width: 100,
+                            height: 40,
+                            borderColor: 'black',
+                            borderWidth: 0
+                        }}
+                        onChangeText={(text) => handleUserTextChange(text, i)}
+                        value={userTexts[i]}
+                    />
+                </View>))}
+        </View>
+        <View style={{top: windowHeight - 360, alignItems: 'left', left: 50}}>
+
+            <TouchableOpacity onPress={moveAllImages} style={{top: 33, left: 200}}>
+                <Text style={{color: 'black'}}>한방에 움직이기</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={{marginTop: 20}} onPress={openModal}>
+                <Text>결과 공개</Text>
+            </TouchableOpacity>
 
             <Modal
                 animationType="slide"
@@ -258,19 +257,14 @@ const Sadari = ({cnt}) => {
                 </View>
             </Modal>
         </View>
-
     </View>);
 };
 
 
 const styles = StyleSheet.create({
     modalContent: {
-        backgroundColor: 'white',
-        padding: 20,
-        margin: 50,
-        borderRadius: 10,
-    },
-    resultRow: {
+        top: 100, backgroundColor: 'white', padding: 20, margin: 50, borderRadius: 10,
+    }, resultRow: {
         marginBottom: 10,
     },
 });
