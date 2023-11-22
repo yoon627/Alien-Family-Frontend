@@ -35,7 +35,6 @@ const Tab = createBottomTabNavigator();
 
 export default function MainScreen({ navigation }) {
   return (
-    <NavigationContainer independent={true}>
       <Tab.Navigator>
         <Tab.Screen
           name="Home"
@@ -94,16 +93,6 @@ export default function MainScreen({ navigation }) {
           }}
         />
         <Tab.Screen
-          name="Mini Games"
-          component={MiniGames}
-          options={{
-            headerShown: false,
-            tabBarShowLabel: false,
-            tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,
-            tabBarVisible: false, //hide tab bar on this screen
-          }}
-        />
-        <Tab.Screen
           name="Attendance"
           component={Attendance}
           options={{
@@ -120,6 +109,7 @@ export default function MainScreen({ navigation }) {
             headerShown: false,
             tabBarShowLabel: false,
             tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,
+            tabBarVisible:false,
           }}
         />
         <Tab.Screen
@@ -129,6 +119,7 @@ export default function MainScreen({ navigation }) {
             headerShown: false,
             tabBarShowLabel: false,
             tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,
+            tabBarVisible:false,
           }}
         />
         <Tab.Screen
@@ -138,9 +129,9 @@ export default function MainScreen({ navigation }) {
             headerShown: false,
             tabBarShowLabel: false,
             tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,
+            tabBarVisible:false,
           }}
         />
       </Tab.Navigator>
-    </NavigationContainer>
   );
 }

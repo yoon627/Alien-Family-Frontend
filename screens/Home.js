@@ -20,6 +20,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
 import MarqueeText from "react-native-marquee";
 import Chanhopark from "./chanhopark";
+import MiniGames from "./MiniGames";
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const Container = styled.View`
   flex: 1;
