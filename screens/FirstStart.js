@@ -58,7 +58,6 @@ const FirstStart = ({ navigation }) => {
         />
       </View>
       <Text>{familyCode}</Text>
-      {/* <Button title="초대코드 복사하기" onPress={copyToClipboard} /> */}
       <TouchableOpacity
         onPress={copyToClipboard}
         style={{
@@ -81,53 +80,6 @@ const FirstStart = ({ navigation }) => {
           초대코드 복사하기
         </Text>
       </TouchableOpacity>
-      {/* <Button
-        title="Go"
-        onPress={async () => {
-          const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
-          const ServerAccessToken = await AsyncStorage.getItem(
-            "ServerAccessToken"
-          );
-          await axios({
-            method: "POST",
-            url: SERVER_ADDRESS + "/api/register/newFamily",
-            headers: {
-              Authorization: "Bearer: " + ServerAccessToken,
-            },
-            data: {
-              ufoName: ufoName,
-              plantName: plantName,
-              code: familyCode,
-            },
-          })
-            .then(async (resp) => {
-              console.log(resp.data.data.familyResponseDto.members[0]);
-              const UserServerAccessToken =
-                resp.data.data.tokenInfo.accessToken;
-              const UserServerRefreshToken =
-                resp.data.data.tokenInfo.refreshToken;
-              await AsyncStorage.setItem(
-                "UserServerAccessToken",
-                UserServerAccessToken
-              );
-              await AsyncStorage.setItem(
-                "UserServerRefreshToken",
-                UserServerRefreshToken
-              );
-              const members = resp.data.data.familyResponseDto.members;
-              for (i = 0; i < members.length; i++) {
-                await AsyncStorage.setItem(
-                  members[i].title,
-                  JSON.stringify(members[i])
-                );
-              }
-              navigation.navigate("MainDrawer");
-            })
-            .catch(function (error) {
-              console.log("server error", error);
-            });
-        }}
-      /> */}
       <TouchableOpacity
         onPress={async () => {
           const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
@@ -147,7 +99,6 @@ const FirstStart = ({ navigation }) => {
             },
           })
             .then(async (resp) => {
-              // console.log(resp.data.data.familyResponseDto.members[0]);
               const UserServerAccessToken =
                 resp.data.data.tokenInfo.accessToken;
               const UserServerRefreshToken =
@@ -160,6 +111,7 @@ const FirstStart = ({ navigation }) => {
                 "UserServerRefreshToken",
                 UserServerRefreshToken
               );
+              //todo
               const members = resp.data.data.familyResponseDto.members;
               for (i = 0; i < members.length; i++) {
                 await AsyncStorage.setItem(
@@ -193,18 +145,6 @@ const FirstStart = ({ navigation }) => {
           GO!
         </Text>
       </TouchableOpacity>
-      {/* <Button
-        title="테스트"
-        onPress={async (resp) => {
-          const members = resp.data.data.familyResponseDto.members;
-          for (i = 0; i < members.length; i++) {
-            await AsyncStorage.setItem(
-              members[i].title,
-              JSON.stringify(members[i])
-            );
-          }
-        }}
-      /> */}
       <TouchableOpacity
         onPress={() => navigation.navigate("MainDrawer")}
         style={{

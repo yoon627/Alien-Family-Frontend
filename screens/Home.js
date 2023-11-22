@@ -117,17 +117,27 @@ export default function Home({ navigation }) {
             transparent={true}
             visible={modalVisible}
             onRequestClose={() => {
-              Alert.alert("Modal has been closed.");
+              // Alert.alert("Modal has been closed.");
               setModalVisible(!modalVisible);
             }}
           >
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
                 <TextInput
-                  style={styles.input}
                   value={TMI}
-                  placeholder="당신의 TMI를 알려주세요"
+                  placeholder="               당신의 TMI를 알려주세요!"
                   onChangeText={onChangeTMI}
+                  multiline={true}
+                  numberOfLines={3}
+                  maxLength={40}
+                  editable={true}
+                  style={{
+                    ...styles.input,
+                    margin: 5,
+                    borderColor: "black",
+                    height: 100,
+                    width: 300,
+                  }}
                 />
                 <View style={{ flexDirection: "row", marginVertical: 10 }}>
                   <Pressable
