@@ -18,25 +18,26 @@ const ChatRoom = () => {
     const [mytoken, setMytoken] = useState(null);
 
     const roomid = 348;
+
+
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const test = await AsyncStorage.getItem("MyName");
-                const token = await AsyncStorage.getItem("ServerAccessToken");
+                const token = await AsyncStorage.getItem("ServerAccessToken")
                 let myfam = await AsyncStorage.getItem("myDB");
                 myfam = JSON.parse(myfam);
                 setMyname(test);
                 setFamname(myfam);
-                setMytoken(token);
+                setMytoken('Bearer ' + token);
             } catch (error) {
-                console.log("null");
+                console.log('Error :', error);
             }
         };
         const getData = async () => {
             try {
                 const response = await fetch('http://43.202.241.133:8080/chat/list?id=' + roomid, {
                     method: 'get', headers: {
-                        // Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNDEiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZmFtaWx5IjoiMzQ5IiwiZXhwIjoxNzAwOTczMjEzfQ.IeHipzx60fWJRD2ZGs8SCKwpOjfSpN837Rjq2qrTli4'
                         Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNTIiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZmFtaWx5IjoiMzU2IiwiZXhwIjoxNzAwOTgzOTE4fQ.EHLgXe4iFJrjr2veJlkZiHafd8tomybIyxty66xmU38'
                     }
                 });
@@ -49,19 +50,18 @@ const ChatRoom = () => {
                 setMessages(data);
 
             } catch (error) {
-                console.error('Error getMsg:', error);
+                console.log('Error :', error);
             }
         };
 
-
-        getData();
         fetchData();
+        getData();
 
     }, []);
+
     useEffect(() => {
         const client = new Client({
             brokerURL: 'ws://43.202.241.133:8080/ws', connectHeaders: {
-                // Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNDEiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZmFtaWx5IjoiMzQ5IiwiZXhwIjoxNzAwOTczMjEzfQ.IeHipzx60fWJRD2ZGs8SCKwpOjfSpN837Rjq2qrTli4'
                 Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNTIiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZmFtaWx5IjoiMzU2IiwiZXhwIjoxNzAwOTgzOTE4fQ.EHLgXe4iFJrjr2veJlkZiHafd8tomybIyxty66xmU38'
             }, onConnect: () => {
                 console.log('Connected to the WebSocket server');
@@ -75,6 +75,8 @@ const ChatRoom = () => {
                 console.error('Additional details:', frame.body);
             },
         });
+        console.log(mytoken);
+
         const interval = setInterval(() => {
             if (!client.connected) {
                 console.log("연결시도중");
@@ -91,6 +93,7 @@ const ChatRoom = () => {
         };
     }, []);
 
+
     const sendMessage = () => {
         if (stompClient && message) {
             const messageData = {
@@ -98,7 +101,7 @@ const ChatRoom = () => {
                 content: message, time: new Date().toISOString()
             };
             const headerData = {
-                Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNTIiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZmFtaWx5IjoiMzU2IiwiZXhwIjoxNzAwOTgzOTE4fQ.EHLgXe4iFJrjr2veJlkZiHafd8tomybIyxty66xmU38'
+                // Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNTIiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZmFtaWx5IjoiMzU2IiwiZXhwIjoxNzAwOTgzOTE4fQ.EHLgXe4iFJrjr2veJlkZiHafd8tomybIyxty66xmU38'
             }
 
             stompClient.publish({
