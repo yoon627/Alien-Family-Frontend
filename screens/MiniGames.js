@@ -15,15 +15,27 @@ import LottieView from 'lottie-react-native';
 
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Client} from '@stomp/stompjs';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Tab = createBottomTabNavigator();
 
 const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
 
 export default function MiniGames({navigation}) {
+    // alienId 가져오기
+    // const [db, setDb] = useState({});
+    //
+    // useEffect(() => {
+    //     const viewDb = async () => {
+    //         const info = await AsyncStorage.getItem("myDB")
+    //         console.log(info);
+    //         // setDb(info);
+    //     };
+    // }, []);
+
     const [stompClient, setStompClient] = useState(null);
-    const [coordinates, setCoordinates] = useState({x:0, y:0});
-    const [characterPosition, setCharacterPosition] = useState({x: 0, y: 0});
+    const [coordinates, setCoordinates] = useState({x: 0, y: 0});
+    const [characterPosition, setCharacterPosition] = useState({x: 200, y: 200});
     const [showButton, setShowButton] = useState({
         ladder: false,
         mole: false,
@@ -55,7 +67,7 @@ export default function MiniGames({navigation}) {
                     stompClient.publish({
                         destination: '/pub/map', headers: headerData, body: JSON.stringify(sendData)
                     });
-                    setCoordinates({x:0, y:0});
+                    setCoordinates({x: 0, y: 0});
                 }
                 Animated.spring(joystickPosition, {
                     toValue: {x: 0, y: 0},
@@ -77,7 +89,7 @@ export default function MiniGames({navigation}) {
             onConnect: () => {
                 console.log("👌🏻connect 성공: 웹소켓 서버 연결~~~~");
                 // 이 땐 좌표 받아오는 거
-                client.subscribe('/sub/map356', (message) => {
+                client.subscribe('/sub/map/356', (message) => {
                     const receiveCoordinates = JSON.parse(message.body);
                     console.log(receiveCoordinates);
                     setCoordinates(prevCoordinates => ({
@@ -164,6 +176,7 @@ export default function MiniGames({navigation}) {
                 // source={require('../assets/img/Background.png')}
                 style={styles.bgImage}
             >
+                <StatusBar style="light"/>
                 <View style={styles.doorForm}>
                     <Image
                         style={styles.door}
@@ -271,6 +284,7 @@ export default function MiniGames({navigation}) {
                 ) : null}
 
                 <View style={{
+                    position: "absolute",
                     left: characterPosition.x,
                     top: characterPosition.y,
                 }}>
@@ -278,23 +292,21 @@ export default function MiniGames({navigation}) {
                         style={styles.alien}
                         source={require("../assets/img/alien.png")}/>
                 </View>
-                <StatusBar style="auto"/>
 
                 {/*에일리언들*/}
                 <View
-                    sty
                     style={{
                         position: "absolute",
                         left: coordinates.x,
                         top: coordinates.y
-                }}>
+                    }}>
                     <Image
                         style={styles.alien}
                         source={require('../assets/img/alien2.png')}/>
                 </View>
 
 
-                <View style={{position: "absolute" ,left: "20%", top: "20%"}}>
+                <View style={{position: "absolute", left: "20%", top: "20%"}}>
                     <Image
                         style={styles.alien}
                         source={require('../assets/img/alien3.png')}/>
