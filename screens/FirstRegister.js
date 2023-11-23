@@ -64,13 +64,14 @@ const FirstRegister = ({ navigation }) => {
         </View>
         <View style={styles.footer}>
           <TouchableOpacity
-            onPress={async () => {
+            onPress={async () => { await AsyncStorage.setItem("MyName", name);
               const SERVER_ADDRESS = await AsyncStorage.getItem(
                 "ServerAddress"
               );
               const ServerAccessToken = await AsyncStorage.getItem(
                 "ServerAccessToken"
               );
+              await AsyncStorage.setItem("nickname",name);
               await axios({
                 method: "POST",
                 url: SERVER_ADDRESS + "/api/register/user",

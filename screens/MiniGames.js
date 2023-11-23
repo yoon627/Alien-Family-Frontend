@@ -1,3 +1,4 @@
+
 import React, {useEffect, useLayoutEffect, useState, useRef} from 'react';
 import {StatusBar} from 'expo-status-bar';
 import {
@@ -37,10 +38,7 @@ export default function MiniGames({navigation}) {
     const [coordinates, setCoordinates] = useState({x: 0, y: 0});
     const [characterPosition, setCharacterPosition] = useState({x: 200, y: 200});
     const [showButton, setShowButton] = useState({
-        ladder: false,
-        mole: false,
-        roulette: false,
-        door: false,
+        ladder: false, mole: false, roulette: false, door: false,
     });
 
     // console.log("받아온 좌표!!!!!: ", coordinates.x, coordinates.y);
@@ -48,13 +46,15 @@ export default function MiniGames({navigation}) {
     const SOME_THRESHOLD = 100;
 
     const joystickPosition = useRef(new Animated.ValueXY()).current;
-    const panResponder = useRef(
-        PanResponder.create({
-            onStartShouldSetPanResponder: () => true,
-            onPanResponderMove: Animated.event([
-                null,
-                {dx: joystickPosition.x, dy: joystickPosition.y}
-            ], {useNativeDriver: false}),
+    const panResponder = useRef(PanResponder.create({
+        onStartShouldSetPanResponder: () => true, onPanResponderMove: (evt, gestureState) => {
+
+            // 조이스틱이 최대 거리를 넘지 않도록 제한
+            const distance = Math.sqrt(Math.pow(gestureState.dx, 2) + Math.pow(gestureState.dy, 2));
+            const angle = Math.atan2(gestureState.dy, gestureState.dx);
+            const x = distance > maxDistance ? maxDistance * Math.cos(angle) : gestureState.dx;
+            const y = distance > maxDistance ? maxDistance * Math.sin(angle) : gestureState.dy;
+
             onPanResponderRelease: () => {
                 // 좌표 서버로 전송
                 if (stompClient && (coordinates.x !== 0 && coordinates.y !== 0)) {
@@ -210,10 +210,12 @@ export default function MiniGames({navigation}) {
                 ) : null}
 
                 <View style={styles.ladderForm}>
+
                     <Image
                         style={styles.ladder}
                         source={require('../assets/img/ladder.png')}
                     />
+
                 </View>
 
                 {showButton.ladder ? (
@@ -231,10 +233,12 @@ export default function MiniGames({navigation}) {
                 ) : null}
 
                 <View style={styles.moleForm}>
+
                     <Image
                         style={styles.mole}
                         source={require('../assets/img/mole.png')}
                     />
+
                 </View>
 
                 {showButton.mole ? (
@@ -259,12 +263,14 @@ export default function MiniGames({navigation}) {
                 </View>
 
                 <Animated.View style={styles.rouletteForm}>
+
                     <LottieView
                         style={styles.roulette}
                         source={require('../assets/json/roulette.json')}
                         autoPlay
                         loop
                     />
+
                 </Animated.View>
 
                 {showButton.roulette ? (
@@ -323,62 +329,28 @@ export default function MiniGames({navigation}) {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        alignItems: "center",
-        justifyContent: 'center',
-    },
-    bgImage: {
-        width: SCREEN_WIDTH,
-        height: SCREEN_HEIGHT,
-        backgroundColor: "#000000",
-    },
-    ladderForm: {
-        position: "absolute",
-        left: -SCREEN_WIDTH * 0.018,
-        top: SCREEN_HEIGHT * 0.1,
-    },
-    ladder: {
-        width: SCREEN_WIDTH * 0.2,
-        height: SCREEN_HEIGHT * 0.07,
-        resizeMode: "contain",
-    },
-    moleForm: {
-        position: "absolute",
-        right: SCREEN_WIDTH * 0.05,
-        top: SCREEN_HEIGHT * 0.2,
-    },
-    mole: {
-        width: SCREEN_WIDTH * 0.15,
-        height: SCREEN_HEIGHT * 0.08,
-        resizeMode: "contain",
-    },
-    rouletteForm: {
-        position: "absolute",
-        left: SCREEN_WIDTH * 0.3,
-        bottom: SCREEN_HEIGHT * 0.3,
-    },
-    roulette: {
-        width: SCREEN_WIDTH * 0.08,
-        height: SCREEN_HEIGHT * 0.08,
-        resizeMode: "contain",
-    },
-    doorForm: {
-        position: "absolute",
-        right: -SCREEN_WIDTH * 0.02,
-        bottom: SCREEN_HEIGHT * 0.25,
-    },
-    door: {
-        width: SCREEN_WIDTH * 0.17,
-        height: SCREEN_HEIGHT * 0.17,
-        opacity: 0.5,
-        resizeMode: "contain",
-    },
-    spaceshipForm: {
-        position: "absolute",
-        right: "10%",
-        bottom: "9%",
-    },
-    spaceship: {
+        flex: 1, alignItems: "center", justifyContent: 'center',
+    }, bgImage: {
+        width: SCREEN_WIDTH, height: SCREEN_HEIGHT, backgroundColor: "#000000",
+    }, ladderForm: {
+        position: "absolute", left: -SCREEN_WIDTH * 0.018, top: SCREEN_HEIGHT * 0.1,
+    }, ladder: {
+        width: SCREEN_WIDTH * 0.2, height: SCREEN_HEIGHT * 0.07, resizeMode: "contain",
+    }, moleForm: {
+        position: "absolute", right: SCREEN_WIDTH * 0.05, top: SCREEN_HEIGHT * 0.2,
+    }, mole: {
+        width: SCREEN_WIDTH * 0.15, height: SCREEN_HEIGHT * 0.08, resizeMode: "contain",
+    }, rouletteForm: {
+        position: "absolute", left: SCREEN_WIDTH * 0.3, bottom: SCREEN_HEIGHT * 0.3,
+    }, roulette: {
+        width: SCREEN_WIDTH * 0.08, height: SCREEN_HEIGHT * 0.08, resizeMode: "contain",
+    }, doorForm: {
+        position: "absolute", right: -SCREEN_WIDTH * 0.02, bottom: SCREEN_HEIGHT * 0.25,
+    }, door: {
+        width: SCREEN_WIDTH * 0.17, height: SCREEN_HEIGHT * 0.17, opacity: 0.5, resizeMode: "contain",
+    }, spaceshipForm: {
+        position: "absolute", right: "10%", bottom: "9%",
+    }, spaceship: {
         width: SCREEN_WIDTH * 0.1,
         height: SCREEN_HEIGHT * 0.1,
         resizeMode: "contain",
@@ -401,6 +373,7 @@ const styles = StyleSheet.create({
         bottom: "17%",
     },
     joystick: {
+
         position: 'absolute',
         width: SCREEN_WIDTH * 0.13,
         height: SCREEN_WIDTH * 0.13,
