@@ -42,19 +42,15 @@ export default function MiniGames({navigation}) {
     });
 
     // console.log("받아온 좌표!!!!!: ", coordinates.x, coordinates.y);
-
     const SOME_THRESHOLD = 100;
-
     const joystickPosition = useRef(new Animated.ValueXY()).current;
-    const panResponder = useRef(PanResponder.create({
-        onStartShouldSetPanResponder: () => true, onPanResponderMove: (evt, gestureState) => {
-
-            // 조이스틱이 최대 거리를 넘지 않도록 제한
-            const distance = Math.sqrt(Math.pow(gestureState.dx, 2) + Math.pow(gestureState.dy, 2));
-            const angle = Math.atan2(gestureState.dy, gestureState.dx);
-            const x = distance > maxDistance ? maxDistance * Math.cos(angle) : gestureState.dx;
-            const y = distance > maxDistance ? maxDistance * Math.sin(angle) : gestureState.dy;
-
+    const panResponder = useRef(
+        PanResponder.create({
+            onStartShouldSetPanResponder: () => true,
+            onPanResponderMove: Animated.event([
+                null,
+                {dx: joystickPosition.x, dy: joystickPosition.y}
+            ], {useNativeDriver: false}),
             onPanResponderRelease: () => {
                 // 좌표 서버로 전송
                 if (stompClient && (coordinates.x !== 0 && coordinates.y !== 0)) {

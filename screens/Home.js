@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
     View,
     Text,
@@ -13,17 +13,16 @@ import {
     TouchableOpacity,
     Pressable,
     Modal,
-    Alert, Image,
+    Alert,
 } from "react-native";
 import styled from "styled-components/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {MaterialCommunityIcons, FontAwesome5} from "@expo/vector-icons";
+import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
 import MarqueeText from "react-native-marquee";
 import Chanhopark from "./chanhopark";
 import MiniGames from "./MiniGames";
 import axios from "axios";
-
-const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const Container = styled.View`
   flex: 1;
   justify-content: center;
@@ -31,100 +30,104 @@ const Container = styled.View`
 `;
 
 export default function Home({ navigation }) {
-  const [TMI, setTMI] = useState("");
-  const onChangeTMI = (payload) => setTMI(payload);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [todayTMI, setTodayTMI] = useState("");
-  const [flower, setFlower] = useState(false);
-  useEffect(() => {
-    async function fetchData() {
-      const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
-      const UserServerAccessToken = await AsyncStorage.getItem(
-        "UserServerAccessToken"
-      );
-      const familyId = await AsyncStorage.getItem("familyId");
-      await axios({
-        method: "GET",
-        url: SERVER_ADDRESS + "/familyTmi",
-
-        headers: {
-          Authorization: "Bearer: " + UserServerAccessToken,
-        },
-      }).then((resp) => {
-        console.log(resp.data);
-        const tmis = resp.data;
-        var mytmi = "";
-        for (i = 0; i < tmis.length; i++) {
-          mytmi = mytmi + tmis[i].writer + ": " + tmis[i].content + "  ";
-        }
-        setTodayTMI(mytmi);
-      });
-    }
-    fetchData();
-  });
-  const movingObject = () => {
-    const movingValue = useRef(new Animated.Value(0)).current;
-
+    const [TMI, setTMI] = useState("");
+    const onChangeTMI = (payload) => setTMI(payload);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [todayTMI, setTodayTMI] = useState("");
+    const [flower, setFlower] = useState(false);
     useEffect(() => {
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(movingValue, {
-            toValue: 100,
-            duration: 5000,
-            useNativeDriver: true,
-          }),
-          Animated.timing(movingValue, {
-            duration: 5000,
-            useNativeDriver: true,
-          }),
-          Animated.timing(movingValue, {
-            toValue: -100,
-            duration: 5000,
-            useNativeDriver: true,
-          }),
-          Animated.timing(movingValue, {
-            duration: 5000,
-            useNativeDriver: true,
-          }),
-        ])
-      ).start();
-    }, []);
-    const interpolated = movingValue.interpolate({
-      inputRange: [-1, 1],
-      outputRange: [-1, 1],
-    });
+        async function fetchData() {
+            const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
+            const UserServerAccessToken = await AsyncStorage.getItem(
+                "UserServerAccessToken"
+            );
+            const familyId = await AsyncStorage.getItem("familyId");
+            await axios({
+                method: "GET",
+                url: SERVER_ADDRESS + "/familyTmi",
 
+                headers: {
+                    Authorization: "Bearer: " + UserServerAccessToken,
+                },
+            }).then((resp) => {
+                console.log(resp.data);
+                const tmis = resp.data;
+                var mytmi = "";
+                for (i = 0; i < tmis.length; i++) {
+                    mytmi = mytmi + tmis[i].writer + ": " + tmis[i].content + "  ";
+                }
+                setTodayTMI(mytmi);
+            });
+        }
+        fetchData();
+    });
+    const movingObject = () => {
+        const movingValue = useRef(new Animated.Value(0)).current;
+
+        useEffect(() => {
+            Animated.loop(
+                Animated.sequence([
+                    Animated.timing(movingValue, {
+                        toValue: 100,
+                        duration: 5000,
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(movingValue, {
+                        duration: 5000,
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(movingValue, {
+                        toValue: -100,
+                        duration: 5000,
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(movingValue, {
+                        duration: 5000,
+                        useNativeDriver: true,
+                    }),
+                ])
+            ).start();
+        }, []);
         const interpolated = movingValue.interpolate({
             inputRange: [-1, 1],
             outputRange: [-1, 1],
         });
 
-  return (
-    <Container>
-      <View
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          borderColor: "black",
-          borderWidth: 2,
-          borderRadius: 10,
-        }}
-      >
-        <Text>
-          {"<"}TMI{">"}
-        </Text>
-        <MarqueeText
-          style={{ fontSize: 24 }}
-          speed={0.5}
-          marqueeOnStart={true}
-          loop={true}
-          delay={1000}
-        >
-          {todayTMI}
-          {/* {Object.keys(TMI).map((key)=>(<Text>TMI[key] </Text>))} */}
-        </MarqueeText>
-      </View>
-      {/* <View style={{ marginHorizontal: 3, marginVertical: 3 }}>
+        return (
+            <Animated.View style={{ transform: [{ translateX: interpolated }] }}>
+                <TouchableOpacity onPress={() => navigation.navigate("Mini Games")}>
+                    <FontAwesome5 name="ghost" size={75} color="black" />
+                </TouchableOpacity>
+            </Animated.View>
+        );
+    };
+
+    return (
+        <Container>
+            <View
+                style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderColor: "black",
+                    borderWidth: 2,
+                    borderRadius: 10,
+                }}
+            >
+                <Text>
+                    {"<"}TMI{">"}
+                </Text>
+                <MarqueeText
+                    style={{ fontSize: 24 }}
+                    speed={0.5}
+                    marqueeOnStart={true}
+                    loop={true}
+                    delay={1000}
+                >
+                    {todayTMI}
+                    {/* {Object.keys(TMI).map((key)=>(<Text>TMI[key] </Text>))} */}
+                </MarqueeText>
+            </View>
+            {/* <View style={{ marginHorizontal: 3, marginVertical: 3 }}>
         <TouchableOpacity
           onPress={async () => {
             const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
@@ -168,127 +171,15 @@ export default function Home({ navigation }) {
           </Text>
         </TouchableOpacity>
       </View> */}
-      <View
-        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-      ></View>
-      <View style={styles.centeredView}>{movingObject()}</View>
-      {flower ? (
-        <MaterialCommunityIcons name="flower" size={100} color="black" />
-      ) : (
-        <MaterialCommunityIcons name="sprout" size={100} color="black" />
-      )}
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "flex-end",
-          alignItems: "center",
-          marginBottom: 50,
-        }}
-      >
-        <View style={styles.centeredView}>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-              // Alert.alert("Modal has been closed.");
-              setModalVisible(!modalVisible);
-            }}
-          >
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <TextInput
-                  value={TMI}
-                  placeholder="당신의 TMI를 알려주세요!"
-                  onChangeText={onChangeTMI}
-                  multiline={true}
-                  numberOfLines={3}
-                  maxLength={40}
-                  editable={true}
-                  style={{
-                    ...styles.input,
-                    margin: 5,
-                    borderColor: "black",
-                    borderWidth: 2,
-                    borderRadius: 10,
-                }}
-            >
-                <Text>
-                    {"<"}TMI{">"}
-                </Text>
-                <MarqueeText
-                    style={{fontSize: 24}}
-                    speed={0.5}
-                    marqueeOnStart={true}
-                    loop={true}
-                    delay={1000}
-                >
-                    <Chanhopark/>
-                </MarqueeText>
-            </View>
-            <View style={{marginHorizontal: 3, marginVertical: 3}}>
-                <TouchableOpacity
-                    onPress={async () => {
-                      const SERVER_ADDRESS = await AsyncStorage.getItem(
-                        "ServerAddress"
-                      );
-                      const UserServerAccessToken = await AsyncStorage.getItem(
-                        "UserServerAccessToken"
-                      );
-                      await axios({
-                        method: "POST",
-                        url: SERVER_ADDRESS + "/tmi",
-                        headers: {
-                          Authorization: "Bearer: " + UserServerAccessToken,
-                        },
-                        data: {
-                          content: TMI,
-                        },
-                      })
-                        .then(async (resp) => {
-                          // console.log("TMI SUCCESS");
-                          // console.log(resp.data.message);
-                          //todo
-                          const writer = await AsyncStorage.getItem("nickname");
-                          setTodayTMI(writer + ": " + TMI + "  " + todayTMI);
-                        })
-                            .then((resp) => {
-                                console.log(resp);
-                            })
-                            .catch(function (error) {
-                                console.log("server error", error);
-                            });
-                    }}
-                    style={{backgroundColor: "black", borderRadius: 50}}
-                >
-                    <Text
-                        style={{
-                            color: "white",
-                            marginHorizontal: 10,
-                            marginVertical: 5,
-                        }}
-                    >
-                        새로고침
-                    </Text>
-                </TouchableOpacity>
-            </View>
             <View
-                style={{flex: 1, justifyContent: "center", alignItems: "center"}}
+                style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
             ></View>
-
             <View style={styles.centeredView}>{movingObject()}</View>
-            <View>
-                <Image
-                    style={{
-                        resizeMode: "contain",
-                        width: SCREEN_WIDTH * 0.2,
-                        height: SCREEN_HEIGHT * 0.2,
-                    }}
-                    source={require('../assets/img/plant.png')}/>
-
-            </View>
-            {/*<MaterialCommunityIcons name="sprout" size={100} color="black" />*/}
-
+            {flower ? (
+                <MaterialCommunityIcons name="flower" size={100} color="black" />
+            ) : (
+                <MaterialCommunityIcons name="sprout" size={100} color="black" />
+            )}
             <View
                 style={{
                     flex: 1,
@@ -296,53 +187,6 @@ export default function Home({ navigation }) {
                     alignItems: "center",
                     marginBottom: 50,
                 }}
-              >
-                TMI 작성
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <View style={{ marginHorizontal: 10, marginVertical: 20 }}>
-            <TouchableOpacity
-              onPress={async () => {
-                const SERVER_ADDRESS = await AsyncStorage.getItem(
-                  "ServerAddress"
-                );
-                const UserServerAccessToken = await AsyncStorage.getItem(
-                  "UserServerAccessToken"
-                );
-                await axios({
-                  method: "GET",
-                  url: SERVER_ADDRESS + "/tmi/check",
-                  headers: {
-                    Authorization: "Bearer: " + UserServerAccessToken,
-                  },
-                })
-                  .then(async (resp) => {
-                    // console.log(resp.data.message);
-                    if (resp.data.message != "오늘의 tmi를 작성했습니다.") {
-                      Alert.alert("출석을 위해 TMI를 작성해주세요!");
-                    } else {
-                      await axios({
-                        method: "GET",
-                        url: SERVER_ADDRESS + "/attendance",
-                        headers: {
-                          Authorization: "Bearer: " + UserServerAccessToken,
-                        },
-                      })
-                        .then((resp) => {
-                          Alert.alert(resp.data.message);
-                          if (flower){
-                            setFlower(false);
-                          }else{
-                            setFlower(true);
-                          }
-                        })
-                        .catch((e) => console.log(e));
-                    }
-                  })
-                  .catch((e) => console.log(e));
-              }}
-              style={{ backgroundColor: "black", borderRadius: 50 }}
             >
                 <View style={styles.centeredView}>
                     <Modal
@@ -373,7 +217,7 @@ export default function Home({ navigation }) {
                                         textAlign: "center",
                                     }}
                                 />
-                                <View style={{flexDirection: "row", marginVertical: 10}}>
+                                <View style={{ flexDirection: "row", marginVertical: 10 }}>
                                     <Pressable
                                         style={[styles.button, styles.buttonClose]}
                                         onPress={async () => {
@@ -393,9 +237,12 @@ export default function Home({ navigation }) {
                                                     content: TMI,
                                                 },
                                             })
-                                                .then((resp) => {
+                                                .then(async (resp) => {
                                                     // console.log("TMI SUCCESS");
                                                     // console.log(resp.data.message);
+                                                    //todo
+                                                    const writer = await AsyncStorage.getItem("nickname");
+                                                    setTodayTMI(writer + ": " + TMI + "  " + todayTMI);
                                                 })
                                                 .catch(function (error) {
                                                     console.log("server error", error);
@@ -416,11 +263,11 @@ export default function Home({ navigation }) {
                         </View>
                     </Modal>
                 </View>
-                <View style={{flexDirection: "row"}}>
-                    <View style={{marginHorizontal: 10, marginVertical: 20}}>
+                <View style={{ flexDirection: "row" }}>
+                    <View style={{ marginHorizontal: 10, marginVertical: 20 }}>
                         <TouchableOpacity
                             onPress={() => setModalVisible(true)}
-                            style={{backgroundColor: "black", borderRadius: 50}}
+                            style={{ backgroundColor: "black", borderRadius: 50 }}
                         >
                             <Text
                                 style={{
@@ -433,7 +280,7 @@ export default function Home({ navigation }) {
                             </Text>
                         </TouchableOpacity>
                     </View>
-                    <View style={{marginHorizontal: 10, marginVertical: 20}}>
+                    <View style={{ marginHorizontal: 10, marginVertical: 20 }}>
                         <TouchableOpacity
                             onPress={async () => {
                                 const SERVER_ADDRESS = await AsyncStorage.getItem(
@@ -442,26 +289,39 @@ export default function Home({ navigation }) {
                                 const UserServerAccessToken = await AsyncStorage.getItem(
                                     "UserServerAccessToken"
                                 );
-                                // await axios({
-                                //   method: "GET",
-                                //   url: SERVER_ADDRESS + "/tmi/check",
-                                //   headers: {
-                                //     Authorization: "Bearer: " + UserServerAccessToken,
-                                //   },
-                                // })
-                                //   .then((resp) => {console.log(resp.data.message)})
-                                //   .catch((e) => console.log(e));//오늘의 tmi를 작성했습니다.
                                 await axios({
                                     method: "GET",
-                                    url: SERVER_ADDRESS + "/attendance",
+                                    url: SERVER_ADDRESS + "/tmi/check",
                                     headers: {
                                         Authorization: "Bearer: " + UserServerAccessToken,
                                     },
                                 })
-                                    .then((resp) => console.log(resp.data.message))
+                                    .then(async (resp) => {
+                                        // console.log(resp.data.message);
+                                        if (resp.data.message != "오늘의 tmi를 작성했습니다.") {
+                                            Alert.alert("출석을 위해 TMI를 작성해주세요!");
+                                        } else {
+                                            await axios({
+                                                method: "GET",
+                                                url: SERVER_ADDRESS + "/attendance",
+                                                headers: {
+                                                    Authorization: "Bearer: " + UserServerAccessToken,
+                                                },
+                                            })
+                                                .then((resp) => {
+                                                    Alert.alert(resp.data.message);
+                                                    if (flower){
+                                                        setFlower(false);
+                                                    }else{
+                                                        setFlower(true);
+                                                    }
+                                                })
+                                                .catch((e) => console.log(e));
+                                        }
+                                    })
                                     .catch((e) => console.log(e));
-                            }}//출석 완료!
-                            style={{backgroundColor: "black", borderRadius: 50}}
+                            }}
+                            style={{ backgroundColor: "black", borderRadius: 50 }}
                         >
                             <Text
                                 style={{
