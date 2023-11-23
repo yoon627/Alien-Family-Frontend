@@ -2,9 +2,9 @@ import React, {useEffect, useRef, useState} from 'react';
 import {Alert, Animated, Button, Dimensions, Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
 const GRID_SIZE = 6;
-const MOLE_APPEAR_DURATION = 500;
-const BOMB_APPEAR_DURATION = 500; // 폭탄이 나타나는 시간
-const SPECIAL_BLOCK_APPEAR_DURATION = 500; // 3점짜리 블록이 나타나는 시간 간격
+const MOLE_APPEAR_DURATION = 1000;
+const BOMB_APPEAR_DURATION = 1000; // 폭탄이 나타나는 시간
+const SPECIAL_BLOCK_APPEAR_DURATION = 1000; // 3점짜리 블록이 나타나는 시간 간격
 const GAME_DURATION = 20000; // 1분
 const BOMB_PENALTY = 1; // 폭탄 버튼 점수 패널티
 const SPECIAL_BLOCK_POINTS = 3;
@@ -57,23 +57,25 @@ const MoleGame = () => {
     useEffect(() => {
         if (!gameActive) return;
         let randomNumbers = getRandomNumbers();
-
         const Interval = setInterval(() => {
             randomNumbers = getRandomNumbers();
         }, MOLE_APPEAR_DURATION);
 
         const moleInterval = setInterval(() => {
             const nextMole = Math.floor(Math.random() * (GRID_SIZE * GRID_SIZE));
+            console.log("A :" ,randomNumbers);
             setActiveMole(randomNumbers[0]);
         }, MOLE_APPEAR_DURATION);
 
         const bombInterval = setInterval(() => {
             const nextBombs = new Array(3).fill(null).map(() => Math.floor(Math.random() * (GRID_SIZE * GRID_SIZE)));
+            console.log("B :" ,randomNumbers.slice(1, 4));
             setActiveBombs(randomNumbers.slice(1, 4));
         }, BOMB_APPEAR_DURATION);
 
         const specialBlockInterval = setInterval(() => {
             const nextSpecialBlock = Math.floor(Math.random() * (GRID_SIZE * GRID_SIZE));
+            console.log("C :" ,randomNumbers);
             setActiveSpecialBlock(randomNumbers[4]);
         }, SPECIAL_BLOCK_APPEAR_DURATION);
 

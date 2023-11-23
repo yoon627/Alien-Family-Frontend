@@ -8,7 +8,7 @@ Object.assign('global', {
     TextEncoder: TextEncodingPolyfill.TextEncoder, TextDecoder: TextEncodingPolyfill.TextDecoder,
 });
 
-const ChatRoom = () => {
+const Xxx = () => {
     const [stompClient, setStompClient] = useState(null);
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
@@ -121,4 +121,4 @@ const ChatRoom = () => {
     </View>);
 };
 
-export default ChatRoom;
+export default Xxx;
