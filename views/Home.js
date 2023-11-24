@@ -9,12 +9,15 @@ import {
   Pressable,
   Modal,
   Alert,
+  Button,
 } from "react-native";
 import styled from "styled-components/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
 import MarqueeText from "react-native-marquee";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { increment, decrement } from "../redux/Slicers/counterSlice";
 const Container = styled.View`
   flex: 1;
   justify-content: center;
@@ -22,6 +25,8 @@ const Container = styled.View`
 `;
 
 export default function Home({ navigation }) {
+  const dispatch = useDispatch();
+  const counter = useSelector((state) => state.counter.value);
   const [TMI, setTMI] = useState("");
   const onChangeTMI = (payload) => setTMI(payload);
   const [modalVisible, setModalVisible] = useState(false);
@@ -278,6 +283,11 @@ export default function Home({ navigation }) {
           </View>
         </View>
       </View>
+      {/* <View>
+        <Text>Counter: {counter}</Text>
+        <Button title="Increment" onPress={() => dispatch(increment())} />
+        <Button title="Decrement" onPress={() => dispatch(decrement())} />
+      </View> */}
     </Container>
   );
 }
