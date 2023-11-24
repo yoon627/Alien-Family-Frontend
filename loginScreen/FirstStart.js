@@ -2,21 +2,34 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  Button,
   StyleSheet,
-  ScrollView,
   Dimensions,
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRoute } from "@react-navigation/native";
+import * as Clipboard from "expo-clipboard";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
-const InvitationScreen = ({ navigation }) => {
-  const [InvitationCode, setInvitationCode] = useState("");
-  const onChangeInvitationCode = (payload) => setInvitationCode(payload);
+const FirstStart = ({ navigation }) => {
+  const [plantName, setPlantName] = useState("");
+  const [ufoName, setUfoName] = useState("");
+  const onChangePlantName = (payload) => setPlantName(payload);
+  const onChangeUfoName = (payload) => setUfoName(payload);
+  const route = useRoute();
+  const familyCode = route.params;
+  const copyToClipboard = async () => {
+    try {
+      Clipboard.setStringAsync(familyCode);
+      alert("초대코드가 클립보드에 복사되었습니다.");
+    } catch {
+      alert("초대코드가 없습니다.");
+    }
+    await Clipboard.setStringAsync(familyCode);
+  };
   return (
     <View style={styles.container}>
       <View
@@ -31,60 +44,57 @@ const InvitationScreen = ({ navigation }) => {
         }}
       >
         <TextInput
-          placeholder="초대코드를 입력해주세요"
+          value={plantName}
+          placeholder="새싹이 이름을 입력해주세요"
           style={styles.input}
-          value={InvitationCode}
-          onChangeText={onChangeInvitationCode}
+          onChangeText={onChangePlantName}
+        />
+        <TextInput
+          value={ufoName}
+          placeholder="우주선 이름을 입력해주세요"
+          style={styles.input}
+          onChangeText={onChangeUfoName}
         />
       </View>
-      {/* <Button
-        title="Go"
-        onPress={async () => {
-          const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
-          const ServerAccessToken = await AsyncStorage.getItem(
-            "ServerAccessToken"
-          );
-          await axios({
-            method: "GET",
-            url:
-              SERVER_ADDRESS + "/api/register/currentFamily/" + InvitationCode,
-            headers: {
-              Authorization: "Bearer: " + ServerAccessToken,
-            },
-          })
-            .then(async (resp) => {
-              const UserServerAccessToken =
-                resp.data.data.tokenInfo.accessToken;
-              const UserServerRefreshToken =
-                resp.data.data.tokenInfo.refreshToken;
-              await AsyncStorage.setItem(
-                "UserServerAccessToken",
-                UserServerAccessToken
-              );
-              await AsyncStorage.setItem(
-                "UserServerRefreshToken",
-                UserServerRefreshToken
-              );
-              navigation.navigate("MainDrawer");
-            })
-            .catch(function (error) {
-              console.log("server error", error);
-            });
+      <Text>{familyCode}</Text>
+      <TouchableOpacity
+        onPress={copyToClipboard}
+        style={{
+          backgroundColor: "black",
+          borderRadius: 50,
+          alignItems: "center",
+          justifyContent: "center",
+          marginVertical: 20,
         }}
-      /> */}
+      >
+        <Text
+          style={{
+            color: "white",
+            marginHorizontal: 30,
+            marginVertical: 10,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          초대코드 복사하기
+        </Text>
+      </TouchableOpacity>
       <TouchableOpacity
         onPress={async () => {
           const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
           const ServerAccessToken = await AsyncStorage.getItem(
             "ServerAccessToken"
           );
-          await AsyncStorage.setItem("familyCode", InvitationCode);
           await axios({
-            method: "GET",
-            url:
-              SERVER_ADDRESS + "/api/register/currentFamily/" + InvitationCode,
+            method: "POST",
+            url: SERVER_ADDRESS + "/api/register/newFamily",
             headers: {
               Authorization: "Bearer: " + ServerAccessToken,
+            },
+            data: {
+              ufoName: ufoName,
+              plantName: plantName,
+              code: familyCode,
             },
           })
             .then(async (resp) => {
@@ -104,7 +114,6 @@ const InvitationScreen = ({ navigation }) => {
               var myDB = {};
               for (i = 0; i < members.length; i++) {
                 const newkey = members[i].memberId;
-                console.log(members[i].memberId);
                 myDB[newkey] = members[i];
               }
               await AsyncStorage.setItem("myDB", JSON.stringify(myDB));
@@ -135,29 +144,7 @@ const InvitationScreen = ({ navigation }) => {
         </Text>
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => navigation.navigate("ClickBox")}
-        style={{
-          backgroundColor: "black",
-          borderRadius: 50,
-          alignItems: "center",
-          justifyContent: "center",
-          marginVertical: 20,
-        }}
-      >
-        <Text
-          style={{
-            color: "white",
-            marginHorizontal: 30,
-            marginVertical: 10,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          초대코드가 없으신가요?
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => navigation.navigate("ClickBox")}
+        onPress={() => navigation.navigate("MainDrawer")}
         style={{
           backgroundColor: "black",
           borderRadius: 50,
@@ -188,22 +175,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  loginText: {
-    fontSize: 24,
-    marginBottom: 16,
-  },
-  footer: {
-    flexDirection: "row",
-    marginTop: "auto",
-  },
-  character: {
-    width: SCREEN_WIDTH,
-    alignItems: "flex-start",
-    paddingHorizontal: 20,
-  },
-  characterFont: {
-    fontSize: 500,
-  },
   input: {
     backgroundColor: "white",
     paddingVertical: 15,
@@ -215,4 +186,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default InvitationScreen;
+export default FirstStart;

@@ -64,7 +64,7 @@ const ChatRoom = () => {
             brokerURL: 'ws://43.202.241.133:8080/ws', connectHeaders: {
                 Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNTIiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZmFtaWx5IjoiMzU2IiwiZXhwIjoxNzAwOTgzOTE4fQ.EHLgXe4iFJrjr2veJlkZiHafd8tomybIyxty66xmU38'
             }, onConnect: () => {
-                console.log('Connected to the WebSocket server');
+                // console.log('Connected to the WebSocket server');
                 client.subscribe('/sub/chat/room/' + roomid, (message) => {
                     const receivedMessage = JSON.parse(message.body);
                     setMessages(prevMessages => [...prevMessages, receivedMessage]);
@@ -75,11 +75,11 @@ const ChatRoom = () => {
                 console.error('Additional details:', frame.body);
             },
         });
-        console.log(mytoken);
+        // console.log(mytoken);
 
         const interval = setInterval(() => {
             if (!client.connected) {
-                console.log("연결시도중");
+                // console.log("연결시도중");
                 client.activate();
             }
         }, 1000); // 1초마다 연결 상태 체크

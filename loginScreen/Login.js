@@ -1,20 +1,6 @@
 import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  TextInput,
-  ScrollView,
-  Alert,
-  Button,
-} from "react-native";
-import { WebView } from "react-native-webview";
-import axios from "axios";
+import { StyleSheet, Text, View, TouchableOpacity, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import KaKaoLogin from "./KaKaoLogin";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const saveServer = async () => {
@@ -30,7 +16,9 @@ const Login = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <MaterialCommunityIcons name="ufo-outline" size={35} color="black" />
-      <Text style={{ fontSize: 50, fontWeight: 500, marginBottom:75}}>UFO</Text>
+      <Text style={{ fontSize: 50, fontWeight: 500, marginBottom: 75 }}>
+        UFO
+      </Text>
       <View>
         <TouchableOpacity
           onPress={async () => {

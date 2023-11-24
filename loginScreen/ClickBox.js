@@ -2,15 +2,10 @@ import React from "react";
 import {
   View,
   Text,
-  Button,
   StyleSheet,
-  ScrollView,
-  Dimensions,
-  TextInput,
   TouchableOpacity,
 } from "react-native";
 import axios from "axios";
-import { useSelector } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Entypo } from "@expo/vector-icons";
 

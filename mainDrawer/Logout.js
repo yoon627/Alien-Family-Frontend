@@ -1,15 +1,9 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   View,
   Text,
   Button,
-  StyleSheet,
-  ScrollView,
-  Dimensions,
-  TextInput,
 } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function Logout({ navigation }) {
@@ -34,5 +28,3 @@ export default function Logout({ navigation }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({});

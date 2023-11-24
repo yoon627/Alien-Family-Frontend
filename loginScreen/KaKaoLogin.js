@@ -1,23 +1,14 @@
-import React, { useState } from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import React from "react";
 import {
   StyleSheet,
-  Text,
   View,
-  TouchableOpacity,
-  TextInput,
-  ScrollView,
-  Alert,
-  Button,
 } from "react-native";
 import { WebView } from "react-native-webview";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useSelector } from "react-redux";
 
 const REST_API_KEY = "53a4c1ed38ca9033bd5c086437b40943";
-const REDIRECT_URI = "http://143.248.226.110:19000";
+const REDIRECT_URI = "http://143.248.226.50:19000";
 const INJECTED_JAVASCRIPT = `window.ReactNativeWebView.postMessage('message from webView')`;
 
 export default function KaKaoLogin({ navigation }) {
@@ -61,7 +52,6 @@ export default function KaKaoLogin({ navigation }) {
       .catch(function (error) {
         console.log("server error", error);
       });
-    // navigation.navigate("First Register");
   };
 
   return (

@@ -3,11 +3,9 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  Button,
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  ScrollView,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DatePicker from "@dietime/react-native-date-picker";
@@ -16,9 +14,7 @@ const FirstRegister = ({ navigation }) => {
   const [birthday, setBirthDay] = useState(JSON.stringify(new Date(Date.now())).slice(1,11));
   const [title, setTitle] = useState("");
   const onChangeName = (payload) => setName(payload);
-  const onChangeBirthDay = (payload) => setBirthDay(payload);
   const onChangeTitle = (payload) => setTitle(payload);
-  var test = ""
   return (
       <View style={styles.container}>
         <View
@@ -38,19 +34,12 @@ const FirstRegister = ({ navigation }) => {
             style={styles.input}
             onChangeText={onChangeName}
           />
-          {/* <TextInput
-          value={birthday}
-          placeholder="생년월일을 입력해주세요"
-          style={styles.input}
-          onChangeText={onChangeBirthDay}
-        /> */}
         <Text style={{color:"white",fontSize:25}}>생년월일을 입력해주세요</Text>
           <View>
             <DatePicker
               textColor="white"
               value={birthday}
               onChange={(value) => {
-                test = JSON.stringify(value).slice(1, 11);
                 setBirthDay(JSON.stringify(value).slice(1, 11))
               }}
             />
@@ -144,15 +133,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  loginText: {
-    fontSize: 24,
-    marginBottom: 16,
-  },
   footer: {
     flex: 0.5,
     marginBottom: 5,
-    // flexDirection: "row",
-    // marginTop: "auto",
   },
   input: {
     backgroundColor: "white",

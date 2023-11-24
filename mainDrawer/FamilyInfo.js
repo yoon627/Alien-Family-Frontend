@@ -3,12 +3,8 @@ import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
-  Button,
   StyleSheet,
   ScrollView,
-  Dimensions,
-  TextInput,
-  TouchableOpacity,
   Image,
 } from "react-native";
 //Todo
