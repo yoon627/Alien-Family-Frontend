@@ -1,23 +1,23 @@
-import { StyleSheet } from "react-native";
 import React from "react";
+import { StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import Login from "./loginScreen/Login";
-import FirstRegister from "./loginScreen/FirstRegister";
-import ChooseCharacter from "./loginScreen/ChooseCharacter";
-import InvitationScreen from "./loginScreen/InvitationScreen";
-import FirstStart from "./loginScreen/FirstStart";
-import MiniGames from "./mainScreen/MiniGames";
-import MainDrawer from "./mainNavigator/MainDrawer";
-import KaKaoLogin from "./loginScreen/KaKaoLogin";
-import ClickBox from "./loginScreen/ClickBox";
-import store from "./redux/config/configStore";
-import { Provider } from "react-redux";
+import Login from "./views/Login";
+import FirstRegister from "./views/FirstRegister";
+import ChooseCharacter from "./views/ChooseCharacter";
+import InvitationScreen from "./views/InvitationScreen";
+import FirstStart from "./views/FirstStart";
+import MiniGames from "./views/MiniGames";
+import MainDrawer from "./views/MainDrawer";
+import KaKaoLogin from "./views/KaKaoLogin";
+import ClickBox from "./views/ClickBox";
 import LadderScreen from "./views/LadderScreen";
 import RouletteScreen from "./views/RouletteScreen";
 import NewGame from "./views/NewGame";
 import ChatRoom from "./views/chatScreen";
-import MainScreen from "./mainNavigator/MainScreen";
+import MainScreen from "./views/MainScreen";
+import { Provider } from "react-redux";
+import store from "./redux/store";
 const Stack = createStackNavigator();
 
 export default function App() {

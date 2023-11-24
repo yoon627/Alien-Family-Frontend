@@ -67,7 +67,7 @@ const Sadari = ({cnt}) => {
                 return newTexts;
             });
         }
-        console.log(columnsWithHorizontalLines);
+        // console.log(columnsWithHorizontalLines);
         setHorizontalLines(newHorizontalLines);
         // columnsWithHorizontalLines에 각 세로줄별 가로줄 정보가 저장됩니다.
         setColumnsWithHorizontalLines(columnsWithHorizontalLines);
@@ -102,12 +102,12 @@ const Sadari = ({cnt}) => {
                         useNativeDriver: true
                     }));
                     currentY = columnsWithHorizontalLines[lineIndex][j].yPosition
-                    console.log("움직였다....");
+                    // console.log("움직였다....");
                     nowpos = j;
                     break;
                 }
             }
-            console.log("지금은 어디인가요 ", currentX);
+            // console.log("지금은 어디인가요 ", currentX);
 
             //옆으로 가자
             // 옆으로 이동

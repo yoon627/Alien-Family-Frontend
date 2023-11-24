@@ -7,15 +7,15 @@ import {
   FontAwesome,
   MaterialIcons,
 } from "@expo/vector-icons";
-import Album from "../mainScreen/Album";
-import Home from "../mainScreen/Home";
-import CalendarScreen from "../mainScreen/CalendarScreen";
-import Feed from "../mainScreen/Feed";
-import Attendance from "../mainScreen/Attendance";
-import LadderScreen from "../views/LadderScreen";
-import RouletteScreen from "../views/RouletteScreen";
-import NewGame from "../views/NewGame";
-import ChatRoom from "../mainScreen/Chatting";
+import Album from "./Album";
+import Home from "./Home";
+import CalendarScreen from "./CalendarScreen";
+import Feed from "./Feed";
+import Attendance from "./Attendance";
+import LadderScreen from "./LadderScreen";
+import RouletteScreen from "./RouletteScreen";
+import NewGame from "./NewGame";
+import ChatRoom from "./Chatting";
 
 const Tab = createBottomTabNavigator();
 
