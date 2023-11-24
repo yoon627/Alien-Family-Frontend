@@ -1,13 +1,20 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import * as ImagePicker from "expo-image-picker";
 import {Button, Image, TouchableOpacity} from "react-native";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ImagePickerComponent = () => {
     // 권한 요청을 위한 훅
     const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
     // 현재 이미지 주소
     const [imageUrl, setImageUrl] = useState('');
+    // 이미지 리스트
+    // const [photos, setPhotos] = useState([]);
+    //
+    // useEffect(() => {
+    //     setPhotos();
+    // }, [imageUrl]);
 
     const uploadImage = async () => {
         // 권한 확인 (권한 없으면 물어보고, 승인하지 않으면 함수 종료)
@@ -38,20 +45,25 @@ const ImagePickerComponent = () => {
 
                 // 서버에 요청 보내기
                 // const filename = uri.split('/').pop();
+                // const type = match ? `image/${match[1]}` : `image`;
+                // const match = /\/.(\w+)$/.exec(filename || '');
+
                 const filename = result.assets[0].fileName;
-                const match = /\/.(\w+)$/.exec(filename || '');
-                const type = match ? `image/${match[1]}` : `image`;
+                const type = result.assets[0].type;
                 const formData = new FormData();
                 formData.append('image', {
                     uri: uri,
                     type: type,
                     name: filename});
 
+                const access_token = await AsyncStorage.getItem("ServerAccessToken");
+
                 const response = await axios({
                     method: 'post',
                     url: '',
                     headers: {
                         'content-type': 'multipart/form-data',
+                        'Authorization': `Bearer ${access_token}`
                     },
                     data: formData
                 })
