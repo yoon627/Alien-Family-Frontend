@@ -15,84 +15,51 @@ const ChatRoom = () => {
     const [messages, setMessages] = useState([]);
     const [myname, setMyname] = useState(null);
     const [famname, setFamname] = useState(null);
-    const [mytoken, setMytoken] = useState(null);
 
+    const myIP = '13.209.81.119';
     const roomid = 348;
 
-
     useEffect(() => {
-        const fetchData = async () => {
+        const connection = async () => {
             try {
                 const test = await AsyncStorage.getItem("MyName");
-                const token = await AsyncStorage.getItem("ServerAccessToken")
-                let myfam = await AsyncStorage.getItem("myDB");
-                myfam = JSON.parse(myfam);
+                const token = await AsyncStorage.getItem("UserServerAccessToken")
                 setMyname(test);
-                setFamname(myfam);
-                setMytoken('Bearer ' + token);
-            } catch (error) {
-                console.log('Error :', error);
-            }
-        };
-        const getData = async () => {
-            try {
-                const response = await fetch('http://43.202.241.133:8080/chat/list?id=' + roomid, {
-                    method: 'get', headers: {
-                        Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNTIiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZmFtaWx5IjoiMzU2IiwiZXhwIjoxNzAwOTgzOTE4fQ.EHLgXe4iFJrjr2veJlkZiHafd8tomybIyxty66xmU38'
+
+                const client = new Client({
+                    brokerURL: 'ws://' + `${myIP}` + ':8080/ws', connectHeaders: {
+                        Authorization: token
+                    }, onConnect: () => {
+                        console.log('Connected to the WebSocket server');
+                        client.subscribe('/sub/chat/room/' + roomid, (message) => {
+                            const receivedMessage = JSON.parse(message.body);
+                            setMessages(prevMessages => [...prevMessages, receivedMessage]);
+                        });
+                    }, onStompError: (frame) => {
+                        console.error('Broker reported error:', frame.headers['message']);
+                        console.error('Additional details:', frame.body);
+                    },
+                });
+
+                const interval = setInterval(() => {
+                    if (!client.connected) {
+                        console.log("연결시도중");
+                        client.activate();
                     }
-                });
-
-                if (!response.ok) {
-                    throw new Error('Response not ok');
-                }
-
-                const data = await response.json();
-                setMessages(data);
-
+                }, 1000); // 1초마다 연결 상태 체크
+                setStompClient(client);
+                return () => {
+                    clearInterval(interval);
+                    if (client) {
+                        client.deactivate();
+                    }
+                };
             } catch (error) {
                 console.log('Error :', error);
             }
         };
-
-        fetchData();
-        getData();
-
+        connection();
     }, []);
-
-    useEffect(() => {
-        const client = new Client({
-            brokerURL: 'ws://43.202.241.133:8080/ws', connectHeaders: {
-                Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNTIiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZmFtaWx5IjoiMzU2IiwiZXhwIjoxNzAwOTgzOTE4fQ.EHLgXe4iFJrjr2veJlkZiHafd8tomybIyxty66xmU38'
-            }, onConnect: () => {
-                // console.log('Connected to the WebSocket server');
-                client.subscribe('/sub/chat/room/' + roomid, (message) => {
-                    const receivedMessage = JSON.parse(message.body);
-                    setMessages(prevMessages => [...prevMessages, receivedMessage]);
-                });
-
-            }, onStompError: (frame) => {
-                console.error('Broker reported error:', frame.headers['message']);
-                console.error('Additional details:', frame.body);
-            },
-        });
-        // console.log(mytoken);
-
-        const interval = setInterval(() => {
-            if (!client.connected) {
-                // console.log("연결시도중");
-                client.activate();
-            }
-        }, 1000); // 1초마다 연결 상태 체크
-        setStompClient(client);
-
-        return () => {
-            clearInterval(interval);
-            if (client) {
-                client.deactivate();
-            }
-        };
-    }, []);
-
 
     const sendMessage = () => {
         if (stompClient && message) {
