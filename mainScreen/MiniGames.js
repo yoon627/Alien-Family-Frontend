@@ -83,11 +83,11 @@ export default function MiniGames({navigation}) {
                 Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNDEiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZmFtaWx5IjoiMzQ5IiwiZXhwIjoxNzAwOTczMjEzfQ.IeHipzx60fWJRD2ZGs8SCKwpOjfSpN837Rjq2qrTli4'
             },
             onConnect: () => {
-                console.log("👌🏻connect 성공: 웹소켓 서버 연결~~~~");
+                // console.log("👌🏻connect 성공: 웹소켓 서버 연결~~~~");
                 // 이 땐 좌표 받아오는 거
                 client.subscribe('/sub/map/356', (message) => {
                     const receiveCoordinates = JSON.parse(message.body);
-                    console.log(receiveCoordinates);
+                    // console.log(receiveCoordinates);
                     setCoordinates(prevCoordinates => ({
                         x: Math.max(0, Math.min(prevCoordinates.x + receiveCoordinates.x, SCREEN_WIDTH - SCREEN_WIDTH * 0.12)),
                         y: Math.max(0, Math.min(prevCoordinates.y - receiveCoordinates.y, SCREEN_HEIGHT - SCREEN_HEIGHT * 0.1)),
@@ -102,16 +102,16 @@ export default function MiniGames({navigation}) {
         });
 
         sokcet.onopen = () => {
-            console.log("🚀 WebSokcet open");
+            // console.log("🚀 WebSokcet open");
             setStompClient(client);
         };
 
         sokcet.onerror = (error) => {
-            console.log("❌ sokcet error");
+            // console.log("❌ sokcet error");
         }
 
         sokcet.onclose = (event) => {
-            console.log("👋🏻 WebSokcet close");
+            // console.log("👋🏻 WebSokcet close");
         }
 
         joystickPosition.addListener(position => {

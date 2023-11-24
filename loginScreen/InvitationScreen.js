@@ -1,36 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
-  Button,
   StyleSheet,
   Dimensions,
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRoute } from "@react-navigation/native";
-import * as Clipboard from "expo-clipboard";
+import axios from "axios";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
-const FirstStart = ({ navigation }) => {
-  const [plantName, setPlantName] = useState("");
-  const [ufoName, setUfoName] = useState("");
-  const onChangePlantName = (payload) => setPlantName(payload);
-  const onChangeUfoName = (payload) => setUfoName(payload);
-  const route = useRoute();
-  const familyCode = route.params;
-  const copyToClipboard = async () => {
-    try {
-      Clipboard.setStringAsync(familyCode);
-      alert("초대코드가 클립보드에 복사되었습니다.");
-    } catch {
-      alert("초대코드가 없습니다.");
-    }
-    await Clipboard.setStringAsync(familyCode);
-  };
+const InvitationScreen = ({ navigation }) => {
+  const [InvitationCode, setInvitationCode] = useState("");
+  const onChangeInvitationCode = (payload) => setInvitationCode(payload);
   return (
     <View style={styles.container}>
       <View
@@ -45,57 +29,25 @@ const FirstStart = ({ navigation }) => {
         }}
       >
         <TextInput
-          value={plantName}
-          placeholder="새싹이 이름을 입력해주세요"
+          placeholder="초대코드를 입력해주세요"
           style={styles.input}
-          onChangeText={onChangePlantName}
-        />
-        <TextInput
-          value={ufoName}
-          placeholder="우주선 이름을 입력해주세요"
-          style={styles.input}
-          onChangeText={onChangeUfoName}
+          value={InvitationCode}
+          onChangeText={onChangeInvitationCode}
         />
       </View>
-      <Text>{familyCode}</Text>
-      <TouchableOpacity
-        onPress={copyToClipboard}
-        style={{
-          backgroundColor: "black",
-          borderRadius: 50,
-          alignItems: "center",
-          justifyContent: "center",
-          marginVertical: 20,
-        }}
-      >
-        <Text
-          style={{
-            color: "white",
-            marginHorizontal: 30,
-            marginVertical: 10,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          초대코드 복사하기
-        </Text>
-      </TouchableOpacity>
       <TouchableOpacity
         onPress={async () => {
           const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
           const ServerAccessToken = await AsyncStorage.getItem(
             "ServerAccessToken"
           );
+          await AsyncStorage.setItem("familyCode", InvitationCode);
           await axios({
-            method: "POST",
-            url: SERVER_ADDRESS + "/api/register/newFamily",
+            method: "GET",
+            url:
+              SERVER_ADDRESS + "/api/register/currentFamily/" + InvitationCode,
             headers: {
               Authorization: "Bearer: " + ServerAccessToken,
-            },
-            data: {
-              ufoName: ufoName,
-              plantName: plantName,
-              code: familyCode,
             },
           })
             .then(async (resp) => {
@@ -111,12 +63,11 @@ const FirstStart = ({ navigation }) => {
                 "UserServerRefreshToken",
                 UserServerRefreshToken
               );
-              const familyid = resp.data.data;
-              console.log(familyid);
               const members = resp.data.data.familyResponseDto.members;
               var myDB = {};
               for (i = 0; i < members.length; i++) {
                 const newkey = members[i].memberId;
+                console.log(members[i].memberId);
                 myDB[newkey] = members[i];
               }
               await AsyncStorage.setItem("myDB", JSON.stringify(myDB));
@@ -147,7 +98,29 @@ const FirstStart = ({ navigation }) => {
         </Text>
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => navigation.navigate("MainDrawer")}
+        onPress={() => navigation.navigate("ClickBox")}
+        style={{
+          backgroundColor: "black",
+          borderRadius: 50,
+          alignItems: "center",
+          justifyContent: "center",
+          marginVertical: 20,
+        }}
+      >
+        <Text
+          style={{
+            color: "white",
+            marginHorizontal: 30,
+            marginVertical: 10,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          초대코드가 없으신가요?
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("ClickBox")}
         style={{
           backgroundColor: "black",
           borderRadius: 50,
@@ -205,4 +178,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FirstStart;
+export default InvitationScreen;

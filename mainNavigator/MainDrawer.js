@@ -1,11 +1,9 @@
 import React from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import TMI from "./TMI";
-import Settings from "./Settings";
+import Settings from "../mainDrawer/Settings";
 import MainScreen from "./MainScreen";
-import Logout from "./Logout";
-import FamilyInfo from "./FamilyInfo";
-import Lab from "./Lab";
+import Logout from "../mainDrawer/Logout";
+import FamilyInfo from "../mainDrawer/FamilyInfo";
 
 const Drawer = createDrawerNavigator();
 
@@ -14,10 +12,8 @@ export default function MainDrawer({ navigation }) {
     <Drawer.Navigator>
       <Drawer.Screen name="MainScreen" component={MainScreen} />
       <Drawer.Screen name="FamilyInfo" component={FamilyInfo} />
-      <Drawer.Screen name="TMI" component={TMI} />
       <Drawer.Screen name="Settings" component={Settings} />
       <Drawer.Screen name="Logout" component={Logout} />
-      <Drawer.Screen name="Lab" component={Lab} />
     </Drawer.Navigator>
   );
 }

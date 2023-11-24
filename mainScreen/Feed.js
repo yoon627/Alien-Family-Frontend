@@ -1,13 +1,13 @@
 import React from "react";
-import { View, Text, Button, StyleSheet, ScrollView, Dimensions,TextInput } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 
-export default function Settings({navigation}){
+export default function Album({ navigation }) {
   return (
     <View style={styles.container}>
-      <Text>Settings</Text>
+      <Text>Feed</Text>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
