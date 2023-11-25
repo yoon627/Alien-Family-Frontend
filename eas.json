@@ -1,10 +1,6 @@
 {
   "cli": {
-<<<<<<< HEAD
-    "version": ">= 5.8.0"
-=======
     "version": ">= 5.9.1"
->>>>>>> 240c9a5 (fix: fixing for android build)
   },
   "build": {
     "development": {

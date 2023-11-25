@@ -46,14 +46,16 @@ export default function Home({ navigation }) {
         headers: {
           Authorization: "Bearer: " + UserServerAccessToken,
         },
-      }).then((resp) => {
-        const tmis = resp.data;
-        var mytmi = "";
-        for (i = 0; i < tmis.length; i++) {
-          mytmi = mytmi + tmis[i].writer + ": " + tmis[i].content + "  ";
-        }
-        setTodayTMI(mytmi);
-      });
+      })
+        .then((resp) => {
+          const tmis = resp.data;
+          var mytmi = "";
+          for (i = 0; i < tmis.length; i++) {
+            mytmi = mytmi + tmis[i].writer + ": " + tmis[i].content + "  ";
+          }
+          setTodayTMI(mytmi);
+        })
+        .catch((e) => console.log(e));
     }
     fetchData();
   });

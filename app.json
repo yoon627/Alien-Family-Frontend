@@ -29,11 +29,7 @@
     },
     "extra": {
       "eas": {
-<<<<<<< HEAD
-        "projectId": "756dda6d-2cad-498a-ae4f-40fec83a4c68"
-=======
         "projectId": "5c2d898c-1258-4e8d-8924-8dc561dc38b1"
->>>>>>> 240c9a5 (fix: fixing for android build)
       }
     }
   }

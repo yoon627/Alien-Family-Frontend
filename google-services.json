@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "263182614118",
+    "project_id": "ufo-front",
+    "storage_bucket": "ufo-front.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:263182614118:android:5af7becc6071d2ae37b7a7",
+        "android_client_info": {
+          "package_name": "com.whddbs627.UFOFront"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCEQLnccPqrpsIc7iamJUwILFOAH8_Tq44"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
