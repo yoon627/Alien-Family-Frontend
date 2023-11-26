@@ -16,6 +16,7 @@ import RouletteScreen from "./views/RouletteScreen";
 import NewGame from "./views/NewGame";
 import ChatRoom from "./views/chatScreen";
 import MainScreen from "./views/MainScreen";
+import ImageUploadPage from "./views/ImageUploadPage";
 import { Provider } from "react-redux";
 import store from "./redux/store";
 const Stack = createStackNavigator();
@@ -38,6 +39,7 @@ export default function App() {
           <Stack.Screen name="Roulette" component={RouletteScreen} />
           <Stack.Screen name="Mole" component={NewGame} />
           <Stack.Screen name="Chat" component={ChatRoom} />
+          <Stack.Screen name="ImageUploadPage" component={ImageUploadPage} />
           <Stack.Screen
             name="MainDrawer"
             component={MainDrawer}

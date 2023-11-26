@@ -55,7 +55,7 @@ export default function MiniGames({navigation}) {
                 // 좌표 서버로 전송
                 if (stompClient && (coordinates.x !== 0 && coordinates.y !== 0)) {
                     const headerData = {
-                        Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNDEiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZmFtaWx5IjoiMzQ5IiwiZXhwIjoxNzAwOTczMjEzfQ.IeHipzx60fWJRD2ZGs8SCKwpOjfSpN837Rjq2qrTli4'
+                        Authorization: 'Bearer '
                     };
                     const sendData = {
                         familyId: 356, x: joystickPosition.x, y: joystickPosition.y
@@ -80,7 +80,7 @@ export default function MiniGames({navigation}) {
         const client = new Client({
             brokerURL: 'ws://43.202.241.133:8080/ws',
             connectHeaders: {
-                Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNDEiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZmFtaWx5IjoiMzQ5IiwiZXhwIjoxNzAwOTczMjEzfQ.IeHipzx60fWJRD2ZGs8SCKwpOjfSpN837Rjq2qrTli4'
+                Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0NTEiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZmFtaWx5IjoiNTM1IiwiZXhwIjoxNzAxMjA1NTc5fQ.-TPkx6HuGSZy9-wSpsJrLFGrUuxYK8NYImOMl5RP2fk',
             },
             onConnect: () => {
                 // console.log("👌🏻connect 성공: 웹소켓 서버 연결~~~~");
