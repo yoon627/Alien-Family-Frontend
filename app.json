@@ -22,7 +22,18 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.whddbs627.UFOFront"
+      "package": "com.whddbs627.UFOFront",
+      "config": {
+        "AndroidManifest": {
+          "application": [
+            {
+              "$": {
+                "android:usesCleartextTraffic": "true"
+              }
+            }
+          ]
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
