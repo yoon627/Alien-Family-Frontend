@@ -5,7 +5,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const REST_API_KEY = "53a4c1ed38ca9033bd5c086437b40943"; 
-const REDIRECT_URI = "http://43.202.241.133:8080/api/login/kakao22";
+const REDIRECT_URI = "http://43.202.241.133:12345/api/login/kakaoRedirect";
 const INJECTED_JAVASCRIPT = `window.ReactNativeWebView.postMessage('message from webView')`;
 
 export default function KaKaoLogin({navigation}) {

@@ -4,7 +4,8 @@ import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
 
-const FCM_SERVER_KEY ="AAAAUCMBJiU:APA91bEs9fOJNe6l2ILHFI88jep5rw9wqR-qTWWbBrKxj7JQnKQ8ZAp4tJbn_yXcL2aP0ydygPIcT89XB6h38vhIozsJ5J61s7w2znBL9hPQG6a18sQcUFkMitr2pkvoCmmfslVQmk-u";
+const FCM_SERVER_KEY =
+  "AAAAUCMBJiU:APA91bEs9fOJNe6l2ILHFI88jep5rw9wqR-qTWWbBrKxj7JQnKQ8ZAp4tJbn_yXcL2aP0ydygPIcT89XB6h38vhIozsJ5J61s7w2znBL9hPQG6a18sQcUFkMitr2pkvoCmmfslVQmk-u";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -16,22 +17,6 @@ Notifications.setNotificationHandler({
 
 // Can use this function below or use Expo's Push Notification Tool from: https://expo.dev/notifications
 async function sendPushNotification(devicePushToken) {
-  // const message = {
-  //   to: expoPushToken,
-  //   sound: "default",
-  //   title: "Original Title",
-  //   body: "And here is the body!",
-  //   data: { someData: "goes here" },
-  // };
-  // await fetch("https://exp.host/--/api/v2/push/send", {
-  //   method: "POST",
-  //   headers: {
-  //     Accept: "application/json",
-  //     "Accept-encoding": "gzip, deflate",
-  //     "Content-Type": "application/json",
-  //   },
-  //   body: JSON.stringify(message),
-  // });
   await fetch("https://fcm.googleapis.com/fcm/send", {
     method: "POST",
     headers: {
@@ -49,8 +34,7 @@ async function sendPushNotification(devicePushToken) {
       },
     }),
   })
-    .then((resp) => console.log(JSON.stringify
-      (resp)))
+    .then((resp) => console.log(resp))
     .catch((e) => console.log(e));
 }
 
@@ -142,24 +126,3 @@ export default function Lab() {
     </View>
   );
 }
-
-// // Lab.js
-// import React from 'react';
-// import { View, Text, Button } from 'react-native';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { increment, decrement } from '../redux/Slicers/counterSlice';
-
-// const Lab = () => {
-//   const dispatch = useDispatch();
-//   const counter = useSelector(state => state.counter.value);
-
-//   return (
-//     <View>
-//       <Text>Counter: {counter}</Text>
-//       <Button title="Increment" onPress={() => dispatch(increment())} />
-//       <Button title="Decrement" onPress={() => dispatch(decrement())} />
-//     </View>
-//   );
-// };
-
-// export default Lab;

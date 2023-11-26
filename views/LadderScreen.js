@@ -36,7 +36,6 @@ function LadderScreen() {
     );
 }
 
-
 const styles = StyleSheet.create({
     button: {
         backgroundColor: '#264b62', // 버튼 색상
