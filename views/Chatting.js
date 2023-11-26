@@ -14,24 +14,55 @@ const ChatRoom = () => {
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const [myname, setMyname] = useState(null);
-    const [famname, setFamname] = useState(null);
+    const [roomNumber, setroomNumber] = useState(null);
 
-    const myIP = '13.209.81.119';
-    const roomid = 348;
+    const myIP = '43.202.241.133';
+    // const myIP = '13.209.81.119';
+
+    useEffect(() => {
+        const getData = async () => {
+
+            try {
+                const token = await AsyncStorage.getItem("UserServerAccessToken")
+                const chatroomId = await AsyncStorage.getItem("chatroomId");
+                const response = await fetch('http://' + `${myIP}` + ':8080/chat/list?id=' + chatroomId, {
+                    method: 'get', headers: {
+                        Authorization: token
+                    }
+                });
+                if (!response.ok) {
+                    throw new Error('Response not ok');
+                }
+                const data = await response.json();
+                setMessages(data);
+
+            } catch (error) {
+                console.error('Error getMsg:', error);
+            }
+        };
+
+        getData();
+    }, []);
+
 
     useEffect(() => {
         const connection = async () => {
             try {
                 const test = await AsyncStorage.getItem("MyName");
                 const token = await AsyncStorage.getItem("UserServerAccessToken")
+                const familyId = await AsyncStorage.getItem("familyId");
+                const chatroomId = await AsyncStorage.getItem("chatroomId");
+
                 setMyname(test);
+                setroomNumber(chatroomId);
+                console.log("FAM ID AND CHATROOM ID", familyId, chatroomId);
 
                 const client = new Client({
                     brokerURL: 'ws://' + `${myIP}` + ':8080/ws', connectHeaders: {
                         Authorization: token
                     }, onConnect: () => {
                         console.log('Connected to the WebSocket server');
-                        client.subscribe('/sub/chat/room/' + roomid, (message) => {
+                        client.subscribe('/sub/chat/room/' + chatroomId, (message) => {
                             const receivedMessage = JSON.parse(message.body);
                             setMessages(prevMessages => [...prevMessages, receivedMessage]);
                         });
@@ -58,23 +89,23 @@ const ChatRoom = () => {
                 console.log('Error :', error);
             }
         };
+
         connection();
     }, []);
 
     const sendMessage = () => {
+        console.log("IN SENDMESSAGE", roomNumber);
         if (stompClient && message) {
             const messageData = {
-                type: "TALK", roomId: roomid, sender: myname, memberId: "352",        // 적절한 멤버 ID 설정
+                type: "TALK", roomId: roomNumber, sender: myname,    // 적절한 멤버 ID 설정
                 content: message, time: new Date().toISOString()
             };
             const headerData = {
                 // Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNTIiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZmFtaWx5IjoiMzU2IiwiZXhwIjoxNzAwOTgzOTE4fQ.EHLgXe4iFJrjr2veJlkZiHafd8tomybIyxty66xmU38'
             }
-
             stompClient.publish({
                 destination: '/pub/chat', headers: headerData, body: JSON.stringify(messageData)
             });
-
             setMessage('');
         }
     };
