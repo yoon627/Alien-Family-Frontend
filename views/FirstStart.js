@@ -97,7 +97,7 @@ const FirstStart = ({navigation}) => {
                             await AsyncStorage.setItem("UserServerRefreshToken", UserServerRefreshToken);
                             const members = resp.data.data.familyResponseDto.members;
                             const familyId = resp.data.data.familyResponseDto.familyId;
-                            const chatroomId = resp.data.data.familyResponseDto.chatRoomId;
+                            const chatroomId = resp.data.data.familyResponseDto.chatroomId;
                             const plant = resp.data.data.familyResponseDto.Plant;
 
                             var myDB = {};
