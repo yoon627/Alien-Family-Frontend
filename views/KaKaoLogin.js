@@ -1,9 +1,6 @@
 import React from "react";
-import {
-  StyleSheet,
-  View,
-} from "react-native";
-import { WebView } from "react-native-webview";
+import {StyleSheet, View,} from "react-native";
+import {WebView} from "react-native-webview";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -11,15 +8,15 @@ const REST_API_KEY = "53a4c1ed38ca9033bd5c086437b40943";
 const REDIRECT_URI = "http://43.202.241.133:8080/api/login/kakao22";
 const INJECTED_JAVASCRIPT = `window.ReactNativeWebView.postMessage('message from webView')`;
 
-export default function KaKaoLogin({ navigation }) {
-  function KaKaoLoginWebView(data) {
-    const exp = "code=";
-    var condition = data.indexOf(exp);
-    if (condition != -1) {
-      var authorize_code = data.substring(condition + exp.length);
-      requestToken(authorize_code);
+export default function KaKaoLogin({navigation}) {
+    function KaKaoLoginWebView(data) {
+        const exp = "code=";
+        var condition = data.indexOf(exp);
+        if (condition != -1) {
+            var authorize_code = data.substring(condition + exp.length);
+            requestToken(authorize_code);
+        }
     }
-  }
 
   const requestToken = async (authorize_code) => {
     var KAT = "none";
@@ -52,31 +49,32 @@ export default function KaKaoLogin({ navigation }) {
       .catch(function (error) {
         console.log("server error", error);
       });
-    navigation.navigate("First Register");
   };
 
-  return (
-    <View style={Styles.container}>
-      <WebView
-        style={{ flex: 1 }}
-        originWhitelist={["*"]}
-        scalesPageToFit={false}
-        source={{
-          uri: `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}`,
-        }}
-        injectedJavaScript={INJECTED_JAVASCRIPT}
-        javaScriptEnabled
-        onMessage={(event) => {
-          KaKaoLoginWebView(event.nativeEvent["url"]);
-        }}
-      />
-    </View>
-  );
+    return (
+        <View style={Styles.container}>
+            <WebView
+                style={{flex: 1}}
+                originWhitelist={["*"]}
+                scalesPageToFit={false}
+                source={{
+                    uri: `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}`,
+                }}
+                injectedJavaScript={INJECTED_JAVASCRIPT}
+                javaScriptEnabled
+                onMessage={(event) => {
+                    KaKaoLoginWebView(event.nativeEvent["url"]);
+                    const data = event.nativeEvent.url;
+                    console.log("DATA", data);
+                }}
+            />
+        </View>
+    );
 }
 const Styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: 24,
-    backgroundColor: "#fff",
-  },
+    container: {
+        flex: 1,
+        marginTop: 24,
+        backgroundColor: "#fff",
+    },
 });
