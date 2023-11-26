@@ -7,8 +7,8 @@ import { WebView } from "react-native-webview";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const REST_API_KEY = "53a4c1ed38ca9033bd5c086437b40943";
-const REDIRECT_URI = "http://143.248.226.50:19000";
+const REST_API_KEY = "53a4c1ed38ca9033bd5c086437b40943"; 
+const REDIRECT_URI = "http://43.202.241.133:8080/api/login/kakao22";
 const INJECTED_JAVASCRIPT = `window.ReactNativeWebView.postMessage('message from webView')`;
 
 export default function KaKaoLogin({ navigation }) {
@@ -52,6 +52,7 @@ export default function KaKaoLogin({ navigation }) {
       .catch(function (error) {
         console.log("server error", error);
       });
+    navigation.navigate("First Register");
   };
 
   return (

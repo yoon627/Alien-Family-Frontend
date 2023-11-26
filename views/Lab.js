@@ -1,20 +1,165 @@
-// Lab.js
-import React from 'react';
-import { View, Text, Button } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import { increment, decrement } from '../redux/Slicers/counterSlice';
+import { useState, useEffect, useRef } from "react";
+import { Text, View, Button, Platform } from "react-native";
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
 
-const Lab = () => {
-  const dispatch = useDispatch();
-  const counter = useSelector(state => state.counter.value);
+const FCM_SERVER_KEY ="AAAAUCMBJiU:APA91bEs9fOJNe6l2ILHFI88jep5rw9wqR-qTWWbBrKxj7JQnKQ8ZAp4tJbn_yXcL2aP0ydygPIcT89XB6h38vhIozsJ5J61s7w2znBL9hPQG6a18sQcUFkMitr2pkvoCmmfslVQmk-u";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
+
+// Can use this function below or use Expo's Push Notification Tool from: https://expo.dev/notifications
+async function sendPushNotification(devicePushToken) {
+  // const message = {
+  //   to: expoPushToken,
+  //   sound: "default",
+  //   title: "Original Title",
+  //   body: "And here is the body!",
+  //   data: { someData: "goes here" },
+  // };
+  // await fetch("https://exp.host/--/api/v2/push/send", {
+  //   method: "POST",
+  //   headers: {
+  //     Accept: "application/json",
+  //     "Accept-encoding": "gzip, deflate",
+  //     "Content-Type": "application/json",
+  //   },
+  //   body: JSON.stringify(message),
+  // });
+  await fetch("https://fcm.googleapis.com/fcm/send", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `key=${FCM_SERVER_KEY}`,
+    },
+    body: JSON.stringify({
+      to: devicePushToken,
+      priority: "normal",
+      data: {
+        experienceId: "whddbs627/UFO-Front",
+        scopeKey: "whddbs627/UFO-Front",
+        title: "📧 You've got mail",
+        message: "Hello world! 🌐",
+      },
+    }),
+  })
+    .then((resp) => console.log(JSON.stringify
+      (resp)))
+    .catch((e) => console.log(e));
+}
+
+async function registerForPushNotificationsAsync() {
+  let token;
+
+  if (Platform.OS === "android") {
+    Notifications.setNotificationChannelAsync("default", {
+      name: "default",
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: "#FF231F7C",
+    });
+  }
+
+  if (Device.isDevice) {
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== "granted") {
+      alert("Failed to get push token for push notification!");
+      return;
+    }
+    token = await Notifications.getDevicePushTokenAsync({
+      projectId: Constants.expoConfig.extra.eas.projectId,
+    });
+    console.log(token);
+  } else {
+    alert("Must use physical device for Push Notifications");
+  }
+
+  return token.data;
+}
+
+export default function Lab() {
+  const [devicePushToken, setDevicePushToken] = useState("");
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
+
+  useEffect(() => {
+    registerForPushNotificationsAsync().then((token) =>
+      setDevicePushToken(token)
+    );
+
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        setNotification(notification);
+      });
+
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        console.log(response);
+      });
+
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
 
   return (
-    <View>
-      <Text>Counter: {counter}</Text>
-      <Button title="Increment" onPress={() => dispatch(increment())} />
-      <Button title="Decrement" onPress={() => dispatch(decrement())} />
+    <View
+      style={{ flex: 1, alignItems: "center", justifyContent: "space-around" }}
+    >
+      <Text>Your device push token: {devicePushToken}</Text>
+      <View style={{ alignItems: "center", justifyContent: "center" }}>
+        <Text>
+          Title: {notification && notification.request.content.title}{" "}
+        </Text>
+        <Text>Body: {notification && notification.request.content.body}</Text>
+        <Text>
+          Data:{" "}
+          {notification && JSON.stringify(notification.request.content.data)}
+        </Text>
+      </View>
+      <Button
+        title="Press to Send Notification"
+        onPress={async () => {
+          await sendPushNotification(devicePushToken);
+        }}
+      />
     </View>
   );
-};
+}
 
-export default Lab;
+// // Lab.js
+// import React from 'react';
+// import { View, Text, Button } from 'react-native';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { increment, decrement } from '../redux/Slicers/counterSlice';
+
+// const Lab = () => {
+//   const dispatch = useDispatch();
+//   const counter = useSelector(state => state.counter.value);
+
+//   return (
+//     <View>
+//       <Text>Counter: {counter}</Text>
+//       <Button title="Increment" onPress={() => dispatch(increment())} />
+//       <Button title="Decrement" onPress={() => dispatch(decrement())} />
+//     </View>
+//   );
+// };
+
+// export default Lab;
