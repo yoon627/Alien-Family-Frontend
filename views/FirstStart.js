@@ -112,7 +112,7 @@ const FirstStart = ({ navigation }) => {
               );
               const members = resp.data.data.familyResponseDto.members;
               var myDB = {};
-              for (i = 0; i < members.length; i++) {
+              for (let i = 0; i < members.length; i++) {
                 const newkey = members[i].memberId;
                 myDB[newkey] = members[i];
               }

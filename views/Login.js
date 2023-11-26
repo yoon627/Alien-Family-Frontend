@@ -5,7 +5,9 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const saveServer = async () => {
   try {
-    await AsyncStorage.setItem("ServerAddress", "http://43.202.241.133:8080");
+    // await AsyncStorage.setItem("ServerAddress", "http://43.202.241.133:8080");
+    await AsyncStorage.setItem("ServerAddress", "http://13.209.81.119:8080");
+    console.log("set server");
   } catch (error) {
     console.log(error);
   }
