@@ -16,8 +16,8 @@ const ChatRoom = () => {
     const [myname, setMyname] = useState(null);
     const [roomNumber, setroomNumber] = useState(null);
 
-    // const myIP = '43.202.241.133';
-    const myIP = '13.209.81.119';
+    const myIP = '43.202.241.133';
+    // const myIP = '13.209.81.119';
 
     useEffect(() => {
         const getData = async () => {
