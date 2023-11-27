@@ -37,7 +37,7 @@
         "android.permission.READ_CALENDAR",
         "android.permission.WRITE_CALENDAR"
       ],
-      "package": "com.whddbs627.UFOFront"
+      "package": "com.whddbs627.UFOFront",
       "googleServicesFile": "./google-services.json"
 
     },
