@@ -14,6 +14,7 @@ export default function Album({navigation}) {
   const [imageUrl, setImageUrl] = useState('');
   // 안드로이드를 위한 모달 visible 상태값
   const [modalVisible, setModalVisible] = useState(false);
+  const [imageList, setImageList] = useState([]);
 
   const imagePickerOption = {
     mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -76,7 +77,6 @@ export default function Album({navigation}) {
     }
   }
 
-
   // 갤러리에서 사진 선택
   const onLaunchImageLibrary = async () => {
     try {
@@ -117,7 +117,7 @@ export default function Album({navigation}) {
     // 서버로 전송될 파일의 이름과 타입 지정
     const body = {
       fileName: uri.substring(uri.lastIndexOf('/') + 1),
-      prefix: "231321321",
+      prefix: "photoAlbum",
     };
 
     try {
@@ -176,14 +176,6 @@ export default function Album({navigation}) {
         onClose={() => setModalVisible(false)}
         onLaunchCamera={onLaunchCamera}
         onLaunchImageLibrary={onLaunchImageLibrary}/>
-      {/*<FastImage*/}
-      {/*    style={{ width: 200, height: 200 }}*/}
-      {/*    source={{*/}
-      {/*        uri: 'https://unsplash.it/400/400?image=1',*/}
-      {/*        priority: FastImage.priority.normal,*/}
-      {/*    }}*/}
-      {/*    resizeMode={FastImage.resizeMode.contain}*/}
-      {/*/>*/}
     </View>
   );
 }
