@@ -6,8 +6,11 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 const saveServer = async () => {
   try {
     await AsyncStorage.setItem("ServerAddress", "http://43.202.241.133:12345");
-    // await AsyncStorage.setItem("ServerAddress", "http://13.209.81.119:8080");
-    console.log("set server");
+    await AsyncStorage.setItem(
+      "FcmServerKey",
+      "AAAAUCMBJiU:APA91bEs9fOJNe6l2ILHFI88jep5rw9wqR-qTWWbBrKxj7JQnKQ8ZAp4tJbn_yXcL2aP0ydygPIcT89XB6h38vhIozsJ5J61s7w2znBL9hPQG6a18sQcUFkMitr2pkvoCmmfslVQmk-u"
+    );
+    // console.log("set server");
   } catch (error) {
     console.log(error);
   }
@@ -16,7 +19,6 @@ const saveServer = async () => {
 const getData = async () => {
   try {
     const token = await AsyncStorage.getItem("UserServerAccessToken");
-    console.log(token);
   } catch (error) {
     console.error("Error getMsg:", error);
   }

@@ -57,15 +57,15 @@ const ChatRoom = () => {
 
         setMyname(test);
         setroomNumber(chatroomId);
-        console.log("FAM ID ", familyId, "CHATROOM ID", chatroomId);
+        // console.log("FAM ID AND CHATROOM ID", familyId, chatroomId);
 
         const client = new Client({
-          brokerURL: "ws://" + `${myIP}` + ":8080/ws",
+          brokerURL: "ws://" + `${myIP}` + ":12345/ws",
           connectHeaders: {
             Authorization: token,
           },
           onConnect: () => {
-            console.log("Connected to the WebSocket server");
+            // console.log('Connected to the WebSocket server');
             client.subscribe("/sub/chat/room/" + chatroomId, (message) => {
               const receivedMessage = JSON.parse(message.body);
               setMessages((prevMessages) => [...prevMessages, receivedMessage]);
@@ -79,7 +79,7 @@ const ChatRoom = () => {
 
         const interval = setInterval(() => {
           if (!client.connected) {
-            console.log("연결시도중");
+            // console.log("연결시도중");
             client.activate();
           }
         }, 1000); // 1초마다 연결 상태 체크
@@ -99,7 +99,7 @@ const ChatRoom = () => {
   }, []);
 
   const sendMessage = () => {
-    console.log("IN SENDMESSAGE", roomNumber);
+    // console.log("IN SENDMESSAGE", roomNumber);
     if (stompClient && message) {
       const messageData = {
         type: "TALK",

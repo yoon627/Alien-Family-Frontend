@@ -13,11 +13,11 @@ import DatePicker from "@dietime/react-native-date-picker";
 const FirstRegister = ({ navigation }) => {
   const [name, setName] = useState("");
   const [birthday, setBirthDay] = useState(
-    JSON.stringify(new Date(Date.now())).slice(1, 11),
+    JSON.stringify(new Date(Date.now())).slice(1, 11)
   );
-  const [title, setTitle] = useState("");
+  const [familyRole, setFamilyRole] = useState("");
   const onChangeName = (payload) => setName(payload);
-  const onChangeTitle = (payload) => setTitle(payload);
+  const onChangeFamilyRole = (payload) => setFamilyRole(payload);
   return (
     <View style={styles.container}>
       <View
@@ -50,10 +50,10 @@ const FirstRegister = ({ navigation }) => {
           />
         </View>
         <TextInput
-          value={title}
+          value={familyRole}
           placeholder="역할을 입력해주세요"
           style={styles.input}
-          onChangeText={onChangeTitle}
+          onChangeText={onChangeFamilyRole}
         />
       </View>
       <View style={styles.footer}>
@@ -61,8 +61,9 @@ const FirstRegister = ({ navigation }) => {
           onPress={async () => {
             await AsyncStorage.setItem("MyName", name);
             const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
-            const ServerAccessToken =
-              await AsyncStorage.getItem("ServerAccessToken");
+            const ServerAccessToken = await AsyncStorage.getItem(
+              "ServerAccessToken"
+            );
             await AsyncStorage.setItem("nickname", name);
             await axios({
               method: "POST",
@@ -73,7 +74,7 @@ const FirstRegister = ({ navigation }) => {
               data: {
                 nickname: name,
                 birthdate: birthday,
-                title: title,
+                familyRole: familyRole,
               },
             })
               .then((resp) => {

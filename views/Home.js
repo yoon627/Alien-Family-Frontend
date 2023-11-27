@@ -1,22 +1,33 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  Alert,
-  Animated,
-  Image,
-  Modal,
-  Pressable,
-  StyleSheet,
+  View,
   Text,
+  StyleSheet,
+  Animated,
   TextInput,
   TouchableOpacity,
-  View,
+  Pressable,
+  Modal,
+  Alert,
+  Image,
 } from "react-native";
 import styled from "styled-components/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
 import MarqueeText from "react-native-marquee";
 import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
+import * as Notifications from "expo-notifications";
+
+const FCM_SERVER_KEY =
+  "AAAAUCMBJiU:APA91bEs9fOJNe6l2ILHFI88jep5rw9wqR-qTWWbBrKxj7JQnKQ8ZAp4tJbn_yXcL2aP0ydygPIcT89XB6h38vhIozsJ5J61s7w2znBL9hPQG6a18sQcUFkMitr2pkvoCmmfslVQmk-u";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 const Container = styled.View`
   flex: 1;
@@ -25,58 +36,15 @@ const Container = styled.View`
 `;
 
 export default function Home({ navigation }) {
-  const dispatch = useDispatch();
-  const counter = useSelector((state) => state.counter.value);
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
   const [TMI, setTMI] = useState("");
   const onChangeTMI = (payload) => setTMI(payload);
   const [modalVisible, setModalVisible] = useState(false);
   const [todayTMI, setTodayTMI] = useState("");
   const [flower, setFlower] = useState(false);
   const [plant, setPlant] = useState(null);
-  const [plantlevel, setPlantlevel] = useState(null);
-
-  useEffect(() => {
-    const getplantInfo = async () => {
-      try {
-        const plant = await AsyncStorage.getItem("plantInfo");
-        setPlantlevel(JSON.parse(plant).level);
-        console.log("plant lv", plantlevel);
-        console.log(plant);
-        setPlant(plant);
-      } catch (error) {
-        console.error("Error getMsg:", error);
-      }
-    };
-
-    getplantInfo();
-  }, []);
-
-  useEffect(() => {
-    async function fetchData() {
-      const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
-      const UserServerAccessToken = await AsyncStorage.getItem(
-        "UserServerAccessToken",
-      );
-      const familyId = await AsyncStorage.getItem("familyId");
-      await axios({
-        method: "GET",
-        url: SERVER_ADDRESS + "/familyTmi",
-
-        headers: {
-          Authorization: "Bearer: " + UserServerAccessToken,
-        },
-      }).then((resp) => {
-        const tmis = resp.data;
-        var mytmi = "";
-        for (let i = 0; i < tmis.length; i++) {
-          mytmi = mytmi + tmis[i].writer + ": " + tmis[i].content + "  ";
-        }
-        setTodayTMI(mytmi);
-      });
-    }
-
-    fetchData();
-  });
   const movingObject = () => {
     const movingValue = useRef(new Animated.Value(0)).current;
 
@@ -101,7 +69,7 @@ export default function Home({ navigation }) {
             duration: 5000,
             useNativeDriver: true,
           }),
-        ]),
+        ])
       ).start();
     }, []);
     const interpolated = movingValue.interpolate({
@@ -117,6 +85,80 @@ export default function Home({ navigation }) {
       </Animated.View>
     );
   };
+  async function fetchData() {
+    const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
+    const UserServerAccessToken = await AsyncStorage.getItem(
+      "UserServerAccessToken"
+    );
+    const familyId = await AsyncStorage.getItem("familyId");
+    await axios({
+      method: "GET",
+      url: SERVER_ADDRESS + "/familyTmi",
+
+      headers: {
+        Authorization: "Bearer: " + UserServerAccessToken,
+      },
+    })
+      .then((resp) => {
+        const tmis = resp.data;
+        var mytmi = "";
+        for (i = 0; i < tmis.length; i++) {
+          mytmi = mytmi + tmis[i].writer + ": " + tmis[i].content + "  ";
+        }
+        setTodayTMI(mytmi);
+      })
+      .catch((e) => console.log(e));
+  }
+  const getData = async () => {
+    try {
+      const plant = await AsyncStorage.getItem("plantInfo");
+      setPlant(
+        JSON.stringify({
+          level: 5,
+          point: 100,
+          name: "Sunflower",
+        })
+      );
+    } catch (error) {
+      console.error("Error getMsg:", error);
+    }
+  };
+  useEffect(() => {
+    fetchData();
+    getData();
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        setNotification(notification);
+      });
+
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {});
+
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
+
+  const [plantlevel, setPlantlevel] = useState(null);
+
+  useEffect(() => {
+    const getplantInfo = async () => {
+      try {
+        const plant = await AsyncStorage.getItem("plantInfo");
+        setPlantlevel(JSON.parse(plant).level);
+        console.log("plant lv", plantlevel);
+        console.log(plant);
+        setPlant(plant);
+      } catch (error) {
+        console.error("Error getMsg:", error);
+      }
+    };
+
+    getplantInfo();
+  }, []);
 
   const increasePlantLevel = () => {
     setPlantlevel((prevLevel) => prevLevel + 1);
@@ -211,7 +253,6 @@ export default function Home({ navigation }) {
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
       ></View>
       <View style={styles.centeredView}>{movingObject()}</View>
-
       {/*{flower ? (*/}
       {/*  <MaterialCommunityIcons name="flower" size={100} color="black" />*/}
       {/*) : (*/}
@@ -221,7 +262,6 @@ export default function Home({ navigation }) {
         {renderFlower()}
       </TouchableOpacity>
       <Text>{plant}</Text>
-
       <View
         style={{
           flex: 1,
@@ -262,10 +302,12 @@ export default function Home({ navigation }) {
                   <Pressable
                     style={[styles.button, styles.buttonClose]}
                     onPress={async () => {
-                      const SERVER_ADDRESS =
-                        await AsyncStorage.getItem("ServerAddress");
+                      const SERVER_ADDRESS = await AsyncStorage.getItem(
+                        "ServerAddress"
+                      );
                       const UserServerAccessToken = await AsyncStorage.getItem(
-                        "UserServerAccessToken",
+                        "UserServerAccessToken"
+
                       );
                       await axios({
                         method: "POST",
@@ -279,8 +321,10 @@ export default function Home({ navigation }) {
                       })
                         .then(async (resp) => {
                           //todo
-                          const writer = await AsyncStorage.getItem("nickname");
-                          setTodayTMI(writer + ": " + TMI + "  " + todayTMI);
+                          // const writer = await AsyncStorage.getItem("nickname");
+                          // setTodayTMI(writer + ": " + TMI + "  " + todayTMI);
+                          fetchData();
+
                         })
                         .catch(function (error) {
                           console.log("server error", error);
@@ -321,10 +365,12 @@ export default function Home({ navigation }) {
           <View style={{ marginHorizontal: 10, marginVertical: 20 }}>
             <TouchableOpacity
               onPress={async () => {
-                const SERVER_ADDRESS =
-                  await AsyncStorage.getItem("ServerAddress");
+                const SERVER_ADDRESS = await AsyncStorage.getItem(
+                  "ServerAddress"
+                );
                 const UserServerAccessToken = await AsyncStorage.getItem(
-                  "UserServerAccessToken",
+                  "UserServerAccessToken"
+
                 );
                 await axios({
                   method: "GET",
@@ -372,11 +418,6 @@ export default function Home({ navigation }) {
           </View>
         </View>
       </View>
-      {/* <View>
-        <Text>Counter: {counter}</Text>
-        <Button title="Increment" onPress={() => dispatch(increment())} />
-        <Button title="Decrement" onPress={() => dispatch(decrement())} />
-      </View> */}
     </Container>
   );
 }

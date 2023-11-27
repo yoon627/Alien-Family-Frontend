@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Dimensions,
-} from "react-native";
+import { View, Text, StyleSheet, ScrollView, Dimensions } from "react-native";
 import axios from "axios";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -192,8 +186,8 @@ const styles = StyleSheet.create({
   colorbtn: {
     paddingHorizontal: 20,
     borderRadius: 20,
-    borderColor:"white",
-    borderWidth:2
+    borderColor: "white",
+    borderWidth: 2,
   },
   colortxt: {
     color: "white",
