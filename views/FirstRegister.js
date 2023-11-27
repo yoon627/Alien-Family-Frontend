@@ -1,14 +1,15 @@
 import axios from "axios";
 import React, { useState } from "react";
 import {
-  View,
-  Text,
   StyleSheet,
+  Text,
   TextInput,
   TouchableOpacity,
+  View,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DatePicker from "@dietime/react-native-date-picker";
+
 const FirstRegister = ({ navigation }) => {
   const [name, setName] = useState("");
   const [birthday, setBirthDay] = useState(

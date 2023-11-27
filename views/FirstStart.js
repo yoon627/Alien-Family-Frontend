@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+
 import {
   Dimensions,
   StyleSheet,
@@ -78,6 +79,28 @@ const FirstStart = ({ navigation }) => {
       alert("초대코드가 없습니다.");
     }
     await Clipboard.setStringAsync(familyCode);
+  };
+    const getAllKeys = async () => {
+    let keys = [];
+    try {
+      keys = await AsyncStorage.getAllKeys();
+      await AsyncStorage.multiRemove(keys);
+    } catch (e) {
+      // 키를 가져오는데 에러 발생 시 처리
+    }
+    return keys;
+  };
+
+  const clearAll = async () => {
+    try {
+      const keys = await getAllKeys();
+      await AsyncStorage.multiRemove(keys);
+      console.log("삭제완료");
+    } catch (e) {
+      // 데이터 제거 중 에러 발생 시 처리
+    }
+
+    console.log("Done");
   };
   useEffect(()=>{
     registerForPushNotificationsAsync().then((token) =>
@@ -183,7 +206,6 @@ const FirstStart = ({ navigation }) => {
               );
               await AsyncStorage.setItem("plantInfo", JSON.stringify(plant));
               await AsyncStorage.setItem("devicePushToken", JSON.stringify(devicePushToken));
-
               navigation.navigate("MainDrawer");
             })
             .catch(function (error) {
@@ -230,6 +252,29 @@ const FirstStart = ({ navigation }) => {
           }}
         >
           다음페이지로
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={clearAll}
+        style={{
+          backgroundColor: "black",
+          borderRadius: 50,
+          alignItems: "center",
+          justifyContent: "center",
+          marginVertical: 20,
+        }}
+      >
+        <Text
+          style={{
+            color: "white",
+            marginHorizontal: 30,
+            marginVertical: 10,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          캐시삭제
         </Text>
       </TouchableOpacity>
     </View>

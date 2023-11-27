@@ -19,7 +19,6 @@ const saveServer = async () => {
 const getData = async () => {
   try {
     const token = await AsyncStorage.getItem("UserServerAccessToken");
-    // console.log(token);
   } catch (error) {
     console.error("Error getMsg:", error);
   }

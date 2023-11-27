@@ -30,9 +30,9 @@ const ChatRoom = () => {
           {
             method: "get",
             headers: {
-              Authorization: token,
+              Authorization: "Bearer " + token,
             },
-          }
+          },
         );
         if (!response.ok) {
           throw new Error("Response not ok");

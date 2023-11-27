@@ -9,6 +9,7 @@ import {
   Pressable,
   Modal,
   Alert,
+  Image,
 } from "react-native";
 import styled from "styled-components/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -27,29 +28,6 @@ Notifications.setNotificationHandler({
     shouldSetBadge: false,
   }),
 });
-
-// Can use this function below or use Expo's Push Notification Tool from: https://expo.dev/notifications
-// async function sendPushNotification(devicePushToken) {
-//   await fetch("https://fcm.googleapis.com/fcm/send", {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//       Authorization: `key=${FCM_SERVER_KEY}`,
-//     },
-//     body: JSON.stringify({
-//       to: devicePushToken,
-//       priority: "normal",
-//       data: {
-//         experienceId: "whddbs627/UFO-Front",
-//         scopeKey: "whddbs627/UFO-Front",
-//         title: "📧 You've got mail",
-//         message: "Hello world! 🌐",
-//       },
-//     }),
-//   })
-//     .then((resp) => resp)
-//     .catch((e) => console.log(e));
-// }
 
 const Container = styled.View`
   flex: 1;
@@ -164,6 +142,89 @@ export default function Home({ navigation }) {
     };
   }, []);
 
+  const [plantlevel, setPlantlevel] = useState(null);
+
+  useEffect(() => {
+    const getplantInfo = async () => {
+      try {
+        const plant = await AsyncStorage.getItem("plantInfo");
+        setPlantlevel(JSON.parse(plant).level);
+        console.log("plant lv", plantlevel);
+        console.log(plant);
+        setPlant(plant);
+      } catch (error) {
+        console.error("Error getMsg:", error);
+      }
+    };
+
+    getplantInfo();
+  }, []);
+
+  const increasePlantLevel = () => {
+    setPlantlevel((prevLevel) => prevLevel + 1);
+  };
+
+  const renderFlower = () => {
+    // if (flower) {
+    // 레벨에 따라 다른 이미지 렌더링
+    switch (plantlevel) {
+      case 0:
+        return (
+          <Image
+            source={require("../assets/img/level_0.png")}
+            style={{ width: 100, height: 100 }}
+            resizeMode="contain"
+          />
+        );
+
+      case 1:
+        return (
+          <Image
+            source={require("../assets/img/level_1.png")}
+            style={{ width: 100, height: 100 }}
+          />
+        );
+
+      case 2:
+        return (
+          <Image
+            source={require("../assets/img/level_2.png")}
+            style={{ width: 100, height: 100 }}
+            resizeMode="contain"
+          />
+        );
+
+      case 3:
+        return (
+          <Image
+            source={require("../assets/img/level_3.png")}
+            style={{ width: 100, height: 100 }}
+            resizeMode="contain"
+          />
+        );
+
+      case 4:
+        return (
+          <Image
+            source={require("../assets/img/level_4.png")}
+            style={{ width: 100, height: 100 }}
+            resizeMode="contain"
+          />
+        );
+
+      // 추가 레벨에 따른 이미지 케이스
+      default:
+        setPlantlevel(0);
+
+        return (
+          <MaterialCommunityIcons name="flower" size={100} color="black" />
+        );
+    }
+    // } else {
+    //   return <MaterialCommunityIcons name="sprout" size={100} color="black" />;
+    // }
+  };
+
   return (
     <Container>
       <View
@@ -192,11 +253,14 @@ export default function Home({ navigation }) {
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
       ></View>
       <View style={styles.centeredView}>{movingObject()}</View>
-      {flower ? (
-        <MaterialCommunityIcons name="flower" size={100} color="black" />
-      ) : (
-        <MaterialCommunityIcons name="sprout" size={100} color="black" />
-      )}
+      {/*{flower ? (*/}
+      {/*  <MaterialCommunityIcons name="flower" size={100} color="black" />*/}
+      {/*) : (*/}
+      {/*  <MaterialCommunityIcons name="sprout" size={100} color="black" />*/}
+      {/*)}*/}
+      <TouchableOpacity onPress={increasePlantLevel}>
+        {renderFlower()}
+      </TouchableOpacity>
       <Text>{plant}</Text>
       <View
         style={{
@@ -243,6 +307,7 @@ export default function Home({ navigation }) {
                       );
                       const UserServerAccessToken = await AsyncStorage.getItem(
                         "UserServerAccessToken"
+
                       );
                       await axios({
                         method: "POST",
@@ -259,6 +324,7 @@ export default function Home({ navigation }) {
                           // const writer = await AsyncStorage.getItem("nickname");
                           // setTodayTMI(writer + ": " + TMI + "  " + todayTMI);
                           fetchData();
+
                         })
                         .catch(function (error) {
                           console.log("server error", error);
@@ -304,6 +370,7 @@ export default function Home({ navigation }) {
                 );
                 const UserServerAccessToken = await AsyncStorage.getItem(
                   "UserServerAccessToken"
+
                 );
                 await axios({
                   method: "GET",
