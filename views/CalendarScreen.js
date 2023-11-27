@@ -22,6 +22,7 @@ export default function CalendarScreen({ navigation }) {
   const [endAt, setEndAt] = useState(new Date());
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
+
   const onStartDateChange = (event, selected) => {
     const startDate = selected || startAt;
     setShowStartDatePicker(false);
@@ -36,7 +37,7 @@ export default function CalendarScreen({ navigation }) {
 
   function formatYYYYMMDD(date) {
     const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // JavaScript months are 0-indexed
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const day = date.getDate().toString().padStart(2, "0");
 
     return `${year}-${month}-${day}`;
@@ -110,7 +111,6 @@ export default function CalendarScreen({ navigation }) {
   const CreateCalendarEvent = async () => {
     try {
       const token = await AsyncStorage.getItem("KakaoAccessToken");
-      console.log("kakao token", token);
       const response = await fetch(
         "https://kapi.kakao.com/v2/api/calendar/create/event",
         // "https://kapi.kakao.com/v2/api/calendar/calendars",
@@ -124,30 +124,53 @@ export default function CalendarScreen({ navigation }) {
           body: formBody,
         },
       );
-      console.log("Payload being sent:", formBody);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
-//       console.log(data);
+
     } catch (error) {
       console.error("There was an error create event:", error);
     }
+  };
+
+  const getMarkedDates = () => {
+    const marked = Object.keys(events).reduce((acc, date) => {
+      acc[date] = {
+        marked: events[date].length > 0, // Mark date if there are events
+        selected: date === selected,
+        selectedColor: "orange",
+        disableTouchEvent: false,
+      };
+      return acc;
+    }, {});
+
+    // Ensure the selected date is marked even if there are no events
+    if (selected && !marked[selected]) {
+      marked[selected] = {
+        selected: true,
+        selectedColor: "orange",
+        disableTouchEvent: true,
+      };
+    }
+
+    return marked;
   };
 
   return (
     <View>
       <Calendar
         onDayPress={onDayPress}
-        markedDates={{
-          [selected]: {
-            selected: true,
-            disableTouchEvent: true,
-            selectedDotColor: "orange",
-          },
-        }}
+        markedDates={getMarkedDates()}
+        // markedDates={{
+        //   [selected]: {
+        //     selected: true,
+        //     disableTouchEvent: true,
+        //     selectedDotColor: "orange",
+        //   },
+        // }}
       />
       <View>
         {selected && events[selected] ? (
