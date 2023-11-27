@@ -30,6 +30,30 @@ const FirstStart = ({ navigation }) => {
     }
     await Clipboard.setStringAsync(familyCode);
   };
+
+  const getAllKeys = async () => {
+    let keys = [];
+    try {
+      keys = await AsyncStorage.getAllKeys();
+      await AsyncStorage.multiRemove(keys);
+    } catch (e) {
+      // 키를 가져오는데 에러 발생 시 처리
+    }
+    return keys;
+  };
+
+  const clearAll = async () => {
+    try {
+      const keys = await getAllKeys();
+      await AsyncStorage.multiRemove(keys);
+      console.log("삭제완료");
+    } catch (e) {
+      // 데이터 제거 중 에러 발생 시 처리
+    }
+
+    console.log("Done");
+  };
+
   return (
     <View style={styles.container}>
       <View
@@ -111,7 +135,7 @@ const FirstStart = ({ navigation }) => {
               );
               const members = resp.data.data.familyResponseDto.members;
               const familyId = resp.data.data.familyResponseDto.familyId;
-              const chatroomId = 3; //resp.data.data.familyResponseDto.chatroomId;
+              const chatroomId = resp.data.data.familyResponseDto.chatroomId;
               const plant = resp.data.data.familyResponseDto.plant;
               console.log("plant info", plant);
               var myDB = {};
@@ -122,7 +146,7 @@ const FirstStart = ({ navigation }) => {
               await AsyncStorage.setItem("myDB", JSON.stringify(myDB));
               await AsyncStorage.setItem("familyId", JSON.stringify(familyId));
               await AsyncStorage.setItem(
-                "chatRoomId",
+                "chatroomId",
                 JSON.stringify(chatroomId),
               );
               await AsyncStorage.setItem("plantInfo", JSON.stringify(plant));
@@ -173,6 +197,28 @@ const FirstStart = ({ navigation }) => {
           }}
         >
           다음페이지로
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={clearAll}
+        style={{
+          backgroundColor: "black",
+          borderRadius: 50,
+          alignItems: "center",
+          justifyContent: "center",
+          marginVertical: 20,
+        }}
+      >
+        <Text
+          style={{
+            color: "white",
+            marginHorizontal: 30,
+            marginVertical: 10,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          캐시삭제
         </Text>
       </TouchableOpacity>
     </View>

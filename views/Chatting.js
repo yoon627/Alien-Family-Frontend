@@ -26,7 +26,7 @@ const ChatRoom = () => {
         const token = await AsyncStorage.getItem("UserServerAccessToken");
         const chatroomId = await AsyncStorage.getItem("chatroomId");
         const response = await fetch(
-          "http://" + `${myIP}` + ":8080/chat/list?id=" + chatroomId,
+          "http://" + `${myIP}` + ":12345/chat/list?id=" + chatroomId,
           {
             method: "get",
             headers: {
@@ -57,7 +57,7 @@ const ChatRoom = () => {
 
         setMyname(test);
         setroomNumber(chatroomId);
-        console.log("FAM ID AND CHATROOM ID", familyId, chatroomId);
+        console.log("FAM ID ", familyId, "CHATROOM ID", chatroomId);
 
         const client = new Client({
           brokerURL: "ws://" + `${myIP}` + ":8080/ws",

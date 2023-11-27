@@ -5,8 +5,8 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const REST_API_KEY = "53a4c1ed38ca9033bd5c086437b40943";
-// const REDIRECT_URI = "http://43.202.241.133:8080/api/login/kakao22";
-const REDIRECT_URI = "http://localhost:8081";
+const REDIRECT_URI = "http://43.202.241.133:12345/api/login/kakaoRedirect"; ///api/login/kakao22";
+// const REDIRECT_URI = "http://localhost:8081";
 
 const INJECTED_JAVASCRIPT = `window.ReactNativeWebView.postMessage('message from webView')`;
 
@@ -64,7 +64,7 @@ export default function KaKaoLogin({ navigation }) {
         originWhitelist={["*"]}
         scalesPageToFit={false}
         source={{
-          uri: `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}`,
+          uri: `https://kauth.kakao.com/oauth/authorize?response_type=code&scope=talk_calendar&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}`,
         }}
         injectedJavaScript={INJECTED_JAVASCRIPT}
         javaScriptEnabled
@@ -77,6 +77,7 @@ export default function KaKaoLogin({ navigation }) {
     </View>
   );
 }
+
 const Styles = StyleSheet.create({
   container: {
     flex: 1,
