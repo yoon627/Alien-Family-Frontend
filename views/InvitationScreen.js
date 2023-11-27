@@ -20,8 +20,8 @@ const FCM_SERVER_KEY =
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
   }),
 });
 
@@ -65,7 +65,11 @@ const InvitationScreen = ({ navigation }) => {
   const [devicePushToken, setDevicePushToken] = useState("");
   const [InvitationCode, setInvitationCode] = useState("");
   const onChangeInvitationCode = (payload) => setInvitationCode(payload);
-
+  useEffect(()=>{
+    registerForPushNotificationsAsync().then((token) =>
+    setDevicePushToken(token)
+  );
+  },[]);
   return (
     <View style={styles.container}>
       <View
@@ -88,9 +92,6 @@ const InvitationScreen = ({ navigation }) => {
       </View>
       <TouchableOpacity
         onPress={async () => {
-          registerForPushNotificationsAsync().then((token) =>
-            setDevicePushToken(token)
-          );
           const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
           const ServerAccessToken = await AsyncStorage.getItem(
             "ServerAccessToken"
@@ -108,7 +109,6 @@ const InvitationScreen = ({ navigation }) => {
             },
           })
             .then(async (resp) => {
-              // console.log(resp)
               const UserServerAccessToken =
                 resp.data.data.tokenInfo.accessToken;
               const UserServerRefreshToken =

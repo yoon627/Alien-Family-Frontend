@@ -21,8 +21,8 @@ const FCM_SERVER_KEY =
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
   }),
 });
 
@@ -79,7 +79,11 @@ const FirstStart = ({ navigation }) => {
     }
     await Clipboard.setStringAsync(familyCode);
   };
-
+  useEffect(()=>{
+    registerForPushNotificationsAsync().then((token) =>
+    setDevicePushToken(token)
+  );
+  },[]);
   return (
     <View style={styles.container}>
       <View
@@ -131,9 +135,6 @@ const FirstStart = ({ navigation }) => {
       </TouchableOpacity>
       <TouchableOpacity
         onPress={async () => {
-          registerForPushNotificationsAsync().then((token) =>
-            setDevicePushToken(token)
-          );
           const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
           const ServerAccessToken = await AsyncStorage.getItem(
             "ServerAccessToken"
