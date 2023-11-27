@@ -5,8 +5,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const REST_API_KEY = "53a4c1ed38ca9033bd5c086437b40943";
-const REDIRECT_URI = "http://43.202.241.133:12345/api/login/kakaoRedirect"; ///api/login/kakao22";
-// const REDIRECT_URI = "http://localhost:8081";
+const REDIRECT_URI = "http://43.202.241.133:12345/api/login/kakaoRedirect";
 
 const INJECTED_JAVASCRIPT = `window.ReactNativeWebView.postMessage('message from webView')`;
 
@@ -27,10 +26,10 @@ export default function KaKaoLogin({ navigation }) {
     await axios({
       method: "post",
       url: "https://kauth.kakao.com/oauth/token",
-      headers: {
-        "Access-Control-Allow-Origin": `http://localhost:8081`,
-        "Access-Control-Allow-Credentials": "true",
-      },
+//       headers: {
+//         "Access-Control-Allow-Origin": `http://localhost:8081`,
+//         "Access-Control-Allow-Credentials": "true",
+//       },
       params: {
         grant_type: "authorization_code",
         client_id: REST_API_KEY,
@@ -64,6 +63,7 @@ export default function KaKaoLogin({ navigation }) {
         originWhitelist={["*"]}
         scalesPageToFit={false}
         source={{
+//           uri: `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}`,
           uri: `https://kauth.kakao.com/oauth/authorize?response_type=code&scope=talk_calendar&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}`,
         }}
         injectedJavaScript={INJECTED_JAVASCRIPT}
@@ -71,7 +71,6 @@ export default function KaKaoLogin({ navigation }) {
         onMessage={(event) => {
           KaKaoLoginWebView(event.nativeEvent["url"]);
           const data = event.nativeEvent.url;
-          console.log("DATA", data);
         }}
       />
     </View>

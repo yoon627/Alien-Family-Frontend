@@ -9,8 +9,12 @@ const FirstRegister = ({ navigation }) => {
   const [birthday, setBirthDay] = useState(new Date());
   const [showBirthDayPicker, setShowBirthDayPicker] = useState(false);
   const [title, setTitle] = useState("");
+  const [familyRole, setFamilyRole] = useState("");
+  
   const onChangeName = (payload) => setName(payload);
   const onChangeTitle = (payload) => setTitle(payload);
+  const onChangeFamilyRole = (payload) => setFamilyRole(payload);
+
   const onBirthDayChange = (event, selected) => {
     const birthDate = selected || birthday;
     if (Platform.OS === "android") {
@@ -71,10 +75,10 @@ const FirstRegister = ({ navigation }) => {
         )}
 
         <TextInput
-          value={title}
+          value={familyRole}
           placeholder="역할을 입력해주세요"
           style={styles.input}
-          onChangeText={onChangeTitle}
+          onChangeText={onChangeFamilyRole}
         />
       </View>
       <View style={styles.footer}>
@@ -82,8 +86,9 @@ const FirstRegister = ({ navigation }) => {
           onPress={async () => {
             await AsyncStorage.setItem("MyName", name);
             const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
-            const ServerAccessToken =
-              await AsyncStorage.getItem("ServerAccessToken");
+            const ServerAccessToken = await AsyncStorage.getItem(
+              "ServerAccessToken"
+            );
             await AsyncStorage.setItem("nickname", name);
             await axios({
               method: "POST",
@@ -94,7 +99,7 @@ const FirstRegister = ({ navigation }) => {
               data: {
                 nickname: name,
                 birthdate: formatYYYYMMDD(birthday),
-                title: title,
+                familyRole: familyRole,
               },
             })
               .then((resp) => {

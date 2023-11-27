@@ -1,85 +1,129 @@
-import React, { useEffect, useState } from "react";
-import { Button, Modal, ScrollView, Text, View } from "react-native";
-import * as Calendar from "expo-calendar";
-import { Checkbox } from "react-native-paper";
+
+import { useState, useEffect, useRef } from "react";
+import { Text, View, Button, Platform } from "react-native";
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
+
+const FCM_SERVER_KEY =
+  "AAAAUCMBJiU:APA91bEs9fOJNe6l2ILHFI88jep5rw9wqR-qTWWbBrKxj7JQnKQ8ZAp4tJbn_yXcL2aP0ydygPIcT89XB6h38vhIozsJ5J61s7w2znBL9hPQG6a18sQcUFkMitr2pkvoCmmfslVQmk-u";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
+
+// Can use this function below or use Expo's Push Notification Tool from: https://expo.dev/notifications
+async function sendPushNotification(devicePushToken) {
+  await fetch("https://fcm.googleapis.com/fcm/send", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `key=${FCM_SERVER_KEY}`,
+    },
+    body: JSON.stringify({
+      to: devicePushToken,
+      priority: "normal",
+      data: {
+        experienceId: "whddbs627/UFO-Front",
+        scopeKey: "whddbs627/UFO-Front",
+        title: "📧 You've got mail",
+        message: "Hello world! 🌐",
+      },
+    }),
+  })
+    .then((resp) => resp)
+    .catch((e) => console.log(e));
+}
+
+async function registerForPushNotificationsAsync() {
+  let token;
+
+  if (Platform.OS === "android") {
+    Notifications.setNotificationChannelAsync("default", {
+      name: "default",
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: "#FF231F7C",
+    });
+  }
+
+  if (Device.isDevice) {
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== "granted") {
+      alert("Failed to get push token for push notification!");
+      return;
+    }
+    token = await Notifications.getDevicePushTokenAsync({
+      projectId: Constants.expoConfig.extra.eas.projectId,
+    });
+    // console.log(token);
+  } else {
+    alert("Must use physical device for Push Notifications");
+  }
+
+  return token.data;
+}
 
 export default function Lab() {
-  const [events, setEvents] = useState([]);
-  const [calendars1, setCalendars] = useState([]);
-  const [selectedEvents, setSelectedEvents] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [devicePushToken, setDevicePushToken] = useState("");
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
 
   useEffect(() => {
-    (async () => {
-      const { status } = await Calendar.requestCalendarPermissionsAsync();
-      if (status === "granted") {
-        const calendars = await Calendar.getCalendarsAsync(
-          Calendar.EntityTypes.EVENT,
-        );
-        setCalendars(calendars);
+    registerForPushNotificationsAsync().then((token) =>
+      setDevicePushToken(token)
+    );
 
-        if (calendars.length > 0) {
-          const startDate = new Date();
-          const endDate = new Date();
-          endDate.setMonth(startDate.getMonth() + 13); // 다음 달까지의 이벤트
-          const calendarId = calendars[4].id; // 첫 번째 캘린더의 ID 사용
-          const allEvents = await Calendar.getEventsAsync(
-            [calendarId],
-            startDate,
-            endDate,
-          );
-          setEvents(allEvents.map((event) => ({ ...event, selected: false })));
-        }
-      }
-    })();
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        setNotification(notification);
+      });
+
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        // console.log(response);
+      });
+
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
   }, []);
 
-  const toggleEventSelection = (id) => {
-    const updatedEvents = events.map((event) => {
-      if (event.id === id) {
-        return { ...event, selected: !event.selected };
-      }
-      return event;
-    });
-    setEvents(updatedEvents);
-  };
-
-  const handleConfirmSelection = () => {
-    setSelectedEvents(events.filter((event) => event.selected));
-    setModalVisible(false);
-  };
-
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      {calendars1.map((calendar) => (
-        <Text key={calendar.id}>{calendar.title}</Text>
-      ))}
-
-      <Button title="이벤트 선택" onPress={() => setModalVisible(true)} />
-      <Modal
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <ScrollView>
-          {events.map((event) => (
-            <View
-              key={event.id}
-              style={{ flexDirection: "row", alignItems: "center", margin: 10 }}
-            >
-              <Checkbox
-                status={event.selected ? "checked" : "unchecked"}
-                onPress={() => toggleEventSelection(event.id)}
-              />
-              <Text>{event.title}</Text>
-            </View>
-          ))}
-          <Button title="확인" onPress={handleConfirmSelection} />
-        </ScrollView>
-      </Modal>
-      <Text>선택된 이벤트:</Text>
-      {selectedEvents.map((event) => (
-        <Text key={event.id}>{event.title}</Text>
-      ))}
+    <View
+      style={{ flex: 1, alignItems: "center", justifyContent: "space-around" }}
+    >
+      <Text>Your device push token: {devicePushToken}</Text>
+      <View style={{ alignItems: "center", justifyContent: "center" }}>
+        <Text>
+          Title: {notification && notification.request.content.title}{" "}
+        </Text>
+        <Text>Body: {notification && notification.request.content.body}</Text>
+        <Text>
+          Data:{" "}
+          {notification && JSON.stringify(notification.request.content.data)}
+        </Text>
+      </View>
+      <Button
+        title="Press to Send Notification"
+        onPress={async () => {
+          await sendPushNotification(devicePushToken);
+        }}
+      />
     </View>
   );
 }

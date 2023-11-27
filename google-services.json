@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "344184661541",
+    "project_id": "ufo-back",
+    "storage_bucket": "ufo-back.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:344184661541:android:fed8c757b9c52a3ff081cc",
+        "android_client_info": {
+          "package_name": "com.whddbs627.UFOFront"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmSu_Li6eau9LYsQ6YoowGQIxs_xozeYI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
