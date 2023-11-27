@@ -42,9 +42,8 @@ const InvitationScreen = ({ navigation }) => {
             await AsyncStorage.getItem("ServerAccessToken");
           await AsyncStorage.setItem("familyCode", InvitationCode);
           await axios({
-            method: "GET",
-            url:
-              SERVER_ADDRESS + "/api/register/currentFamily/" + InvitationCode,
+            method: "POST",
+            url: SERVER_ADDRESS + "/api/register/currentFamily/",
             headers: {
               Authorization: "Bearer: " + ServerAccessToken,
             },
@@ -70,7 +69,6 @@ const InvitationScreen = ({ navigation }) => {
               var myDB = {};
               for (let i = 0; i < members.length; i++) {
                 const newkey = members[i].memberId;
-                console.log("MEMBER ID ", members[i].memberId);
                 myDB[newkey] = members[i];
               }
               await AsyncStorage.setItem("myDB", JSON.stringify(myDB));

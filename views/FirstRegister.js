@@ -1,23 +1,32 @@
 import axios from "axios";
-import React, { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import React, {useState} from "react";
+import {Button, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View,} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import DatePicker from "@dietime/react-native-date-picker";
-
+import DateTimePicker from "@react-native-community/datetimepicker"; //JSON.stringify(new Date(Date.now())).slice(1, 11),
+//JSON.stringify(new Date(Date.now())).slice(1, 11),
 const FirstRegister = ({ navigation }) => {
   const [name, setName] = useState("");
-  const [birthday, setBirthDay] = useState(
-    JSON.stringify(new Date(Date.now())).slice(1, 11),
-  );
+  const [birthday, setBirthDay] = useState(new Date());
+  const [showBirthDayPicker, setShowBirthDayPicker] = useState(false);
   const [title, setTitle] = useState("");
   const onChangeName = (payload) => setName(payload);
   const onChangeTitle = (payload) => setTitle(payload);
+  const onBirthDayChange = (event, selected) => {
+    const birthDate = selected || birthday;
+    if (Platform.OS === "android") {
+      setShowBirthDayPicker(false);
+    }
+    setBirthDay(birthDate); // Ensure currentDate is a Date object
+  };
+
+  function formatYYYYMMDD(date) {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  }
+
   return (
     <View style={styles.container}>
       <View
@@ -37,18 +46,30 @@ const FirstRegister = ({ navigation }) => {
           style={styles.input}
           onChangeText={onChangeName}
         />
-        <Text style={{ color: "white", fontSize: 25 }}>
-          생년월일을 입력해주세요
-        </Text>
-        <View>
-          <DatePicker
-            textColor="white"
-            value={birthday}
-            onChange={(value) => {
-              setBirthDay(JSON.stringify(value).slice(1, 11));
-            }}
-          />
-        </View>
+        <TouchableOpacity onPress={() => setShowBirthDayPicker(true)}>
+          <Text style={{ color: "white", fontSize: 20 }}>
+            생일 쓰셈 {formatYYYYMMDD(birthday)} ㅋㅋ
+          </Text>
+        </TouchableOpacity>
+
+        {showBirthDayPicker && (
+          <View>
+            <DateTimePicker
+              value={birthday}
+              mode="date"
+              display="spinner"
+              textColor="white"
+              onChange={onBirthDayChange}
+            />
+            {Platform.OS === "ios" && (
+              <Button
+                title="닫기"
+                onPress={() => setShowBirthDayPicker(false)}
+              />
+            )}
+          </View>
+        )}
+
         <TextInput
           value={title}
           placeholder="역할을 입력해주세요"
@@ -72,7 +93,7 @@ const FirstRegister = ({ navigation }) => {
               },
               data: {
                 nickname: name,
-                birthdate: birthday,
+                birthdate: formatYYYYMMDD(birthday),
                 title: title,
               },
             })

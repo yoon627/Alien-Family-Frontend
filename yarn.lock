@@ -1214,11 +1214,6 @@
   resolved "https://registry.yarnpkg.com/@ctrl/tinycolor/-/tinycolor-3.6.1.tgz#b6c75a56a1947cc916ea058772d666a2c8932f31"
   integrity sha512-SITSV6aIXsuVNV3f3O0f2n/cgyEDWoSqtZMYiAmcsYHydcKrOz3gUxB/iXd/Qf08+IZX4KpgNbvUdMBmWz+kcA==
 
-"@dietime/react-native-date-picker@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@dietime/react-native-date-picker/-/react-native-date-picker-1.2.1.tgz#79bcc66f009b81051cb0dd2009dac6259929efb0"
-  integrity sha512-ezrBP7qxnYyKsvtt1SiTLZVjwf8fN1pscSK1qPGB1saYA7Mcof6XpHNlwao8uXhz7BRmzo6sYCQLPyx5VK60Kg==
-
 "@egjs/hammerjs@^2.0.17":
   version "2.0.17"
   resolved "https://registry.yarnpkg.com/@egjs/hammerjs/-/hammerjs-2.0.17.tgz#5dc02af75a6a06e4c2db0202cae38c9263895124"
@@ -2164,9 +2159,9 @@
   integrity sha512-ga8y9v9uyeiLdpKddhxYQkxNDrfvuPrlFb0N1qnZZByvcElJaXthF1UhvCh9TLWJBEHeNtdnbysW7Y6Uq8CVng==
 
 "@types/react@*":
-  version "18.2.38"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.38.tgz#3605ca41d3daff2c434e0b98d79a2469d4c2dd52"
-  integrity sha512-cBBXHzuPtQK6wNthuVMV6IjHAFkdl/FOPFIlkd81/Cd1+IqkHu/A+w4g43kaQQoYHik/ruaQBDL72HyCy1vuMw==
+  version "18.2.39"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.39.tgz#744bee99e053ad61fe74eb8b897f3ab5b19a7e25"
+  integrity sha512-Oiw+ppED6IremMInLV4HXGbfbG6GyziY3kqAwJYOR0PNbkYDmLWQA3a95EhdSmamsvbkJN96ZNN+YD+fGjzSBA==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -2775,9 +2770,9 @@ camelize@^1.0.0:
   integrity sha512-dU+Tx2fsypxTgtLoE36npi3UqcjSSMNYfkqgmoEhtZrraP5VWq0K7FkWVTYa8eMPtnU/G2txVsfdCJTn9uzpuQ==
 
 caniuse-lite@^1.0.30001541:
-  version "1.0.30001564"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001564.tgz#eaa8bbc58c0cbccdcb7b41186df39dd2ba591889"
-  integrity sha512-DqAOf+rhof+6GVx1y+xzbFPeOumfQnhYzVnZD6LAXijR77yPtm9mfOcqOnT3mpnJiZVT+kwLAFnRlZcIz+c6bg==
+  version "1.0.30001565"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001565.tgz#a528b253c8a2d95d2b415e11d8b9942acc100c4f"
+  integrity sha512-xrE//a3O7TP0vaJ8ikzkD2c2NgcVUvsEe2IvFTntV4Yd1Z9FVzh+gW+enX96L0psrbaFMcVcH2l90xNuGDWc8w==
 
 chalk@^2.0.1, chalk@^2.4.2:
   version "2.4.2"
@@ -3354,9 +3349,9 @@ ee-first@1.1.1:
   integrity sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==
 
 electron-to-chromium@^1.4.535:
-  version "1.4.594"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.594.tgz#f69f207fba80735a44a988df42f3f439115d0515"
-  integrity sha512-xT1HVAu5xFn7bDfkjGQi9dNpMqGchUkebwf1GL7cZN32NSwwlHRPMSDJ1KN6HkS0bWUtndbSQZqvpQftKG2uFQ==
+  version "1.4.595"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.595.tgz#fa33309eb9aabb7426915f8e166ec60f664e9ad4"
+  integrity sha512-+ozvXuamBhDOKvMNUQvecxfbyICmIAwS4GpLmR0bsiSBlGnLaOcs2Cj7J8XSbW+YEaN3Xl3ffgpm+srTUWFwFQ==
 
 emoji-regex@^8.0.0:
   version "8.0.0"
@@ -3525,6 +3520,11 @@ expo-build-properties@^0.8.3:
   dependencies:
     ajv "^8.11.0"
     semver "^7.5.3"
+
+expo-calendar@^11.3.2:
+  version "11.3.2"
+  resolved "https://registry.yarnpkg.com/expo-calendar/-/expo-calendar-11.3.2.tgz#3062fde239586aecbffee836ba96e622b4769526"
+  integrity sha512-6J+zWT5sX+Dd0puS1nUpqErtCyz20h9OB3AtIDIeZi3R+F07dna7ZYgDyBvSVYt1wHj6B5tTBF3TCXshoArv5Q==
 
 expo-clipboard@~4.3.1:
   version "4.3.1"
@@ -5878,11 +5878,6 @@ react-native-communications@2.2.1:
   resolved "https://registry.yarnpkg.com/react-native-communications/-/react-native-communications-2.2.1.tgz#7883b56b20a002eeb790c113f8616ea8692ca795"
   integrity sha512-5+C0X9mopI0+qxyQHzOPEi5v5rxNBQjxydPPiKMQSlX1RBIcJ8uTcqUPssQ9Mo8p6c1IKIWJUSqCj4jAmD0qVQ==
 
-react-native-date-picker@^4.3.3:
-  version "4.3.3"
-  resolved "https://registry.yarnpkg.com/react-native-date-picker/-/react-native-date-picker-4.3.3.tgz#5ca4ca10283538ab9307b7f2dc6b83233ded122b"
-  integrity sha512-Lq2hGZkwoyCMsxi/uw4KVGu4/xdPZ8AHEx2SU5KY2mipHFpX+r4n5/gXa+rpCRkARJaTFYPZ7S59bT9KMh7fGw==
-
 react-native-gesture-handler@~2.12.0:
   version "2.12.1"
   resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-2.12.1.tgz#f11a99fb95169810c6886fad5efa01a17fd81660"
@@ -5928,9 +5923,9 @@ react-native-marquee@^0.5.0:
     "@react-navigation/native-stack" "^6.9.11"
 
 react-native-paper@^5.11.1:
-  version "5.11.2"
-  resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-5.11.2.tgz#447b7cae8eaf578e6133ca8f56131b78f4c3cfa1"
-  integrity sha512-UbMkoGtOzU2T54b1uUnqc6YA0kz5mCUxoA4VLcePHDAi/Nvk54gm/TkZnP6nImUMjpcSBI4Fj0GI1cx9Cp169w==
+  version "5.11.3"
+  resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-5.11.3.tgz#09efd215ed3f6607dec7c76897358a754c2484b7"
+  integrity sha512-550W/B+2LdFt0wBucQQI7GKZJ4XD0DTJz1BxalMv87l8WKKdRrdxI8t1lTEbyFb4gsTHA/sqMVXpQXITh0yplw==
   dependencies:
     "@callstack/react-theme-provider" "^3.0.9"
     color "^3.1.2"

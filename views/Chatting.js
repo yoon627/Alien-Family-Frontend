@@ -57,7 +57,7 @@ const ChatRoom = () => {
 
         setMyname(test);
         setroomNumber(chatroomId);
-        console.log("FAM ID ", familyId, "CHATROOM ID", chatroomId);
+        console.log("my FAM ID ", familyId, "my CHATROOM ID", chatroomId);
 
         const client = new Client({
           brokerURL: "ws://" + `${myIP}` + ":8080/ws",
@@ -99,7 +99,7 @@ const ChatRoom = () => {
   }, []);
 
   const sendMessage = () => {
-    console.log("IN SENDMESSAGE", roomNumber);
+    console.log("SENDMESSAGE in room no", roomNumber);
     if (stompClient && message) {
       const messageData = {
         type: "TALK",

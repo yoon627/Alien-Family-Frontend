@@ -46,12 +46,10 @@ const FirstStart = ({ navigation }) => {
     try {
       const keys = await getAllKeys();
       await AsyncStorage.multiRemove(keys);
-      console.log("삭제완료");
+      console.log("캐시 삭제완료");
     } catch (e) {
-      // 데이터 제거 중 에러 발생 시 처리
+      console.log("캐시 삭제에러");
     }
-
-    console.log("Done");
   };
 
   return (
@@ -135,9 +133,8 @@ const FirstStart = ({ navigation }) => {
               );
               const members = resp.data.data.familyResponseDto.members;
               const familyId = resp.data.data.familyResponseDto.familyId;
-              const chatroomId = resp.data.data.familyResponseDto.chatroomId;
+              const chatroomId = resp.data.data.familyResponseDto.chatRoomId;
               const plant = resp.data.data.familyResponseDto.plant;
-              console.log("plant info", plant);
               var myDB = {};
               for (let i = 0; i < members.length; i++) {
                 const newkey = members[i].memberId;
