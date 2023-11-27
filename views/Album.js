@@ -1,5 +1,5 @@
-import React, {useState} from "react";
-import {View, Text, StyleSheet, Pressable, Platform, ActionSheetIOS} from "react-native";
+import React, {useEffect, useState} from "react";
+import {View, Text, StyleSheet, Pressable, Platform, ActionSheetIOS, FlatList, Image} from "react-native";
 import {ImagePlus} from "lucide-react-native";
 import UploadModeModal from "../components/UploadModeModal";
 import * as ImagePicker from "expo-image-picker";
@@ -14,7 +14,25 @@ export default function Album({navigation}) {
   const [imageUrl, setImageUrl] = useState('');
   // 안드로이드를 위한 모달 visible 상태값
   const [modalVisible, setModalVisible] = useState(false);
-  const [imageList, setImageList] = useState([]);
+  // 화면에 보여줄 이미지 목록 (s3에서 불러온 이미지들)
+  const [imageData, setImageData] = useState([]);
+
+  useEffect(() => {
+    // 서버에서 s3 이미지 url 받아옴
+    const fetchData = async () => {
+      try {
+        const response = await fetch("서버에서 이미지 url을 제공하는 주소");
+        const data = await response.json();
+        // 받아온 이미지 데이터 상태에 저장
+        setImageData(data);
+      } catch (error) {
+        console.error("이미지 url을 가져오는 중에 오류가 발생했습니다.", error);
+      }
+    };
+
+    // 데이터 불러오기
+    fetchData();
+  }, []);
 
   const imagePickerOption = {
     mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -118,6 +136,7 @@ export default function Album({navigation}) {
     const body = {
       fileName: uri.substring(uri.lastIndexOf('/') + 1),
       prefix: "photoAlbum",
+      photoTags: "DAD"
     };
 
     try {
@@ -165,6 +184,20 @@ export default function Album({navigation}) {
   return (
     <View style={styles.container}>
       <Text>Album</Text>
+      <FlatList
+        data={imageData}
+        keyExtractor={(item) => item.photoId.toString()}
+        renderItem={({item}) => (
+          <View>
+            <Image
+              source={{uri: item.photoUrl}}
+              style={styles.image}
+              resizeMode="cover"
+            />
+            <Text>{item.photoTags.join(', ')}</Text>
+          </View>
+        )}
+      />
       <Pressable onPress={modalOpen}>
         <ImagePlus
           color="navy"
@@ -185,5 +218,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  image: {
+    width: 200,
+    height: 200,
+    margin: 8,
   },
 });
