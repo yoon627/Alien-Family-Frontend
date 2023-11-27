@@ -5,7 +5,7 @@ import UploadModeModal from "../components/UploadModeModal";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function Album({navigation}) {
+export default function AlbumScreen({navigation}) {
   // 카메라 권한 요청을 위한 훅
   const [cameraStatus, cameraRequestPermission] = ImagePicker.useCameraPermissions();
   // 앨범 권한 요청을 위한 훅
