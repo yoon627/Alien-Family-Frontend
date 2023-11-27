@@ -108,6 +108,7 @@ const InvitationScreen = ({ navigation }) => {
             },
           })
             .then(async (resp) => {
+              // console.log(resp)
               const UserServerAccessToken =
                 resp.data.data.tokenInfo.accessToken;
               const UserServerRefreshToken =
@@ -123,8 +124,8 @@ const InvitationScreen = ({ navigation }) => {
               await AsyncStorage.setItem("devicePushToken", devicePushToken);
               const members = resp.data.data.familyResponseDto.members;
               const familyId = resp.data.data.familyResponseDto.familyId;
-              const chatroomId = resp.data.data.familyResponseDto.chatroomId;
-              const plant = resp.data.data.familyResponseDto.Plant;
+              const chatroomId = resp.data.data.familyResponseDto.chatRoomId;
+              const plant = resp.data.data.familyResponseDto.plant;
 
               var myDB = {};
               for (let i = 0; i < members.length; i++) {

@@ -29,27 +29,27 @@ Notifications.setNotificationHandler({
 });
 
 // Can use this function below or use Expo's Push Notification Tool from: https://expo.dev/notifications
-async function sendPushNotification(devicePushToken) {
-  await fetch("https://fcm.googleapis.com/fcm/send", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `key=${FCM_SERVER_KEY}`,
-    },
-    body: JSON.stringify({
-      to: devicePushToken,
-      priority: "normal",
-      data: {
-        experienceId: "whddbs627/UFO-Front",
-        scopeKey: "whddbs627/UFO-Front",
-        title: "📧 You've got mail",
-        message: "Hello world! 🌐",
-      },
-    }),
-  })
-    .then((resp) => resp)
-    .catch((e) => console.log(e));
-}
+// async function sendPushNotification(devicePushToken) {
+//   await fetch("https://fcm.googleapis.com/fcm/send", {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//       Authorization: `key=${FCM_SERVER_KEY}`,
+//     },
+//     body: JSON.stringify({
+//       to: devicePushToken,
+//       priority: "normal",
+//       data: {
+//         experienceId: "whddbs627/UFO-Front",
+//         scopeKey: "whddbs627/UFO-Front",
+//         title: "📧 You've got mail",
+//         message: "Hello world! 🌐",
+//       },
+//     }),
+//   })
+//     .then((resp) => resp)
+//     .catch((e) => console.log(e));
+// }
 
 const Container = styled.View`
   flex: 1;
@@ -148,6 +148,20 @@ export default function Home({ navigation }) {
   useEffect(() => {
     fetchData();
     getData();
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        setNotification(notification);
+      });
+
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {});
+
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
   }, []);
 
   return (
@@ -242,8 +256,9 @@ export default function Home({ navigation }) {
                       })
                         .then(async (resp) => {
                           //todo
-                          const writer = await AsyncStorage.getItem("nickname");
-                          setTodayTMI(writer + ": " + TMI + "  " + todayTMI);
+                          // const writer = await AsyncStorage.getItem("nickname");
+                          // setTodayTMI(writer + ": " + TMI + "  " + todayTMI);
+                          fetchData();
                         })
                         .catch(function (error) {
                           console.log("server error", error);
