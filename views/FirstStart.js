@@ -26,29 +26,6 @@ Notifications.setNotificationHandler({
   }),
 });
 
-// Can use this function below or use Expo's Push Notification Tool from: https://expo.dev/notifications
-async function sendPushNotification(devicePushToken) {
-  await fetch("https://fcm.googleapis.com/fcm/send", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `key=${FCM_SERVER_KEY}`,
-    },
-    body: JSON.stringify({
-      to: devicePushToken,
-      priority: "normal",
-      data: {
-        experienceId: "whddbs627/UFO-Front",
-        scopeKey: "whddbs627/UFO-Front",
-        title: "📧 You've got mail",
-        message: "Hello world! 🌐",
-      },
-    }),
-  })
-    .then((resp) => console.log(resp))
-    .catch((e) => console.log(e));
-}
-
 async function registerForPushNotificationsAsync() {
   let token;
 
@@ -76,7 +53,6 @@ async function registerForPushNotificationsAsync() {
     token = await Notifications.getDevicePushTokenAsync({
       projectId: Constants.expoConfig.extra.eas.projectId,
     });
-    console.log(token.data);
   } else {
     alert("Must use physical device for Push Notifications");
   }
@@ -103,12 +79,6 @@ const FirstStart = ({ navigation }) => {
     }
     await Clipboard.setStringAsync(familyCode);
   };
-
-  useEffect(() => {
-    registerForPushNotificationsAsync().then((token) =>
-      setDevicePushToken(token)
-    );
-  });
 
   return (
     <View style={styles.container}>
@@ -161,6 +131,9 @@ const FirstStart = ({ navigation }) => {
       </TouchableOpacity>
       <TouchableOpacity
         onPress={async () => {
+          registerForPushNotificationsAsync().then((token) =>
+            setDevicePushToken(token)
+          );
           const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
           const ServerAccessToken = await AsyncStorage.getItem(
             "ServerAccessToken"
@@ -179,7 +152,6 @@ const FirstStart = ({ navigation }) => {
             },
           })
             .then(async (resp) => {
-              console.log(resp.data.data.familyResponseDto);
               const UserServerAccessToken =
                 resp.data.data.tokenInfo.accessToken;
               const UserServerRefreshToken =
@@ -209,6 +181,7 @@ const FirstStart = ({ navigation }) => {
                 JSON.stringify(chatroomId)
               );
               await AsyncStorage.setItem("plantInfo", JSON.stringify(plant));
+              await AsyncStorage.setItem("devicePushToken", JSON.stringify(devicePushToken));
 
               navigation.navigate("MainDrawer");
             })

@@ -10,8 +10,8 @@ const FCM_SERVER_KEY =
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
   }),
 });
 
@@ -34,7 +34,7 @@ async function sendPushNotification(devicePushToken) {
       },
     }),
   })
-    .then((resp) => console.log(resp))
+    .then((resp) => resp)
     .catch((e) => console.log(e));
 }
 
@@ -65,7 +65,7 @@ async function registerForPushNotificationsAsync() {
     token = await Notifications.getDevicePushTokenAsync({
       projectId: Constants.expoConfig.extra.eas.projectId,
     });
-    console.log(token);
+    // console.log(token);
   } else {
     alert("Must use physical device for Push Notifications");
   }
@@ -91,7 +91,7 @@ export default function Lab() {
 
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log(response);
+        // console.log(response);
       });
 
     return () => {

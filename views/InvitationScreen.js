@@ -52,26 +52,20 @@ async function registerForPushNotificationsAsync() {
     token = await Notifications.getDevicePushTokenAsync({
       projectId: Constants.expoConfig.extra.eas.projectId,
     });
-    console.log(token.data);
   } else {
     alert("Must use physical device for Push Notifications");
   }
 
   return token.data;
-} 
+}
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");   
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 const InvitationScreen = ({ navigation }) => {
   const [devicePushToken, setDevicePushToken] = useState("");
   const [InvitationCode, setInvitationCode] = useState("");
   const onChangeInvitationCode = (payload) => setInvitationCode(payload);
 
-  useEffect(()=>{
-    registerForPushNotificationsAsync().then((token) =>
-    setDevicePushToken(token)
-  );
-  })
   return (
     <View style={styles.container}>
       <View
@@ -94,6 +88,9 @@ const InvitationScreen = ({ navigation }) => {
       </View>
       <TouchableOpacity
         onPress={async () => {
+          registerForPushNotificationsAsync().then((token) =>
+            setDevicePushToken(token)
+          );
           const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
           const ServerAccessToken = await AsyncStorage.getItem(
             "ServerAccessToken"
@@ -101,15 +98,14 @@ const InvitationScreen = ({ navigation }) => {
           await AsyncStorage.setItem("familyCode", InvitationCode);
           await axios({
             method: "POST",
-            url:
-              SERVER_ADDRESS + "/api/register/currentFamily",
+            url: SERVER_ADDRESS + "/api/register/currentFamily",
             headers: {
               Authorization: "Bearer: " + ServerAccessToken,
             },
             data: {
-              code:InvitationCode,
-              firebaseToken:devicePushToken,
-            }
+              code: InvitationCode,
+              firebaseToken: devicePushToken,
+            },
           })
             .then(async (resp) => {
               const UserServerAccessToken =
@@ -124,7 +120,7 @@ const InvitationScreen = ({ navigation }) => {
                 "UserServerRefreshToken",
                 UserServerRefreshToken
               );
-              await AsyncStorage.setItem("firebasetoken",devicePushToken);
+              await AsyncStorage.setItem("devicePushToken", devicePushToken);
               const members = resp.data.data.familyResponseDto.members;
               const familyId = resp.data.data.familyResponseDto.familyId;
               const chatroomId = resp.data.data.familyResponseDto.chatroomId;
@@ -133,7 +129,6 @@ const InvitationScreen = ({ navigation }) => {
               var myDB = {};
               for (let i = 0; i < members.length; i++) {
                 const newkey = members[i].memberId;
-                console.log("MEMBER ID ", members[i].memberId);
                 myDB[newkey] = members[i];
               }
               await AsyncStorage.setItem("myDB", JSON.stringify(myDB));
@@ -143,7 +138,6 @@ const InvitationScreen = ({ navigation }) => {
                 JSON.stringify(chatroomId)
               );
               await AsyncStorage.setItem("plantInfo", JSON.stringify(plant));
-
               navigation.navigate("MainDrawer");
             })
             .catch(function (error) {

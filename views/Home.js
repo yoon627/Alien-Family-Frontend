@@ -22,47 +22,6 @@ const Container = styled.View`
   align-items: center;
 `;
 
-const movingObject = () => {
-  const movingValue = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(movingValue, {
-          toValue: 100,
-          duration: 5000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(movingValue, {
-          duration: 5000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(movingValue, {
-          toValue: -100,
-          duration: 5000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(movingValue, {
-          duration: 5000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-  }, []);
-  const interpolated = movingValue.interpolate({
-    inputRange: [-1, 1],
-    outputRange: [-1, 1],
-  });
-
-  return (
-    <Animated.View style={{ transform: [{ translateX: interpolated }] }}>
-      <TouchableOpacity onPress={() => navigation.navigate("Mini Games")}>
-        <FontAwesome5 name="ghost" size={75} color="black" />
-      </TouchableOpacity>
-    </Animated.View>
-  );
-};
-
 export default function Home({ navigation }) {
   const [TMI, setTMI] = useState("");
   const onChangeTMI = (payload) => setTMI(payload);
@@ -70,7 +29,46 @@ export default function Home({ navigation }) {
   const [todayTMI, setTodayTMI] = useState("");
   const [flower, setFlower] = useState(false);
   const [plant, setPlant] = useState(null);
+  const movingObject = () => {
+    const movingValue = useRef(new Animated.Value(0)).current;
 
+    useEffect(() => {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(movingValue, {
+            toValue: 100,
+            duration: 5000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(movingValue, {
+            duration: 5000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(movingValue, {
+            toValue: -100,
+            duration: 5000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(movingValue, {
+            duration: 5000,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+    }, []);
+    const interpolated = movingValue.interpolate({
+      inputRange: [-1, 1],
+      outputRange: [-1, 1],
+    });
+
+    return (
+      <Animated.View style={{ transform: [{ translateX: interpolated }] }}>
+        <TouchableOpacity onPress={() => navigation.navigate("Mini Games")}>
+          <FontAwesome5 name="ghost" size={75} color="black" />
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  };
   async function fetchData() {
     const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
     const UserServerAccessToken = await AsyncStorage.getItem(
@@ -82,7 +80,7 @@ export default function Home({ navigation }) {
       url: SERVER_ADDRESS + "/familyTmi",
 
       headers: {
-        Authorization: "Bearer: " + UserServerAccessToken,  
+        Authorization: "Bearer: " + UserServerAccessToken,
       },
     })
       .then((resp) => {
