@@ -15,6 +15,41 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
 import MarqueeText from "react-native-marquee";
 import axios from "axios";
+import * as Notifications from "expo-notifications";
+
+const FCM_SERVER_KEY =
+  "AAAAUCMBJiU:APA91bEs9fOJNe6l2ILHFI88jep5rw9wqR-qTWWbBrKxj7JQnKQ8ZAp4tJbn_yXcL2aP0ydygPIcT89XB6h38vhIozsJ5J61s7w2znBL9hPQG6a18sQcUFkMitr2pkvoCmmfslVQmk-u";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
+
+// Can use this function below or use Expo's Push Notification Tool from: https://expo.dev/notifications
+async function sendPushNotification(devicePushToken) {
+  await fetch("https://fcm.googleapis.com/fcm/send", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `key=${FCM_SERVER_KEY}`,
+    },
+    body: JSON.stringify({
+      to: devicePushToken,
+      priority: "normal",
+      data: {
+        experienceId: "whddbs627/UFO-Front",
+        scopeKey: "whddbs627/UFO-Front",
+        title: "📧 You've got mail",
+        message: "Hello world! 🌐",
+      },
+    }),
+  })
+    .then((resp) => resp)
+    .catch((e) => console.log(e));
+}
 
 const Container = styled.View`
   flex: 1;
@@ -23,6 +58,9 @@ const Container = styled.View`
 `;
 
 export default function Home({ navigation }) {
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
   const [TMI, setTMI] = useState("");
   const onChangeTMI = (payload) => setTMI(payload);
   const [modalVisible, setModalVisible] = useState(false);
