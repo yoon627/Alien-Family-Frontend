@@ -6,7 +6,7 @@ const Randomkkkk = () => {
   const [stompClient, setStompClient] = useState(null);
 
   useEffect(() => {
-    const stomp = Stomp.client("ws://192.249.20.103:8080/ws");
+    const stomp = Stomp.client("ws://192.249.20.103:12345/ws");
     stomp.connect({}, () => setStompClient(stomp));
 
     return () => {

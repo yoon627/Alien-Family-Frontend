@@ -1,5 +1,6 @@
 import React, {Fragment, useEffect, useState} from "react";
 import {
+  Text,
   View,
   StyleSheet,
   Pressable,
@@ -8,15 +9,35 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
-  Dimensions
+  Dimensions,
 } from "react-native";
 import {ImagePlus} from "lucide-react-native";
 import UploadModeModal from "../components/UploadModeModal";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ImageUploadForm from "./ImageUploadForm";
+import Checkbox from 'expo-checkbox';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
+
+const TAG_OPTION = [
+  {
+    item: '아빠',
+    id: 'DAD',
+  },
+  {
+    item: '엄마',
+    id: 'MOM',
+  },
+  {
+    item: '첫째',
+    id: 'FIRST',
+  },
+  {
+    item: '둘째',
+    id: 'SECOND',
+  },
+]
 
 export default function AlbumScreen({navigation}) {
   // 카메라 권한 요청을 위한 훅
@@ -31,6 +52,8 @@ export default function AlbumScreen({navigation}) {
   const [imageData, setImageData] = useState([]);
   // 이미지 올리는 form
   const [showUploadForm, setShowUploadForm] = useState(false);
+  // 선택한 태그
+  const [selectedTags, setSelectedTags] = useState([]);
 
   const handleUploadComplete = () => {
     setShowUploadForm(false);
@@ -39,10 +62,9 @@ export default function AlbumScreen({navigation}) {
   useEffect(() => {
     // 서버에서 s3 이미지 url 받아옴
     const fetchData = async () => {
-      const photoId = ' ';
       const UserServerAccessToken = await AsyncStorage.getItem("UserServerAccessToken");
       try {
-        const response = await fetch(`http://43.202.241.133:12345/photo/list/${photoId}`, {
+        const response = await fetch(`http://43.202.241.133:12345/photo/list`, {
           method: "GET",
           headers: {
             'Content-Type': 'application/json',
@@ -158,13 +180,62 @@ export default function AlbumScreen({navigation}) {
     }
   }
 
+  const toggleTagSelection = (tagId) => {
+    setSelectedTags((prevTags) => {
+      const isSelected = prevTags.includes(tagId);
+      if (isSelected) {
+        return prevTags.filter((tag) => tag !== tagId);
+      } else {
+        return [...prevTags, tagId];
+      }
+    });
+    // console.log("선택한 태그:", selectedTags);
+  };
+
+
+  const filterImages = () => {
+    // console.log("선택한 태그:", selectedTags);
+
+    if (selectedTags.length === 0) {
+      return imageData;
+    }
+
+    const filteredImages = imageData.filter((item) => {
+      const hasMatchingTag = item.photoTags.some((tag) => selectedTags.includes(tag));
+      console.log(`Item ${item.photoId} - hasMatchingTag: ${hasMatchingTag}`);
+      return hasMatchingTag;
+    });
+
+    console.log("필터된 사진:", filteredImages);
+    return filteredImages;
+  }
+
+
+  useEffect(() => {
+    console.log("선택한 태그 (useEffect):", selectedTags);
+  }, [selectedTags]);
+
   return (
     <View style={styles.container}>
       {!showUploadForm ? (
         <Fragment>
+          <View style={styles.tagContainer}>
+            {TAG_OPTION.map((tag) => (
+              <View style={styles.tagItem} key={tag.id}>
+                <Checkbox
+                  value={selectedTags.includes(tag.id)}
+                  onValueChange={() => toggleTagSelection(tag.id)}
+                />
+                <TouchableOpacity
+                  onPress={() => toggleTagSelection(tag.id)}>
+                  <Text>{tag.item}</Text>
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
           <FlatList
             numColumns={4}
-            data={imageData}
+            data={filterImages()}
             keyExtractor={(item) => item.photoId.toString()}
             renderItem={({item}) => (
               <View style={styles.imageContainer}>
@@ -228,6 +299,15 @@ const styles = StyleSheet.create({
   imageContainer: {
     top: "1%",
     margin: 2,
-  }
+  },
+  tagContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    paddingVertical: 10,
+  },
+  tagItem: {
+    alignItems: 'center',
+  },
 });
 
