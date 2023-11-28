@@ -152,18 +152,17 @@ export default function AlbumScreen({navigation}) {
     <View style={styles.container}>
       {!showUploadForm ? (
         <Fragment>
-          <Text>Album</Text>
           <FlatList
+            numColumns={4}
             data={imageData}
             keyExtractor={(item) => item.photoId.toString()}
             renderItem={({item}) => (
-              <View>
+              <View style={styles.imageContainer}>
                 <Image
                   source={{uri: item.photoKey}}
                   style={styles.image}
                   resizeMode="cover"
                 />
-                {/*<Text>{item.photoTags}</Text>*/}
               </View>
             )}
           />
@@ -196,13 +195,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   image: {
-    width: 200,
-    height: 200,
-    margin: 8,
+    resizeMode: "contain",
+    width: 150, // 이미지의 가로 크기
+    height: 150, // 이미지의 세로 크기
+    margin: 4, // 이미지 간의 간격 조절
   },
   imagePlusContainer: {
     position: "absolute",
-    top: 16,
-    right: 16,
+    bottom: 16, // 아래 여백 조절
+    right: 16, // 오른쪽 여백 조절
   },
+  imageContainer: {
+    margin: 4,
+  }
 });

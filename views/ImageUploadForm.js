@@ -15,11 +15,11 @@ const K_OPTIONS = [
   },
   {
     item: '첫째',
-    id: 'FIR',
+    id: 'FIRST',
   },
   {
     item: '둘째',
-    id: 'SEC',
+    id: 'SECOND',
   },
 ]
 export default function ImageUploadForm({uri, onUploadComplete}) {
