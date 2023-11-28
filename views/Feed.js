@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
-export default function Album({ navigation }) {
+export default function AlbumScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Text>Feed</Text>
