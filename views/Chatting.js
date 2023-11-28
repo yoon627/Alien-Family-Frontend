@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, ScrollView, Text, TextInput, View } from "react-native";
 import { Client } from "@stomp/stompjs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -16,6 +16,7 @@ const ChatRoom = () => {
   const [messages, setMessages] = useState([]);
   const [myname, setMyname] = useState(null);
   const [roomNumber, setroomNumber] = useState(null);
+  const scrollViewRef = useRef(); // ScrollView 참조 생성
 
   const myIP = "43.202.241.133";
   // const myIP = '13.209.81.119';
@@ -68,6 +69,7 @@ const ChatRoom = () => {
             client.subscribe("/sub/chat/room/" + chatroomId, (message) => {
               const receivedMessage = JSON.parse(message.body);
               setMessages((prevMessages) => [...prevMessages, receivedMessage]);
+              scrollViewRef.current?.scrollToEnd({ animated: true }); // 여기에 스크롤 로직 추가
             });
           },
           onStompError: (frame) => {
@@ -98,7 +100,6 @@ const ChatRoom = () => {
   }, []);
 
   const sendMessage = () => {
-
     if (stompClient && message) {
       const messageData = {
         type: "TALK",
@@ -118,9 +119,23 @@ const ChatRoom = () => {
       setMessage("");
     }
   };
+
+  useEffect(() => {
+    if (stompClient) {
+      stompClient.onConnect = () => {
+        // ... 기존 로직
+        stompClient.subscribe("/sub/chat/room/" + chatroomId, (message) => {
+          const receivedMessage = JSON.parse(message.body);
+          setMessages((prevMessages) => [...prevMessages, receivedMessage]);
+          scrollViewRef.current?.scrollToEnd({ animated: true }); // 여기에 스크롤 로직 추가
+        });
+      };
+    }
+  }, [stompClient]);
+
   return (
     <View style={{ flex: 1, padding: 20 }}>
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView style={{ flex: 1 }} ref={scrollViewRef}>
         {messages.map((msg, index) => (
           <View
             key={index}

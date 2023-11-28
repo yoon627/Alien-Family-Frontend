@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "UFO-Front",
-    "slug": "ufo-front",
+    "slug": "UFO-Front",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -32,21 +32,19 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-
       "permissions": [
         "android.permission.READ_CALENDAR",
         "android.permission.WRITE_CALENDAR"
       ],
-      "package": "com.whddbs627.UFOFront"
+      "package": "com.whddbs627.UFOFront",
       "googleServicesFile": "./google-services.json"
-
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "97d3e24f-5db9-406b-af49-849431b8e561"
+        "projectId": "756dda6d-2cad-498a-ae4f-40fec83a4c68"
       }
     }
   }
