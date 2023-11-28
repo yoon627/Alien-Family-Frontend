@@ -60,7 +60,6 @@ export default function CalendarScreen({ navigation }) {
         },
       },
     );
-
     const data = await response.json();
     if (data.code === 200 && data.data.length > 0) {
       let i = 0;
@@ -138,21 +137,37 @@ export default function CalendarScreen({ navigation }) {
       ...prevEvents,
       [selected]: prevEvents[selected].map((event) =>
         event.id === editingEvent.id
-          ? { ...event, title: editingEvent.title }
+          ? {
+              ...event,
+              title: editingEvent.title,
+              startDate: editingEvent.startDate,
+              endDate: editingEvent.endDate,
+            }
           : event,
       ),
     }));
+    console.log(editingEvent.id);
     const token = await AsyncStorage.getItem("UserServerAccessToken");
+    const editPayload = {
+      eventId: editingEvent.id, // 이벤트 ID
+      eventName: editingEvent.title, // 수정된 제목
+      startDate: formatYYYYMMDD(editingEvent.startDate), // 수정된 시작 날짜
+      endDate: formatYYYYMMDD(editingEvent.endDate), // 수정된 종료 날짜
+      // 필요한 경우 추가 필드
+    };
+
     const response = await fetch("http://43.202.241.133:12345/calendarEvent/", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`, // 필요한 경우 인증 헤더 추가
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(editPayload),
     });
 
     const data = await response.json();
+    console.log(data);
+
     setModalVisible(false);
   };
 

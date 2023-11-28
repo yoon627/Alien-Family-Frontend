@@ -26,10 +26,11 @@ const ChatRoom = () => {
       try {
         const token = await AsyncStorage.getItem("UserServerAccessToken");
         const chatroomId = await AsyncStorage.getItem("chatroomId");
+        console.log("챗룸아이디", chatroomId);
         const response = await fetch(
           "http://" + `${myIP}` + ":12345/chat/list?id=" + chatroomId,
           {
-            method: "get",
+            method: "GET",
             headers: {
               Authorization: "Bearer " + token,
             },
@@ -65,7 +66,7 @@ const ChatRoom = () => {
             Authorization: token,
           },
           onConnect: () => {
-            // console.log('Connected to the WebSocket server');
+            console.log("Connected to the WebSocket server");
             client.subscribe("/sub/chat/room/" + chatroomId, (message) => {
               const receivedMessage = JSON.parse(message.body);
               setMessages((prevMessages) => [...prevMessages, receivedMessage]);
@@ -119,19 +120,6 @@ const ChatRoom = () => {
       setMessage("");
     }
   };
-
-  useEffect(() => {
-    if (stompClient) {
-      stompClient.onConnect = () => {
-        // ... 기존 로직
-        stompClient.subscribe("/sub/chat/room/" + chatroomId, (message) => {
-          const receivedMessage = JSON.parse(message.body);
-          setMessages((prevMessages) => [...prevMessages, receivedMessage]);
-          scrollViewRef.current?.scrollToEnd({ animated: true }); // 여기에 스크롤 로직 추가
-        });
-      };
-    }
-  }, [stompClient]);
 
   return (
     <View style={{ flex: 1, padding: 20 }}>

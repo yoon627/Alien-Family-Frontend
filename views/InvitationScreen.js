@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 
 import {
   Dimensions,
+  Platform,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
-  Platform,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -66,11 +66,11 @@ const InvitationScreen = ({ navigation }) => {
   const [devicePushToken, setDevicePushToken] = useState("");
   const [InvitationCode, setInvitationCode] = useState("");
   const onChangeInvitationCode = (payload) => setInvitationCode(payload);
-  useEffect(()=>{
+  useEffect(() => {
     registerForPushNotificationsAsync().then((token) =>
-    setDevicePushToken(token)
-  );
-  },[]);
+      setDevicePushToken(token),
+    );
+  }, []);
   return (
     <View style={styles.container}>
       <View
@@ -94,9 +94,8 @@ const InvitationScreen = ({ navigation }) => {
       <TouchableOpacity
         onPress={async () => {
           const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
-          const ServerAccessToken = await AsyncStorage.getItem(
-            "ServerAccessToken"
-          );
+          const ServerAccessToken =
+            await AsyncStorage.getItem("ServerAccessToken");
           await AsyncStorage.setItem("familyCode", InvitationCode);
           await axios({
             method: "POST",
@@ -116,16 +115,16 @@ const InvitationScreen = ({ navigation }) => {
                 resp.data.data.tokenInfo.refreshToken;
               await AsyncStorage.setItem(
                 "UserServerAccessToken",
-                UserServerAccessToken
+                UserServerAccessToken,
               );
               await AsyncStorage.setItem(
                 "UserServerRefreshToken",
-                UserServerRefreshToken
+                UserServerRefreshToken,
               );
               await AsyncStorage.setItem("devicePushToken", devicePushToken);
               const members = resp.data.data.familyResponseDto.members;
               const familyId = resp.data.data.familyResponseDto.familyId;
-              const chatroomId = resp.data.data.familyResponseDto.chatRoomId;
+              const chatroomId = resp.data.data.familyResponseDto.chatroomId;
               const plant = resp.data.data.familyResponseDto.plant;
 
               var myDB = {};
@@ -137,7 +136,7 @@ const InvitationScreen = ({ navigation }) => {
               await AsyncStorage.setItem("familyId", JSON.stringify(familyId));
               await AsyncStorage.setItem(
                 "chatroomId",
-                JSON.stringify(chatroomId)
+                JSON.stringify(chatroomId),
               );
               await AsyncStorage.setItem("plantInfo", JSON.stringify(plant));
               navigation.navigate("MainDrawer");
