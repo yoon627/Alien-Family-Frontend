@@ -1,15 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
+  Alert,
   Animated,
+  Image,
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
   TextInput,
   TouchableOpacity,
-  Pressable,
-  Modal,
-  Alert,
-  Image,
+  View,
 } from "react-native";
 import styled from "styled-components/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -69,7 +69,7 @@ export default function Home({ navigation }) {
             duration: 5000,
             useNativeDriver: true,
           }),
-        ])
+        ]),
       ).start();
     }, []);
     const interpolated = movingValue.interpolate({
@@ -85,10 +85,11 @@ export default function Home({ navigation }) {
       </Animated.View>
     );
   };
+
   async function fetchData() {
     const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
     const UserServerAccessToken = await AsyncStorage.getItem(
-      "UserServerAccessToken"
+      "UserServerAccessToken",
     );
     const familyId = await AsyncStorage.getItem("familyId");
     await axios({
@@ -102,13 +103,14 @@ export default function Home({ navigation }) {
       .then((resp) => {
         const tmis = resp.data;
         var mytmi = "";
-        for (i = 0; i < tmis.length; i++) {
+        for (let i = 0; i < tmis.length; i++) {
           mytmi = mytmi + tmis[i].writer + ": " + tmis[i].content + "  ";
         }
         setTodayTMI(mytmi);
       })
       .catch((e) => console.log(e));
   }
+
   const getData = async () => {
     try {
       const plant = await AsyncStorage.getItem("plantInfo");
@@ -117,7 +119,7 @@ export default function Home({ navigation }) {
           level: 5,
           point: 100,
           name: "Sunflower",
-        })
+        }),
       );
     } catch (error) {
       console.error("Error getMsg:", error);
@@ -138,7 +140,7 @@ export default function Home({ navigation }) {
 
     return () => {
       Notifications.removeNotificationSubscription(
-        notificationListener.current
+        notificationListener.current,
       );
       Notifications.removeNotificationSubscription(responseListener.current);
     };
@@ -305,11 +307,10 @@ export default function Home({ navigation }) {
                   <Pressable
                     style={[styles.button, styles.buttonClose]}
                     onPress={async () => {
-                      const SERVER_ADDRESS = await AsyncStorage.getItem(
-                        "ServerAddress"
-                      );
+                      const SERVER_ADDRESS =
+                        await AsyncStorage.getItem("ServerAddress");
                       const UserServerAccessToken = await AsyncStorage.getItem(
-                        "UserServerAccessToken"
+                        "UserServerAccessToken",
                       );
                       await axios({
                         method: "POST",
@@ -366,11 +367,10 @@ export default function Home({ navigation }) {
           <View style={{ marginHorizontal: 10, marginVertical: 20 }}>
             <TouchableOpacity
               onPress={async () => {
-                const SERVER_ADDRESS = await AsyncStorage.getItem(
-                  "ServerAddress"
-                );
+                const SERVER_ADDRESS =
+                  await AsyncStorage.getItem("ServerAddress");
                 const UserServerAccessToken = await AsyncStorage.getItem(
-                  "UserServerAccessToken"
+                  "UserServerAccessToken",
                 );
                 await axios({
                   method: "GET",
