@@ -1,22 +1,37 @@
 import React from "react";
-import {StyleSheet, Text, View, TouchableOpacity, Alert} from "react-native";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {MaterialCommunityIcons} from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const saveServer = async () => {
   try {
-    await AsyncStorage.setItem("ServerAddress", "http://43.202.241.133:8080");
+    await AsyncStorage.setItem("ServerAddress", "http://43.202.241.133:12345");
+    await AsyncStorage.setItem(
+      "FcmServerKey",
+      "AAAAUCMBJiU:APA91bEs9fOJNe6l2ILHFI88jep5rw9wqR-qTWWbBrKxj7JQnKQ8ZAp4tJbn_yXcL2aP0ydygPIcT89XB6h38vhIozsJ5J61s7w2znBL9hPQG6a18sQcUFkMitr2pkvoCmmfslVQmk-u"
+    );
+    // console.log("set server");
   } catch (error) {
     console.log(error);
   }
 };
 
-const Login = ({navigation}) => {
+const getData = async () => {
+  try {
+    const token = await AsyncStorage.getItem("UserServerAccessToken");
+  } catch (error) {
+    console.error("Error getMsg:", error);
+  }
+};
+
+getData();
+
+const Login = ({ navigation }) => {
   saveServer();
   return (
     <View style={styles.container}>
-      <MaterialCommunityIcons name="ufo-outline" size={35} color="black"/>
-      <Text style={{fontSize: 55, fontWeight: 500, marginBottom: 75}}>
+      <MaterialCommunityIcons name="ufo-outline" size={35} color="black" />
+      <Text style={{ fontSize: 50, fontWeight: 500, marginBottom: 75 }}>
         UFO
       </Text>
       <View>
@@ -29,48 +44,88 @@ const Login = ({navigation}) => {
               Alert.alert("회원가입해주세요");
             }
           }}
-          style={
-            styles.buttonStyle
-          }
+          style={{
+            backgroundColor: "black",
+            borderRadius: 50,
+            alignItems: "center",
+            justifyContent: "center",
+            marginVertical: 20,
+          }}
         >
           <Text
-            style={styles.buttonText}
+            style={{
+              color: "white",
+              marginHorizontal: 20,
+              marginVertical: 15,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
           >
             로그인
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => navigation.navigate("KaKaoLogin")}
-          style={
-            styles.buttonStyle
-          }
+          style={{
+            backgroundColor: "black",
+            borderRadius: 50,
+            alignItems: "center",
+            justifyContent: "center",
+            marginVertical: 20,
+          }}
         >
           <Text
-            style={styles.buttonText}
+            style={{
+              color: "white",
+              marginHorizontal: 30,
+              marginVertical: 15,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
           >
             카카오계정으로 회원가입
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => navigation.navigate("First Register")}
-          style={
-            styles.buttonStyle
-          }
+          style={{
+            backgroundColor: "black",
+            borderRadius: 50,
+            alignItems: "center",
+            justifyContent: "center",
+            marginVertical: 20,
+          }}
         >
           <Text
-            style={styles.buttonText}
+            style={{
+              color: "white",
+              marginHorizontal: 30,
+              marginVertical: 15,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
           >
             다음페이지로
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => navigation.navigate("MainDrawer")}
-          style={
-            styles.buttonStyle
-          }
+          style={{
+            backgroundColor: "black",
+            borderRadius: 50,
+            alignItems: "center",
+            justifyContent: "center",
+            marginVertical: 20,
+          }}
         >
           <Text
-            style={styles.buttonText}
+            style={{
+              color: "white",
+              marginHorizontal: 30,
+              marginVertical: 15,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
           >
             메인페이지로
           </Text>
@@ -86,22 +141,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  buttonStyle: {
-    backgroundColor: "black",
-    borderRadius: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    marginVertical: 10,
+  loginText: {
+    fontSize: 24,
+    marginBottom: 16,
   },
-  buttonText: {
-    fontSize: 17,
-    fontWeight: "bold",
-    color: "white",
-    marginHorizontal: "25%",
-    marginVertical: 25,
-    alignItems: "center",
-    justifyContent: "center",
-  }
+  footer: {
+    flexDirection: "row",
+    marginTop: "auto",
+  },
 });
 
 export default Login;

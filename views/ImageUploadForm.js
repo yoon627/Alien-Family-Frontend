@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {Button, View, Image, TextInput, StyleSheet} from "react-native";
+import {Button, View, Image, TextInput, StyleSheet, ScrollView} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 // import SelectBox from 'react-native-multi-selectbox'
 import {xorBy} from "lodash";
@@ -52,7 +52,7 @@ const TAG_OPTION = [
 ]
 
 export default function ImageUploadForm({uri, onUploadComplete}) {
-  const [photoTags, setPhotoTags] = useState(['DAD'])
+  const [photoTags, setPhotoTags] = useState(['EXTRA'])
   const [description, setDescription] = useState('');
 
   // 클라에서 바로 presigned url로 업로드
@@ -60,20 +60,22 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
   // 2단계: 받아온 url에 put으로 요청해서 업로드한다.
   const uploadToServer = async () => {
     const familyId = await AsyncStorage.getItem("familyId");
+    const UserServerAccessToken = await AsyncStorage.getItem("UserServerAccessToken");
+
     // 서버로 전송될 파일의 이름과 타입 지정
     const body = {
-      prefix: 901,   // familyId
+      prefix: familyId,   // familyId
       fileName: uri.substring(uri.lastIndexOf('/') + 1),
     };
 
     try {
       // 1단계: 서버에 presigned url 요청
-      const urlRes = await fetch('http://43.202.241.133:8080/photo/s3', {
+      const urlRes = await fetch('http://43.202.241.133:12345/photo/s3', {
         method: 'POST',
         body: JSON.stringify(body),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0NTEiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZmFtaWx5IjoiNTM1IiwiZXhwIjoxNzAxMjA1NTc5fQ.-TPkx6HuGSZy9-wSpsJrLFGrUuxYK8NYImOMl5RP2fk`,
+          'Authorization': 'Bearer ' + UserServerAccessToken
         },
       });
 
@@ -99,20 +101,22 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
 
       // 서버 응답이 성공적인지 확인하고 필요한 처리 수행
       if (uploadRes.ok) {
+        const writer = await AsyncStorage.getItem("nickname");
         const list = signedUrl.split('?')
         const imageInfo = {
-          photoKey: 901 + '/' + list[0].substring(list[0].lastIndexOf('/') + 1),
+          writer: writer,
+          photoKey: familyId + '/' + list[0].substring(list[0].lastIndexOf('/') + 1),
           photoTags: photoTags,
-          description: "아빠 사진 잘나왔다!",
+          description: description,
         };
-        console.log(imageInfo);
+        // console.log(imageInfo);
 
-        const response = await fetch('http://43.202.241.133:8080/photo', {
+        const response = await fetch('http://43.202.241.133:12345/photo', {
           method: 'POST',
           body: JSON.stringify(imageInfo),
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0NTEiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZmFtaWx5IjoiNTM1IiwiZXhwIjoxNzAxMjA1NTc5fQ.-TPkx6HuGSZy9-wSpsJrLFGrUuxYK8NYImOMl5RP2fk`,
+            'Authorization': 'Bearer ' + UserServerAccessToken
           },
         });
         console.log("👌🏻 이미지 업로드 성공");
@@ -126,7 +130,7 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Image
         style={styles.uploadImage}
         source={{uri: uri}}
@@ -135,59 +139,49 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
         resizeMode="contain"
       />
       <View style={{height: 40}}/>
-      {/*<SelectBox*/}
-      {/*  label="사진 속 인물을 선택해주십샤"*/}
-      {/*  options={TAG_OPTION}*/}
-      {/*  selectedValues={selectedTeams}*/}
-      {/*  onMultiSelect={onMultiChange}*/}
-      {/*  onTapClose={onMultiChange}*/}
-      {/*  isMulti*/}
-      {/*/>*/}
       <TextInput
         style={styles.input}
-        value={photoTags.join(', ')} // 배열을 문자열로 변환
-        onChangeText={(text) => setPhotoTags(text.split(',').map(tag => tag.trim()))} // 문자열을 배열로 변환
-        placeholder="photoTags"
+        value={photoTags.join(', ')}
+        onChangeText={(text) =>
+          setPhotoTags(text.split(',').map((tag) => tag.trim()))
+        }
+        placeholder="인물 태그..."
         multiline
       />
       <TextInput
-        style={styles.input}
+        style={[styles.input, styles.description]}
         value={description}
         onChangeText={setDescription}
-        placeholder="Description"
+        placeholder="문구 입력..."
         multiline
       />
       <Button
-        title="Upload"
+        title="공유"
         onPress={uploadToServer}
-        color="#841584" // 버튼 색상 지정 (예시)
       />
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
   },
   uploadImage: {
-    width: 100,
-    height: 100,
-    marginBottom: 10,
-  },
-  picker: {
-    height: 40,
     width: 200,
-    marginBottom: 10,
+    height: 200,
+    marginBottom: 20,
   },
   input: {
     height: 40,
-    borderColor: "gray",
+    width: '100%',
+    borderColor: 'gray',
     borderWidth: 1,
-    marginBottom: 10,
-    paddingHorizontal: 10, // 좌우 패딩
+    marginBottom: 20,
+    paddingHorizontal: 10,
     borderRadius: 5,
   },
   description: {

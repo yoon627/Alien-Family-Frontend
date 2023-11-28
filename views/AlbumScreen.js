@@ -1,11 +1,22 @@
 import React, {Fragment, useEffect, useState} from "react";
-import {View, Text, StyleSheet, Pressable, Platform, ActionSheetIOS, FlatList, Image} from "react-native";
+import {
+  View,
+  StyleSheet,
+  Pressable,
+  Platform,
+  ActionSheetIOS,
+  FlatList,
+  Image,
+  TouchableOpacity,
+  Dimensions
+} from "react-native";
 import {ImagePlus} from "lucide-react-native";
 import UploadModeModal from "../components/UploadModeModal";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ImageUploadForm from "./ImageUploadForm";
-import * as url from "url";
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
 
 export default function AlbumScreen({navigation}) {
   // 카메라 권한 요청을 위한 훅
@@ -28,23 +39,22 @@ export default function AlbumScreen({navigation}) {
   useEffect(() => {
     // 서버에서 s3 이미지 url 받아옴
     const fetchData = async () => {
-      const familyId = await AsyncStorage.getItem("familyId");
       const photoId = ' ';
-
+      const UserServerAccessToken = await AsyncStorage.getItem("UserServerAccessToken");
       try {
-        const response = await fetch(`http://43.202.241.133:8080/photo/list/901/${photoId}`, {
+        const response = await fetch(`http://43.202.241.133:12345/photo/list/${photoId}`, {
           method: "GET",
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0NTEiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZmFtaWx5IjoiNTM1IiwiZXhwIjoxNzAxMjA1NTc5fQ.-TPkx6HuGSZy9-wSpsJrLFGrUuxYK8NYImOMl5RP2fk`,
+            'Authorization': 'Bearer ' + UserServerAccessToken,
           },
         });
 
         const data = await response.json();
         // 받아온 이미지 데이터 상태에 저장
         setImageData(data.data);
-        console.log(data.data)
-        console.log("👉🏻앨범 이미지 리스트: ", data.data.map(item => item.photoKey));
+        // console.log("받은 데이터!!!!!!!!!", data.data)
+        // console.log("👉🏻앨범 이미지 리스트: ", data.data.map(item => item.photoKey));
       } catch (error) {
         console.error("이미지 url을 가져오는 중에 오류가 발생했습니다.", error);
       }
@@ -104,7 +114,7 @@ export default function AlbumScreen({navigation}) {
         if (result.assets && result.assets.length > 0) {
           const chosenImage = result.assets[0];
           setChosenImage(chosenImage);
-          console.log("🌄 저장한 이미지 -> ", chosenImage);
+          // console.log("🌄 저장한 이미지 -> ", chosenImage);
           setShowUploadForm(true);
           // ImageUploadForm(chosenImage.uri); // 이미지 선택 후 폼 작성 + 서버로 업로드
         } else {
@@ -136,7 +146,7 @@ export default function AlbumScreen({navigation}) {
         if (result.assets && result.assets.length > 0) {
           const chosenImage = result.assets[0];
           setChosenImage(chosenImage);
-          console.log("🌄 저장한 이미지 -> ", chosenImage);
+          // console.log("🌄 저장한 이미지 -> ", chosenImage);
           setShowUploadForm(true);
           // ImageUploadForm({uri}); // 이미지 선택 후 폼 작성 + 서버로 업로드
         } else {
@@ -158,11 +168,22 @@ export default function AlbumScreen({navigation}) {
             keyExtractor={(item) => item.photoId.toString()}
             renderItem={({item}) => (
               <View style={styles.imageContainer}>
-                <Image
-                  source={{uri: item.photoKey}}
-                  style={styles.image}
-                  resizeMode="cover"
-                />
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("ImageDetailForm", {
+                    photoInfo: {
+                      createAt: item.createAt,
+                      photoKey: item.photoKey,
+                      photoTags: item.photoTags,
+                      description: item.description,
+                      writer: item.writer,
+                    }
+                  })}>
+                  <Image
+                    source={{uri: item.photoKey}}
+                    style={styles.image}
+                    resizeMode="cover"
+                  />
+                </TouchableOpacity>
               </View>
             )}
           />
@@ -196,16 +217,17 @@ const styles = StyleSheet.create({
   },
   image: {
     resizeMode: "contain",
-    width: 150, // 이미지의 가로 크기
-    height: 150, // 이미지의 세로 크기
-    margin: 4, // 이미지 간의 간격 조절
+    width: SCREEN_WIDTH / 4 - 7, // 이미지의 가로 크기 (한 행에 4개씩 배치하고 간격 조절)
+    height: SCREEN_WIDTH / 4 - 7, // 이미지의 세로 크기
   },
   imagePlusContainer: {
     position: "absolute",
-    top: "2%", // 아래 여백 조절
-    right: "3%", // 오른쪽 여백 조절
+    bottom: "2%",
+    right: "3%",
   },
   imageContainer: {
-    margin: 4,
+    top: "1%",
+    margin: 2,
   }
 });
+

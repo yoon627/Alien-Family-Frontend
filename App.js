@@ -14,9 +14,10 @@ import ClickBox from "./views/ClickBox";
 import LadderScreen from "./views/LadderScreen";
 import RouletteScreen from "./views/RouletteScreen";
 import NewGame from "./views/NewGame";
-import ChatRoom from "./views/chatScreen";
 import MainScreen from "./views/MainScreen";
 import {Provider} from "react-redux";
+import ChatRoom from "./views/Chatting";
+import ImageDetailForm from "./views/ImageDetailForm";
 import store from "./redux/store";
 
 const Stack = createStackNavigator();
@@ -39,6 +40,7 @@ export default function App() {
           <Stack.Screen name="Roulette" component={RouletteScreen}/>
           <Stack.Screen name="Mole" component={NewGame}/>
           <Stack.Screen name="Chat" component={ChatRoom}/>
+          <Stack.Screen name="ImageDetailForm" component={ImageDetailForm}/>
           <Stack.Screen
             name="MainDrawer"
             component={MainDrawer}
