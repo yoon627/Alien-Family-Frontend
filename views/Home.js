@@ -132,7 +132,7 @@ export default function Home({ navigation }) {
       });
 
     responseListener.current =
-      Notifications.addNotificationResponseReceivedListener((response) => {});
+      Notifications.addNotificationResponseReceivedListener((response) => {console.log(response)});
 
     return () => {
       Notifications.removeNotificationSubscription(
