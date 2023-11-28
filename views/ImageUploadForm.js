@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 // import SelectBox from 'react-native-multi-selectbox'
 import {xorBy} from "lodash";
 
-const K_OPTIONS = [
+const TAG_OPTION = [
   {
     item: '아빠',
     id: 'DAD',
@@ -21,7 +21,36 @@ const K_OPTIONS = [
     item: '둘째',
     id: 'SECOND',
   },
+  {
+    item: '셋째',
+    id: 'THIRD',
+  },
+  {
+    item: '넷째',
+    id: 'FORTH',
+  },
+  {
+    item: '다섯째',
+    id: 'FIFTH',
+  },
+  {
+    item: '여섯째',
+    id: 'SIXTH',
+  },
+  {
+    item: '할아버지',
+    id: 'GRANDFATHER',
+  },
+  {
+    item: '할머니',
+    id: 'GRANDMOTHER',
+  },
+  {
+    item: '삼촌',
+    id: 'UNCLE',
+  },
 ]
+
 export default function ImageUploadForm({uri, onUploadComplete}) {
   const [photoTags, setPhotoTags] = useState(['DAD'])
   const [description, setDescription] = useState('');
@@ -108,7 +137,7 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
       <View style={{height: 40}}/>
       {/*<SelectBox*/}
       {/*  label="사진 속 인물을 선택해주십샤"*/}
-      {/*  options={K_OPTIONS}*/}
+      {/*  options={TAG_OPTION}*/}
       {/*  selectedValues={selectedTeams}*/}
       {/*  onMultiSelect={onMultiChange}*/}
       {/*  onTapClose={onMultiChange}*/}

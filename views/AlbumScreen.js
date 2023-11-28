@@ -202,8 +202,8 @@ const styles = StyleSheet.create({
   },
   imagePlusContainer: {
     position: "absolute",
-    bottom: 16, // 아래 여백 조절
-    right: 16, // 오른쪽 여백 조절
+    top: "2%", // 아래 여백 조절
+    right: "3%", // 오른쪽 여백 조절
   },
   imageContainer: {
     margin: 4,
