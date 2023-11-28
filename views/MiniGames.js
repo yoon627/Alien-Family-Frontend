@@ -58,24 +58,24 @@ export default function MiniGames({ navigation }) {
         { useNativeDriver: false }
       ),
       onPanResponderRelease: () => {
-        // 좌표 서버로 전송
-        if (stompClient && coordinates.x !== 0 && coordinates.y !== 0) {
-          const headerData = {
-            Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNDEiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZmFtaWx5IjoiMzQ5IiwiZXhwIjoxNzAwOTczMjEzfQ.IeHipzx60fWJRD2ZGs8SCKwpOjfSpN837Rjq2qrTli4",
-          };
-          const sendData = {
-            familyId: 356,
-            x: joystickPosition.x,
-            y: joystickPosition.y,
-          };
-          stompClient.publish({
-            destination: "/pub/map",
-            headers: headerData,
-            body: JSON.stringify(sendData),
-          });
-          setCoordinates({ x: 0, y: 0 });
-        }
+        // // 좌표 서버로 전송
+        // if (stompClient && coordinates.x !== 0 && coordinates.y !== 0) {
+        //   const headerData = {
+        //     Authorization:
+        //       "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNDEiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZmFtaWx5IjoiMzQ5IiwiZXhwIjoxNzAwOTczMjEzfQ.IeHipzx60fWJRD2ZGs8SCKwpOjfSpN837Rjq2qrTli4",
+        //   };
+        //   const sendData = {
+        //     familyId: 356,
+        //     x: joystickPosition.x,
+        //     y: joystickPosition.y,
+        //   };
+        //   stompClient.publish({
+        //     destination: "/pub/map",
+        //     headers: headerData,
+        //     body: JSON.stringify(sendData),
+        //   });
+        //   setCoordinates({ x: 0, y: 0 });
+        // }
         Animated.spring(joystickPosition, {
           toValue: { x: 0, y: 0 },
           friction: 5,
@@ -85,58 +85,58 @@ export default function MiniGames({ navigation }) {
     })
   ).current;
 
-  useEffect(() => {
-    // 여기서 웹소켓 연결 및 이벤트 리스너 등록
-    const sokcet = new WebSocket("ws://43.202.241.133:8080/ws");
-    const client = new Client({
-      brokerURL: "ws://43.202.241.133:8080/ws",
-      connectHeaders: {
-        Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNDEiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZmFtaWx5IjoiMzQ5IiwiZXhwIjoxNzAwOTczMjEzfQ.IeHipzx60fWJRD2ZGs8SCKwpOjfSpN837Rjq2qrTli4",
-      },
-      onConnect: () => {
-        // console.log("👌🏻connect 성공: 웹소켓 서버 연결~~~~");
-        // 이 땐 좌표 받아오는 거
-        client.subscribe("/sub/map/356", (message) => {
-          const receiveCoordinates = JSON.parse(message.body);
-          // console.log(receiveCoordinates);
-          setCoordinates((prevCoordinates) => ({
-            x: Math.max(
-              0,
-              Math.min(
-                prevCoordinates.x + receiveCoordinates.x,
-                SCREEN_WIDTH - SCREEN_WIDTH * 0.12
-              )
-            ),
-            y: Math.max(
-              0,
-              Math.min(
-                prevCoordinates.y - receiveCoordinates.y,
-                SCREEN_HEIGHT - SCREEN_HEIGHT * 0.1
-              )
-            ),
-          }));
-          // console.log("💭받은 좌표", receiveCoordinates.x, receiveCoordinates.y);
-        });
-      },
-      onStompError: (frame) => {
-        console.error("Broker reported error:", frame.headers["message"]);
-        console.error("Additional details:", frame.body);
-      },
-    });
+  // useEffect(() => {
+  // //   여기서 웹소켓 연결 및 이벤트 리스너 등록
+    // const sokcet = new WebSocket("ws://43.202.241.133:8080/ws");
+    // const client = new Client({
+    //   brokerURL: "ws://43.202.241.133:8080/ws",
+    //   connectHeaders: {
+    //     Authorization:
+    //       "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNDEiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZmFtaWx5IjoiMzQ5IiwiZXhwIjoxNzAwOTczMjEzfQ.IeHipzx60fWJRD2ZGs8SCKwpOjfSpN837Rjq2qrTli4",
+    //   },
+    //   onConnect: () => {
+    //     // console.log("👌🏻connect 성공: 웹소켓 서버 연결~~~~");
+    //     // 이 땐 좌표 받아오는 거
+    //     client.subscribe("/sub/map/356", (message) => {
+    //       const receiveCoordinates = JSON.parse(message.body);
+    //       // console.log(receiveCoordinates);
+    //       setCoordinates((prevCoordinates) => ({
+    //         x: Math.max(
+    //           0,
+    //           Math.min(
+    //             prevCoordinates.x + receiveCoordinates.x,
+    //             SCREEN_WIDTH - SCREEN_WIDTH * 0.12
+    //           )
+    //         ),
+    //         y: Math.max(
+    //           0,
+    //           Math.min(
+    //             prevCoordinates.y - receiveCoordinates.y,
+    //             SCREEN_HEIGHT - SCREEN_HEIGHT * 0.1
+    //           )
+    //         ),
+    //       }));
+    //       // console.log("💭받은 좌표", receiveCoordinates.x, receiveCoordinates.y);
+    //     });
+    //   },
+    //   onStompError: (frame) => {
+    //     console.error("Broker reported error:", frame.headers["message"]);
+    //     console.error("Additional details:", frame.body);
+    //   },
+    // });
 
-    sokcet.onopen = () => {
-      // console.log("🚀 WebSokcet open");
-      setStompClient(client);
-    };
-
-    sokcet.onerror = (error) => {
-      // console.log("❌ sokcet error");
-    };
-
-    sokcet.onclose = (event) => {
-      // console.log("👋🏻 WebSokcet close");
-    };
+    // sokcet.onopen = () => {
+    //   // console.log("🚀 WebSokcet open");
+    //   setStompClient(client);
+    // };
+    //
+    // sokcet.onerror = (error) => {
+    //   // console.log("❌ sokcet error");
+    // };
+    //
+    // sokcet.onclose = (event) => {
+    //   // console.log("👋🏻 WebSokcet close");
+    // };
 
     joystickPosition.addListener((position) => {
       // 조이스틱 움직임에 따라 캐릭터 위치 업데이트
@@ -155,23 +155,23 @@ export default function MiniGames({ navigation }) {
       }));
     });
 
-    const interval = setInterval(() => {
-      if (!client.connected) {
-        client.activate();
-      }
-    }, 1000); // 1초마다 연결 상태 체크
-    setStompClient(client);
-
-    // 언마운트시 연결 해제
-    return () => {
-      clearInterval(interval);
-      if (client) {
-        client.deactivate();
-      }
-      sokcet.close();
-      joystickPosition.removeAllListeners();
-    };
-  }, []);
+  //   const interval = setInterval(() => {
+  //     if (!client.connected) {
+  //       client.activate();
+  //     }
+  //   }, 1000); // 1초마다 연결 상태 체크
+  //   setStompClient(client);
+  //
+  //   // 언마운트시 연결 해제
+  //   return () => {
+  //     clearInterval(interval);
+  //     if (client) {
+  //       client.deactivate();
+  //     }
+  //     sokcet.close();
+  //     joystickPosition.removeAllListeners();
+  //   };
+  // }, []);
 
   // 게임 이미지 & 캐릭터 사이 거리 계산
   const calculateDistance = (pos1, pos2) => {
