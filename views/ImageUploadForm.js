@@ -33,7 +33,7 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
     const familyId = await AsyncStorage.getItem("familyId");
     // 서버로 전송될 파일의 이름과 타입 지정
     const body = {
-      prefix: familyId,   // familyId
+      prefix: 901,   // familyId
       fileName: uri.substring(uri.lastIndexOf('/') + 1),
     };
 
@@ -70,8 +70,9 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
 
       // 서버 응답이 성공적인지 확인하고 필요한 처리 수행
       if (uploadRes.ok) {
+        const list = signedUrl.split('?')
         const imageInfo = {
-          photoKey: familyId + '/' + uri.substring(uri.lastIndexOf('/') + 1),
+          photoKey: 901 + '/' + list[0].substring(list[0].lastIndexOf('/') + 1),
           photoTags: photoTags,
           description: "아빠 사진 잘나왔다!",
         };

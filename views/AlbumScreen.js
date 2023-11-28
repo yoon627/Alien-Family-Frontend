@@ -32,7 +32,7 @@ export default function AlbumScreen({navigation}) {
       const photoId = ' ';
 
       try {
-        const response = await fetch(`http://43.202.241.133:8080/photo/list/${familyId}/${photoId}`, {
+        const response = await fetch(`http://43.202.241.133:8080/photo/list/901/${photoId}`, {
           method: "GET",
           headers: {
             'Content-Type': 'application/json',
@@ -43,7 +43,8 @@ export default function AlbumScreen({navigation}) {
         const data = await response.json();
         // 받아온 이미지 데이터 상태에 저장
         setImageData(data.data);
-        console.log(data.data.map(item => item.photoKey));
+        console.log(data.data)
+        console.log("👉🏻앨범 이미지 리스트: ", data.data.map(item => item.photoKey));
       } catch (error) {
         console.error("이미지 url을 가져오는 중에 오류가 발생했습니다.", error);
       }
@@ -162,7 +163,7 @@ export default function AlbumScreen({navigation}) {
                   style={styles.image}
                   resizeMode="cover"
                 />
-                <Text>{item.photoTags}</Text>
+                {/*<Text>{item.photoTags}</Text>*/}
               </View>
             )}
           />
