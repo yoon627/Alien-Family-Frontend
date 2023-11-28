@@ -6066,6 +6066,11 @@ react-native-modal-datetime-picker@^17.1.0:
   dependencies:
     prop-types "^15.7.2"
 
+react-native-multi-selectbox@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/react-native-multi-selectbox/-/react-native-multi-selectbox-1.5.0.tgz#a2bbb3ae9a76f10f6f0404ae9c9b0b573a051614"
+  integrity sha512-yRxV8PPD0TIRoXK4WduHcADzroB2UWGbJIlKEGkvz8sPPs80o8wdJDthuqbvO7U6rIP2ABb/TRaJAFAxFTi8jw==
+
 react-native-paper@^5.11.1:
   version "5.11.1"
   resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-5.11.1.tgz#34f612d6fb28099334db08a1bd109086ea91dcac"
