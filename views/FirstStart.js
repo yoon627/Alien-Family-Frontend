@@ -188,7 +188,7 @@ const FirstStart = ({ navigation }) => {
               );
               const members = resp.data.data.familyResponseDto.members;
               const familyId = resp.data.data.familyResponseDto.familyId;
-              const chatroomId = resp.data.data.familyResponseDto.chatRoomId;
+              const chatroomId = resp.data.data.familyResponseDto.chatroomId;
               const plant = resp.data.data.familyResponseDto.plant;
 
               var myDB = {};
