@@ -79,7 +79,7 @@ const FirstStart = ({ navigation }) => {
     }
     await Clipboard.setStringAsync(familyCode);
   };
-    const getAllKeys = async () => {
+  const getAllKeys = async () => {
     let keys = [];
     try {
       keys = await AsyncStorage.getAllKeys();
@@ -99,11 +99,11 @@ const FirstStart = ({ navigation }) => {
       console.log("캐시 삭제에러");
     }
   };
-  useEffect(()=>{
+  useEffect(() => {
     registerForPushNotificationsAsync().then((token) =>
-    setDevicePushToken(token)
-  );
-  },[]);
+      setDevicePushToken(token),
+    );
+  }, []);
   return (
     <View style={styles.container}>
       <View
@@ -156,9 +156,8 @@ const FirstStart = ({ navigation }) => {
       <TouchableOpacity
         onPress={async () => {
           const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
-          const ServerAccessToken = await AsyncStorage.getItem(
-            "ServerAccessToken"
-          );
+          const ServerAccessToken =
+            await AsyncStorage.getItem("ServerAccessToken");
           await axios({
             method: "POST",
             url: SERVER_ADDRESS + "/api/register/newFamily",
@@ -179,11 +178,11 @@ const FirstStart = ({ navigation }) => {
                 resp.data.data.tokenInfo.refreshToken;
               await AsyncStorage.setItem(
                 "UserServerAccessToken",
-                UserServerAccessToken
+                UserServerAccessToken,
               );
               await AsyncStorage.setItem(
                 "UserServerRefreshToken",
-                UserServerRefreshToken
+                UserServerRefreshToken,
               );
               const members = resp.data.data.familyResponseDto.members;
               const familyId = resp.data.data.familyResponseDto.familyId;
@@ -199,10 +198,13 @@ const FirstStart = ({ navigation }) => {
               await AsyncStorage.setItem("familyId", JSON.stringify(familyId));
               await AsyncStorage.setItem(
                 "chatroomId",
-                JSON.stringify(chatroomId)
+                JSON.stringify(chatroomId),
               );
               await AsyncStorage.setItem("plantInfo", JSON.stringify(plant));
-              await AsyncStorage.setItem("devicePushToken", JSON.stringify(devicePushToken));
+              await AsyncStorage.setItem(
+                "devicePushToken",
+                JSON.stringify(devicePushToken),
+              );
               navigation.navigate("MainDrawer");
             })
             .catch(function (error) {
