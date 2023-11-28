@@ -19,6 +19,7 @@ import {Provider} from "react-redux";
 import ChatRoom from "./views/Chatting";
 import ImageDetailForm from "./views/ImageDetailForm";
 import store from "./redux/store";
+import Attendance from "./views/Attendance";
 
 const Stack = createStackNavigator();
 
@@ -57,7 +58,9 @@ export default function App() {
             component={MainDrawer}
             options={{headerShown: false}}
           />
-          <Stack.Screen name="MainScreen" component={MainScreen}/>
+          <Stack.Screen name="MainScreen" component={MainScreen} />
+          <Stack.Screen name="Attendance" component={Attendance} />
+
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

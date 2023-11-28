@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Text, View, Button, Platform } from "react-native";
 import * as Device from "expo-device";
@@ -18,11 +17,14 @@ Notifications.setNotificationHandler({
 
 // Can use this function below or use Expo's Push Notification Tool from: https://expo.dev/notifications
 async function sendPushNotification(devicePushToken) {
-  await fetch("https://fcm.googleapis.com/fcm/send", {
+  const UserServerAccessToken = await AsyncStorage.getItem(
+    "UserServerAccessToken"
+  );
+  await fetch("http://43.202.241.133:12345/mind627", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `key=${FCM_SERVER_KEY}`,
+      Authorization: "Bearer: " + UserServerAccessToken,
     },
     body: JSON.stringify({
       to: devicePushToken,
@@ -35,7 +37,7 @@ async function sendPushNotification(devicePushToken) {
       },
     }),
   })
-    .then((resp) => resp)
+    .then((resp) => console.log("axios response: "+resp))
     .catch((e) => console.log(e));
 }
 
@@ -88,11 +90,12 @@ export default function Lab() {
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
         setNotification(notification);
+        console.log("notificationListener: "+notification);
       });
 
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
-        // console.log(response);
+        console.log("responseListener: " +response);
       });
 
     return () => {
