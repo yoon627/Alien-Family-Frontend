@@ -17,6 +17,7 @@ import NewGame from "./views/NewGame";
 import MainScreen from "./views/MainScreen";
 import { Provider } from "react-redux";
 import store from "./redux/store";
+import Attendance from "./views/Attendance";
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -53,6 +54,7 @@ export default function App() {
             options={{ headerShown: false }}
           />
           <Stack.Screen name="MainScreen" component={MainScreen} />
+          <Stack.Screen name="Attendance" component={Attendance} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

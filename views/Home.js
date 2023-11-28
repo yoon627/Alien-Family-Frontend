@@ -132,7 +132,9 @@ export default function Home({ navigation }) {
       });
 
     responseListener.current =
-      Notifications.addNotificationResponseReceivedListener((response) => {console.log(response)});
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        console.log(response);
+      });
 
     return () => {
       Notifications.removeNotificationSubscription(
@@ -307,7 +309,6 @@ export default function Home({ navigation }) {
                       );
                       const UserServerAccessToken = await AsyncStorage.getItem(
                         "UserServerAccessToken"
-
                       );
                       await axios({
                         method: "POST",
@@ -324,7 +325,6 @@ export default function Home({ navigation }) {
                           // const writer = await AsyncStorage.getItem("nickname");
                           // setTodayTMI(writer + ": " + TMI + "  " + todayTMI);
                           fetchData();
-
                         })
                         .catch(function (error) {
                           console.log("server error", error);
@@ -370,7 +370,6 @@ export default function Home({ navigation }) {
                 );
                 const UserServerAccessToken = await AsyncStorage.getItem(
                   "UserServerAccessToken"
-
                 );
                 await axios({
                   method: "GET",
@@ -413,6 +412,22 @@ export default function Home({ navigation }) {
                 }}
               >
                 출첵
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{ marginHorizontal: 10, marginVertical: 20 }}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Attendance")}
+              style={{ backgroundColor: "black", borderRadius: 50 }}
+            >
+              <Text
+                style={{
+                  color: "white",
+                  marginHorizontal: 30,
+                  marginVertical: 20,
+                }}
+              >
+                출첵 페이지
               </Text>
             </TouchableOpacity>
           </View>
