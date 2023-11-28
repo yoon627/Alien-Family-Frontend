@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Modal,
@@ -11,6 +11,21 @@ import { Calendar } from "react-native-calendars";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
+const colors = [
+  "#FEE1E8",
+  "#C6DBDA",
+  "#d1c089",
+  "#92346e",
+  "#55CBCD",
+  "#C08863",
+  "#483020",
+  "#9ec8a0",
+];
+
+const getRandomColor = (index) => {
+  return colors[index % colors.length];
+};
+
 export default function CalendarScreen({ navigation }) {
   const [selected, setSelected] = useState("");
   const [events, setEvents] = useState({});
@@ -22,6 +37,61 @@ export default function CalendarScreen({ navigation }) {
   const [endAt, setEndAt] = useState(new Date());
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
+  const [name, setName] = useState("");
+  const [familyId, setFamilyId] = useState("");
+  const [eventId, setEventId] = useState("");
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const getData = async () => {
+    const name = await AsyncStorage.getItem("MyName");
+    const id = await AsyncStorage.getItem("familyId");
+    const token = await AsyncStorage.getItem("UserServerAccessToken"); // 적절한 토큰 키 사용
+
+    const response = await fetch(
+      "http://43.202.241.133:12345/calendarEvent/day/2023/11",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // 필요한 경우 인증 헤더 추가
+        },
+      },
+    );
+
+    const data = await response.json();
+    if (data.code === 200 && data.data.length > 0) {
+      let i = 0;
+      const newEvents = { ...events };
+      data.data.forEach((eventData) => {
+        const newEvent = {
+          id: eventData.eventId,
+          title: eventData.eventName,
+          name: eventData.member.nickname,
+        };
+
+        const datesInRange = getDatesInRange(
+          new Date(eventData.startDate),
+          new Date(eventData.endDate),
+        );
+
+        datesInRange.forEach((date) => {
+          newEvents[date] = [...(newEvents[date] || []), newEvent];
+        });
+      });
+      setEvents(newEvents);
+    }
+
+    setFamilyId(id);
+    setName(name);
+  };
+
+  useEffect(() => {
+    setStartAt(new Date(selected));
+    setEndAt(new Date(selected));
+  }, [selected]);
 
   const onStartDateChange = (event, selected) => {
     const startDate = selected || startAt;
@@ -39,8 +109,19 @@ export default function CalendarScreen({ navigation }) {
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const day = date.getDate().toString().padStart(2, "0");
-
     return `${year}-${month}-${day}`;
+  }
+
+  function getDatesInRange(startDate, endDate) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const dates = [];
+    while (start <= end) {
+      dates.push(formatYYYYMMDD(new Date(start)));
+      start.setDate(start.getDate() + 1);
+    }
+
+    return dates;
   }
 
   const onDayPress = (day) => {
@@ -52,7 +133,7 @@ export default function CalendarScreen({ navigation }) {
     setModalVisible(true);
   };
 
-  const handleEditEvent = () => {
+  const handleEditEvent = async () => {
     setEvents((prevEvents) => ({
       ...prevEvents,
       [selected]: prevEvents[selected].map((event) =>
@@ -61,6 +142,17 @@ export default function CalendarScreen({ navigation }) {
           : event,
       ),
     }));
+    const token = await AsyncStorage.getItem("UserServerAccessToken");
+    const response = await fetch("http://43.202.241.133:12345/calendarEvent/", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // 필요한 경우 인증 헤더 추가
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
     setModalVisible(false);
   };
 
@@ -69,37 +161,64 @@ export default function CalendarScreen({ navigation }) {
       <TouchableOpacity
         key={index}
         onPress={() => openEditModal(event)}
-        style={{ padding: 10, marginTop: 5, backgroundColor: "#f0f0f0" }}
+        style={{
+          padding: 10,
+          marginTop: 5,
+          backgroundColor: getRandomColor(index),
+        }}
       >
-        <Text>{event.title}</Text>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text>{event.title}</Text>
+          <Text>{event.name}</Text>
+        </View>
       </TouchableOpacity>
     ));
   };
 
-  const addNewEvent = () => {
-    const newEvent = { id: Date.now(), title: newEventTitle };
-    setEvents({
-      ...events,
-      [selected]: [...(events[selected] || []), newEvent],
-    });
-    setNewEventTitle("");
-    setNewEventModalVisible(false);
+  const addNewEvent = async () => {
+    try {
+      const token = await AsyncStorage.getItem("UserServerAccessToken"); // 적절한 토큰 키 사용
+      const response = await fetch(
+        "http://43.202.241.133:12345/calendarEvent",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // 필요한 경우 인증 헤더 추가
+          },
+          body: JSON.stringify(payload),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("HTTP error! status: " + response.status);
+      }
+
+      const data = await response.json(); // 응답을 JSON으로 변환
+      const newEvent = {
+        id: data.data.eventId,
+        title: newEventTitle,
+        name: name,
+      };
+      const datesInRange = getDatesInRange(startAt, endAt);
+      const newEvents = { ...events };
+
+      datesInRange.forEach((date) => {
+        newEvents[date] = [...(newEvents[date] || []), newEvent];
+      });
+
+      setEvents(newEvents);
+      setNewEventTitle("");
+      setNewEventModalVisible(false);
+    } catch (error) {
+      console.error("There was an error creating the event:", error);
+    }
   };
 
   const payload = {
-    calendar_id: "primary",
-    event: JSON.stringify({
-      title: `${newEventTitle}`,
-      time: {
-        // start_at: startAt,
-        start_at: formatYYYYMMDD(startAt),
-        // end_at: endAt,
-        end_at: formatYYYYMMDD(endAt),
-        time_zone: "Asia/Seoul",
-        all_day: false,
-        lunar: false,
-      },
-    }),
+    eventName: newEventTitle,
+    startDate: startAt,
+    endDate: endAt,
   };
 
   const formBody = Object.keys(payload)
@@ -130,7 +249,6 @@ export default function CalendarScreen({ navigation }) {
       }
 
       const data = await response.json();
-
     } catch (error) {
       console.error("There was an error create event:", error);
     }
@@ -161,17 +279,7 @@ export default function CalendarScreen({ navigation }) {
 
   return (
     <View>
-      <Calendar
-        onDayPress={onDayPress}
-        markedDates={getMarkedDates()}
-        // markedDates={{
-        //   [selected]: {
-        //     selected: true,
-        //     disableTouchEvent: true,
-        //     selectedDotColor: "orange",
-        //   },
-        // }}
-      />
+      <Calendar onDayPress={onDayPress} markedDates={getMarkedDates()} />
       <View>
         {selected && events[selected] ? (
           renderEvents()
@@ -205,6 +313,35 @@ export default function CalendarScreen({ navigation }) {
               marginBottom: 20,
             }}
           />
+          <View>
+            <Text>시작 {formatYYYYMMDD(startAt)}</Text>
+            <Button
+              title="Start Date"
+              onPress={() => setShowStartDatePicker(true)}
+            />
+            {showStartDatePicker && (
+              <DateTimePicker
+                value={startAt}
+                mode="date"
+                display="spinner"
+                onChange={onStartDateChange}
+              />
+            )}
+
+            <Text>끝 {formatYYYYMMDD(endAt)}</Text>
+            <Button
+              title="End Date"
+              onPress={() => setShowEndDatePicker(true)}
+            />
+            {showEndDatePicker && (
+              <DateTimePicker
+                value={endAt}
+                mode="date"
+                display="spinner"
+                onChange={onEndDateChange}
+              />
+            )}
+          </View>
           <Button title="수정하기" onPress={handleEditEvent} />
           <Button
             title="취소"
@@ -243,7 +380,6 @@ export default function CalendarScreen({ navigation }) {
                 value={startAt}
                 mode="date"
                 display="spinner"
-                minuteInterval={5}
                 onChange={onStartDateChange}
               />
             )}
