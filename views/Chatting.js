@@ -29,7 +29,7 @@ const ChatRoom = () => {
         const response = await fetch(
           "http://" + `${myIP}` + ":12345/chat/list?id=" + chatroomId,
           {
-            method: "get",
+            method: "GET",
             headers: {
               Authorization: "Bearer " + token,
             },
@@ -65,7 +65,6 @@ const ChatRoom = () => {
             Authorization: token,
           },
           onConnect: () => {
-            // console.log('Connected to the WebSocket server');
             client.subscribe("/sub/chat/room/" + chatroomId, (message) => {
               const receivedMessage = JSON.parse(message.body);
               setMessages((prevMessages) => [...prevMessages, receivedMessage]);
@@ -80,7 +79,6 @@ const ChatRoom = () => {
 
         const interval = setInterval(() => {
           if (!client.connected) {
-            // console.log("연결시도중");
             client.activate();
           }
         }, 1000); // 1초마다 연결 상태 체크
@@ -119,19 +117,6 @@ const ChatRoom = () => {
       setMessage("");
     }
   };
-
-  useEffect(() => {
-    if (stompClient) {
-      stompClient.onConnect = () => {
-        // ... 기존 로직
-        stompClient.subscribe("/sub/chat/room/" + chatroomId, (message) => {
-          const receivedMessage = JSON.parse(message.body);
-          setMessages((prevMessages) => [...prevMessages, receivedMessage]);
-          scrollViewRef.current?.scrollToEnd({ animated: true }); // 여기에 스크롤 로직 추가
-        });
-      };
-    }
-  }, [stompClient]);
 
   return (
     <View style={{ flex: 1, padding: 20 }}>
