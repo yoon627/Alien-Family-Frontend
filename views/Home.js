@@ -133,7 +133,7 @@ export default function Home({ navigation }) {
 
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log(response);
+        // console.log(response);
       });
 
     return () => {
@@ -151,8 +151,8 @@ export default function Home({ navigation }) {
       try {
         const plant = await AsyncStorage.getItem("plantInfo");
         setPlantlevel(JSON.parse(plant).level);
-        console.log("plant lv", plantlevel);
-        console.log(plant);
+        // console.log("plant lv", plantlevel);
+        // console.log(plant);
         setPlant(plant);
       } catch (error) {
         console.error("Error getMsg:", error);
@@ -229,28 +229,33 @@ export default function Home({ navigation }) {
 
   return (
     <Container>
-      <View
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          borderColor: "black",
-          borderWidth: 2,
-          borderRadius: 10,
-        }}
+      <TouchableOpacity
+        onPress={() => setModalVisible(true)}
+        style={{ borderRadius: 10 }}
       >
-        <Text>
-          {"<"}TMI{">"}
-        </Text>
-        <MarqueeText
-          style={{ fontSize: 24 }}
-          speed={0.5}
-          marqueeOnStart={true}
-          loop={true}
-          delay={1000}
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            borderColor: "black",
+            borderWidth: 2,
+            borderRadius: 10,
+          }}
         >
-          {todayTMI}
-        </MarqueeText>
-      </View>
+          <Text>
+            {"<"}TMI{">"}
+          </Text>
+          <MarqueeText
+            style={{ fontSize: 24 }}
+            speed={0.5}
+            marqueeOnStart={true}
+            loop={true}
+            delay={1000}
+          >
+            {todayTMI}
+          </MarqueeText>
+        </View>
+      </TouchableOpacity>
       <View
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
       ></View>
@@ -263,7 +268,7 @@ export default function Home({ navigation }) {
       <TouchableOpacity onPress={increasePlantLevel}>
         {renderFlower()}
       </TouchableOpacity>
-      <Text>{plant}</Text>
+      {/* <Text>{plant}</Text> */}
       <View
         style={{
           flex: 1,
@@ -346,7 +351,7 @@ export default function Home({ navigation }) {
           </Modal>
         </View>
         <View style={{ flexDirection: "row" }}>
-          <View style={{ marginHorizontal: 10, marginVertical: 20 }}>
+          {/* <View style={{ marginHorizontal: 10, marginVertical: 20 }}>
             <TouchableOpacity
               onPress={() => setModalVisible(true)}
               style={{ backgroundColor: "black", borderRadius: 50 }}
@@ -361,7 +366,7 @@ export default function Home({ navigation }) {
                 TMI 작성
               </Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
           <View style={{ marginHorizontal: 10, marginVertical: 20 }}>
             <TouchableOpacity
               onPress={async () => {
@@ -402,17 +407,14 @@ export default function Home({ navigation }) {
                   })
                   .catch((e) => console.log(e));
               }}
-              style={{ backgroundColor: "black", borderRadius: 50 }}
             >
-              <Text
-                style={{
-                  color: "white",
-                  marginHorizontal: 30,
-                  marginVertical: 20,
-                }}
-              >
-                출첵
-              </Text>
+              <View>
+                <MaterialCommunityIcons
+                  name="watering-can"
+                  size={75}
+                  color="black"
+                />
+              </View>
             </TouchableOpacity>
           </View>
           <View style={{ marginHorizontal: 10, marginVertical: 20 }}>
@@ -427,7 +429,7 @@ export default function Home({ navigation }) {
                   marginVertical: 20,
                 }}
               >
-                출첵 페이지
+                타임라인
               </Text>
             </TouchableOpacity>
           </View>
