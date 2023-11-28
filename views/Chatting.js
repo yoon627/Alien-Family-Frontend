@@ -51,12 +51,12 @@ const ChatRoom = () => {
   useEffect(() => {
     const connection = async () => {
       try {
-        const test = await AsyncStorage.getItem("MyName");
+        const name = await AsyncStorage.getItem("MyName");
         const token = await AsyncStorage.getItem("UserServerAccessToken");
         const familyId = await AsyncStorage.getItem("familyId");
         const chatroomId = await AsyncStorage.getItem("chatroomId");
 
-        setMyname(test);
+        setMyname(name);
         setroomNumber(chatroomId);
 
         const client = new Client({
