@@ -132,7 +132,9 @@ export default function Home({ navigation }) {
       });
 
     responseListener.current =
-      Notifications.addNotificationResponseReceivedListener((response) => {});
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        // console.log(response);
+      });
 
     return () => {
       Notifications.removeNotificationSubscription(
@@ -149,8 +151,8 @@ export default function Home({ navigation }) {
       try {
         const plant = await AsyncStorage.getItem("plantInfo");
         setPlantlevel(JSON.parse(plant).level);
-        console.log("plant lv", plantlevel);
-        console.log(plant);
+        // console.log("plant lv", plantlevel);
+        // console.log(plant);
         setPlant(plant);
       } catch (error) {
         console.error("Error getMsg:", error);
@@ -249,19 +251,20 @@ export default function Home({ navigation }) {
           {todayTMI}
         </MarqueeText>
       </View>
+      <TouchableOpacity
+        onPress={() => setModalVisible(true)}
+        style={{ borderRadius: 5, backgroundColor: "black" }}
+      >
+        <Text style={{ color: "white" }}>TMI 작성</Text>
+      </TouchableOpacity>
       <View
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
       ></View>
       <View style={styles.centeredView}>{movingObject()}</View>
-      {/*{flower ? (*/}
-      {/*  <MaterialCommunityIcons name="flower" size={100} color="black" />*/}
-      {/*) : (*/}
-      {/*  <MaterialCommunityIcons name="sprout" size={100} color="black" />*/}
-      {/*)}*/}
       <TouchableOpacity onPress={increasePlantLevel}>
         {renderFlower()}
       </TouchableOpacity>
-      <Text>{plant}</Text>
+      {/* <Text>{plant}</Text> */}
       <View
         style={{
           flex: 1,
@@ -307,7 +310,6 @@ export default function Home({ navigation }) {
                       );
                       const UserServerAccessToken = await AsyncStorage.getItem(
                         "UserServerAccessToken"
-
                       );
                       await axios({
                         method: "POST",
@@ -324,7 +326,6 @@ export default function Home({ navigation }) {
                           // const writer = await AsyncStorage.getItem("nickname");
                           // setTodayTMI(writer + ": " + TMI + "  " + todayTMI);
                           fetchData();
-
                         })
                         .catch(function (error) {
                           console.log("server error", error);
@@ -346,7 +347,7 @@ export default function Home({ navigation }) {
           </Modal>
         </View>
         <View style={{ flexDirection: "row" }}>
-          <View style={{ marginHorizontal: 10, marginVertical: 20 }}>
+          {/* <View style={{ marginHorizontal: 10, marginVertical: 20 }}>
             <TouchableOpacity
               onPress={() => setModalVisible(true)}
               style={{ backgroundColor: "black", borderRadius: 50 }}
@@ -361,7 +362,7 @@ export default function Home({ navigation }) {
                 TMI 작성
               </Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
           <View style={{ marginHorizontal: 10, marginVertical: 20 }}>
             <TouchableOpacity
               onPress={async () => {
@@ -370,7 +371,6 @@ export default function Home({ navigation }) {
                 );
                 const UserServerAccessToken = await AsyncStorage.getItem(
                   "UserServerAccessToken"
-
                 );
                 await axios({
                   method: "GET",
@@ -403,6 +403,19 @@ export default function Home({ navigation }) {
                   })
                   .catch((e) => console.log(e));
               }}
+            >
+              <View>
+                <MaterialCommunityIcons
+                  name="watering-can"
+                  size={75}
+                  color="black"
+                />
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View style={{ marginHorizontal: 10, marginVertical: 20 }}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Attendance")}
               style={{ backgroundColor: "black", borderRadius: 50 }}
             >
               <Text
@@ -412,7 +425,7 @@ export default function Home({ navigation }) {
                   marginVertical: 20,
                 }}
               >
-                출첵
+                타임라인
               </Text>
             </TouchableOpacity>
           </View>

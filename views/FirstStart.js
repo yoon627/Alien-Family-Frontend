@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-
 import {
   Dimensions,
   StyleSheet,
@@ -10,7 +9,7 @@ import {
 } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRoute } from "@react-navigation/native";
+import {useRoute} from "@react-navigation/native";
 import * as Clipboard from "expo-clipboard";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
@@ -282,20 +281,20 @@ const FirstStart = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  input: {
-    backgroundColor: "white",
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderRadius: 30,
-    marginTop: 20,
-    fontSize: 18,
-    marginVertical: 20,
-  },
+    container: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    input: {
+        backgroundColor: "white",
+        paddingVertical: 15,
+        paddingHorizontal: 20,
+        borderRadius: 30,
+        marginTop: 20,
+        fontSize: 18,
+        marginVertical: 20,
+    },
 });
 
 export default FirstStart;
