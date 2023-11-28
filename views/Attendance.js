@@ -54,6 +54,7 @@ export default function Attendance({ navigation }) {
       },
     })
       .then((resp) => {
+        console.log(resp.data.data)
         const tmpJson = {};
         const attendances = resp.data.data;
         for (i = 0; i < week.length; i++) {

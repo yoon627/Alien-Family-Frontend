@@ -229,42 +229,38 @@ export default function Home({ navigation }) {
 
   return (
     <Container>
+      <View
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+          borderColor: "black",
+          borderWidth: 2,
+          borderRadius: 10,
+        }}
+      >
+        <Text>
+          {"<"}TMI{">"}
+        </Text>
+        <MarqueeText
+          style={{ fontSize: 24 }}
+          speed={0.5}
+          marqueeOnStart={true}
+          loop={true}
+          delay={1000}
+        >
+          {todayTMI}
+        </MarqueeText>
+      </View>
       <TouchableOpacity
         onPress={() => setModalVisible(true)}
-        style={{ borderRadius: 10 }}
+        style={{ borderRadius: 5, backgroundColor: "black" }}
       >
-        <View
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-            borderColor: "black",
-            borderWidth: 2,
-            borderRadius: 10,
-          }}
-        >
-          <Text>
-            {"<"}TMI{">"}
-          </Text>
-          <MarqueeText
-            style={{ fontSize: 24 }}
-            speed={0.5}
-            marqueeOnStart={true}
-            loop={true}
-            delay={1000}
-          >
-            {todayTMI}
-          </MarqueeText>
-        </View>
+        <Text style={{ color: "white" }}>TMI 작성</Text>
       </TouchableOpacity>
       <View
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
       ></View>
       <View style={styles.centeredView}>{movingObject()}</View>
-      {/*{flower ? (*/}
-      {/*  <MaterialCommunityIcons name="flower" size={100} color="black" />*/}
-      {/*) : (*/}
-      {/*  <MaterialCommunityIcons name="sprout" size={100} color="black" />*/}
-      {/*)}*/}
       <TouchableOpacity onPress={increasePlantLevel}>
         {renderFlower()}
       </TouchableOpacity>
