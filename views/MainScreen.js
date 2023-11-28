@@ -7,7 +7,7 @@ import {
   FontAwesome,
   MaterialIcons,
 } from "@expo/vector-icons";
-import Album from "./Album";
+import AlbumScreen from "./AlbumScreen";
 import Home from "./Home";
 import CalendarScreen from "./CalendarScreen";
 import Feed from "./Feed";
@@ -33,8 +33,8 @@ export default function MainScreen({ navigation }) {
         }}
       />
       <Tab.Screen
-        name="Album"
-        component={Album}
+        name="AlbumScreen"
+        component={AlbumScreen}
         options={{
           headerShown: false,
           tabBarIcon: () => (
