@@ -5,17 +5,9 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import ChoseCalendar from "./ChoseCalendar";
+import { Ionicons } from "@expo/vector-icons";
 
-const colors = [
-  "#FEE1E8",
-  "#C6DBDA",
-  "#d1c089",
-  "#92346e",
-  "#55CBCD",
-  "#C08863",
-  "#483020",
-  "#9ec8a0",
-];
+const colors = ["#DEA690", "#B4DE9B", "#6FDECB", "#DC7ADE", "#DF8588"];
 
 const getRandomColor = (index) => {
   return colors[index % colors.length];
@@ -42,10 +34,13 @@ export default function CalendarScreen({ navigation }) {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
 
   useEffect(() => {
-    console.log(currentYear, "년", currentMonth, "월");
-
     getData();
-  }, [isLocalCalendarModalVisible, currentMonth]);
+  }, [
+    isLocalCalendarModalVisible,
+    currentMonth,
+    isAddOrEditModalVisible,
+    isModalVisible,
+  ]);
 
   const handleMonthChange = (date) => {
     let year = date.year;
@@ -129,9 +124,10 @@ export default function CalendarScreen({ navigation }) {
   };
 
   function formatYYYYMMDD(date) {
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
+    const formatdate = new Date(date);
+    const year = formatdate.getFullYear();
+    const month = (formatdate.getMonth() + 1).toString().padStart(2, "0");
+    const day = formatdate.getDate().toString().padStart(2, "0");
     return `${year}-${month}-${day}`;
   }
 
@@ -162,9 +158,11 @@ export default function CalendarScreen({ navigation }) {
           backgroundColor: getRandomColor(index),
         }}
       >
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text>{event.title}</Text>
-          <Text>{event.name}</Text>
+        <View style={{ flexDirection: "row", justifyContent: "flex-start" }}>
+          <Ionicons name={"person"} size={15} />
+          <Text style={{ fontWeight: "bold", paddingLeft: 10 }}>
+            {event.name} : {event.title}
+          </Text>
         </View>
       </TouchableOpacity>
     ));
@@ -280,21 +278,25 @@ export default function CalendarScreen({ navigation }) {
   };
 
   const getMarkedDates = () => {
-    const marked = Object.keys(events).reduce((acc, date) => {
-      acc[date] = {
-        marked: events[date].length > 0, // Mark date if there are events
-        selected: date === selected,
-        selectedColor: "orange",
-        disableTouchEvent: false,
-      };
-      return acc;
-    }, {});
+    let marked = {};
 
-    // Ensure the selected date is marked even if there are no events
+    Object.keys(events).forEach((date) => {
+      let periods = events[date].map((event) => {
+        return {
+          startingDay: formatYYYYMMDD(event.startDate) === date,
+          endingDay: formatYYYYMMDD(event.endDate) === date,
+          color: getRandomColor(events[date].indexOf(event)),
+        };
+      });
+
+      marked[date] = { periods: periods };
+    });
+
+    // Ensure the selected date is marked
     if (selected && !marked[selected]) {
       marked[selected] = {
         selected: true,
-        selectedColor: "orange",
+        selectedColor: "#e0b3e8",
         disableTouchEvent: true,
       };
     }
@@ -337,12 +339,58 @@ export default function CalendarScreen({ navigation }) {
     }
   };
 
+  const theme = {
+    backgroundColor: "#ffffff",
+    calendarBackground: "#f2f2f2",
+    textSectionTitleColor: "#b6c1cd",
+    textSectionTitleDisabledColor: "#d9e1e8",
+    selectedDayBackgroundColor: "#ff7f50", // Coral color for the selected day
+    selectedDayTextColor: "#ffffff",
+    todayTextColor: "#ff4500", // Orange Red color for the current day
+    dayTextColor: "#2d4150",
+    textDisabledColor: "#d9e1e8",
+    dotColor: "#00adf5",
+    selectedDotColor: "#ffffff",
+    arrowColor: "pink", // Arrows for switching months
+    disabledArrowColor: "#d9e1e8",
+    monthTextColor: "purple", // Color for the month's title
+    indicatorColor: "blue",
+    textDayFontWeight: "bold",
+    textMonthFontWeight: "bold",
+    textDayHeaderFontWeight: "300",
+    textDayFontSize: 16,
+    textMonthFontSize: 16,
+    textDayHeaderFontSize: 16,
+    textDayFontFamily: "dnf",
+  };
+
+  const customHeader = () => {
+    return (
+      <View>
+        <TouchableOpacity>
+          <Text
+            style={{
+              fontFamily: "dnf",
+              fontSize: 32,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >{`${currentMonth}  ${currentYear}`}</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
   return (
     <View>
       <Calendar
         onDayPress={onDayPress}
         markedDates={getMarkedDates()}
+        markingType={"multi-period"}
         onMonthChange={handleMonthChange}
+        renderHeader={customHeader}
+        theme={theme}
       />
       <View>
         {selected && events[selected] ? (
@@ -353,9 +401,9 @@ export default function CalendarScreen({ navigation }) {
       </View>
       <TouchableOpacity
         onPress={toggleAddOrEditModal}
-        style={{ padding: 10, marginTop: 5, backgroundColor: "#a273c3" }}
+        style={{ padding: 10, marginTop: 5, backgroundColor: "#cecccc" }}
       >
-        <Text>일정 추가하기ㅋㅋ</Text>
+        <Text> + 새로운 일정</Text>
       </TouchableOpacity>
 
       <Modal

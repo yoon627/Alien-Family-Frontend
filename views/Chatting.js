@@ -36,7 +36,7 @@ const ChatRoom = () => {
         const chatroomId = await AsyncStorage.getItem("chatroomId");
         console.log("챗룸ID ", chatroomId);
         const response = await fetch(
-          "http://" + `${myIP}` + ":12345/chat/list?id=" + "782",
+          "http://" + `${myIP}` + ":12345/chat/list?id=" + chatroomId,
           {
             method: "get",
             headers: {
@@ -208,6 +208,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
   },
   messageText: {
+    fontFamily: "dnf",
     color: "white",
   },
   inputRow: {
