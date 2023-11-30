@@ -1,15 +1,10 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Modal,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Button, Modal, Text, TextInput, View } from "react-native";
 import { Calendar } from "react-native-calendars";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import ChoseCalendar from "./ChoseCalendar";
 
 const colors = [
   "#FEE1E8",
@@ -40,10 +35,36 @@ export default function CalendarScreen({ navigation }) {
   const [name, setName] = useState("");
   const [familyId, setFamilyId] = useState("");
   const [eventId, setEventId] = useState("");
+  const [isAddOrEditModalVisible, setIsAddOrEditModalVisible] = useState(false);
+  const [isLocalCalendarModalVisible, setIsLocalCalendarModalVisible] =
+    useState(false);
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
 
   useEffect(() => {
+    console.log(currentYear, "년", currentMonth, "월");
+
     getData();
-  }, []);
+  }, [isLocalCalendarModalVisible, currentMonth]);
+
+  const handleMonthChange = (date) => {
+    let year = date.year;
+    let month = date.month;
+    setCurrentYear(year);
+    setCurrentMonth(month);
+  };
+
+  const toggleAddOrEditModal = () => {
+    if (Object.is(startAt.valueOf(), NaN)) {
+      setStartAt(new Date());
+      setEndAt(new Date());
+    }
+    setIsAddOrEditModalVisible((prevState) => !prevState);
+  };
+
+  const toggleLocalCalendarModal = () => {
+    setIsLocalCalendarModalVisible((prevState) => !prevState);
+  };
 
   const getData = async () => {
     const name = await AsyncStorage.getItem("MyName");
@@ -51,7 +72,8 @@ export default function CalendarScreen({ navigation }) {
     const token = await AsyncStorage.getItem("UserServerAccessToken"); // 적절한 토큰 키 사용
 
     const response = await fetch(
-      "http://43.202.241.133:12345/calendarEvent/day/2023/11",
+      "http://43.202.241.133:12345/calendarEvent/day/" +
+        `${currentYear}/${currentMonth}`,
       {
         method: "GET",
         headers: {
@@ -62,13 +84,15 @@ export default function CalendarScreen({ navigation }) {
     );
     const data = await response.json();
     if (data.code === 200 && data.data.length > 0) {
-      let i = 0;
-      const newEvents = { ...events };
+      let newEvents = {};
+
       data.data.forEach((eventData) => {
         const newEvent = {
           id: eventData.eventId,
           title: eventData.eventName,
           name: eventData.member.nickname,
+          startDate: new Date(eventData.startDate),
+          endDate: new Date(eventData.endDate),
         };
 
         const datesInRange = getDatesInRange(
@@ -80,9 +104,9 @@ export default function CalendarScreen({ navigation }) {
           newEvents[date] = [...(newEvents[date] || []), newEvent];
         });
       });
+
       setEvents(newEvents);
     }
-
     setFamilyId(id);
     setName(name);
   };
@@ -125,53 +149,6 @@ export default function CalendarScreen({ navigation }) {
 
   const onDayPress = (day) => {
     setSelected(day.dateString);
-  };
-
-  const openEditModal = (event) => {
-    setEditingEvent({ ...event });
-    setModalVisible(true);
-  };
-
-  const handleEditEvent = async () => {
-    setEvents((prevEvents) => ({
-      ...prevEvents,
-      [selected]: prevEvents[selected].map((event) =>
-        event.id === editingEvent.id
-          ? {
-              ...event,
-              title: editingEvent.title,
-              startDate: editingEvent.startDate,
-              endDate: editingEvent.endDate,
-            }
-          : event,
-      ),
-    }));
-    console.log(editingEvent.startDate);
-    const token = await AsyncStorage.getItem("UserServerAccessToken");
-    const editPayload = {
-      eventId: editingEvent.id, // 이벤트 ID
-      eventName: editingEvent.title, // 수정된 제목
-      startDate: editingEvent.startDate, // 수정된 시작 날짜
-      endDate: editingEvent.endDate, // 수정된 종료 날짜
-      // 필요한 경우 추가 필드
-    };
-
-    const response = await fetch(
-      "http://43.202.241.133:12345/calendarEvent/" + editingEvent.id,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // 필요한 경우 인증 헤더 추가
-        },
-        body: JSON.stringify(editPayload),
-      },
-    );
-
-    const data = await response.json();
-    console.log(data);
-
-    setModalVisible(false);
   };
 
   const renderEvents = () => {
@@ -239,6 +216,69 @@ export default function CalendarScreen({ navigation }) {
     }
   };
 
+  const openEditModal = (event) => {
+    setEditingEvent({ ...event });
+    setStartAt(new Date(event.startDate));
+    setEndAt(new Date(event.endDate));
+    setModalVisible(true);
+  };
+
+  const handleEditEvent = async () => {
+    const updatedEvents = { ...events };
+
+    // 기존 이벤트를 삭제
+    if (editingEvent) {
+      const oldDates = getDatesInRange(
+        new Date(editingEvent.startDate),
+        new Date(editingEvent.endDate),
+      );
+      oldDates.forEach((date) => {
+        updatedEvents[date] = updatedEvents[date].filter(
+          (event) => event.id !== editingEvent.id,
+        );
+      });
+    }
+
+    // 수정된 이벤트 정보 업데이트
+    const newEvent = {
+      ...editingEvent,
+      title: editingEvent.title,
+      startDate: startAt,
+      endDate: endAt,
+    };
+
+    // 새로운 날짜에 이벤트 추가
+    const newDates = getDatesInRange(startAt, endAt);
+    newDates.forEach((date) => {
+      updatedEvents[date] = [...(updatedEvents[date] || []), newEvent];
+    });
+
+    setEvents(updatedEvents);
+
+    const token = await AsyncStorage.getItem("UserServerAccessToken");
+    const editPayload = {
+      eventId: editingEvent.id, // 이벤트 ID
+      eventName: editingEvent.title, // 수정된 제목
+      startDate: startAt, // 수정된 시작 날짜
+      endDate: endAt, // 수정된 종료 날짜
+    };
+
+    const response = await fetch(
+      "http://43.202.241.133:12345/calendarEvent/" + editingEvent.id,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // 필요한 경우 인증 헤더 추가
+        },
+        body: JSON.stringify(editPayload),
+      },
+    );
+
+    const data = await response.json();
+    setModalVisible(false);
+  };
+
   const getMarkedDates = () => {
     const marked = Object.keys(events).reduce((acc, date) => {
       acc[date] = {
@@ -299,7 +339,11 @@ export default function CalendarScreen({ navigation }) {
 
   return (
     <View>
-      <Calendar onDayPress={onDayPress} markedDates={getMarkedDates()} />
+      <Calendar
+        onDayPress={onDayPress}
+        markedDates={getMarkedDates()}
+        onMonthChange={handleMonthChange}
+      />
       <View>
         {selected && events[selected] ? (
           renderEvents()
@@ -308,11 +352,56 @@ export default function CalendarScreen({ navigation }) {
         )}
       </View>
       <TouchableOpacity
-        onPress={() => setNewEventModalVisible(true)}
-        style={{ padding: 10, marginTop: 5, backgroundColor: "#f0f0f0" }}
+        onPress={toggleAddOrEditModal}
+        style={{ padding: 10, marginTop: 5, backgroundColor: "#a273c3" }}
       >
-        <Text>일정 추가하기</Text>
+        <Text>일정 추가하기ㅋㅋ</Text>
       </TouchableOpacity>
+
+      <Modal
+        visible={isAddOrEditModalVisible}
+        onRequestClose={toggleAddOrEditModal}
+        transparent={true}
+        animationType="slide"
+      >
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "white",
+              padding: 20,
+              borderRadius: 10,
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+              elevation: 5,
+              width: "50%", // 너비 조정
+              height: "17%", // 높이 조정
+            }}
+          >
+            <Button
+              title="새 일정 추가"
+              onPress={() => {
+                setNewEventModalVisible(true);
+                toggleAddOrEditModal();
+              }}
+            />
+            <Button
+              title="달력에서 가져오기"
+              onPress={() => {
+                toggleAddOrEditModal();
+                toggleLocalCalendarModal();
+              }}
+            />
+            <Button title="취소" onPress={toggleAddOrEditModal} />
+          </View>
+        </View>
+      </Modal>
+
       <Modal
         visible={isModalVisible}
         onRequestClose={() => setModalVisible(false)}
@@ -430,6 +519,42 @@ export default function CalendarScreen({ navigation }) {
             onPress={() => setNewEventModalVisible(false)}
             color="red"
           />
+        </View>
+      </Modal>
+
+      <Modal
+        visible={isLocalCalendarModalVisible}
+        onRequestClose={() => setIsLocalCalendarModalVisible(false)}
+        transparent={true}
+        animationType="slide"
+      >
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "white",
+              padding: 20,
+              borderRadius: 10,
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+              elevation: 5,
+              width: "50%", // 너비 조정
+              height: "50%", // 높이 조정
+            }}
+          >
+            <ChoseCalendar />
+
+            <Button
+              title="취소"
+              onPress={() => toggleLocalCalendarModal()}
+              color="red"
+            />
+          </View>
         </View>
       </Modal>
     </View>

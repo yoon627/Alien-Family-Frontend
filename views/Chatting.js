@@ -34,9 +34,9 @@ const ChatRoom = () => {
       try {
         const token = await AsyncStorage.getItem("UserServerAccessToken");
         const chatroomId = await AsyncStorage.getItem("chatroomId");
-        console.log(chatroomId);
+        console.log("챗룸ID ", chatroomId);
         const response = await fetch(
-          "http://" + `${myIP}` + ":12345/chat/list?id=" + chatroomId,
+          "http://" + `${myIP}` + ":12345/chat/list?id=" + "782",
           {
             method: "get",
             headers: {
@@ -146,18 +146,19 @@ const ChatRoom = () => {
     <View style={{ flex: 1, padding: 20 }}>
       <ScrollView style={{ flex: 1 }} ref={scrollViewRef}>
         {messages.map((msg, index) => (
-          <View
-            key={index}
-            style={[
-              styles.messageBubble,
-              msg.sender === myname ? styles.myMessage : styles.otherMessage,
-            ]}
-          >
-            {/* 상대방 메시지일 때만 이름을 표시 */}
+          <View key={index}>
+            {/* 상대방 메시지일 때만 이름을 말풍선 위에 표시 */}
             {msg.sender !== myname && (
               <Text style={styles.senderName}>{msg.sender}</Text>
             )}
-            <Text style={styles.messageText}>{msg.content}</Text>
+            <View
+              style={[
+                styles.messageBubble,
+                msg.sender === myname ? styles.myMessage : styles.otherMessage,
+              ]}
+            >
+              <Text style={styles.messageText}>{msg.content}</Text>
+            </View>
           </View>
         ))}
       </ScrollView>
@@ -203,9 +204,8 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 2,
   },
   senderName: {
-    color: "#f6ecec",
-    paddingBottom: 4,
-    fontSize: 12,
+    color: "#100f0f",
+    fontSize: 10,
   },
   messageText: {
     color: "white",
