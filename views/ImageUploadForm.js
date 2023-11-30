@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {Button, View, Image, TextInput, StyleSheet, ScrollView} from "react-native";
+import {Button, View, Image, TextInput, StyleSheet, ScrollView, Platform, KeyboardAvoidingView} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 // import SelectBox from 'react-native-multi-selectbox'
 import {xorBy} from "lodash";
@@ -130,36 +130,41 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Image
-        style={styles.uploadImage}
-        source={{uri: uri}}
-        width={100}
-        height={100}
-        resizeMode="contain"
-      />
-      <View style={{height: 40}}/>
-      <TextInput
-        style={styles.input}
-        value={photoTags.join(', ')}
-        onChangeText={(text) =>
-          setPhotoTags(text.split(',').map((tag) => tag.trim()))
-        }
-        placeholder="인물 태그..."
-        multiline
-      />
-      <TextInput
-        style={[styles.input, styles.description]}
-        value={description}
-        onChangeText={setDescription}
-        placeholder="문구 입력..."
-        multiline
-      />
-      <Button
-        title="공유"
-        onPress={uploadToServer}
-      />
-    </ScrollView>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <ScrollView contentContainerStyle={styles.container}>
+        <Image
+          style={styles.uploadImage}
+          source={{uri: uri}}
+          width={100}
+          height={100}
+          resizeMode="contain"
+        />
+        <View style={{height: 40}}/>
+        <TextInput
+          style={styles.input}
+          value={photoTags.join(', ')}
+          onChangeText={(text) =>
+            setPhotoTags(text.split(',').map((tag) => tag.trim()))
+          }
+          placeholder="인물 태그..."
+          multiline
+        />
+        <TextInput
+          style={[styles.input, styles.description]}
+          value={description}
+          onChangeText={setDescription}
+          placeholder="문구 입력..."
+          multiline
+        />
+        <Button
+          title="공유"
+          onPress={uploadToServer}
+        />
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 

@@ -20,6 +20,7 @@ import ChatRoom from "./views/Chatting";
 import ImageDetailForm from "./views/ImageDetailForm";
 import store from "./redux/store";
 import Attendance from "./views/Attendance";
+import AlbumScreen from "./views/AlbumScreen";
 
 const Stack = createStackNavigator();
 
@@ -42,6 +43,7 @@ export default function App() {
           <Stack.Screen name="Mole" component={NewGame}/>
           <Stack.Screen name="Chat" component={ChatRoom}/>
           <Stack.Screen name="ImageDetailForm" component={ImageDetailForm}/>
+          <Stack.Screen name="AlbumScreen" component={AlbumScreen} />
           <Stack.Screen
             name="MainDrawer"
             component={MainDrawer}

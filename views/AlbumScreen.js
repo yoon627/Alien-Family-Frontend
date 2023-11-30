@@ -37,6 +37,10 @@ const TAG_OPTION = [
     item: '둘째',
     id: 'SECOND',
   },
+  {
+    item: '기타',
+    id: 'EXTRA',
+  },
 ]
 
 export default function AlbumScreen({navigation}) {
@@ -54,6 +58,7 @@ export default function AlbumScreen({navigation}) {
   const [showUploadForm, setShowUploadForm] = useState(false);
   // 선택한 태그
   const [selectedTags, setSelectedTags] = useState([]);
+  const [albumList, setAlbumList] = useState([]);
 
   const handleUploadComplete = () => {
     setShowUploadForm(false);
@@ -75,6 +80,7 @@ export default function AlbumScreen({navigation}) {
         const data = await response.json();
         // 받아온 이미지 데이터 상태에 저장
         setImageData(data.data);
+        setAlbumList(data.data);
         // console.log("받은 데이터!!!!!!!!!", data.data)
         // console.log("👉🏻앨범 이미지 리스트: ", data.data.map(item => item.photoKey));
       } catch (error) {
@@ -242,12 +248,14 @@ export default function AlbumScreen({navigation}) {
                 <TouchableOpacity
                   onPress={() => navigation.navigate("ImageDetailForm", {
                     photoInfo: {
+                      photoId: item.photoId,
                       createAt: item.createAt,
                       photoKey: item.photoKey,
                       photoTags: item.photoTags,
                       description: item.description,
                       writer: item.writer,
-                    }
+                    },
+                    albumList: albumList,
                   })}>
                   <Image
                     source={{uri: item.photoKey}}

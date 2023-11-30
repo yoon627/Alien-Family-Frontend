@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { ScrollView } from "react-native-gesture-handler";
@@ -40,10 +40,11 @@ export default function Attendance({ navigation }) {
   ];
   const [tmiJson, setTmiJson] = useState({});
   const [attendanceJson, setAttendanceJson] = useState({});
+
   async function fetchData() {
     const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
     const UserServerAccessToken = await AsyncStorage.getItem(
-      "UserServerAccessToken"
+      "UserServerAccessToken",
     );
     await axios({
       method: "GET",
@@ -56,13 +57,13 @@ export default function Attendance({ navigation }) {
       .then((resp) => {
         const tmpJson = {};
         const attendances = resp.data.data;
-        for (i = 0; i < week.length; i++) {
+        for (let i = 0; i < week.length; i++) {
           const tmp = attendances[week[i]];
           let members = "";
           if (tmp) {
-            for (j = 0; j < tmp.length; j++) {
+            for (let j = 0; j < tmp.length; j++) {
               members += tmp[j].member.nickname;
-              if (j<tmp.length-1){
+              if (j < tmp.length - 1) {
                 members += ", ";
               }
             }
@@ -84,11 +85,11 @@ export default function Attendance({ navigation }) {
         // console.log(resp.data.data)
         const tmpJson = {};
         const tmptmis = resp.data.data;
-        for (i = 0; i < week.length; i++) {
+        for (let i = 0; i < week.length; i++) {
           const tmp = tmptmis[week[i]];
           let arr = [];
           if (tmp) {
-            for (j = 0; j < tmp.length; j++) {
+            for (let j = 0; j < tmp.length; j++) {
               arr.push(tmp[j].member.nickname + ":" + tmp[j].content);
             }
           }
@@ -99,6 +100,7 @@ export default function Attendance({ navigation }) {
       })
       .catch((e) => console.log(e));
   }
+
   useEffect(() => {
     fetchData();
   }, []);
