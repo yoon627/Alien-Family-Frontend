@@ -60,7 +60,6 @@ export default function CalendarScreen({ navigation }) {
         },
       },
     );
-
     const data = await response.json();
     if (data.code === 200 && data.data.length > 0) {
       let i = 0;
@@ -138,21 +137,40 @@ export default function CalendarScreen({ navigation }) {
       ...prevEvents,
       [selected]: prevEvents[selected].map((event) =>
         event.id === editingEvent.id
-          ? { ...event, title: editingEvent.title }
+          ? {
+              ...event,
+              title: editingEvent.title,
+              startDate: editingEvent.startDate,
+              endDate: editingEvent.endDate,
+            }
           : event,
       ),
     }));
+    console.log(editingEvent.startDate);
     const token = await AsyncStorage.getItem("UserServerAccessToken");
-    const response = await fetch("http://43.202.241.133:12345/calendarEvent/", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // 필요한 경우 인증 헤더 추가
+    const editPayload = {
+      eventId: editingEvent.id, // 이벤트 ID
+      eventName: editingEvent.title, // 수정된 제목
+      startDate: editingEvent.startDate, // 수정된 시작 날짜
+      endDate: editingEvent.endDate, // 수정된 종료 날짜
+      // 필요한 경우 추가 필드
+    };
+
+    const response = await fetch(
+      "http://43.202.241.133:12345/calendarEvent/" + editingEvent.id,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // 필요한 경우 인증 헤더 추가
+        },
+        body: JSON.stringify(editPayload),
       },
-      body: JSON.stringify(payload),
-    });
+    );
 
     const data = await response.json();
+    console.log(data);
+
     setModalVisible(false);
   };
 
@@ -173,6 +191,12 @@ export default function CalendarScreen({ navigation }) {
         </View>
       </TouchableOpacity>
     ));
+  };
+
+  const payload = {
+    eventName: newEventTitle,
+    startDate: startAt,
+    endDate: endAt,
   };
 
   const addNewEvent = async () => {
@@ -215,45 +239,6 @@ export default function CalendarScreen({ navigation }) {
     }
   };
 
-  const payload = {
-    eventName: newEventTitle,
-    startDate: startAt,
-    endDate: endAt,
-  };
-
-  const formBody = Object.keys(payload)
-    .map(
-      (key) => encodeURIComponent(key) + "=" + encodeURIComponent(payload[key]),
-    )
-    .join("&");
-
-  const CreateCalendarEvent = async () => {
-    try {
-      const token = await AsyncStorage.getItem("KakaoAccessToken");
-      const response = await fetch(
-        "https://kapi.kakao.com/v2/api/calendar/create/event",
-        // "https://kapi.kakao.com/v2/api/calendar/calendars",
-        {
-          method: "POST",
-          headers: {
-            Authorization: "Bearer " + token, // Replace YOUR_ACCESS_TOKEN with your actual access token
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-
-          body: formBody,
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-    } catch (error) {
-      console.error("There was an error create event:", error);
-    }
-  };
-
   const getMarkedDates = () => {
     const marked = Object.keys(events).reduce((acc, date) => {
       acc[date] = {
@@ -275,6 +260,41 @@ export default function CalendarScreen({ navigation }) {
     }
 
     return marked;
+  };
+
+  const deleteEvent = async (eventId) => {
+    try {
+      const token = await AsyncStorage.getItem("UserServerAccessToken");
+      const response = await fetch(
+        `http://43.202.241.133:12345/calendarEvent/${eventId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("HTTP error! status: " + response.status);
+      }
+
+      // Update the UI to remove the deleted event
+      setEvents((prevEvents) => {
+        const updatedEvents = { ...prevEvents };
+        Object.keys(updatedEvents).forEach((date) => {
+          updatedEvents[date] = updatedEvents[date].filter(
+            (event) => event.id !== eventId,
+          );
+        });
+        return updatedEvents;
+      });
+
+      setModalVisible(false);
+    } catch (error) {
+      console.error("There was an error deleting the event:", error);
+    }
   };
 
   return (
@@ -344,6 +364,11 @@ export default function CalendarScreen({ navigation }) {
           </View>
           <Button title="수정하기" onPress={handleEditEvent} />
           <Button
+            title="Delete Event"
+            onPress={() => deleteEvent(editingEvent.id)}
+            color="red"
+          />
+          <Button
             title="취소"
             onPress={() => setModalVisible(false)}
             color="red"
@@ -400,7 +425,6 @@ export default function CalendarScreen({ navigation }) {
           </View>
 
           <Button title="추가하기" onPress={addNewEvent} />
-          <Button title="업로드" onPress={CreateCalendarEvent} />
           <Button
             title="취소"
             onPress={() => setNewEventModalVisible(false)}
