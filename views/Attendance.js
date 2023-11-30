@@ -54,7 +54,6 @@ export default function Attendance({ navigation }) {
       },
     })
       .then((resp) => {
-        console.log(resp.data.data)
         const tmpJson = {};
         const attendances = resp.data.data;
         for (i = 0; i < week.length; i++) {
@@ -82,6 +81,7 @@ export default function Attendance({ navigation }) {
       },
     })
       .then((resp) => {
+        // console.log(resp.data.data)
         const tmpJson = {};
         const tmptmis = resp.data.data;
         for (i = 0; i < week.length; i++) {
@@ -92,6 +92,7 @@ export default function Attendance({ navigation }) {
               arr.push(tmp[j].member.nickname + ":" + tmp[j].content);
             }
           }
+          // console.log(arr)
           tmpJson[week[i]] = arr;
         }
         setTmiJson(tmpJson);
