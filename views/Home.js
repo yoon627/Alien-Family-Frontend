@@ -38,12 +38,6 @@ Notifications.setNotificationHandler({
   }),
 });
 
-const Container = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-`;
-
 export default function Home({ navigation,fonts }) {
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();

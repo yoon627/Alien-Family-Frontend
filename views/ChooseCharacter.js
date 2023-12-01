@@ -216,7 +216,7 @@ const ChooseCharacter = ({ navigation }) => {
                 <ImageBackground source={require("../assets/img/grayBtn.png")}>
                   <TouchableOpacity
                     onPress={async () => {
-                      navigation.navigate("Invitation");
+                      navigation.navigate("FirstRegister");
                     }}
                     style={{
                       borderRadius: 50,

@@ -21,6 +21,7 @@ import ImageDetailForm from "./views/ImageDetailForm";
 import store from "./redux/store";
 import Attendance from "./views/Attendance";
 import AlbumScreen from "./views/AlbumScreen";
+import Greet from "./views/Greet";
 import {
   MD3LightTheme as DefaultTheme,
   PaperProvider,
@@ -59,14 +60,15 @@ export default function App() {
 
   return (
     <StoreProvider store={store}>
-      <PaperProvider theme={{ ...theme, fonts }}>
+      <PaperProvider theme={{ ...theme}}>
         <NavigationContainer>
           <Stack.Navigator
             initialRouteName="Login"
-            screenOptions={{ headerShown: false }}
+            screenOptions={{ headerShown: false,animationEnabled:false }}
           >
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="KaKaoLogin" component={KaKaoLogin} />
+            <Stack.Screen name="Greet" component={Greet} />
             <Stack.Screen name="FirstRegister" component={FirstRegister} />
             <Stack.Screen name="ChooseCharacter" component={ChooseCharacter} />
             <Stack.Screen name="Invitation" component={InvitationScreen} />

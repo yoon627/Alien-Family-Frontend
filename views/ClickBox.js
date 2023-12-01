@@ -67,7 +67,7 @@ const [showBox, setShowBox] = useState(false);
             </View>
           </View>
           <TouchableOpacity
-              onPress={() => navigation.navigate("First Start", familyCode)}   
+              onPress={() => navigation.navigate("FirstStart", familyCode)}   
               >
               <ImageBackground
                 source={require("../assets/img/pinkBtn.png")}                

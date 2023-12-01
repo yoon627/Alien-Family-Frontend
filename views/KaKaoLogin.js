@@ -26,10 +26,6 @@ export default function KaKaoLogin({ navigation }) {
     await axios({
       method: "post",
       url: "https://kauth.kakao.com/oauth/token",
-//       headers: {
-//         "Access-Control-Allow-Origin": `http://localhost:8081`,
-//         "Access-Control-Allow-Credentials": "true",
-//       },
       params: {
         grant_type: "authorization_code",
         client_id: REST_API_KEY,
@@ -47,9 +43,10 @@ export default function KaKaoLogin({ navigation }) {
     await axios
       .post(SERVER_ADDRESS + "/api/login/kakao", KAT)
       .then(async (resp) => {
+        console.log(resp.data)
         SAT = resp.data.data.accessToken;
         await AsyncStorage.setItem("ServerAccessToken", SAT);
-        navigation.navigate("FirstRegister");
+        navigation.navigate("Greet");
       })
       .catch(function (error) {
         console.log("server error", error);
@@ -63,7 +60,6 @@ export default function KaKaoLogin({ navigation }) {
         originWhitelist={["*"]}
         scalesPageToFit={false}
         source={{
-//           uri: `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}`,
           uri: `https://kauth.kakao.com/oauth/authorize?response_type=code&scope=talk_calendar&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}`,
         }}
         injectedJavaScript={INJECTED_JAVASCRIPT}
