@@ -1,10 +1,13 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import ChoseCalendar from "./ChoseCalendar";
 
+const Drawer = createDrawerNavigator();
 export default function Settings({ navigation }) {
   return (
     <View style={styles.container}>
-      <Text>Settings</Text>
+      <ChoseCalendar />
     </View>
   );
 }
