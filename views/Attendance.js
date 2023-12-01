@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Dimensions, Image } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { ScrollView } from "react-native-gesture-handler";
+import { Bold } from "lucide-react-native";
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
 
 export default function Attendance({ navigation }) {
   const ktc = new Date();
@@ -60,14 +63,9 @@ export default function Attendance({ navigation }) {
         const attendances = resp.data.data;
         for (let i = 0; i < week.length; i++) {
           const tmp = attendances[week[i]];
-          let members = "";
+          let members = [];
           if (tmp) {
-            for (let j = 0; j < tmp.length; j++) {
-              members += tmp[j].member.nickname;
-              if (j < tmp.length - 1) {
-                members += ", ";
-              }
-            }
+            members.push(tmp.length)
           }
           tmpJson[week[i]] = members;
         }
@@ -90,7 +88,7 @@ export default function Attendance({ navigation }) {
           let arr = [];
           if (tmp) {
             for (let j = 0; j < tmp.length; j++) {
-              arr.push(tmp[j].member.nickname + ":" + tmp[j].content);
+              arr.push(tmp[j].member.nickname + " : " + tmp[j].content);
             }
           }
           tmpJson[week[i]] = arr;
@@ -105,28 +103,31 @@ export default function Attendance({ navigation }) {
   }, []);
   // const test = { a: "b" };
   return (
+    
     <View style={styles.container}>
-      <Text style={{ fontSize: 70 }}>Attendance</Text>
+      <Text style={styles.main_title}>Attendance</Text>
       <ScrollView>
         {week.map((day) => (
-          <View key={day}>
-            <Text>===========================================</Text>
-            <Text>
-              {JSON.stringify(day).slice(1, 11)} 출석한 사람들:{" "}
-              {attendanceJson[day] ? (
-                attendanceJson[day]
-              ) : (
-                <Text>없어요...</Text>
-              )}
-            </Text>
-            <Text>#오늘의 TMI</Text>
+          <View key={day} style={styles.attendence_container}>
+
+            <Text style={styles.sub_title}># {JSON.stringify(day).slice(1, 11)}</Text>
             {tmiJson[day] && tmiJson[day].length > 0 ? (
-              tmiJson[day].map((tmi, index) => <Text key={index}>{tmi}</Text>)
+              tmiJson[day].map((tmi, index) => <Text key={index} style={styles.tmi_txt}>- {tmi}</Text>)
             ) : (
               <Text>없어요...</Text>
             )}
-            <Text>===========================================</Text>
-            <Text></Text>
+            
+            <View style={styles.image_container}>
+              {attendanceJson[day] && attendanceJson[day].length > 0 ? (
+                attendanceJson[day].map((attendant, index) =>
+                Array.from({ length: attendant }).map((_, subIndex) => (
+                  <Image key={subIndex} style={{width: 50, height: 50, marginLeft: 5}}source={require("../assets/img/attendance.png")} />
+                ))
+                )
+                ) : (
+                  <Text>없나요?...</Text>
+                  )}
+            </View>
           </View>
         ))}
       </ScrollView>
@@ -139,5 +140,78 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor:'#DED1DF'
   },
+  
+  attendence_container: {
+    width:SCREEN_WIDTH*0.8,
+    backgroundColor: '#FFFFFF70',
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: 30,
+    borderColor : 'gray'
+
+  },
+  
+  main_title:{
+    marginBottom: 20,
+    fontSize : 60,
+    padding:10,
+    backgroundColor: 'white',
+    alignSelf: 'flex-mid',
+    width:'100%',
+    textAlign:'center',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 9,
+    },
+    shadowOpacity: 0.35,
+    // shadowRadius: 20.84,
+    elevation: 6,
+  },
+
+  sub_title:{
+    color: '#353535',
+    fontSize: 25,
+    fontWeight:'700',
+    marginBottom: 12,
+    borderBottomWidth : 1,
+    borderColor: '#DED1DF',
+
+  },
+  tmi_txt:{
+    fontSize: 17,
+    borderBottomWidth : 1,
+    borderColor: '#DED1DF',
+    paddingBottom: 2,
+    marginBottom: 18
+  },
+
+  image_container:{
+    // backgroundColor: 'gray',
+    flexDirection:'row',
+    flexWrap:'wrap',
+    width: '100%',
+    justifyContent:'flex-end'
+  },
+
+  attendant:{
+    fontSize: 15,
+    padding: 9,
+    margin: 3,
+    alignItems: 'flex-end',
+    borderColor: '#D63CE3',
+    border: 'solid',
+    borderWidth: 1,
+    borderRadius: 13,
+    border: 3,
+
+  },
+
+
+  // log_container:{
+  //   backgroundColor: '#fff'
+
+  // }
 });
