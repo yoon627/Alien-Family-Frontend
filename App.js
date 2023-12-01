@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {StyleSheet} from "react-native";
 import {NavigationContainer} from "@react-navigation/native";
 import {createStackNavigator} from "@react-navigation/stack";
@@ -21,10 +21,17 @@ import ImageDetailForm from "./views/ImageDetailForm";
 import store from "./redux/store";
 import Attendance from "./views/Attendance";
 import AlbumScreen from "./views/AlbumScreen";
+import {useFonts} from "expo-font";
 
 const Stack = createStackNavigator();
 
 export default function App() {
+
+  const [fontsLoaded] = useFonts({
+    dnf: require("./assets/font/DNFBitBitv2.ttf"),
+    sammul: require('./assets/font/DOSSaemmul.ttf'),
+  });
+
   return (
     <Provider store={store}>
       <NavigationContainer>
@@ -43,7 +50,7 @@ export default function App() {
           <Stack.Screen name="Mole" component={NewGame}/>
           <Stack.Screen name="Chat" component={ChatRoom}/>
           <Stack.Screen name="ImageDetailForm" component={ImageDetailForm}/>
-          <Stack.Screen name="AlbumScreen" component={AlbumScreen} />
+          <Stack.Screen name="AlbumScreen" component={AlbumScreen}/>
           <Stack.Screen
             name="MainDrawer"
             component={MainDrawer}
@@ -60,8 +67,8 @@ export default function App() {
             component={MainDrawer}
             options={{headerShown: false}}
           />
-          <Stack.Screen name="MainScreen" component={MainScreen} />
-          <Stack.Screen name="Attendance" component={Attendance} />
+          <Stack.Screen name="MainScreen" component={MainScreen}/>
+          <Stack.Screen name="Attendance" component={Attendance}/>
 
         </Stack.Navigator>
       </NavigationContainer>
