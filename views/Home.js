@@ -135,9 +135,7 @@ export default function Home({ navigation }) {
       });
 
     responseListener.current =
-      Notifications.addNotificationResponseReceivedListener((response) => {
-        // console.log(response);
-      });
+      Notifications.addNotificationResponseReceivedListener((response) => {});
 
     return () => {
       Notifications.removeNotificationSubscription(
@@ -154,8 +152,6 @@ export default function Home({ navigation }) {
       try {
         const plant = await AsyncStorage.getItem("plantInfo");
         setPlantlevel(JSON.parse(plant).level);
-        // console.log("plant lv", plantlevel);
-        // console.log(plant);
         setPlant(plant);
       } catch (error) {
         console.error("Error getMsg:", error);

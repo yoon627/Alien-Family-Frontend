@@ -1,26 +1,13 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Modal,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Button, Modal, Text, TextInput, View } from "react-native";
 import { Calendar } from "react-native-calendars";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import ChoseCalendar from "./ChoseCalendar";
+import { Ionicons } from "@expo/vector-icons";
 
-const colors = [
-  "#FEE1E8",
-  "#C6DBDA",
-  "#d1c089",
-  "#92346e",
-  "#55CBCD",
-  "#C08863",
-  "#483020",
-  "#9ec8a0",
-];
+const colors = ["#DEA690", "#B4DE9B", "#6FDECB", "#DC7ADE", "#DF8588"];
 
 const getRandomColor = (index) => {
   return colors[index % colors.length];
@@ -40,10 +27,39 @@ export default function CalendarScreen({ navigation }) {
   const [name, setName] = useState("");
   const [familyId, setFamilyId] = useState("");
   const [eventId, setEventId] = useState("");
+  const [isAddOrEditModalVisible, setIsAddOrEditModalVisible] = useState(false);
+  const [isLocalCalendarModalVisible, setIsLocalCalendarModalVisible] =
+    useState(false);
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [
+    isLocalCalendarModalVisible,
+    currentMonth,
+    isAddOrEditModalVisible,
+    isModalVisible,
+  ]);
+
+  const handleMonthChange = (date) => {
+    let year = date.year;
+    let month = date.month;
+    setCurrentYear(year);
+    setCurrentMonth(month);
+  };
+
+  const toggleAddOrEditModal = () => {
+    if (Object.is(startAt.valueOf(), NaN)) {
+      setStartAt(new Date());
+      setEndAt(new Date());
+    }
+    setIsAddOrEditModalVisible((prevState) => !prevState);
+  };
+
+  const toggleLocalCalendarModal = () => {
+    setIsLocalCalendarModalVisible((prevState) => !prevState);
+  };
 
   const getData = async () => {
     const name = await AsyncStorage.getItem("MyName");
@@ -51,7 +67,8 @@ export default function CalendarScreen({ navigation }) {
     const token = await AsyncStorage.getItem("UserServerAccessToken"); // 적절한 토큰 키 사용
 
     const response = await fetch(
-      "http://43.202.241.133:12345/calendarEvent/day/2023/11",
+      "http://43.202.241.133:12345/calendarEvent/day/" +
+        `${currentYear}/${currentMonth}`,
       {
         method: "GET",
         headers: {
@@ -62,13 +79,15 @@ export default function CalendarScreen({ navigation }) {
     );
     const data = await response.json();
     if (data.code === 200 && data.data.length > 0) {
-      let i = 0;
-      const newEvents = { ...events };
+      let newEvents = {};
+
       data.data.forEach((eventData) => {
         const newEvent = {
           id: eventData.eventId,
           title: eventData.eventName,
           name: eventData.member.nickname,
+          startDate: new Date(eventData.startDate),
+          endDate: new Date(eventData.endDate),
         };
 
         const datesInRange = getDatesInRange(
@@ -80,9 +99,9 @@ export default function CalendarScreen({ navigation }) {
           newEvents[date] = [...(newEvents[date] || []), newEvent];
         });
       });
+
       setEvents(newEvents);
     }
-
     setFamilyId(id);
     setName(name);
   };
@@ -105,9 +124,10 @@ export default function CalendarScreen({ navigation }) {
   };
 
   function formatYYYYMMDD(date) {
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
+    const formatdate = new Date(date);
+    const year = formatdate.getFullYear();
+    const month = (formatdate.getMonth() + 1).toString().padStart(2, "0");
+    const day = formatdate.getDate().toString().padStart(2, "0");
     return `${year}-${month}-${day}`;
   }
 
@@ -127,53 +147,6 @@ export default function CalendarScreen({ navigation }) {
     setSelected(day.dateString);
   };
 
-  const openEditModal = (event) => {
-    setEditingEvent({ ...event });
-    setModalVisible(true);
-  };
-
-  const handleEditEvent = async () => {
-    setEvents((prevEvents) => ({
-      ...prevEvents,
-      [selected]: prevEvents[selected].map((event) =>
-        event.id === editingEvent.id
-          ? {
-              ...event,
-              title: editingEvent.title,
-              startDate: editingEvent.startDate,
-              endDate: editingEvent.endDate,
-            }
-          : event,
-      ),
-    }));
-    console.log(editingEvent.startDate);
-    const token = await AsyncStorage.getItem("UserServerAccessToken");
-    const editPayload = {
-      eventId: editingEvent.id, // 이벤트 ID
-      eventName: editingEvent.title, // 수정된 제목
-      startDate: editingEvent.startDate, // 수정된 시작 날짜
-      endDate: editingEvent.endDate, // 수정된 종료 날짜
-      // 필요한 경우 추가 필드
-    };
-
-    const response = await fetch(
-      "http://43.202.241.133:12345/calendarEvent/" + editingEvent.id,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // 필요한 경우 인증 헤더 추가
-        },
-        body: JSON.stringify(editPayload),
-      },
-    );
-
-    const data = await response.json();
-    console.log(data);
-
-    setModalVisible(false);
-  };
-
   const renderEvents = () => {
     return events[selected]?.map((event, index) => (
       <TouchableOpacity
@@ -185,9 +158,11 @@ export default function CalendarScreen({ navigation }) {
           backgroundColor: getRandomColor(index),
         }}
       >
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text>{event.title}</Text>
-          <Text>{event.name}</Text>
+        <View style={{ flexDirection: "row", justifyContent: "flex-start" }}>
+          <Ionicons name={"person"} size={15} />
+          <Text style={{ fontWeight: "bold", paddingLeft: 10 }}>
+            {event.name} : {event.title}
+          </Text>
         </View>
       </TouchableOpacity>
     ));
@@ -239,22 +214,89 @@ export default function CalendarScreen({ navigation }) {
     }
   };
 
-  const getMarkedDates = () => {
-    const marked = Object.keys(events).reduce((acc, date) => {
-      acc[date] = {
-        marked: events[date].length > 0, // Mark date if there are events
-        selected: date === selected,
-        selectedColor: "orange",
-        disableTouchEvent: false,
-      };
-      return acc;
-    }, {});
+  const openEditModal = (event) => {
+    setEditingEvent({ ...event });
+    setStartAt(new Date(event.startDate));
+    setEndAt(new Date(event.endDate));
+    setModalVisible(true);
+  };
 
-    // Ensure the selected date is marked even if there are no events
+  const handleEditEvent = async () => {
+    const updatedEvents = { ...events };
+
+    // 기존 이벤트를 삭제
+    if (editingEvent) {
+      const oldDates = getDatesInRange(
+        new Date(editingEvent.startDate),
+        new Date(editingEvent.endDate),
+      );
+      oldDates.forEach((date) => {
+        updatedEvents[date] = updatedEvents[date].filter(
+          (event) => event.id !== editingEvent.id,
+        );
+      });
+    }
+
+    // 수정된 이벤트 정보 업데이트
+    const newEvent = {
+      ...editingEvent,
+      title: editingEvent.title,
+      startDate: startAt,
+      endDate: endAt,
+    };
+
+    // 새로운 날짜에 이벤트 추가
+    const newDates = getDatesInRange(startAt, endAt);
+    newDates.forEach((date) => {
+      updatedEvents[date] = [...(updatedEvents[date] || []), newEvent];
+    });
+
+    setEvents(updatedEvents);
+
+    const token = await AsyncStorage.getItem("UserServerAccessToken");
+    const editPayload = {
+      eventId: editingEvent.id, // 이벤트 ID
+      eventName: editingEvent.title, // 수정된 제목
+      startDate: startAt, // 수정된 시작 날짜
+      endDate: endAt, // 수정된 종료 날짜
+    };
+
+    const response = await fetch(
+      "http://43.202.241.133:12345/calendarEvent/" + editingEvent.id,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // 필요한 경우 인증 헤더 추가
+        },
+        body: JSON.stringify(editPayload),
+      },
+    );
+
+    const data = await response.json();
+    setModalVisible(false);
+  };
+
+  const getMarkedDates = () => {
+    let marked = {};
+
+    Object.keys(events).forEach((date) => {
+      let periods = events[date].map((event) => {
+        return {
+          startingDay: formatYYYYMMDD(event.startDate) === date,
+          endingDay: formatYYYYMMDD(event.endDate) === date,
+          color: getRandomColor(events[date].indexOf(event)),
+        };
+      });
+
+      marked[date] = { periods: periods };
+    });
+
+    // Ensure the selected date is marked
     if (selected && !marked[selected]) {
       marked[selected] = {
         selected: true,
-        selectedColor: "orange",
+        selectedColor: "#e0b3e8",
         disableTouchEvent: true,
       };
     }
@@ -297,9 +339,59 @@ export default function CalendarScreen({ navigation }) {
     }
   };
 
+  const theme = {
+    backgroundColor: "#ffffff",
+    calendarBackground: "#f2f2f2",
+    textSectionTitleColor: "#b6c1cd",
+    textSectionTitleDisabledColor: "#d9e1e8",
+    selectedDayBackgroundColor: "#ff7f50", // Coral color for the selected day
+    selectedDayTextColor: "#ffffff",
+    todayTextColor: "#ff4500", // Orange Red color for the current day
+    dayTextColor: "#2d4150",
+    textDisabledColor: "#d9e1e8",
+    dotColor: "#00adf5",
+    selectedDotColor: "#ffffff",
+    arrowColor: "pink", // Arrows for switching months
+    disabledArrowColor: "#d9e1e8",
+    monthTextColor: "purple", // Color for the month's title
+    indicatorColor: "blue",
+    textDayFontWeight: "bold",
+    textMonthFontWeight: "bold",
+    textDayHeaderFontWeight: "300",
+    textDayFontSize: 16,
+    textMonthFontSize: 16,
+    textDayHeaderFontSize: 16,
+    textDayFontFamily: "dnf",
+  };
+
+  const customHeader = () => {
+    return (
+      <View>
+        <TouchableOpacity>
+          <Text
+            style={{
+              fontFamily: "dnf",
+              fontSize: 32,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >{`${currentMonth}  ${currentYear}`}</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
   return (
     <View>
-      <Calendar onDayPress={onDayPress} markedDates={getMarkedDates()} />
+      <Calendar
+        onDayPress={onDayPress}
+        markedDates={getMarkedDates()}
+        markingType={"multi-period"}
+        onMonthChange={handleMonthChange}
+        renderHeader={customHeader}
+        theme={theme}
+      />
       <View>
         {selected && events[selected] ? (
           renderEvents()
@@ -308,11 +400,56 @@ export default function CalendarScreen({ navigation }) {
         )}
       </View>
       <TouchableOpacity
-        onPress={() => setNewEventModalVisible(true)}
-        style={{ padding: 10, marginTop: 5, backgroundColor: "#f0f0f0" }}
+        onPress={toggleAddOrEditModal}
+        style={{ padding: 10, marginTop: 5, backgroundColor: "#cecccc" }}
       >
-        <Text>일정 추가하기</Text>
+        <Text> + 새로운 일정</Text>
       </TouchableOpacity>
+
+      <Modal
+        visible={isAddOrEditModalVisible}
+        onRequestClose={toggleAddOrEditModal}
+        transparent={true}
+        animationType="slide"
+      >
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "white",
+              padding: 20,
+              borderRadius: 10,
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+              elevation: 5,
+              width: "50%", // 너비 조정
+              height: "17%", // 높이 조정
+            }}
+          >
+            <Button
+              title="새 일정 추가"
+              onPress={() => {
+                setNewEventModalVisible(true);
+                toggleAddOrEditModal();
+              }}
+            />
+            <Button
+              title="달력에서 가져오기"
+              onPress={() => {
+                toggleAddOrEditModal();
+                toggleLocalCalendarModal();
+              }}
+            />
+            <Button title="취소" onPress={toggleAddOrEditModal} />
+          </View>
+        </View>
+      </Modal>
+
       <Modal
         visible={isModalVisible}
         onRequestClose={() => setModalVisible(false)}
@@ -430,6 +567,42 @@ export default function CalendarScreen({ navigation }) {
             onPress={() => setNewEventModalVisible(false)}
             color="red"
           />
+        </View>
+      </Modal>
+
+      <Modal
+        visible={isLocalCalendarModalVisible}
+        onRequestClose={() => setIsLocalCalendarModalVisible(false)}
+        transparent={true}
+        animationType="slide"
+      >
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "white",
+              padding: 20,
+              borderRadius: 10,
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+              elevation: 5,
+              width: "50%", // 너비 조정
+              height: "50%", // 높이 조정
+            }}
+          >
+            <ChoseCalendar />
+
+            <Button
+              title="취소"
+              onPress={() => toggleLocalCalendarModal()}
+              color="red"
+            />
+          </View>
         </View>
       </Modal>
     </View>
