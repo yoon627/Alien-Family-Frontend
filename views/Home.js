@@ -36,7 +36,7 @@ const Container = styled.View`
   align-items: center;
 `;
 
-export default function Home({ navigation }) {
+export default function Home({ navigation,fonts }) {
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();

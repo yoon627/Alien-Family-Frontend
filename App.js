@@ -21,23 +21,69 @@ import ImageDetailForm from "./views/ImageDetailForm";
 import store from "./redux/store";
 import Attendance from "./views/Attendance";
 import AlbumScreen from "./views/AlbumScreen";
-import { MD3LightTheme as DefaultTheme, PaperProvider } from "react-native-paper";
+import {
+  MD3LightTheme as DefaultTheme,
+  PaperProvider,
+  useTheme,
+  configureFonts,
+  customText,
+} from "react-native-paper";
+import {
+  Montserrat_400Regular,
+  Montserrat_700Bold,
+} from "@expo-google-fonts/montserrat";
+import { useFonts } from "expo-font";
+import { AppLoading } from "expo";
 
 const Stack = createStackNavigator();
 
 const theme = {
   ...DefaultTheme,
-  colors:{
+  colors: {
     ...DefaultTheme.colors,
-    primary:'tomamto',
-    secondary:'yellow',
+    primary: "tomamto",
+    secondary: "yellow",
   },
 };
 
+const fontConfig = {
+  android: { regular: { fontFamily: "" } },
+};
+
 export default function App() {
+  const [loaded] = useFonts({
+    dnf: require("./assets/fonts/DNFBitBitv2.ttf"),
+  });
+
+  const baseFont = {
+    fontFamily: "dnf",
+  };
+
+  const baseVariants = configureFonts({ config: baseFont });
+
+  const customVariants = {
+    // Customize individual base variants:
+    displayMedium: {
+      ...baseVariants.displayMedium,
+      fontFamily: 'dnf',
+    },}
+
+  const fonts = configureFonts({
+    config: {
+      ...baseVariants,
+      ...customVariants,
+    },
+  });
+
+  const theme = useTheme();
+
+  if (!loaded) {
+    return null;
+  }
+
   return (
     <StoreProvider store={store}>
-      <PaperProvider theme={theme}>
+      <PaperProvider theme={{ ...theme, fonts }}>
         <NavigationContainer>
           <Stack.Navigator
             initialRouteName="Login"
@@ -45,8 +91,8 @@ export default function App() {
           >
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="KaKaoLogin" component={KaKaoLogin} />
-            <Stack.Screen name="First Register" component={FirstRegister} />
-            <Stack.Screen name="Choose Character" component={ChooseCharacter} />
+            <Stack.Screen name="FirstRegister" component={FirstRegister} />
+            <Stack.Screen name="ChooseCharacter" component={ChooseCharacter} />
             <Stack.Screen name="Invitation" component={InvitationScreen} />
             <Stack.Screen name="ClickBox" component={ClickBox} />
             <Stack.Screen name="Ladder" component={LadderScreen} />
@@ -60,7 +106,7 @@ export default function App() {
               component={MainDrawer}
               options={{ headerShown: false }}
             />
-            <Stack.Screen name="First Start" component={FirstStart} />
+            <Stack.Screen name="FirstStart" component={FirstStart} />
             <Stack.Screen
               name="Mini Games"
               component={MiniGames}

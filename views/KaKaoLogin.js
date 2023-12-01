@@ -49,7 +49,7 @@ export default function KaKaoLogin({ navigation }) {
       .then(async (resp) => {
         SAT = resp.data.data.accessToken;
         await AsyncStorage.setItem("ServerAccessToken", SAT);
-        navigation.navigate("First Register");
+        navigation.navigate("FirstRegister");
       })
       .catch(function (error) {
         console.log("server error", error);
