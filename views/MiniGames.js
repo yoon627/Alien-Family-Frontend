@@ -204,7 +204,6 @@ export default function MiniGames({ navigation }) {
   return (
     <View style={styles.container}>
       <ImageBackground
-        // source={require('../assets/img/Background.png')}
         style={styles.bgImage}
       >
         <StatusBar style="light" />

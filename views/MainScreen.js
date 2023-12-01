@@ -1,12 +1,6 @@
 import React from "react";
-import { View } from "react-native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import {
-  AntDesign,
-  Entypo,
-  FontAwesome,
-  MaterialIcons,
-} from "@expo/vector-icons";
+import {Image, View, StyleSheet, Dimensions} from "react-native";
+import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import AlbumScreen from "./AlbumScreen";
 import Home from "./Home";
 import CalendarScreen from "./CalendarScreen";
@@ -19,17 +13,28 @@ import ChatRoom from "./Chatting";
 
 const Tab = createBottomTabNavigator();
 
-export default function MainScreen({ navigation }) {
+const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get('window');
+
+export default function MainScreen({navigation}) {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+      screenOptions={{
+        tabBarStyle: styles.tabBar
+      }}
+    >
       <Tab.Screen
         name="Home"
         component={Home}
         options={{
           headerShown: false,
-          tabBarIcon: () => <Entypo name="home" size={24} color="black" />,
+          tabBarIcon: () => (
+            <Image
+              source={require('../assets/img/navbarIcon/home2.png')}
+              style={styles.icon}
+            />
+          ),
           tabBarShowLabel: false,
-          tabBarActiveBackgroundColor: "gray",
+          // tabBarActiveBackgroundColor: "gray",
         }}
       />
       <Tab.Screen
@@ -38,10 +43,13 @@ export default function MainScreen({ navigation }) {
         options={{
           headerShown: false,
           tabBarIcon: () => (
-            <MaterialIcons name="photo-album" size={24} color="black" />
+            <Image
+              source={require('../assets/img/navbarIcon/album2.png')}
+              style={styles.icon}
+            />
           ),
           tabBarShowLabel: false,
-          tabBarActiveBackgroundColor: "gray",
+          // tabBarActiveBackgroundColor: "gray",
         }}
       />
       <Tab.Screen
@@ -49,9 +57,14 @@ export default function MainScreen({ navigation }) {
         component={ChatRoom}
         options={{
           headerShown: false,
-          tabBarIcon: () => <Entypo name="chat" size={24} color="black" />,
+          tabBarIcon: () => (
+            <Image
+              source={require('../assets/img/navbarIcon/chat2.png')}
+              style={styles.chat}
+            />
+          ),
           tabBarShowLabel: false,
-          tabBarActiveBackgroundColor: "gray",
+          // tabBarActiveBackgroundColor: "gray",
         }}
       />
       <Tab.Screen
@@ -60,10 +73,13 @@ export default function MainScreen({ navigation }) {
         options={{
           headerShown: false,
           tabBarIcon: () => (
-            <AntDesign name="calendar" size={24} color="black" />
+            <Image
+              source={require('../assets/img/navbarIcon/calendar2.png')}
+              style={styles.icon}
+            />
           ),
           tabBarShowLabel: false,
-          tabBarActiveBackgroundColor: "gray",
+          // tabBarActiveBackgroundColor: "gray",
         }}
       />
       <Tab.Screen
@@ -72,10 +88,13 @@ export default function MainScreen({ navigation }) {
         options={{
           headerShown: false,
           tabBarIcon: () => (
-            <FontAwesome name="history" size={24} color="black" />
+            <Image
+              source={require('../assets/img/navbarIcon/alarm2.png')}
+              style={styles.icon}
+            />
           ),
           tabBarShowLabel: false,
-          tabBarActiveBackgroundColor: "gray",
+          // tabBarActiveBackgroundColor: "gray",
         }}
       />
       <Tab.Screen
@@ -84,7 +103,7 @@ export default function MainScreen({ navigation }) {
         options={{
           headerShown: false,
           tabBarShowLabel: false,
-          tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,
+          tabBarButton: () => <View style={{width: 0, height: 0}}></View>,
           tabBarVisible: false, //hide tab bar on this screen
         }}
       />
@@ -95,7 +114,7 @@ export default function MainScreen({ navigation }) {
         options={{
           headerShown: false,
           tabBarShowLabel: false,
-          tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,
+          tabBarButton: () => <View style={{width: 0, height: 0}}></View>,
           tabBarVisible: false,
         }}
       />
@@ -105,7 +124,7 @@ export default function MainScreen({ navigation }) {
         options={{
           headerShown: false,
           tabBarShowLabel: false,
-          tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,
+          tabBarButton: () => <View style={{width: 0, height: 0}}></View>,
           tabBarVisible: false,
         }}
       />
@@ -115,10 +134,32 @@ export default function MainScreen({ navigation }) {
         options={{
           headerShown: false,
           tabBarShowLabel: false,
-          tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,
+          tabBarButton: () => <View style={{width: 0, height: 0}}></View>,
           tabBarVisible: false,
         }}
       />
     </Tab.Navigator>
   );
 }
+
+const styles = StyleSheet.create({
+  icon: {
+    marginTop: 6,
+    flex: 1,
+    width: SCREEN_WIDTH * 0.11,
+    height: SCREEN_HEIGHT * 0.1,
+    resizeMode: "contain",
+  },
+  chat: {
+    marginTop: 15,
+    marginLeft: 6,
+    flex: 1,
+    width: SCREEN_WIDTH * 0.11,
+    height: SCREEN_HEIGHT * 0.1,
+    resizeMode: "contain",
+  },
+  tabBar: {
+    backgroundColor: "#E0EBF2", // 탭 바의 배경색
+    height: SCREEN_HEIGHT * 0.1,
+  }
+});
