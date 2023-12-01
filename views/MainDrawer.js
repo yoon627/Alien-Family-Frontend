@@ -5,8 +5,9 @@ import MainScreen from "./MainScreen";
 import Logout from "./Logout";
 import FamilyInfo from "./FamilyInfo";
 import Lab from "./Lab";
-import {PaperProvider} from "react-native-paper";
 import ChoseCalendar from "./ChoseCalendar";
+import { PaperProvider } from "react-native-paper";
+import Settings from "./Settings";
 
 const Drawer = createDrawerNavigator();
 
@@ -34,7 +35,7 @@ export default function MainDrawer({navigation}) {
         <Drawer.Screen name="FamilyInfo" component={FamilyInfo} options={{title: '우리 가족'}}/>
         <Drawer.Screen name="Settings" component={ChoseCalendar} options={{title: '설정'}}/>
         <Drawer.Screen name="Logout" component={Logout} options={{title: '로그아웃'}}/>
-        <Drawer.Screen name="Lab" component={Lab} options={{title: '랩'}}/>
+
       </Drawer.Navigator>
     </PaperProvider>
   );
