@@ -14,13 +14,16 @@ import LadderScreen from "./views/LadderScreen";
 import RouletteScreen from "./views/RouletteScreen";
 import NewGame from "./views/NewGame";
 import MainScreen from "./views/MainScreen";
-import { Provider } from "react-redux";
+import {Provider} from "react-redux";
 import ChatRoom from "./views/Chatting";
 import ImageDetailForm from "./views/ImageDetailForm";
 import store from "./redux/store";
 import Attendance from "./views/Attendance";
 import AlbumScreen from "./views/AlbumScreen";
 import {useFonts} from "expo-font";
+import {createStackNavigator} from "@react-navigation/stack";
+import ImageUploadForm from "./views/ImageUploadForm";
+
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -35,7 +38,7 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator
           initialRouteName="Login"
-          screenOptions={{ headerShown: false }}
+          screenOptions={{headerShown: false}}
         >
           <Stack.Screen name="Login" component={Login}/>
           <Stack.Screen name="KaKaoLogin" component={KaKaoLogin}/>
@@ -47,26 +50,28 @@ export default function App() {
           <Stack.Screen name="Roulette" component={RouletteScreen}/>
           <Stack.Screen name="Mole" component={NewGame}/>
           <Stack.Screen name="Chat" component={ChatRoom}/>
+          <Stack.Screen name="AlbumScreen" component={AlbumScreen}/>
+          <Stack.Screen name="ImageUploadForm" component={ImageUploadForm}/>
           <Stack.Screen name="ImageDetailForm" component={ImageDetailForm}/>
-     
+
           <Stack.Screen
             name="MainDrawer"
             component={MainDrawer}
-            options={{ headerShown: false }}
+            options={{headerShown: false}}
           />
-          <Stack.Screen name="First Start" component={FirstStart} />
+          <Stack.Screen name="First Start" component={FirstStart}/>
           <Stack.Screen
             name="Mini Games"
             component={MiniGames}
-            options={{ headerShown: false }}
+            options={{headerShown: false}}
           />
           <Stack.Screen
             name="Home"
             component={MainDrawer}
-            options={{ headerShown: false }}
-
-          <Stack.Screen name="MainScreen" component={MainScreen} />
-          <Stack.Screen name="Attendance" component={Attendance} />
+            options={{headerShown: false}}
+          />
+          <Stack.Screen name="MainScreen" component={MainScreen}/>
+          <Stack.Screen name="Attendance" component={Attendance}/>
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

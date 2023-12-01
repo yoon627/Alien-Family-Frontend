@@ -255,9 +255,11 @@ export default function Home({navigation}) {
                 <MarqueeText
                   onPress={() => navigation.navigate("Attendance")}
                   style={styles.marqueeText}
-                  speed={0.6}
+                  speed={0.2}
                   marqueeOnStart
                   loop
+
+
                   delay={1000}
                 >
                   {todayTMI}나는 계속 배가 고프다 , 배가 고픈데 어쩌죠
@@ -272,9 +274,9 @@ export default function Home({navigation}) {
             >
               <Text
                 style={{
-                  fontFamily: "dnf",
+                  color: "white",
                   fontSize: 19 * fontRatio,
-                  color: "white"
+                  fontFamily: "dnf",
                 }}
               >
                 오늘의 TMI
@@ -295,7 +297,7 @@ export default function Home({navigation}) {
           <View
             style={{
               flex: 1,
-              justifyContent: "flex-end",
+              jㄱustifyContent: "flex-end",
               alignItems: "center",
               marginBottom: 50,
             }}
@@ -358,13 +360,13 @@ export default function Home({navigation}) {
                           setModalVisible(!modalVisible);
                         }}
                       >
-                        <Text style={styles.textStyle}>작성</Text>
+                        <Text style={{...styles.textStyle, color: "#fff"}}>작성</Text>
                       </Pressable>
                       <Pressable
                         style={[styles.button, styles.buttonClose]}
                         onPress={() => setModalVisible(!modalVisible)}
                       >
-                        <Text style={styles.textStyle}>취소</Text>
+                        <Text style={{...styles.textStyle, color: "#727272"}}>취소</Text>
                       </Pressable>
                     </View>
                   </View>
@@ -455,7 +457,6 @@ const styles = StyleSheet.create({
   marqueeText: {
     marginTop: 5,
     fontSize: 20,
-    fontFamily: "sammul",
   },
   container: {
     flex: 1,
@@ -502,7 +503,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   textStyle: {
-    color: "white",
     textAlign: "center",
     fontFamily: "dnf",
   },

@@ -198,7 +198,6 @@ export default function AlbumScreen({navigation}) {
     // console.log("선택한 태그:", selectedTags);
   };
 
-
   const filterImages = () => {
     // console.log("선택한 태그:", selectedTags);
 
@@ -215,7 +214,6 @@ export default function AlbumScreen({navigation}) {
     console.log("필터된 사진:", filteredImages);
     return filteredImages;
   }
-
 
   useEffect(() => {
     console.log("선택한 태그 (useEffect):", selectedTags);
@@ -269,10 +267,9 @@ export default function AlbumScreen({navigation}) {
           <Pressable
             style={styles.imagePlusContainer}
             onPress={modalOpen}>
-            <ImagePlus
-              color="navy"
-              size={40}
-            />
+            <Image
+              source={require('../assets/img/plus.png')}
+              style={{width: SCREEN_WIDTH * 0.13, height: SCREEN_WIDTH * 0.13, resizeMode: "contain"}} />
           </Pressable>
         </Fragment>
       ) : (
@@ -293,6 +290,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#fff"
   },
   image: {
     resizeMode: "contain",
@@ -301,8 +299,8 @@ const styles = StyleSheet.create({
   },
   imagePlusContainer: {
     position: "absolute",
-    bottom: "2%",
-    right: "3%",
+    bottom: "3%",
+    right: "4%",
   },
   imageContainer: {
     top: "1%",

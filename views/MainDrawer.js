@@ -18,7 +18,7 @@ export default function MainDrawer({navigation}) {
     <PaperProvider>
       <Drawer.Navigator
         screenOptions={{
-          headerTintColor: '#D63CE3',
+          headerTintColor: '#C22F77',
           drawerActiveBackgroundColor: '#F0E1EE',
           drawerActiveTintColor: '#434343',
           drawerInactiveTintColor: '#CC95D0',
@@ -26,7 +26,7 @@ export default function MainDrawer({navigation}) {
             color: "#fff",
           },
           headerStyle: {
-            height: SCREEN_HEIGHT * 0.11,
+            height: SCREEN_HEIGHT * 0.1,
             backgroundColor: "#fff"
           }
         }}

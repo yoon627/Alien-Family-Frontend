@@ -1,8 +1,20 @@
-import {useState} from "react";
-import {Button, View, Image, TextInput, StyleSheet, ScrollView, Platform, KeyboardAvoidingView} from "react-native";
+import React, {useState} from "react";
+import {
+  Button,
+  View,
+  Image,
+  TextInput,
+  StyleSheet,
+  ScrollView,
+  Platform,
+  KeyboardAvoidingView,
+  ImageBackground, Dimensions, Pressable, Text
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-// import SelectBox from 'react-native-multi-selectbox'
+import SelectBox from 'react-native-multi-selectbox'
 import {xorBy} from "lodash";
+
+const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get('window');
 
 const TAG_OPTION = [
   {
@@ -22,33 +34,9 @@ const TAG_OPTION = [
     id: 'SECOND',
   },
   {
-    item: '셋째',
-    id: 'THIRD',
-  },
-  {
-    item: '넷째',
-    id: 'FORTH',
-  },
-  {
-    item: '다섯째',
-    id: 'FIFTH',
-  },
-  {
-    item: '여섯째',
-    id: 'SIXTH',
-  },
-  {
-    item: '할아버지',
-    id: 'GRANDFATHER',
-  },
-  {
-    item: '할머니',
-    id: 'GRANDMOTHER',
-  },
-  {
-    item: '삼촌',
-    id: 'UNCLE',
-  },
+    item: '기타',
+    id: 'EXTRA',
+  }
 ]
 
 export default function ImageUploadForm({uri, onUploadComplete}) {
@@ -103,13 +91,13 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
       if (uploadRes.ok) {
         const writer = await AsyncStorage.getItem("nickname");
         const list = signedUrl.split('?')
+
         const imageInfo = {
           writer: writer,
           photoKey: familyId + '/' + list[0].substring(list[0].lastIndexOf('/') + 1),
           photoTags: photoTags,
           description: description,
         };
-        // console.log(imageInfo);
 
         const response = await fetch('http://43.202.241.133:12345/photo', {
           method: 'POST',
@@ -142,27 +130,40 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
           height={100}
           resizeMode="contain"
         />
-        <View style={{height: 40}}/>
+        <View style={{height: 20}}/>
+
         <TextInput
           style={styles.input}
           value={photoTags.join(', ')}
           onChangeText={(text) =>
             setPhotoTags(text.split(',').map((tag) => tag.trim()))
           }
-          placeholder="인물 태그..."
+          placeholder="사람 태그..."
           multiline
         />
+
         <TextInput
           style={[styles.input, styles.description]}
           value={description}
           onChangeText={setDescription}
-          placeholder="문구 입력..."
+          placeholder="문구를 입력하세요..."
           multiline
         />
-        <Button
-          title="공유"
-          onPress={uploadToServer}
-        />
+
+        <View style={{flexDirection: "row", marginVertical: 10}}>
+          <Pressable
+            style={[styles.button, styles.buttonWrite]}
+            onPress={uploadToServer}>
+            <Text style={{...styles.textStyle, color: "#fff"}}>공유</Text>
+          </Pressable>
+          <Pressable
+            style={[styles.button, styles.buttonClose]}
+            onPress={onUploadComplete}
+          >
+            <Text style={{...styles.textStyle, color: "#727272"}}>취소</Text>
+          </Pressable>
+        </View>
+
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -173,23 +174,44 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    // padding: 20,
   },
   uploadImage: {
-    width: 200,
-    height: 200,
+    width: SCREEN_WIDTH,
+    height: SCREEN_HEIGHT * 0.4,
+    // height: SCREEN_HEIGHT,
     marginBottom: 20,
   },
   input: {
     height: 40,
-    width: '100%',
-    borderColor: 'gray',
+    width: '80%',
+    borderColor: '#C1BABD',
     borderWidth: 1,
+    borderRadius: 10,
     marginBottom: 20,
-    paddingHorizontal: 10,
-    borderRadius: 5,
+    paddingLeft: 10,
   },
   description: {
-    height: 80,
+    height: 100,
+  },
+  button: {
+    width: 65,
+    // height: 34,
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    opacity: 0.9,
+  },
+  buttonWrite: {
+    backgroundColor: "#C336CF",
+    marginHorizontal: 10,
+  },
+  buttonClose: {
+    backgroundColor: "#DED1DF",
+    marginHorizontal: 10,
+  },
+  textStyle: {
+    textAlign: "center",
+    fontFamily: "dnf",
   },
 });

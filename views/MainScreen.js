@@ -1,5 +1,5 @@
 import React from "react";
-import {Image, View, StyleSheet, Dimensions} from "react-native";
+import {Image, View, StyleSheet, Dimensions, Platform} from "react-native";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import AlbumScreen from "./AlbumScreen";
 import Home from "./Home";
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
   tabBar: {
-    backgroundColor: "#E0EBF2", // 탭 바의 배경색
-    height: SCREEN_HEIGHT * 0.1,
+    backgroundColor: "#E0EBF2", // 탭 바 색
+    height: Platform.OS === 'ios' ? SCREEN_HEIGHT * 0.11 : SCREEN_HEIGHT * 0.09,
   }
 });
