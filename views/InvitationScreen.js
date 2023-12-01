@@ -77,7 +77,7 @@ const InvitationScreen = ({ navigation }) => {
         style={{
           marginVertical: 30,
           backgroundColor: "black",
-          borderRadius: 30,
+          borderRadius: 8,
           paddingHorizontal: 30,
           paddingVertical: 30,
           justifyContent: "center",
@@ -145,13 +145,6 @@ const InvitationScreen = ({ navigation }) => {
               console.log("server error", error);
             });
         }}
-        style={{
-          backgroundColor: "black",
-          borderRadius: 50,
-          alignItems: "center",
-          justifyContent: "center",
-          marginVertical: 20,
-        }}
       >
         <Text
           style={{
@@ -162,14 +155,13 @@ const InvitationScreen = ({ navigation }) => {
             justifyContent: "center",
           }}
         >
-          GO!
         </Text>
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => navigation.navigate("ClickBox")}
         style={{
           backgroundColor: "black",
-          borderRadius: 50,
+          borderRadius: 8,
           alignItems: "center",
           justifyContent: "center",
           marginVertical: 20,
@@ -191,7 +183,7 @@ const InvitationScreen = ({ navigation }) => {
         onPress={() => navigation.navigate("ClickBox")}
         style={{
           backgroundColor: "black",
-          borderRadius: 50,
+          borderRadius: 8,
           alignItems: "center",
           justifyContent: "center",
           marginVertical: 20,
@@ -239,7 +231,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     paddingVertical: 15,
     paddingHorizontal: 20,
-    borderRadius: 30,
+    borderRadius: 8,
     marginTop: 20,
     fontSize: 18,
     marginVertical: 20,
