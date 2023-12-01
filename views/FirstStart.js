@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  ImageBackground
 } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -90,15 +91,6 @@ const FirstStart = ({ navigation }) => {
     return keys;
   };
 
-  const clearAll = async () => {
-    try {
-      const keys = await getAllKeys();
-      await AsyncStorage.multiRemove(keys);
-      console.log("캐시 삭제완료");
-    } catch (e) {
-      console.log("캐시 삭제에러");
-    }
-  };
   useEffect(() => {
     registerForPushNotificationsAsync().then((token) =>
       setDevicePushToken(token),
@@ -131,28 +123,7 @@ const FirstStart = ({ navigation }) => {
         />
       </View>
       <Text>{familyCode}</Text>
-      <TouchableOpacity
-        onPress={copyToClipboard}
-        style={{
-          backgroundColor: "black",
-          borderRadius: 50,
-          alignItems: "center",
-          justifyContent: "center",
-          marginVertical: 20,
-        }}
-      >
-        <Text
-          style={{
-            color: "white",
-            marginHorizontal: 30,
-            marginVertical: 10,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          초대코드 복사하기
-        </Text>
-      </TouchableOpacity>
+
       <TouchableOpacity
         onPress={async () => {
           const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
@@ -219,62 +190,11 @@ const FirstStart = ({ navigation }) => {
           marginVertical: 20,
         }}
       >
-        <Text
-          style={{
-            color: "white",
-            marginHorizontal: 30,
-            marginVertical: 30,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          GO!
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => navigation.navigate("MainDrawer")}
-        style={{
-          backgroundColor: "black",
-          borderRadius: 50,
-          alignItems: "center",
-          justifyContent: "center",
-          marginVertical: 20,
-        }}
-      >
-        <Text
-          style={{
-            color: "white",
-            marginHorizontal: 30,
-            marginVertical: 10,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          다음페이지로
-        </Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        onPress={clearAll}
-        style={{
-          backgroundColor: "black",
-          borderRadius: 50,
-          alignItems: "center",
-          justifyContent: "center",
-          marginVertical: 20,
-        }}
-      >
-        <Text
-          style={{
-            color: "white",
-            marginHorizontal: 30,
-            marginVertical: 10,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          캐시삭제
-        </Text>
+        <ImageBackground
+          source={require("../assets/img/pinkBtn.png")}
+          imageStyle={{borderRadius: 15}} >
+          <Text style={styles.pinkBtnTxt}>다음페이지로</Text>
+        </ImageBackground>
       </TouchableOpacity>
     </View>
   );
@@ -290,10 +210,17 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         paddingVertical: 15,
         paddingHorizontal: 20,
-        borderRadius: 30,
+        borderRadius: 15,
         marginTop: 20,
         fontSize: 18,
         marginVertical: 20,
+    },
+    pinkBtnTxt:{
+      padding: 20,
+      fontSize: 20,
+      color: '#FFF',
+      backgroundColor: '#D63CE3',
+      borderRadius: 15
     },
 });
 

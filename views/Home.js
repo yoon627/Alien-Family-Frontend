@@ -1,26 +1,34 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {
   Alert,
-  Animated,
+  Animated, Dimensions,
   Image,
-  ImageBackground,
-  Modal,
+  ImageBackground, KeyboardAvoidingView,
+  Modal, Platform,
   Pressable,
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
   View,
 } from "react-native";
 import styled from "styled-components/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
 import MarqueeText from "react-native-marquee";
 import axios from "axios";
 import * as Notifications from "expo-notifications";
+import {TouchableOpacity} from "react-native-gesture-handler";
 
 const FCM_SERVER_KEY =
   "AAAAUCMBJiU:APA91bEs9fOJNe6l2ILHFI88jep5rw9wqR-qTWWbBrKxj7JQnKQ8ZAp4tJbn_yXcL2aP0ydygPIcT89XB6h38vhIozsJ5J61s7w2znBL9hPQG6a18sQcUFkMitr2pkvoCmmfslVQmk-u";
+
+const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get('window');
+const fontRatio = SCREEN_HEIGHT / 800;
+
+const Container = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -46,6 +54,11 @@ export default function Home({ navigation,fonts }) {
   const [todayTMI, setTodayTMI] = useState("");
   const [flower, setFlower] = useState(false);
   const [plant, setPlant] = useState(null);
+
+  const openModal = () => {
+    setTMI('');   // 모달 열릴 때 tmi 초기화
+    setModalVisible(true);
+  }
   const movingObject = () => {
     const movingValue = useRef(new Animated.Value(0)).current;
 
@@ -79,9 +92,18 @@ export default function Home({ navigation,fonts }) {
     });
 
     return (
-      <Animated.View style={{ transform: [{ translateX: interpolated }] }}>
-        <TouchableOpacity onPress={() => navigation.navigate("Mini Games")}>
-          <FontAwesome5 name="ghost" size={75} color="black" />
+      <Animated.View style={{transform: [{translateX: interpolated}]}}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Mini Games")}
+        >
+          <Image
+            source={require('../assets/img/homeAlien.png')}
+            style={{
+              width: SCREEN_WIDTH * 0.22,
+              height: SCREEN_HEIGHT * 0.2,
+              resizeMode: "contain"
+            }}
+          />
         </TouchableOpacity>
       </Animated.View>
     );
@@ -135,9 +157,7 @@ export default function Home({ navigation,fonts }) {
       });
 
     responseListener.current =
-      Notifications.addNotificationResponseReceivedListener((response) => {
-        // console.log(response);
-      });
+      Notifications.addNotificationResponseReceivedListener((response) => {});
 
     return () => {
       Notifications.removeNotificationSubscription(
@@ -154,8 +174,6 @@ export default function Home({ navigation,fonts }) {
       try {
         const plant = await AsyncStorage.getItem("plantInfo");
         setPlantlevel(JSON.parse(plant).level);
-        // console.log("plant lv", plantlevel);
-        // console.log(plant);
         setPlant(plant);
       } catch (error) {
         console.error("Error getMsg:", error);
@@ -177,8 +195,7 @@ export default function Home({ navigation,fonts }) {
         return (
           <Image
             source={require("../assets/img/level_0.png")}
-            style={{ width: 100, height: 100 }}
-            resizeMode="contain"
+            style={styles.plant}
           />
         );
 
@@ -186,7 +203,7 @@ export default function Home({ navigation,fonts }) {
         return (
           <Image
             source={require("../assets/img/level_1.png")}
-            style={{ width: 100, height: 100 }}
+            style={styles.plant}
           />
         );
 
@@ -194,8 +211,7 @@ export default function Home({ navigation,fonts }) {
         return (
           <Image
             source={require("../assets/img/level_2.png")}
-            style={{ width: 100, height: 100 }}
-            resizeMode="contain"
+            style={styles.plant}
           />
         );
 
@@ -203,8 +219,7 @@ export default function Home({ navigation,fonts }) {
         return (
           <Image
             source={require("../assets/img/level_3.png")}
-            style={{ width: 100, height: 100 }}
-            resizeMode="contain"
+            style={styles.plant}
           />
         );
 
@@ -212,142 +227,161 @@ export default function Home({ navigation,fonts }) {
         return (
           <Image
             source={require("../assets/img/level_4.png")}
-            style={{ width: 100, height: 100 }}
-            resizeMode="contain"
+            style={styles.plant}
           />
         );
 
       // 추가 레벨에 따른 이미지 케이스
       default:
         setPlantlevel(0);
-
-        return (
-          <MaterialCommunityIcons name="flower" size={100} color="black" />
-        );
     }
-    // } else {
-    //   return <MaterialCommunityIcons name="sprout" size={100} color="black" />;
-    // }
   };
 
   return (
-    <ImageBackground
-      source={require("../assets/img/mainScreen.png")}
-      style={styles.backgroundImage}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
     >
-      <Container>
-        <TouchableOpacity
-          onPress={() => setModalVisible(true)}
-          style={{
-            marginTop: "15%",
-          }}
-        >
-          <Text style={{ color: "white", fontSize: 24 }}>오늘의 TMI</Text>
-        </TouchableOpacity>
-
-        <View style={styles.tmiContainer}>
-          <View style={styles.marqueeWrapper}>
-            <MarqueeText
-              style={styles.marqueeText}
-              speed={0.5}
-              marqueeOnStart
-              loop
-              delay={1000}
-            >
-              {todayTMI}
-            </MarqueeText>
-          </View>
-        </View>
-
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        ></View>
-        <View style={styles.centeredView}>{movingObject()}</View>
-        <TouchableOpacity onPress={increasePlantLevel}>
-          {renderFlower()}
-        </TouchableOpacity>
-
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "flex-end",
-            alignItems: "center",
-            marginBottom: 50,
-          }}
-        >
-          <View style={styles.centeredView}>
-            <Modal
-              animationType="slide"
-              transparent={true}
-              visible={modalVisible}
-              onRequestClose={() => {
-                setModalVisible(!modalVisible);
+      <ImageBackground
+        source={require("../assets/img/background.png")}
+        style={styles.backgroundImage}
+      >
+        <Container>
+          <View style={styles.tmiTool}>
+            <Image
+              source={require('../assets/img/tmiTool.png')}
+              style={{
+                width: SCREEN_WIDTH * 0.85,
+                height: SCREEN_HEIGHT * 0.5,
+                resizeMode: "contain"
               }}
+            />
+            <View style={styles.tmiContainer}>
+              <View style={styles.marqueeWrapper}>
+                <MarqueeText
+                  onPress={() => navigation.navigate("Attendance")}
+                  style={styles.marqueeText}
+                  speed={0.6}
+                  marqueeOnStart
+                  loop
+                  delay={1000}
+                >
+                  {todayTMI}나는 계속 배가 고프다 , 배가 고픈데 어쩌죠
+                </MarqueeText>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.tmiTextContainer}>
+            <TouchableOpacity
+              onPress={openModal}
             >
-              <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                  <TextInput
-                    value={TMI}
-                    placeholder="당신의 TMI를 알려주세요!"
-                    onChangeText={onChangeTMI}
-                    multiline={true}
-                    numberOfLines={3}
-                    maxLength={40}
-                    editable={true}
-                    style={{
-                      ...styles.input,
-                      margin: 5,
-                      borderColor: "black",
-                      height: 100,
-                      width: 300,
-                      textAlign: "center",
-                    }}
-                  />
-                  <View style={{ flexDirection: "row", marginVertical: 10 }}>
-                    <Pressable
-                      style={[styles.button, styles.buttonClose]}
-                      onPress={async () => {
-                        const SERVER_ADDRESS =
-                          await AsyncStorage.getItem("ServerAddress");
-                        const UserServerAccessToken =
-                          await AsyncStorage.getItem("UserServerAccessToken");
-                        await axios({
-                          method: "POST",
-                          url: SERVER_ADDRESS + "/tmi",
-                          headers: {
-                            Authorization: "Bearer: " + UserServerAccessToken,
-                          },
-                          data: {
-                            content: TMI,
-                          },
-                        })
-                          .then(async (resp) => {
-                            //todo
-                            // const writer = await AsyncStorage.getItem("nickname");
-                            // setTodayTMI(writer + ": " + TMI + "  " + todayTMI);
-                            fetchData();
-                          })
-                          .catch(function (error) {
-                            console.log("server error", error);
-                          });
-                        setModalVisible(!modalVisible);
+              <Text
+                style={{
+                  fontFamily: "dnf",
+                  fontSize: 19 * fontRatio,
+                  color: "white"
+                }}
+              >
+                오늘의 TMI
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{flex: 1, justifyContent: "center", alignItems: "center"}}
+          ></View>
+          <View style={styles.alien}>{movingObject()}</View>
+
+          <View style={styles.bottomContainer}>
+            <TouchableOpacity
+              onPress={increasePlantLevel}>
+              {renderFlower()}
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "flex-end",
+              alignItems: "center",
+              marginBottom: 50,
+            }}
+          >
+            <View style={styles.centeredView}>
+              <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                  setModalVisible(!modalVisible);
+                }}
+              >
+                <View style={styles.centeredView}>
+                  <View style={styles.modalView}>
+                    <TextInput
+                      value={TMI}
+                      placeholder="당신의 TMI를 알려주세요!"
+                      onChangeText={onChangeTMI}
+                      multiline={true}
+                      numberOfLines={3}
+                      maxLength={40}
+                      editable={true}
+                      style={{
+                        ...styles.input,
+                        margin: 5,
+                        borderColor: "#D63CE3",
+                        height: 100,
+                        width: 300,
+                        textAlign: "center",
                       }}
-                    >
-                      <Text style={styles.textStyle}>작성</Text>
-                    </Pressable>
-                    <Pressable
-                      style={[styles.button, styles.buttonClose]}
-                      onPress={() => setModalVisible(!modalVisible)}
-                    >
-                      <Text style={styles.textStyle}>취소</Text>
-                    </Pressable>
+                    />
+                    <View style={{flexDirection: "row", marginVertical: 10}}>
+                      <Pressable
+                        style={[styles.button, styles.buttonWrite]}
+                        onPress={async () => {
+                          const SERVER_ADDRESS =
+                            await AsyncStorage.getItem("ServerAddress");
+                          const UserServerAccessToken =
+                            await AsyncStorage.getItem("UserServerAccessToken");
+                          await axios({
+                            method: "POST",
+                            url: SERVER_ADDRESS + "/tmi",
+                            headers: {
+                              Authorization: "Bearer: " + UserServerAccessToken,
+                            },
+                            data: {
+                              content: TMI,
+                            },
+                          })
+                            .then(async (resp) => {
+                              //todo
+                              // const writer = await AsyncStorage.getItem("nickname");
+                              // setTodayTMI(writer + ": " + TMI + "  " + todayTMI);
+                              fetchData();
+                            })
+                            .catch(function (error) {
+                              console.log("server error", error);
+                            });
+                          setModalVisible(!modalVisible);
+                        }}
+                      >
+                        <Text style={styles.textStyle}>작성</Text>
+                      </Pressable>
+                      <Pressable
+                        style={[styles.button, styles.buttonClose]}
+                        onPress={() => setModalVisible(!modalVisible)}
+                      >
+                        <Text style={styles.textStyle}>취소</Text>
+                      </Pressable>
+                    </View>
                   </View>
                 </View>
-              </View>
-            </Modal>
-          </View>
-          <View style={{ flexDirection: "row" }}>
-            <View style={{ marginHorizontal: 10, marginVertical: 20 }}>
+              </Modal>
+            </View>
+
+            <View style={{
+              left: "-25%",
+              bottom: 5,
+            }}>
               <TouchableOpacity
                 onPress={async () => {
                   const SERVER_ADDRESS =
@@ -387,58 +421,48 @@ export default function Home({ navigation,fonts }) {
                     .catch((e) => console.log(e));
                 }}
               >
-                <View>
-                  <MaterialCommunityIcons
-                    name="watering-can"
-                    size={75}
-                    color="black"
-                  />
-                </View>
-              </TouchableOpacity>
-            </View>
-            <View style={{ marginHorizontal: 10, marginVertical: 20 }}>
-              <TouchableOpacity
-                onPress={() => navigation.navigate("Attendance")}
-                style={{ backgroundColor: "black", borderRadius: 50 }}
-              >
-                <Text
-                  style={{
-                    color: "white",
-                    marginHorizontal: 30,
-                    marginVertical: 20,
-                  }}
-                >
-                  타임라인
-                </Text>
+                <Image
+                  source={require('../assets/img/wateringCan.png')}
+                  style={styles.wateringCan}
+                />
               </TouchableOpacity>
             </View>
           </View>
-        </View>
-      </Container>
-    </ImageBackground>
+        </Container>
+      </ImageBackground>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
-    resizeMode: "cover", // 또는 'contain' 등 이미지 사이즈 조정
+    width: SCREEN_WIDTH,
+    resizeMode: "cover",
   },
-
-  tmiContainer: {
+  tmiTool: {
+    position: "absolute",
     alignItems: "center",
-    marginTop: "10%", // 화면 높이의 30% 지점에 배치
+    top: "-22%",
+  },
+  tmiTextContainer: {
+    position: "absolute",
+    top: Platform.OS === 'ios' ? '6%' : '5%'
+  },
+  tmiContainer: {
+    bottom: "38%",
+    padding: "11%",
   },
   marqueeWrapper: {
-    width: 250, // 원하는 너비 설정
-    height: 50, // 원하는 높이 설정
+    alignItems: "center",
+    width: SCREEN_WIDTH * 0.7,
     overflow: "hidden", // 영역을 벗어난 부분 숨기기
   },
   marqueeText: {
-    fontSize: 24,
-    // 기타 스타일 설정
+    marginTop: 5,
+    fontSize: 20,
+    fontFamily: "sammul",
   },
-
   container: {
     flex: 1,
     justifyContent: "center",
@@ -466,22 +490,27 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   button: {
+    width: 65,
+    // height: 34,
     borderRadius: 20,
     padding: 10,
     elevation: 2,
-    color: "black",
   },
   buttonOpen: {
     backgroundColor: "black",
   },
+  buttonWrite: {
+    backgroundColor: "#C336CF",
+    marginHorizontal: 10,
+  },
   buttonClose: {
-    backgroundColor: "black",
+    backgroundColor: "#DED1DF",
     marginHorizontal: 10,
   },
   textStyle: {
     color: "white",
-    fontWeight: "bold",
     textAlign: "center",
+    fontFamily: "dnf",
   },
   modalText: {
     marginBottom: 15,
@@ -494,5 +523,24 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 10,
+  },
+  wateringCan: {
+    width: SCREEN_WIDTH * 0.17,
+    height: SCREEN_HEIGHT * 0.1,
+    resizeMode: "contain",
+  },
+  bottomContainer: {
+    position: "absolute",
+    flex: 1,
+    bottom: 40,
+  },
+  plant: {
+    width: SCREEN_WIDTH * 0.23,
+    height: SCREEN_HEIGHT * 0.2,
+    resizeMode: "contain"
+  },
+  alien: {
+    position: "absolute",
+    bottom: "22%",
   },
 });

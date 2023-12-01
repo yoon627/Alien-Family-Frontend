@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, {useEffect, useState}  from "react";
 import { StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -51,35 +51,11 @@ const fontConfig = {
 };
 
 export default function App() {
-  const [loaded] = useFonts({
-    dnf: require("./assets/fonts/DNFBitBitv2.ttf"),
+
+  const [fontsLoaded] = useFonts({
+    dnf: require("./assets/font/DNFBitBitv2.ttf"),
+    sammul: require('./assets/font/DOSSaemmul.ttf'),
   });
-
-  const baseFont = {
-    fontFamily: "dnf",
-  };
-
-  const baseVariants = configureFonts({ config: baseFont });
-
-  const customVariants = {
-    // Customize individual base variants:
-    displayMedium: {
-      ...baseVariants.displayMedium,
-      fontFamily: 'dnf',
-    },}
-
-  const fonts = configureFonts({
-    config: {
-      ...baseVariants,
-      ...customVariants,
-    },
-  });
-
-  const theme = useTheme();
-
-  if (!loaded) {
-    return null;
-  }
 
   return (
     <StoreProvider store={store}>
