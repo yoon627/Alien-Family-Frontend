@@ -7,10 +7,13 @@ import {
   ImageBackground,
   Dimensions,
 } from "react-native";
+import { useRoute } from "@react-navigation/native";
 import * as Animatable from "react-native-animatable";
 
 const Greet = ({ navigation }) => {
-  const [userName, setUserName] = useState("이종윤");
+  const route = useRoute();
+  const name = route.params;
+  const [userName, setUserName] = useState(name);
   const [isGreetAnimationEnd, setIsGreetAnimationEnd] = useState(false);
   const [isFirstAnimationEnd, setIsFirstAnimationEnd] = useState(false);
   const [isSecondAnimationEnd, setIsSecondAnimationEnd] = useState(false);

@@ -22,6 +22,7 @@ export default function KaKaoLogin({ navigation }) {
   const requestToken = async (authorize_code) => {
     var KAT = "none";
     var SAT = "none";
+    var name = "";
     const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
     await axios({
       method: "post",
@@ -40,13 +41,26 @@ export default function KaKaoLogin({ navigation }) {
       .catch(function (error) {
         console.log("kakao error", error);
       });
+    await axios({
+      method: "GET",
+      url: "https://kapi.kakao.com/v2/user/me",
+      headers: {
+        Authorization: `Bearer ${KAT}`,
+      },
+    })
+      .then(async (resp) => {
+        name = resp.data.kakao_account.profile.nickname;
+      })
+      .catch(function (error) {
+        console.log("server error", error);
+      });
     await axios
       .post(SERVER_ADDRESS + "/api/login/kakao", KAT)
       .then(async (resp) => {
-        console.log(resp.data)
+        // console.log(resp.data);
         SAT = resp.data.data.accessToken;
         await AsyncStorage.setItem("ServerAccessToken", SAT);
-        navigation.navigate("Greet");
+        navigation.navigate("Greet",name);
       })
       .catch(function (error) {
         console.log("server error", error);
