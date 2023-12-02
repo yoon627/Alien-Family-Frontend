@@ -52,13 +52,13 @@ const fontConfig = {
 };
 
 export default function App() {
-
   const [fontsLoaded] = useFonts({
     dnf: require("./assets/font/DNFBitBitv2.ttf"),
-    sammul: require('./assets/font/DOSSaemmul.ttf'),
+    sammul: require("./assets/font/DOSSaemmul.ttf"),
   });
 
   return (
+
     <StoreProvider store={store}>
       <PaperProvider theme={{ ...theme}}>
         <NavigationContainer>

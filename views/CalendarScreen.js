@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Button, Modal, Text, TextInput, View } from "react-native";
+import {
+  Alert,
+  Button,
+  ImageBackground,
+  Modal,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Calendar } from "react-native-calendars";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import ChoseCalendar from "./ChoseCalendar";
@@ -19,7 +27,7 @@ export default function CalendarScreen({ navigation }) {
   const [isModalVisible, setModalVisible] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
   const [isNewEventModalVisible, setNewEventModalVisible] = useState(false);
-  const [newEventTitle, setNewEventTitle] = useState("일정 제목");
+  const [newEventTitle, setNewEventTitle] = useState("");
   const [startAt, setStartAt] = useState(new Date());
   const [endAt, setEndAt] = useState(new Date());
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
@@ -35,12 +43,7 @@ export default function CalendarScreen({ navigation }) {
 
   useEffect(() => {
     getData();
-  }, [
-    isLocalCalendarModalVisible,
-    currentMonth,
-    isAddOrEditModalVisible,
-    isModalVisible,
-  ]);
+  }, [currentMonth]);
 
   const handleMonthChange = (date) => {
     let year = date.year;
@@ -66,41 +69,61 @@ export default function CalendarScreen({ navigation }) {
     const id = await AsyncStorage.getItem("familyId");
     const token = await AsyncStorage.getItem("UserServerAccessToken"); // 적절한 토큰 키 사용
 
-    const response = await fetch(
-      "http://43.202.241.133:12345/calendarEvent/day/" +
-        `${currentYear}/${currentMonth}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // 필요한 경우 인증 헤더 추가
+    try {
+      const response = await fetch(
+        "http://43.202.241.133:12345/calendarEvent/day/" +
+          `${currentYear}/${currentMonth}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // 필요한 경우 인증 헤더 추가
+          },
         },
-      },
-    );
-    const data = await response.json();
-    if (data.code === 200 && data.data.length > 0) {
-      let newEvents = {};
+      );
+      if (response.ok) {
+        await AsyncStorage.removeItem("calendarEvents");
 
-      data.data.forEach((eventData) => {
-        const newEvent = {
-          id: eventData.eventId,
-          title: eventData.eventName,
-          name: eventData.member.nickname,
-          startDate: new Date(eventData.startDate),
-          endDate: new Date(eventData.endDate),
-        };
+        const data = await response.json();
+        if (data.code === 200 && data.data.length > 0) {
+          let newEvents = {};
 
-        const datesInRange = getDatesInRange(
-          new Date(eventData.startDate),
-          new Date(eventData.endDate),
-        );
+          data.data.forEach((eventData) => {
+            const newEvent = {
+              id: eventData.eventId,
+              title: eventData.eventName,
+              name: eventData.member.nickname,
+              startDate: new Date(eventData.startDate),
+              endDate: new Date(eventData.endDate),
+            };
 
-        datesInRange.forEach((date) => {
-          newEvents[date] = [...(newEvents[date] || []), newEvent];
-        });
-      });
+            const datesInRange = getDatesInRange(
+              new Date(eventData.startDate),
+              new Date(eventData.endDate),
+            );
 
-      setEvents(newEvents);
+            datesInRange.forEach((date) => {
+              newEvents[date] = [...(newEvents[date] || []), newEvent];
+            });
+          });
+
+          setEvents(newEvents);
+
+          await AsyncStorage.setItem(
+            "calendarEvents",
+            JSON.stringify(newEvents),
+          );
+        }
+      } else {
+        throw new Error("서버 응답 노노 해");
+      }
+    } catch (error) {
+      console.error("Error fetching data from server:", error);
+      // 서버에서 데이터를 가져오는데 실패한 경우, AsyncStorage에서 데이터 로드
+      const storedEvents = await AsyncStorage.getItem("calendarEvents");
+      if (storedEvents) {
+        setEvents(JSON.parse(storedEvents));
+      }
     }
     setFamilyId(id);
     setName(name);
@@ -175,6 +198,21 @@ export default function CalendarScreen({ navigation }) {
   };
 
   const addNewEvent = async () => {
+    if (startAt > endAt) {
+      // 경고 창 바로 표시
+      Alert.alert(
+        "", // 경고 창 제목
+        "시작 날짜는 종료 날짜보다 이전이어야 합니다.", // 경고 창 내용
+        [
+          {
+            text: "확인",
+          },
+        ],
+        { cancelable: true },
+      );
+      return;
+    }
+
     try {
       const token = await AsyncStorage.getItem("UserServerAccessToken"); // 적절한 토큰 키 사용
       const response = await fetch(
@@ -198,6 +236,8 @@ export default function CalendarScreen({ navigation }) {
         id: data.data.eventId,
         title: newEventTitle,
         name: name,
+        startDate: startAt,
+        endDate: endAt,
       };
       const datesInRange = getDatesInRange(startAt, endAt);
       const newEvents = { ...events };
@@ -216,12 +256,27 @@ export default function CalendarScreen({ navigation }) {
 
   const openEditModal = (event) => {
     setEditingEvent({ ...event });
-    setStartAt(new Date(event.startDate));
-    setEndAt(new Date(event.endDate));
+    setStartAt(event.startDate);
+    setEndAt(event.endDate);
     setModalVisible(true);
   };
 
   const handleEditEvent = async () => {
+    if (startAt > endAt) {
+      // 경고 창 바로 표시
+      Alert.alert(
+        "", // 경고 창 제목
+        "시작 날짜는 종료 날짜보다 이전이어야 합니다.", // 경고 창 내용
+        [
+          {
+            text: "확인",
+          },
+        ],
+        { cancelable: true },
+      );
+      return;
+    }
+
     const updatedEvents = { ...events };
 
     // 기존 이벤트를 삭제
@@ -236,7 +291,6 @@ export default function CalendarScreen({ navigation }) {
         );
       });
     }
-
     // 수정된 이벤트 정보 업데이트
     const newEvent = {
       ...editingEvent,
@@ -438,13 +492,7 @@ export default function CalendarScreen({ navigation }) {
                 toggleAddOrEditModal();
               }}
             />
-            <Button
-              title="달력에서 가져오기"
-              onPress={() => {
-                toggleAddOrEditModal();
-                toggleLocalCalendarModal();
-              }}
-            />
+
             <Button title="취소" onPress={toggleAddOrEditModal} />
           </View>
         </View>
@@ -512,18 +560,21 @@ export default function CalendarScreen({ navigation }) {
           />
         </View>
       </Modal>
-
+      {/*새 일정 추가 하기*/}
       <Modal
         visible={isNewEventModalVisible}
         onRequestClose={() => setNewEventModalVisible(false)}
         transparent={false}
         animationType="slide"
       >
-        <View style={{ marginTop: 50, marginHorizontal: 20 }}>
-          <Text>새 일정 추가</Text>
+        <View style={{ marginTop: 50, marginHorizontal: 20, padding: 20 }}>
+          <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 20 }}>
+            새 일정 추가
+          </Text>
           <TextInput
             value={newEventTitle}
             onChangeText={setNewEventTitle}
+            placeholder="제목"
             style={{
               height: 40,
               borderColor: "gray",
@@ -532,41 +583,94 @@ export default function CalendarScreen({ navigation }) {
             }}
           />
           <View>
-            <Text>시작 {formatYYYYMMDD(startAt)}</Text>
-            <Button
-              title="Start Date"
-              onPress={() => setShowStartDatePicker(true)}
-            />
-            {showStartDatePicker && (
-              <DateTimePicker
-                value={startAt}
-                mode="date"
-                display="spinner"
-                onChange={onStartDateChange}
-              />
-            )}
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
+              <Text style={{ fontSize: 32 }}>시작 </Text>
+              {showStartDatePicker && (
+                <DateTimePicker
+                  value={startAt}
+                  mode="date"
+                  display="default"
+                  onChange={onStartDateChange}
+                />
+              )}
+              <TouchableOpacity onPress={() => setShowStartDatePicker(true)}>
+                <Text style={{ fontSize: 32 }}>{formatYYYYMMDD(startAt)}</Text>
+              </TouchableOpacity>
+            </View>
 
-            <Text>끝 {formatYYYYMMDD(endAt)}</Text>
-            <Button
-              title="End Date"
-              onPress={() => setShowEndDatePicker(true)}
-            />
-            {showEndDatePicker && (
-              <DateTimePicker
-                value={endAt}
-                mode="date"
-                display="spinner"
-                onChange={onEndDateChange}
-              />
-            )}
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
+              <Text style={{ fontSize: 32 }}>종료 </Text>
+              {showEndDatePicker && (
+                <DateTimePicker
+                  value={endAt}
+                  mode="date"
+                  display="default"
+                  onChange={onEndDateChange}
+                />
+              )}
+              <TouchableOpacity onPress={() => setShowEndDatePicker(true)}>
+                <Text style={{ fontSize: 32 }}>{formatYYYYMMDD(endAt)}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
-          <Button title="추가하기" onPress={addNewEvent} />
-          <Button
-            title="취소"
-            onPress={() => setNewEventModalVisible(false)}
-            color="red"
-          />
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              padding: 40,
+            }}
+          >
+            <Button
+              title="달력에서 가져오기"
+              onPress={() => {
+                toggleAddOrEditModal();
+                toggleLocalCalendarModal();
+              }}
+            />
+            <TouchableOpacity
+              onPress={addNewEvent}
+              style={{ marginRight: 20, borderRadius: 20 }}
+            >
+              <ImageBackground
+                source={require("../assets/img/pinkBtn.png")}
+                style={{
+                  width: 100,
+                  height: 50,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderRadius: 20,
+                  overflow: "hidden",
+                }}
+              >
+                <Text style={{ fontSize: 32, color: "white" }}>확인</Text>
+              </ImageBackground>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setNewEventModalVisible(false);
+              }}
+              style={{ marginRight: 20, borderRadius: 20 }}
+            >
+              <ImageBackground
+                source={require("../assets/img/pinkBtn.png")}
+                style={{
+                  width: 100,
+                  height: 50,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderRadius: 20,
+                  overflow: "hidden",
+                }}
+              >
+                <Text style={{ fontSize: 32, color: "white" }}>취소</Text>
+              </ImageBackground>
+            </TouchableOpacity>
+          </View>
         </View>
       </Modal>
 

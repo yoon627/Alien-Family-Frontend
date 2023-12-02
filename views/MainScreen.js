@@ -1,6 +1,6 @@
 import React from "react";
-import {Image, View, StyleSheet, Dimensions} from "react-native";
-import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
+import { Dimensions, Image, StyleSheet, View } from "react-native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import AlbumScreen from "./AlbumScreen";
 import Home from "./Home";
 import CalendarScreen from "./CalendarScreen";
@@ -13,13 +13,13 @@ import ChatRoom from "./Chatting";
 
 const Tab = createBottomTabNavigator();
 
-const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get('window');
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-export default function MainScreen({navigation}) {
+export default function MainScreen({ navigation }) {
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarStyle: styles.tabBar
+        tabBarStyle: styles.tabBar,
       }}
     >
       <Tab.Screen
@@ -29,7 +29,7 @@ export default function MainScreen({navigation}) {
           headerShown: false,
           tabBarIcon: () => (
             <Image
-              source={require('../assets/img/navbarIcon/home2.png')}
+              source={require("../assets/img/navbarIcon/home2.png")}
               style={styles.icon}
             />
           ),
@@ -44,7 +44,7 @@ export default function MainScreen({navigation}) {
           headerShown: false,
           tabBarIcon: () => (
             <Image
-              source={require('../assets/img/navbarIcon/album2.png')}
+              source={require("../assets/img/navbarIcon/album2.png")}
               style={styles.icon}
             />
           ),
@@ -59,7 +59,7 @@ export default function MainScreen({navigation}) {
           headerShown: false,
           tabBarIcon: () => (
             <Image
-              source={require('../assets/img/navbarIcon/chat2.png')}
+              source={require("../assets/img/navbarIcon/chat2.png")}
               style={styles.chat}
             />
           ),
@@ -74,7 +74,7 @@ export default function MainScreen({navigation}) {
           headerShown: false,
           tabBarIcon: () => (
             <Image
-              source={require('../assets/img/navbarIcon/calendar2.png')}
+              source={require("../assets/img/navbarIcon/calendar2.png")}
               style={styles.icon}
             />
           ),
@@ -89,7 +89,7 @@ export default function MainScreen({navigation}) {
           headerShown: false,
           tabBarIcon: () => (
             <Image
-              source={require('../assets/img/navbarIcon/alarm2.png')}
+              source={require("../assets/img/navbarIcon/alarm2.png")}
               style={styles.icon}
             />
           ),
@@ -103,7 +103,7 @@ export default function MainScreen({navigation}) {
         options={{
           headerShown: false,
           tabBarShowLabel: false,
-          tabBarButton: () => <View style={{width: 0, height: 0}}></View>,
+          tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,
           tabBarVisible: false, //hide tab bar on this screen
         }}
       />
@@ -114,7 +114,7 @@ export default function MainScreen({navigation}) {
         options={{
           headerShown: false,
           tabBarShowLabel: false,
-          tabBarButton: () => <View style={{width: 0, height: 0}}></View>,
+          tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,
           tabBarVisible: false,
         }}
       />
@@ -124,7 +124,7 @@ export default function MainScreen({navigation}) {
         options={{
           headerShown: false,
           tabBarShowLabel: false,
-          tabBarButton: () => <View style={{width: 0, height: 0}}></View>,
+          tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,
           tabBarVisible: false,
         }}
       />
@@ -134,7 +134,7 @@ export default function MainScreen({navigation}) {
         options={{
           headerShown: false,
           tabBarShowLabel: false,
-          tabBarButton: () => <View style={{width: 0, height: 0}}></View>,
+          tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,
           tabBarVisible: false,
         }}
       />
@@ -161,5 +161,5 @@ const styles = StyleSheet.create({
   tabBar: {
     backgroundColor: "#E0EBF2", // 탭 바의 배경색
     height: SCREEN_HEIGHT * 0.1,
-  }
+  },
 });
