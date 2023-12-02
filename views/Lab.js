@@ -17,14 +17,14 @@ Notifications.setNotificationHandler({
 
 // Can use this function below or use Expo's Push Notification Tool from: https://expo.dev/notifications
 async function sendPushNotification(devicePushToken) {
-  const UserServerAccessToken = await AsyncStorage.getItem(
-    "UserServerAccessToken"
-  );
-  await fetch("http://43.202.241.133:12345/mind627", {
+  // const devicePushToken = await AsyncStorage.getItem(
+  //   "firebaseToken"
+  // );
+  await fetch("https://fcm.googleapis.com/fcm/send", {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer: " + UserServerAccessToken,
+      'Content-Type': 'application/json',
+      Authorization: `key=${FCM_SERVER_KEY}`,
     },
     body: JSON.stringify({
       to: devicePushToken,
@@ -37,7 +37,7 @@ async function sendPushNotification(devicePushToken) {
       },
     }),
   })
-    .then((resp) => console.log("axios response: "+resp))
+    .then((resp) => console.log("axios response: " + resp))
     .catch((e) => console.log(e));
 }
 
@@ -68,7 +68,7 @@ async function registerForPushNotificationsAsync() {
     token = await Notifications.getDevicePushTokenAsync({
       projectId: Constants.expoConfig.extra.eas.projectId,
     });
-    // console.log(token);
+    console.log(token.data);
   } else {
     alert("Must use physical device for Push Notifications");
   }
@@ -90,12 +90,15 @@ export default function Lab() {
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
         setNotification(notification);
-        console.log("notificationListener: "+notification);
+        console.log(notification);
+        console.log(notification.request);
+        console.log(notification.request.content);
+        console.log(notification.request.content.data);
       });
 
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log("responseListener: " +response);
+        console.log("responseListener: " + response);
       });
 
     return () => {
