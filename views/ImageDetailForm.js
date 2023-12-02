@@ -35,23 +35,22 @@ export default function ImageDetailForm({route, navigation}) {
     }
   };
 
-
   return (
     <View style={styles.container}>
       <Swiper
-
         controlsEnabled={true}
         from={index}
       >
 
         {albumList.map((item, index) => {
+          const nowYear = new Date().getFullYear();
           const createDate = new Date(item.createAt);
           const year = createDate.getFullYear();
           const month = createDate.getMonth() + 1;
           const day = createDate.getDate();
           const hours = createDate.getHours();
           const minutes = createDate.getMinutes();
-          const formattedDate = `${year}년 ${month}월 ${day}일 ${hours}:${minutes}`;
+          const formattedDate = `${month}월 ${day}일 ${hours}:${minutes}`;
 
           return (
             <KeyboardAvoidingView
@@ -59,10 +58,18 @@ export default function ImageDetailForm({route, navigation}) {
               style={styles.container}
             >
               <View key={index} style={styles.slide}>
-                <Text style={styles.date}>{formattedDate}</Text>
-                <Text style={styles.date}>사진 주인: {item.writer}</Text>
+                <Text style={styles.date}>
+                  {nowYear === year ? formattedDate : year + formattedDate}
+                </Text>
+                <Text style={styles.writer}>{item.writer}</Text>
                 <Image style={styles.uploadImage} source={{uri: item.photoKey}} resizeMode="contain"/>
-                <Text style={styles.tag}>태그: {item.photoTags.join(", ")}</Text>
+                <View style={styles.tagButtonsContainer}>
+                  <Text style={styles.tagButton}>
+                    {item.photoTags.map((tag, index) => (
+                      <Text key={index} style={styles.tagText}>{tag}</Text>
+                    ))}
+                  </Text>
+                </View>
                 <Text style={styles.description}>설명: {item.description}</Text>
 
                 <TextInput
@@ -105,6 +112,7 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 20,
+
   },
   comment: {
     fontSize: 15,
@@ -116,5 +124,24 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderRadius: 5,
     width: '50%',
-  }
+  },
+  writer: {
+    fontWeight: "bold",
+
+  },
+  tagButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  tagButton: {
+    alignItems: 'center',
+    justifyContent: "center",
+    paddingHorizontal: 13,
+    paddingVertical: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    backgroundColor: '#E0EBF2',
+  },
+
 });

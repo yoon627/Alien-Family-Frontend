@@ -22,23 +22,23 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const TAG_OPTION = [
   {
-    item: '아빠',
+    item: '# 아빠',
     id: 'DAD',
   },
   {
-    item: '엄마',
+    item: '# 엄마',
     id: 'MOM',
   },
   {
-    item: '첫째',
+    item: '# 첫째',
     id: 'FIRST',
   },
   {
-    item: '둘째',
+    item: '# 둘째',
     id: 'SECOND',
   },
   {
-    item: '기타',
+    item: '# 기타',
     id: 'EXTRA',
   },
 ]
@@ -81,8 +81,8 @@ export default function AlbumScreen({navigation}) {
         // 받아온 이미지 데이터 상태에 저장
         setImageData(data.data);
         setAlbumList(data.data);
-        console.log("받은 데이터!!!!!!!!!", data.data)
-        console.log("👉🏻앨범 이미지 리스트: ", data.data.map(item => item.photoKey));
+        // console.log("받은 데이터!!!!!!!!!", data.data)
+        // console.log("👉🏻앨범 이미지 리스트: ", data.data.map(item => item.photoKey));
       } catch (error) {
         console.error("이미지 url을 가져오는 중에 오류가 발생했습니다.", error);
       }
@@ -211,7 +211,6 @@ export default function AlbumScreen({navigation}) {
       return hasMatchingTag;
     });
 
-    console.log("필터된 사진:", filteredImages);
     return filteredImages;
   }
 
@@ -224,17 +223,26 @@ export default function AlbumScreen({navigation}) {
       {!showUploadForm ? (
         <Fragment>
           <View style={styles.tagContainer}>
-            {TAG_OPTION.map((tag) => (
-              <View style={styles.tagItem} key={tag.id}>
-                <Checkbox
-                  value={selectedTags.includes(tag.id)}
-                  onValueChange={() => toggleTagSelection(tag.id)}
-                />
-                <TouchableOpacity
-                  onPress={() => toggleTagSelection(tag.id)}>
-                  <Text>{tag.item}</Text>
-                </TouchableOpacity>
-              </View>
+            {TAG_OPTION.map((tag, index) => (
+              <TouchableOpacity
+                key={tag.id}
+                style={[
+                  styles.tagItem,
+                  selectedTags.includes(tag.id) && styles.selectedTagItem,
+                  index !== TAG_OPTION.length - 1 && {marginRight: 7},
+                ]}
+                onPress={() => toggleTagSelection(tag.id)}
+              >
+                <Text
+                  style={{
+                    color: selectedTags.includes(tag.id) ? 'black' : 'black',
+                    fontWeight: selectedTags.includes(tag.id) ? 'bold' : 'normal',
+
+                  }}
+                >
+                  {tag.item}
+                </Text>
+              </TouchableOpacity>
             ))}
           </View>
           <FlatList
@@ -269,7 +277,7 @@ export default function AlbumScreen({navigation}) {
             onPress={modalOpen}>
             <Image
               source={require('../assets/img/plus.png')}
-              style={{width: SCREEN_WIDTH * 0.13, height: SCREEN_WIDTH * 0.13, resizeMode: "contain"}} />
+              style={{width: SCREEN_WIDTH * 0.13, height: SCREEN_WIDTH * 0.13, resizeMode: "contain"}}/>
           </Pressable>
         </Fragment>
       ) : (
@@ -282,7 +290,8 @@ export default function AlbumScreen({navigation}) {
         onLaunchImageLibrary={onLaunchImageLibrary}
       />
     </View>
-  );
+  )
+    ;
 }
 
 const styles = StyleSheet.create({
@@ -299,8 +308,8 @@ const styles = StyleSheet.create({
   },
   imagePlusContainer: {
     position: "absolute",
-    bottom: "3%",
-    right: "4%",
+    bottom: "4%",
+    right: "5%",
   },
   imageContainer: {
     top: "1%",
@@ -308,11 +317,20 @@ const styles = StyleSheet.create({
   },
   tagContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 10,
   },
   tagItem: {
     alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#ccc',
+  },
+  selectedTagItem: {
+    borderColor: "#E0EBF2",
+    backgroundColor: "#E0EBF2",
   },
 });

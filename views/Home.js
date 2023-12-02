@@ -151,7 +151,8 @@ export default function Home({navigation}) {
       });
 
     responseListener.current =
-      Notifications.addNotificationResponseReceivedListener((response) => {});
+      Notifications.addNotificationResponseReceivedListener((response) => {
+      });
 
     return () => {
       Notifications.removeNotificationSubscription(
@@ -255,7 +256,7 @@ export default function Home({navigation}) {
                 <MarqueeText
                   onPress={() => navigation.navigate("Attendance")}
                   style={styles.marqueeText}
-                  speed={0.2}
+                  speed={0.4}
                   marqueeOnStart
                   loop
 

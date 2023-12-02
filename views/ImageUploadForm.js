@@ -11,8 +11,8 @@ import {
   ImageBackground, Dimensions, Pressable, Text
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import SelectBox from 'react-native-multi-selectbox'
-import {xorBy} from "lodash";
+import {value} from "lodash/seq";
+import image from "react-native-reanimated/src/reanimated2/component/Image";
 
 const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get('window');
 
@@ -40,8 +40,17 @@ const TAG_OPTION = [
 ]
 
 export default function ImageUploadForm({uri, onUploadComplete}) {
-  const [photoTags, setPhotoTags] = useState(['EXTRA'])
+  const [photoTags, setPhotoTags] = useState([])
   const [description, setDescription] = useState('');
+
+  const toggleTag = (tag) => {
+    // 선택된 태그 목록 업데이트
+    if (photoTags.includes(tag)) {
+      setPhotoTags(photoTags.filter((photoTags) => photoTags !== tag));
+    } else {
+      setPhotoTags([...photoTags, tag]);
+    }
+  };
 
   // 클라에서 바로 presigned url로 업로드
   // 1단계: signed url을 요청해서 받는다.
@@ -108,6 +117,7 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
           },
         });
         console.log("👌🏻 이미지 업로드 성공");
+        // console.log(imageInfo);
         onUploadComplete();
       } else {
         console.error("❌ 이미지 업로드 실패");
@@ -126,21 +136,31 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
         <Image
           style={styles.uploadImage}
           source={{uri: uri}}
-          width={100}
-          height={100}
           resizeMode="contain"
         />
         <View style={{height: 20}}/>
-
-        <TextInput
-          style={styles.input}
-          value={photoTags.join(', ')}
-          onChangeText={(text) =>
-            setPhotoTags(text.split(',').map((tag) => tag.trim()))
-          }
-          placeholder="사람 태그..."
-          multiline
-        />
+        <View style={styles.tagButtonsContainer}>
+          {TAG_OPTION.map((tagOption, index) => (
+            <Pressable
+              key={tagOption.id}
+              style={[
+                styles.tagButton,
+                photoTags.includes(tagOption.id) && styles.tagButtonSelected,
+                index !== TAG_OPTION.length - 1 && {marginRight: 10},
+              ]}
+              onPress={() => toggleTag(tagOption.id)}
+            >
+              <Text
+                style={{
+                  ...styles.tagButtonText,
+                  fontWeight: photoTags.includes(tagOption.id) ? "bold" : "normal"
+                }}
+              >
+                {tagOption.item}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
 
         <TextInput
           style={[styles.input, styles.description]}
@@ -179,7 +199,6 @@ const styles = StyleSheet.create({
   uploadImage: {
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT * 0.4,
-    // height: SCREEN_HEIGHT,
     marginBottom: 20,
   },
   input: {
@@ -196,7 +215,6 @@ const styles = StyleSheet.create({
   },
   button: {
     width: 65,
-    // height: 34,
     borderRadius: 20,
     padding: 10,
     elevation: 2,
@@ -213,5 +231,25 @@ const styles = StyleSheet.create({
   textStyle: {
     textAlign: "center",
     fontFamily: "dnf",
+  },
+  tagButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  tagButton: {
+    alignItems: 'center',
+    justifyContent: "center",
+    paddingHorizontal: 13,
+    paddingVertical: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#E0EBF2',
+  },
+  tagButtonSelected: {
+    backgroundColor: "#E0EBF2",
+  },
+  tagButtonText: {
+    color: '#000',
   },
 });
