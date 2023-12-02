@@ -49,7 +49,7 @@ export default function KaKaoLogin({ navigation }) {
       },
     })
       .then(async (resp) => {
-        await AsyncStorage.setItem("kakaoEmail",resp.data.kakao_account.email);
+        await AsyncStorage.setItem("kakaoEmail", resp.data.kakao_account.email);
         name = resp.data.kakao_account.profile.nickname;
         await AsyncStorage.setItem("kakaoName", name);
         // await AsyncStorage.setItem("ServerAccessToken", SAT);
@@ -62,7 +62,16 @@ export default function KaKaoLogin({ navigation }) {
       .then(async (resp) => {
         // SAT = resp.data.data.accessToken;
         // await AsyncStorage.setItem("ServerAccessToken", SAT);
-        navigation.navigate("Greet",name);
+        if (resp.data.code === 200) {
+          await AsyncStorage.setItem(
+            "AccessToken",
+            resp.data.data.tokenInfo.accessToken
+          )
+            .then(navigation.navigate("MainDrawer"))
+            .catch((e) => console.log(e));
+        } else {
+          navigation.navigate("Greet", name);
+        }
       })
       .catch(function (error) {
         console.log(error);

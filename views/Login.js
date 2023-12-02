@@ -85,22 +85,26 @@ const Login = ({ navigation }) => {
                   const SERVER_ADDRESS = await AsyncStorage.getItem(
                     "ServerAddress"
                   );
-                  const UserServerAccessToken = await AsyncStorage.getItem(
-                    "UserServerAccessToken"
-                  );
-                  if (UserServerAccessToken) {
+                  const AccessToken = await AsyncStorage.getItem("AccessToken");
+                  if (AccessToken) {
                     await axios({
                       method: "GET",
                       url: SERVER_ADDRESS + "/api/login/token",
                       headers: {
-                        Authorization: "Bearer: " + UserServerAccessToken,
+                        Authorization: "Bearer " + AccessToken,
                       },
                     })
-                      .then((resp) => console.log(resp))
-                      .catch((e) => console.log(e));
+                      .then(async (resp) => {
+                        await AsyncStorage.setItem(
+                          "AccessToken",
+                          resp.data.data.tokenInfo.accessToken
+                        )
+                          .then(navigation.navigate("MainDrawer"))
+                          .catch((e) => console.log(e));
+                      })
+                      .catch((e) => navigation.navigate("KaKaoLogin"));
                   } else {
                     navigation.navigate("KaKaoLogin");
-                    // Alert.alert('회원가입해주세요');
                   }
                 }}
                 style={{
@@ -143,7 +147,9 @@ const Login = ({ navigation }) => {
                     await AsyncStorage.setItem(
                       "AccessToken",
                       resp.data.data.tokenInfo.accessToken
-                    ).then(navigation.navigate("MainDrawer")).catch(e=>console.log(e));
+                    )
+                      .then(navigation.navigate("MainDrawer"))
+                      .catch((e) => console.log(e));
                   })
                   .catch((e) => navigation.navigate("KaKaoLogin"));
               } else {
