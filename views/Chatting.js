@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
+  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -35,6 +36,7 @@ const ChatRoom = () => {
         const token = await AsyncStorage.getItem("UserServerAccessToken");
         const chatroomId = await AsyncStorage.getItem("chatroomId");
         console.log("챗룸ID ", chatroomId);
+
         const response = await fetch(
           "http://" + `${myIP}` + ":12345/chat/list?id=" + chatroomId,
           {
@@ -113,7 +115,7 @@ const ChatRoom = () => {
       const messageData = {
         type: "TALK",
         roomId: roomNumber,
-        sender: myname, // 적절한 멤버 ID 설정
+        sender: "유나", // 적절한 멤버 ID 설정
         content: message,
         time: new Date().toISOString(),
       };
@@ -144,20 +146,37 @@ const ChatRoom = () => {
 
   return (
     <View style={{ flex: 1, padding: 20 }}>
-      <ScrollView style={{ flex: 1 }} ref={scrollViewRef}>
+      <ScrollView style={{ flex: 1, marginLeft: 10 }} ref={scrollViewRef}>
         {messages.map((msg, index) => (
           <View key={index}>
-            {/* 상대방 메시지일 때만 이름을 말풍선 위에 표시 */}
-            {msg.sender !== myname && (
-              <Text style={styles.senderName}>{msg.sender}</Text>
-            )}
             <View
-              style={[
-                styles.messageBubble,
-                msg.sender === myname ? styles.myMessage : styles.otherMessage,
-              ]}
+              style={{
+                flexDirection: "row",
+                alignItems: "flex-end",
+                marginBottom: 4,
+              }}
             >
-              <Text style={styles.messageText}>{msg.content}</Text>
+              {msg.sender !== myname && (
+                <Image
+                  source={require("../assets/img/profile.jpg")}
+                  style={styles.profilePic}
+                />
+              )}
+              <View style={{ flex: 1 }}>
+                {msg.sender !== myname && (
+                  <Text style={styles.senderName}>{msg.sender}</Text>
+                )}
+                <View
+                  style={[
+                    styles.messageBubble,
+                    msg.sender === myname
+                      ? styles.myMessage
+                      : styles.otherMessage,
+                  ]}
+                >
+                  <Text style={styles.messageText}>{msg.content}</Text>
+                </View>
+              </View>
             </View>
           </View>
         ))}
@@ -205,7 +224,8 @@ const styles = StyleSheet.create({
   },
   senderName: {
     color: "#100f0f",
-    fontSize: 10,
+    fontSize: 15,
+    marginLeft: 10,
   },
   messageText: {
     fontFamily: "dnf",
@@ -231,6 +251,12 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     justifyContent: "center",
     alignItems: "center",
+  },
+  profilePic: {
+    width: 60, // 이미지 크기 조절
+    height: 60, // 이미지 크기 조절
+    borderRadius: 20, // 원형으로 만들기
+    marginRight: 10, // 메시지 버블과의 간격
   },
 });
 export default ChatRoom;
