@@ -53,6 +53,7 @@ export default function CalendarScreen({ navigation }) {
   };
 
   const toggleAddOrEditModal = () => {
+    setNewEventTitle("");
     if (Object.is(startAt.valueOf(), NaN)) {
       setStartAt(new Date());
       setEndAt(new Date());
@@ -213,6 +214,20 @@ export default function CalendarScreen({ navigation }) {
       return;
     }
 
+    if (newEventTitle === "") {
+      Alert.alert(
+        "", // 경고 창 제목
+        "일정 제목은 필수항목입니다.", // 경고 창 내용
+        [
+          {
+            text: "확인",
+          },
+        ],
+        { cancelable: true },
+      );
+      return;
+    }
+
     try {
       const token = await AsyncStorage.getItem("UserServerAccessToken"); // 적절한 토큰 키 사용
       const response = await fetch(
@@ -267,6 +282,19 @@ export default function CalendarScreen({ navigation }) {
       Alert.alert(
         "", // 경고 창 제목
         "시작 날짜는 종료 날짜보다 이전이어야 합니다.", // 경고 창 내용
+        [
+          {
+            text: "확인",
+          },
+        ],
+        { cancelable: true },
+      );
+      return;
+    }
+    if (editingEvent.title === "") {
+      Alert.alert(
+        "", // 경고 창 제목
+        "일정 제목은 필수항목입니다.", // 경고 창 내용
         [
           {
             text: "확인",
