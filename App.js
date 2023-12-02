@@ -60,7 +60,7 @@ export default function App() {
   if (!fontsLoaded) {
     return null;
   }
-  console.log("로딩댐?", fontsLoaded);
+  // console.log("로딩댐?", fontsLoaded);
   return (
     <StoreProvider store={store}>
       <PaperProvider theme={{ ...theme }}>
