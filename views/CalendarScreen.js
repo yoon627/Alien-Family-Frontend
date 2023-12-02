@@ -220,6 +220,8 @@ export default function CalendarScreen({ navigation }) {
         id: data.data.eventId,
         title: newEventTitle,
         name: name,
+        startDate: startAt,
+        endDate: endAt,
       };
       const datesInRange = getDatesInRange(startAt, endAt);
       const newEvents = { ...events };
@@ -238,8 +240,8 @@ export default function CalendarScreen({ navigation }) {
 
   const openEditModal = (event) => {
     setEditingEvent({ ...event });
-    setStartAt(new Date(event.startDate));
-    setEndAt(new Date(event.endDate));
+    setStartAt(event.startDate);
+    setEndAt(event.endDate);
     setModalVisible(true);
   };
 
@@ -258,7 +260,6 @@ export default function CalendarScreen({ navigation }) {
         );
       });
     }
-
     // 수정된 이벤트 정보 업데이트
     const newEvent = {
       ...editingEvent,
