@@ -16,6 +16,7 @@ import * as Clipboard from "expo-clipboard";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
+import { Alert } from "react-native";
 
 const FCM_SERVER_KEY =
   "AAAAUCMBJiU:APA91bEs9fOJNe6l2ILHFI88jep5rw9wqR-qTWWbBrKxj7JQnKQ8ZAp4tJbn_yXcL2aP0ydygPIcT89XB6h38vhIozsJ5J61s7w2znBL9hPQG6a18sQcUFkMitr2pkvoCmmfslVQmk-u";
@@ -163,87 +164,19 @@ const FirstStart = ({ navigation }) => {
               <ImageBackground source={require("../assets/img/pinkBtn.png")}>
                 <TouchableOpacity
                   onPress={async () => {
-                    console.log(plantName,ufoName)
+                    // console.log(plantName, ufoName);
                     await AsyncStorage.setItem("plantName", plantName);
                     await AsyncStorage.setItem("ufoName", ufoName);
-                    navigation.navigate("FirstRegister", {
-                      cameFrom: "FirstStart",
-                    });
+                    if (!plantName) {
+                      Alert.alert("새싹이 이름을 지어주세요");
+                    } else if (!ufoName) {
+                      Alert.alert("우주선 이름을 지어주세요");
+                    } else {
+                      navigation.navigate("FirstRegister", {
+                        cameFrom: "FirstStart",
+                      });
+                    }
                   }}
-                  // onPress={async () => {
-                  //   const SERVER_ADDRESS = await AsyncStorage.getItem(
-                  //     "ServerAddress"
-                  //   );
-                  //   const ServerAccessToken = await AsyncStorage.getItem(
-                  //     "ServerAccessToken"
-                  //   );
-                  //   await axios({
-                  //     method: "POST",
-                  //     url: SERVER_ADDRESS + "/api/register/newFamily",
-                  //     headers: {
-                  //       Authorization: "Bearer: " + ServerAccessToken,
-                  //     },
-                  //     data: {
-                  //       ufoName: ufoName,
-                  //       plantName: plantName,
-                  //       code: familyCode,
-                  //       firebaseToken: devicePushToken,
-                  //     },
-                  //   })
-                  //     .then(async (resp) => {
-                  //       const UserServerAccessToken =
-                  //         resp.data.data.tokenInfo.accessToken;
-                  //       const UserServerRefreshToken =
-                  //         resp.data.data.tokenInfo.refreshToken;
-                  //       await AsyncStorage.setItem(
-                  //         "UserServerAccessToken",
-                  //         UserServerAccessToken
-                  //       );
-                  //       await AsyncStorage.setItem(
-                  //         "UserServerRefreshToken",
-                  //         UserServerRefreshToken
-                  //       );
-                  //       const members =
-                  //         resp.data.data.familyResponseDto.members;
-                  //       const familyId =
-                  //         resp.data.data.familyResponseDto.familyId;
-                  //       const chatroomId =
-                  //         resp.data.data.familyResponseDto.chatroomId;
-                  //       const plant = resp.data.data.familyResponseDto.plant;
-
-                  //       var myDB = {};
-                  //       for (let i = 0; i < members.length; i++) {
-                  //         const newkey = members[i].memberId;
-                  //         myDB[newkey] = members[i];
-                  //       }
-                  //       await AsyncStorage.setItem(
-                  //         "myDB",
-                  //         JSON.stringify(myDB)
-                  //       );
-                  //       await AsyncStorage.setItem(
-                  //         "familyId",
-                  //         JSON.stringify(familyId)
-                  //       );
-                  //       await AsyncStorage.setItem(
-                  //         "chatroomId",
-                  //         JSON.stringify(chatroomId)
-                  //       );
-                  //       await AsyncStorage.setItem(
-                  //         "plantInfo",
-                  //         JSON.stringify(plant)
-                  //       );
-                  //       await AsyncStorage.setItem(
-                  //         "devicePushToken",
-                  //         JSON.stringify(devicePushToken)
-                  //       );
-                  //       navigation.navigate("FirstRegister", {
-                  //         cameFrom: "FirstStart",
-                  //       });
-                  //     })
-                  //     .catch(function (error) {
-                  //       console.log("server error", error);
-                  //     });
-                  // }}
                   style={{
                     borderRadius: 50,
                     alignItems: "center",

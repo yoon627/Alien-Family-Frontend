@@ -13,7 +13,7 @@ export default function Logout({ navigation }) {
             {
               text: "yes",
               onPress: async () => {
-                await AsyncStorage.removeItem("AccessToken");
+                await AsyncStorage.removeItem("UserServerAccessToken");
                 navigation.navigate("Login");
               },
             },

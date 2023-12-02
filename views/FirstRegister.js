@@ -195,12 +195,14 @@ const FirstRegister = ({ route, navigation }) => {
                     await AsyncStorage.setItem("birthday", formatYYYYMMDD(birthday
                     ));
                     await AsyncStorage.setItem("familyRole", familyRole);
-                    if (birthday == new Date()){
-                      Alert.alert("빈칸을 채워주세요")
-                    }else if (name && familyRole){
-                      navigation.navigate("ChooseCharacter");
+                    if (!name){
+                      Alert.alert("이름을 적어주세요");
+                    }else if(formatYYYYMMDD(birthday)===formatYYYYMMDD(new Date())){
+                      Alert.alert("생일을 알려주세요");
+                    }else if(!familyRole){
+                      Alert.alert("호칭을 알려주세요");
                     }else{
-                      Alert.alert("빈칸을 채워주세요")
+                      navigation.navigate("ChooseCharacter");
                     }
                   }}
                   style={{

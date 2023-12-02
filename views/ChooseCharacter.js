@@ -277,7 +277,7 @@ const ChooseCharacter = ({ navigation }) => {
                         })
                           .then(async (resp) => {
                             await AsyncStorage.setItem(
-                              "AccessToken",
+                              "UserServerAccessToken",
                               resp.data.data.tokenInfo.accessToken
                             );
                             const members =
@@ -329,7 +329,7 @@ const ChooseCharacter = ({ navigation }) => {
                         })
                           .then(async (resp) => {
                             await AsyncStorage.setItem(
-                              "AccessToken",
+                              "UserServerAccessToken",
                               resp.data.data.tokenInfo.accessToken
                             );
                             const members =
