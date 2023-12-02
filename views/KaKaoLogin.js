@@ -5,7 +5,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const REST_API_KEY = "53a4c1ed38ca9033bd5c086437b40943";
-const REDIRECT_URI = "http://43.202.241.133:12345/api/login/kakaoRedirect";
+const REDIRECT_URI = "http://43.202.241.133:12346/api/login/kakaoRedirect";
 
 const INJECTED_JAVASCRIPT = `window.ReactNativeWebView.postMessage('message from webView')`;
 
@@ -49,7 +49,10 @@ export default function KaKaoLogin({ navigation }) {
       },
     })
       .then(async (resp) => {
+        await AsyncStorage.setItem("kakaoEmail",resp.data.kakao_account.email);
         name = resp.data.kakao_account.profile.nickname;
+        await AsyncStorage.setItem("kakaoName", name);
+        // await AsyncStorage.setItem("ServerAccessToken", SAT);
       })
       .catch(function (error) {
         console.log("server error", error);
@@ -57,12 +60,12 @@ export default function KaKaoLogin({ navigation }) {
     await axios
       .post(SERVER_ADDRESS + "/api/login/kakao", KAT)
       .then(async (resp) => {
-        // console.log(resp.data);
-        SAT = resp.data.data.accessToken;
-        await AsyncStorage.setItem("ServerAccessToken", SAT);
+        // SAT = resp.data.data.accessToken;
+        // await AsyncStorage.setItem("ServerAccessToken", SAT);
         navigation.navigate("Greet",name);
       })
       .catch(function (error) {
+        console.log(error);
         console.log("server error", error);
       });
   };

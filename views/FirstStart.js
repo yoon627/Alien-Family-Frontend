@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
   ImageBackground,
+  KeyboardAvoidingView,
 } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -61,7 +62,7 @@ async function registerForPushNotificationsAsync() {
   return token.data;
 }
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 const FirstStart = ({ navigation }) => {
   const [devicePushToken, setDevicePushToken] = useState("");
@@ -127,6 +128,8 @@ const FirstStart = ({ navigation }) => {
                     borderColor: "#F213A6",
                     borderWidth: 3,
                     marginBottom: 10,
+                    width: 250,
+                    height: 70,
                   }}
                   onChangeText={onChangePlantName}
                 />
@@ -140,6 +143,8 @@ const FirstStart = ({ navigation }) => {
                     borderColor: "#F213A6",
                     borderWidth: 3,
                     marginBottom: 10,
+                    width: 250,
+                    height: 70,
                   }}
                   onChangeText={onChangeUfoName}
                 />
@@ -158,77 +163,87 @@ const FirstStart = ({ navigation }) => {
               <ImageBackground source={require("../assets/img/pinkBtn.png")}>
                 <TouchableOpacity
                   onPress={async () => {
-                    const SERVER_ADDRESS = await AsyncStorage.getItem(
-                      "ServerAddress"
-                    );
-                    const ServerAccessToken = await AsyncStorage.getItem(
-                      "ServerAccessToken"
-                    );
-                    await axios({
-                      method: "POST",
-                      url: SERVER_ADDRESS + "/api/register/newFamily",
-                      headers: {
-                        Authorization: "Bearer: " + ServerAccessToken,
-                      },
-                      data: {
-                        ufoName: ufoName,
-                        plantName: plantName,
-                        code: familyCode,
-                        firebaseToken: devicePushToken,
-                      },
-                    })
-                      .then(async (resp) => {
-                        const UserServerAccessToken =
-                          resp.data.data.tokenInfo.accessToken;
-                        const UserServerRefreshToken =
-                          resp.data.data.tokenInfo.refreshToken;
-                        await AsyncStorage.setItem(
-                          "UserServerAccessToken",
-                          UserServerAccessToken
-                        );
-                        await AsyncStorage.setItem(
-                          "UserServerRefreshToken",
-                          UserServerRefreshToken
-                        );
-                        const members =
-                          resp.data.data.familyResponseDto.members;
-                        const familyId =
-                          resp.data.data.familyResponseDto.familyId;
-                        const chatroomId =
-                          resp.data.data.familyResponseDto.chatroomId;
-                        const plant = resp.data.data.familyResponseDto.plant;
-
-                        var myDB = {};
-                        for (let i = 0; i < members.length; i++) {
-                          const newkey = members[i].memberId;
-                          myDB[newkey] = members[i];
-                        }
-                        await AsyncStorage.setItem(
-                          "myDB",
-                          JSON.stringify(myDB)
-                        );
-                        await AsyncStorage.setItem(
-                          "familyId",
-                          JSON.stringify(familyId)
-                        );
-                        await AsyncStorage.setItem(
-                          "chatroomId",
-                          JSON.stringify(chatroomId)
-                        );
-                        await AsyncStorage.setItem(
-                          "plantInfo",
-                          JSON.stringify(plant)
-                        );
-                        await AsyncStorage.setItem(
-                          "devicePushToken",
-                          JSON.stringify(devicePushToken)
-                        );
-                        navigation.navigate("FirstRegister",{cameFrom:"FirstStart"});
-                      })
-                      .catch(function (error) {
-                        console.log("server error", error);
-                      });
+                    console.log(plantName,ufoName)
+                    await AsyncStorage.setItem("plantName", plantName);
+                    await AsyncStorage.setItem("ufoName", ufoName);
+                    navigation.navigate("FirstRegister", {
+                      cameFrom: "FirstStart",
+                    });
                   }}
+                  // onPress={async () => {
+                  //   const SERVER_ADDRESS = await AsyncStorage.getItem(
+                  //     "ServerAddress"
+                  //   );
+                  //   const ServerAccessToken = await AsyncStorage.getItem(
+                  //     "ServerAccessToken"
+                  //   );
+                  //   await axios({
+                  //     method: "POST",
+                  //     url: SERVER_ADDRESS + "/api/register/newFamily",
+                  //     headers: {
+                  //       Authorization: "Bearer: " + ServerAccessToken,
+                  //     },
+                  //     data: {
+                  //       ufoName: ufoName,
+                  //       plantName: plantName,
+                  //       code: familyCode,
+                  //       firebaseToken: devicePushToken,
+                  //     },
+                  //   })
+                  //     .then(async (resp) => {
+                  //       const UserServerAccessToken =
+                  //         resp.data.data.tokenInfo.accessToken;
+                  //       const UserServerRefreshToken =
+                  //         resp.data.data.tokenInfo.refreshToken;
+                  //       await AsyncStorage.setItem(
+                  //         "UserServerAccessToken",
+                  //         UserServerAccessToken
+                  //       );
+                  //       await AsyncStorage.setItem(
+                  //         "UserServerRefreshToken",
+                  //         UserServerRefreshToken
+                  //       );
+                  //       const members =
+                  //         resp.data.data.familyResponseDto.members;
+                  //       const familyId =
+                  //         resp.data.data.familyResponseDto.familyId;
+                  //       const chatroomId =
+                  //         resp.data.data.familyResponseDto.chatroomId;
+                  //       const plant = resp.data.data.familyResponseDto.plant;
+
+                  //       var myDB = {};
+                  //       for (let i = 0; i < members.length; i++) {
+                  //         const newkey = members[i].memberId;
+                  //         myDB[newkey] = members[i];
+                  //       }
+                  //       await AsyncStorage.setItem(
+                  //         "myDB",
+                  //         JSON.stringify(myDB)
+                  //       );
+                  //       await AsyncStorage.setItem(
+                  //         "familyId",
+                  //         JSON.stringify(familyId)
+                  //       );
+                  //       await AsyncStorage.setItem(
+                  //         "chatroomId",
+                  //         JSON.stringify(chatroomId)
+                  //       );
+                  //       await AsyncStorage.setItem(
+                  //         "plantInfo",
+                  //         JSON.stringify(plant)
+                  //       );
+                  //       await AsyncStorage.setItem(
+                  //         "devicePushToken",
+                  //         JSON.stringify(devicePushToken)
+                  //       );
+                  //       navigation.navigate("FirstRegister", {
+                  //         cameFrom: "FirstStart",
+                  //       });
+                  //     })
+                  //     .catch(function (error) {
+                  //       console.log("server error", error);
+                  //     });
+                  // }}
                   style={{
                     borderRadius: 50,
                     alignItems: "center",

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -12,13 +12,51 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ToggleButton } from "react-native-paper";
 import axios from "axios";
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
+async function registerForPushNotificationsAsync() {
+  let token;
+
+  if (Platform.OS === "android") {
+    Notifications.setNotificationChannelAsync("default", {
+      name: "default",
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: "#FF231F7C",
+    });
+  }
+
+  if (Device.isDevice) {
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== "granted") {
+      alert("Failed to get push token for push notification!");
+      return;
+    }
+    token = await Notifications.getDevicePushTokenAsync({
+      projectId: Constants.expoConfig.extra.eas.projectId,
+    });
+  } else {
+    alert("Must use physical device for Push Notifications");
+  }
+
+  return token.data;
+}
+
 const ChooseCharacter = ({ navigation }) => {
-  const [AlienType, setAlienType] = useState("BASIC");
-  const [selectedToggle, setSelectedToggle] = useState(null);
-  const [activeButton, setActiveButton] = useState(null);
+  const [alienType, setAlienType] = useState("BASIC");
+  const [selectedToggle, setSelectedToggle] = useState(58);
+  const [activeButton, setActiveButton] = useState(58);
+  const [devicePushToken, setDevicePushToken] = useState("");
   const scrollViewRef = useRef(null);
   const imageList = [
     require("../assets/img/character/BASIC.png"),
@@ -47,26 +85,61 @@ const ChooseCharacter = ({ navigation }) => {
   const ChooseType = (event) => {
     const { width } = Dimensions.get("window");
     const offset = event.nativeEvent.contentOffset.x;
-    const page = Math.round(offset / width);
-
+    const page = Math.round(offset / (width * 0.85 - 20));
+    setActiveButton(page + 58);
     if (page >= 0 && page < iconList.length) {
-      setAlienType(iconList[page]);
-      setSelectedToggle(iconList[page]);
+      var type = [
+        "BASIC",
+        "GLASSES",
+        "GIRL",
+        "BAND_AID",
+        "RABBIT",
+        "HEADBAND",
+        "TOMATO",
+        "CHRISTMAS_TREE",
+        "SANTA",
+        "PIRATE",
+      ];
+      setAlienType(type[page]);
+      setSelectedToggle(iconList[page] + 58);
     }
   };
   const handleToggleChange = (value) => {
-    setActiveButton(value);
+    console.log(value);
+    // setActiveButton(value);
     const index = iconList.indexOf(value);
     if (index !== -1) {
       scrollViewRef.current.scrollTo({
         x: index * (SCREEN_WIDTH * 0.85 - 20),
-        animated: true,
+        // animated: true,
       });
-      setAlienType(value);
+      // console.log(value-53)
+      var tmp = value - 58;
+      var type = [
+        "BASIC",
+        "GLASSES",
+        "GIRL",
+        "BAND_AID",
+        "RABBIT",
+        "HEADBAND",
+        "TOMATO",
+        "CHRISTMAS_TREE",
+        "SANTA",
+        "PIRATE",
+      ];
+      setAlienType(type[tmp]);
       setSelectedToggle(value);
+      if (value === index * (SCREEN_WIDTH * 0.85 - 20)) {
+        setActiveButton(value);
+      }
     }
   };
-
+  useEffect(() => {
+    registerForPushNotificationsAsync().then(async (token) => {
+      setDevicePushToken(token);
+      await AsyncStorage.setItem("firebaseToken", token);
+    });
+  }, []);
   return (
     <ImageBackground style={styles.backgroundImage}>
       <View style={styles.container}>
@@ -80,7 +153,11 @@ const ChooseCharacter = ({ navigation }) => {
               horizontal
               onScroll={ChooseType}
               showsHorizontalScrollIndicator={false}
-              style={{ backgroundColor: "#DED1DF", borderRadius: 20 }}
+              style={{
+                backgroundColor: "#DED1DF",
+                borderRadius: 20,
+                overflow: "hidden",
+              }}
             >
               {imageList.map((character, index) => (
                 <View key={index} style={{ flexDirection: "row" }}>
@@ -158,29 +235,76 @@ const ChooseCharacter = ({ navigation }) => {
                 <ImageBackground source={require("../assets/img/pinkBtn.png")}>
                   <TouchableOpacity
                     onPress={async () => {
+                      await AsyncStorage.setItem("alienType", alienType);
                       const SERVER_ADDRESS = await AsyncStorage.getItem(
                         "ServerAddress"
                       );
-                      const ServerAccessToken = await AsyncStorage.getItem(
-                        "ServerAccessToken"
+                      const nickname = await AsyncStorage.getItem("nickname");
+                      const birthday = await AsyncStorage.getItem("birthday");
+                      const familyRole = await AsyncStorage.getItem(
+                        "familyRole"
                       );
-                      await axios({
-                        method: "POST",
-                        url: SERVER_ADDRESS + "/api/register/alien",
-                        headers: {
-                          Authorization: "Bearer: " + ServerAccessToken,
-                        },
-                        data: {
-                          color: AlienColor.toUpperCase(),
-                          type: AlienType,
-                        },
-                      })
-                        .then((resp) => {
-                          navigation.navigate("Invitation");
+                      const familyCode = await AsyncStorage.getItem(
+                        "familyCode"
+                      );
+                      const kakaoEmail = await AsyncStorage.getItem(
+                        "kakaoEmail"
+                      );
+                      const plantName = await AsyncStorage.getItem("plantName");
+                      const ufoName = await AsyncStorage.getItem("ufoName");
+
+                      // console.log(nickname);
+                      // console.log(birthday);
+                      // console.log(familyRole);
+                      // console.log(devicePushToken);
+                      // console.log(alienType);
+                      // console.log(familyCode);
+                      // console.log(kakaoEmail);
+                      // console.log(plantName);
+                      // console.log(ufoName);
+                      if (ufoName && plantName) {
+                        await axios({
+                          method: "POST",
+                          url: SERVER_ADDRESS + "/api/register/newFamily",
+                          headers: {},
+                          data: {
+                            ufoName: ufoName,
+                            plantName: plantName,
+                            code: familyCode,
+                            firebaseToken: devicePushToken,
+                            email: kakaoEmail,
+                            nickname: nickname,
+                            birthdate: birthday,
+                            familyRole: familyRole,
+                            alienType: alienType,
+                          },
                         })
-                        .catch(function (error) {
-                          console.log("server error", error);
-                        });
+                          .then((resp) => {
+                            console.log(resp);
+                            navigation.navigate("MainDrawer");
+                          })
+                          .catch((e) => console.log(e));
+                      } else {
+                        await axios({
+                          method: "POST",
+                          url: SERVER_ADDRESS + "/api/register/currentFamily",
+                          headers: {},
+                          data: {
+                            code: familyCode,
+                            firebaseToken: devicePushToken,
+                            email: kakaoEmail,
+                            nickname: nickname,
+                            birthdate: birthday,
+                            familyRole: familyRole,
+                            alienType: alienType,
+                          },
+                        })
+                          .then((resp) => {
+                            console.log(resp);
+                            navigation.navigate("MainDrawer");
+                          })
+                          .catch((e) => console.log(e));
+                      }
                     }}
                     style={{
                       borderRadius: 50,
@@ -265,7 +389,7 @@ const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
     resizeMode: "cover",
-    backgroundColor:"white"
+    backgroundColor: "white",
   },
 });
 

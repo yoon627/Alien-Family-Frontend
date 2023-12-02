@@ -17,7 +17,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import RNPickerSelect from "react-native-picker-select";
 
 const FirstRegister = ({ route, navigation }) => {
-  const {cameFrom} = route.params;
+  const cameFrom = route.params;
   const { width, height } = Dimensions.get("window");
   const [name, setName] = useState("");
   const [birthday, setBirthDay] = useState(new Date());
@@ -190,32 +190,40 @@ const FirstRegister = ({ route, navigation }) => {
               <ImageBackground source={require("../assets/img/pinkBtn.png")}>
                 <TouchableOpacity
                   onPress={async () => {
-                    await AsyncStorage.setItem("MyName", name);
-                    const SERVER_ADDRESS = await AsyncStorage.getItem(
-                      "ServerAddress"
-                    );
-                    const ServerAccessToken = await AsyncStorage.getItem(
-                      "ServerAccessToken"
-                    );
                     await AsyncStorage.setItem("nickname", name);
-                    await axios({
-                      method: "POST",
-                      url: SERVER_ADDRESS + "/api/register/user",
-                      headers: {
-                        Authorization: "Bearer: " + ServerAccessToken,
-                      },
-                      data: {
-                        nickname: name,
-                        birthdate: formatYYYYMMDD(birthday),
-                      },
-                    })
-                      .then((resp) => {
-                        navigation.navigate("ChooseCharacter");
-                      })
-                      .catch(function (error) {
-                        console.log("server error", error);
-                      });
+                    await AsyncStorage.setItem("birthday", formatYYYYMMDD(birthday
+                    ));
+                    await AsyncStorage.setItem("familyRole", familyRole);
+                    console.log(name,formatYYYYMMDD(birthday),familyRole)
+                    navigation.navigate("ChooseCharacter");
                   }}
+                  // onPress={async () => {
+                  //   await AsyncStorage.setItem('MyName', name);
+                  //   const SERVER_ADDRESS = await AsyncStorage.getItem(
+                  //     'ServerAddress'
+                  //   );
+                  //   const ServerAccessToken = await AsyncStorage.getItem(
+                  //     'ServerAccessToken'
+                  //   );
+                  //   await AsyncStorage.setItem('nickname', name);
+                  //   await axios({
+                  //     method: 'POST',
+                  //     url: SERVER_ADDRESS + '/api/register/user',
+                  //     headers: {
+                  //       Authorization: 'Bearer: ' + ServerAccessToken,
+                  //     },
+                  //     data: {
+                  //       nickname: name,
+                  //       birthdate: formatYYYYMMDD(birthday),
+                  //     },
+                  //   })
+                  //     .then((resp) => {
+                  //       navigation.navigate('ChooseCharacter');
+                  //     })
+                  //     .catch(function (error) {
+                  //       console.log('server error', error);
+                  //     });
+                  // }}
                   style={{
                     borderRadius: 50,
                     alignItems: "center",

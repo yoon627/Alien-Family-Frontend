@@ -21,19 +21,19 @@ const ClickBox = ({ navigation }) => {
   const getFamilyCode = async () => {
     try {
       const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
-      const ServerAccessToken = await AsyncStorage.getItem("ServerAccessToken");
-
+      // const ServerAccessToken = await AsyncStorage.getItem("ServerAccessToken");
+      // const kakaoEmail = await AsyncStorage.getItem("kakaoEmail");
       const response = await axios({
         method: "GET",
         url: SERVER_ADDRESS + "/api/register/familyCode",
         headers: {
-          Authorization: "Bearer " + ServerAccessToken,
+          // Authorization: "Bearer " + kakaoEmail,
         },
+      }).then(async(resp)=>{
+        setFamilyCode(resp.data);
+        setShowBox(true);
+        await AsyncStorage.setItem("familyCode", resp.data);
       });
-
-      const newFamilyCode = response.data;
-      setFamilyCode(newFamilyCode);
-      setShowBox(true);
     } catch (error) {
       console.log("server error", error);
     }
