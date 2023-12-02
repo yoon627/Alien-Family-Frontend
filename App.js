@@ -1,4 +1,4 @@
-import React, {useEffect, useState}  from "react";
+import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -26,16 +26,9 @@ import Lab from "./views/Lab";
 import {
   MD3LightTheme as DefaultTheme,
   PaperProvider,
-  useTheme,
-  configureFonts,
-  customText,
 } from "react-native-paper";
-import {
-  Montserrat_400Regular,
-  Montserrat_700Bold,
-} from "@expo-google-fonts/montserrat";
 import { useFonts } from "expo-font";
-import { AppLoading } from "expo";
+import * as SplashScreen from "expo-splash-screen";
 
 const Stack = createStackNavigator();
 
@@ -51,21 +44,30 @@ const theme = {
 const fontConfig = {
   android: { regular: { fontFamily: "" } },
 };
-
+SplashScreen.preventAutoHideAsync();
 export default function App() {
-
   const [fontsLoaded] = useFonts({
     dnf: require("./assets/font/DNFBitBitv2.ttf"),
-    sammul: require('./assets/font/DOSSaemmul.ttf'),
+    sammul: require("./assets/font/DOSSaemmul.ttf"),
   });
 
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
+  console.log("로딩댐?", fontsLoaded);
   return (
     <StoreProvider store={store}>
-      <PaperProvider theme={{ ...theme}}>
-        <NavigationContainer>
+      <PaperProvider theme={{ ...theme }}>
+        <NavigationContainer onReady={onLayoutRootView}>
           <Stack.Navigator
             initialRouteName="Login"
-            screenOptions={{ headerShown: false,animationEnabled:false }}
+            screenOptions={{ headerShown: false, animationEnabled: false }}
           >
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="KaKaoLogin" component={KaKaoLogin} />

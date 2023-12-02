@@ -1,12 +1,10 @@
-import React, { useCallback } from "react";
+import React from "react";
 import {
-  Alert,
   ImageBackground,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Image,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -16,7 +14,7 @@ const saveServer = async () => {
     await AsyncStorage.setItem("ServerAddress", "http://43.202.241.133:1998");
     await AsyncStorage.setItem(
       "FcmServerKey",
-      "AAAAUCMBJiU:APA91bEs9fOJNe6l2ILHFI88jep5rw9wqR-qTWWbBrKxj7JQnKQ8ZAp4tJbn_yXcL2aP0ydygPIcT89XB6h38vhIozsJ5J61s7w2znBL9hPQG6a18sQcUFkMitr2pkvoCmmfslVQmk-u"
+      "AAAAUCMBJiU:APA91bEs9fOJNe6l2ILHFI88jep5rw9wqR-qTWWbBrKxj7JQnKQ8ZAp4tJbn_yXcL2aP0ydygPIcT89XB6h38vhIozsJ5J61s7w2znBL9hPQG6a18sQcUFkMitr2pkvoCmmfslVQmk-u",
     );
   } catch (error) {
     console.log(error);
@@ -48,10 +46,10 @@ const Login = ({ navigation }) => {
           <Text
             style={{
               color: "white",
-              fontWeight: "bold",
               fontSize: 40,
-              lineHeight: 40,
-              marginTop: 20,
+              lineHeight: 60,
+              marginTop: 30,
+              fontFamily: "dnf",
             }}
           >
             ALIEN
@@ -59,9 +57,9 @@ const Login = ({ navigation }) => {
           <Text
             style={{
               color: "white",
-              fontWeight: "bold",
               fontSize: 40,
-              lineHeight: 40,
+              lineHeight: 60,
+              fontFamily: "dnf",
             }}
           >
             FAMILY
@@ -111,19 +109,19 @@ const Login = ({ navigation }) => {
                         }
                         await AsyncStorage.setItem(
                           "myDB",
-                          JSON.stringify(myDB)
+                          JSON.stringify(myDB),
                         );
                         await AsyncStorage.setItem(
                           "familyId",
-                          JSON.stringify(familyId)
+                          JSON.stringify(familyId),
                         );
                         await AsyncStorage.setItem(
                           "chatroomId",
-                          JSON.stringify(chatroomId)
+                          JSON.stringify(chatroomId),
                         );
                         await AsyncStorage.setItem(
                           "plantInfo",
-                          JSON.stringify(plant)
+                          JSON.stringify(plant),
                         );
                         await AsyncStorage.setItem(
                           "UserServerAccessToken",
