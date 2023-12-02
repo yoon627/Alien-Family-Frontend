@@ -64,7 +64,7 @@ export default function KaKaoLogin({ navigation }) {
         // await AsyncStorage.setItem("ServerAccessToken", SAT);
         if (resp.data.code === 200) {
           await AsyncStorage.setItem(
-            "AccessToken",
+            "UserServerAccessToken",
             resp.data.data.tokenInfo.accessToken
           )
             .then(navigation.navigate("MainDrawer"))

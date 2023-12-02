@@ -15,6 +15,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import RNPickerSelect from "react-native-picker-select";
+import { Alert } from "react-native";
 
 const FirstRegister = ({ route, navigation }) => {
   const cameFrom = route.params;
@@ -194,36 +195,16 @@ const FirstRegister = ({ route, navigation }) => {
                     await AsyncStorage.setItem("birthday", formatYYYYMMDD(birthday
                     ));
                     await AsyncStorage.setItem("familyRole", familyRole);
-                    console.log(name,formatYYYYMMDD(birthday),familyRole)
-                    navigation.navigate("ChooseCharacter");
+                    if (!name){
+                      Alert.alert("이름을 적어주세요");
+                    }else if(formatYYYYMMDD(birthday)===formatYYYYMMDD(new Date())){
+                      Alert.alert("생일을 알려주세요");
+                    }else if(!familyRole){
+                      Alert.alert("호칭을 알려주세요");
+                    }else{
+                      navigation.navigate("ChooseCharacter");
+                    }
                   }}
-                  // onPress={async () => {
-                  //   await AsyncStorage.setItem('MyName', name);
-                  //   const SERVER_ADDRESS = await AsyncStorage.getItem(
-                  //     'ServerAddress'
-                  //   );
-                  //   const ServerAccessToken = await AsyncStorage.getItem(
-                  //     'ServerAccessToken'
-                  //   );
-                  //   await AsyncStorage.setItem('nickname', name);
-                  //   await axios({
-                  //     method: 'POST',
-                  //     url: SERVER_ADDRESS + '/api/register/user',
-                  //     headers: {
-                  //       Authorization: 'Bearer: ' + ServerAccessToken,
-                  //     },
-                  //     data: {
-                  //       nickname: name,
-                  //       birthdate: formatYYYYMMDD(birthday),
-                  //     },
-                  //   })
-                  //     .then((resp) => {
-                  //       navigation.navigate('ChooseCharacter');
-                  //     })
-                  //     .catch(function (error) {
-                  //       console.log('server error', error);
-                  //     });
-                  // }} 
                   style={{
                     borderRadius: 50,
                     alignItems: "center",

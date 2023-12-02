@@ -80,15 +80,18 @@ const Login = ({ navigation }) => {
             <ImageBackground source={require("../assets/img/pinkBtn.png")}>
               <TouchableOpacity
                 onPress={async () => {
-                  const SERVER_ADDRESS =
-                    await AsyncStorage.getItem("ServerAddress");
-                  const AccessToken = await AsyncStorage.getItem("AccessToken");
-                  if (AccessToken) {
+                  const SERVER_ADDRESS = await AsyncStorage.getItem(
+                    "ServerAddress"
+                  );
+                  const UserServerAccessToken = await AsyncStorage.getItem(
+                    "UserServerAccessToken"
+                  );
+                  if (UserServerAccessToken) {
                     await axios({
                       method: "GET",
                       url: SERVER_ADDRESS + "/api/login/token",
                       headers: {
-                        Authorization: "Bearer " + AccessToken,
+                        Authorization: "Bearer " + UserServerAccessToken,
                       },
                     })
                       .then(async (resp) => {
@@ -121,11 +124,12 @@ const Login = ({ navigation }) => {
                           JSON.stringify(plant),
                         );
                         await AsyncStorage.setItem(
-                          "AccessToken",
-                          resp.data.data.tokenInfo.accessToken,
-                        )
-                          .then(navigation.navigate("MainDrawer"))
-                          .catch((e) => console.log(e));
+                          "UserServerAccessToken",
+                          resp.data.data.tokenInfo.accessToken
+                        );
+                      })
+                      .then(() => {
+                        navigation.navigate("MainDrawer");
                       })
                       .catch((e) => navigation.navigate("KaKaoLogin"));
                   } else {
@@ -154,32 +158,9 @@ const Login = ({ navigation }) => {
               </TouchableOpacity>
             </ImageBackground>
           </View>
-          {/* <TouchableOpacity
-            onPress={async () => {
-              const SERVER_ADDRESS = await AsyncStorage.getItem(
-                "ServerAddress"
-              );
-              const AccessToken = await AsyncStorage.getItem("AccessToken");
-              if (AccessToken) {
-                await axios({
-                  method: "GET",
-                  url: SERVER_ADDRESS + "/api/login/token",
-                  headers: {
-                    Authorization: "Bearer " + AccessToken,
-                  },
-                })
-                  .then(async (resp) => {
-                    await AsyncStorage.setItem(
-                      "AccessToken",
-                      resp.data.data.tokenInfo.accessToken
-                    )
-                      .then(navigation.navigate("MainDrawer"))
-                      .catch((e) => console.log(e));
-                  })
-                  .catch((e) => navigation.navigate("KaKaoLogin"));
-              } else {
-                navigation.navigate("KaKaoLogin");
-              }
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("FirstRegister");
             }}
             style={{
               borderRadius: 50,
@@ -197,9 +178,9 @@ const Login = ({ navigation }) => {
                 textDecorationLine: "underline",
               }}
             >
-              카카오계정으로 회원가입
+              로그인 테스트용 버튼
             </Text>
-          </TouchableOpacity> */}
+          </TouchableOpacity>
         </View>
       </View>
     </ImageBackground>

@@ -16,30 +16,30 @@ Notifications.setNotificationHandler({
 });
 
 // Can use this function below or use Expo's Push Notification Tool from: https://expo.dev/notifications
-// async function sendPushNotification(devicePushToken) {
-//   const UserServerAccessToken = await AsyncStorage.getItem(
-//     "UserServerAccessToken"
-//   );
-//   await fetch("http://43.202.241.133:12345/mind627", {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//       Authorization: "Bearer: " + UserServerAccessToken,
-//     },
-//     body: JSON.stringify({
-//       to: devicePushToken,
-//       priority: "normal",
-//       data: {
-//         experienceId: "whddbs627/UFO-Front",
-//         scopeKey: "whddbs627/UFO-Front",
-//         title: "📧 You've got mail",
-//         message: "Hello world! 🌐",
-//       },
-//     }),
-//   })
-//     .then((resp) => console.log("axios response: " + resp))
-//     .catch((e) => console.log(e));
-// }
+async function sendPushNotification(devicePushToken) {
+  // const devicePushToken = await AsyncStorage.getItem(
+  //   "firebaseToken"
+  // );
+  await fetch("https://fcm.googleapis.com/fcm/send", {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `key=${FCM_SERVER_KEY}`,
+    },
+    body: JSON.stringify({
+      to: devicePushToken,
+      priority: "normal",
+      data: {
+        experienceId: "whddbs627/UFO-Front",
+        scopeKey: "whddbs627/UFO-Front",
+        title: "📧 You've got mail",
+        message: "Hello world! 🌐",
+      },
+    }),
+  })
+    .then((resp) => console.log("axios response: " + resp))
+    .catch((e) => console.log(e));
+}
 
 async function registerForPushNotificationsAsync() {
   let token;
@@ -68,15 +68,6 @@ async function registerForPushNotificationsAsync() {
     token = await Notifications.getDevicePushTokenAsync({
       projectId: Constants.expoConfig.extra.eas.projectId,
     });
-    console.log(token.data);
-    console.log(token.data);
-    console.log(token.data);
-    console.log(token.data);
-    console.log(token.data);
-    console.log(token.data);
-    console.log(token.data);
-    console.log(token.data);
-    console.log(token.data);
     console.log(token.data);
   } else {
     alert("Must use physical device for Push Notifications");
@@ -133,12 +124,12 @@ export default function Lab() {
           {notification && JSON.stringify(notification.request.content.data)}
         </Text>
       </View>
-      {/* <Button
+      <Button
         title="Press to Send Notification"
         onPress={async () => {
           await sendPushNotification(devicePushToken);
         }}
-      /> */}
+      />
     </View>
   );
 }
