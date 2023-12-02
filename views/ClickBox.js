@@ -30,9 +30,9 @@ const ClickBox = ({ navigation }) => {
           // Authorization: "Bearer " + kakaoEmail,
         },
       }).then(async(resp)=>{
-        setFamilyCode(resp.data);
+        setFamilyCode(resp.data.data);
         setShowBox(true);
-        await AsyncStorage.setItem("familyCode", resp.data);
+        await AsyncStorage.setItem("familyCode", resp.data.data);
       });
     } catch (error) {
       console.log("server error", error);

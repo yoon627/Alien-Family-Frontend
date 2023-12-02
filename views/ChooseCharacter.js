@@ -277,9 +277,10 @@ const ChooseCharacter = ({ navigation }) => {
                             alienType: alienType,
                           },
                         })
-                          .then((resp) => {
-                            console.log(resp);
-                            // navigation.navigate("MainDrawer");
+                          .then(async(resp) => {
+                            await AsyncStorage.setItem("AccessToken",resp.data.data.tokenInfo.accessToken);
+                            console.log(resp.data.data.tokenInfo.accessToken);
+                            navigation.navigate("MainDrawer");
                           })
                           .catch((e) => console.log(e));
                       } else {
@@ -297,9 +298,10 @@ const ChooseCharacter = ({ navigation }) => {
                             alienType: alienType,
                           },
                         })
-                          .then((resp) => {
-                            console.log(resp);
-                            // navigation.navigate("MainDrawer");
+                          .then(async(resp) => {
+                            await AsyncStorage.setItem("AccessToken",resp.data.data.tokenInfo.accessToken);
+                            console.log(resp.data.data.tokenInfo.accessToken);
+                            navigation.navigate("MainDrawer");
                           })
                           .catch((e) => console.log(e));
                       }

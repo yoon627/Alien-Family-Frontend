@@ -102,7 +102,7 @@ const InvitationScreen = ({ navigation }) => {
                     borderColor: "#F213A6",
                     borderWidth: 3,
                     marginBottom: 10,
-                    height:70
+                    height: 70,
                   }}
                   onChangeText={onChangeInvitationCode}
                 />
@@ -132,9 +132,17 @@ const InvitationScreen = ({ navigation }) => {
                         method: "GET",
                         url:
                           SERVER_ADDRESS +
-                          "/api/reagister/familyCode/" +
+                          "/api/register/familyCode/" +
                           InvitationCode,
-                      }).then((resp) => console.log(resp));
+                      })
+                        .then((resp) => {
+                          if (resp.data.data){
+                            navigation.navigate("FirstRegister");
+                          }else{
+                            Alert.alert("유효하지 않은 초대코드입니다");
+                          }
+                        })
+                        .catch((e) => console.log(e));
                     }
                   }}
                   // onPress={async () => {
