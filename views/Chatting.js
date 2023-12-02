@@ -35,7 +35,6 @@ const ChatRoom = () => {
       try {
         const token = await AsyncStorage.getItem("UserServerAccessToken");
         const chatroomId = await AsyncStorage.getItem("chatroomId");
-        console.log("챗룸ID ", chatroomId);
 
         const response = await fetch(
           "http://" + `${myIP}` + ":12345/chat/list?id=" + chatroomId,
@@ -115,7 +114,7 @@ const ChatRoom = () => {
       const messageData = {
         type: "TALK",
         roomId: roomNumber,
-        sender: "유나", // 적절한 멤버 ID 설정
+        sender: myname, // 적절한 멤버 ID 설정
         content: message,
         time: new Date().toISOString(),
       };
