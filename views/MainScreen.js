@@ -13,13 +13,13 @@ import ChatRoom from "./Chatting";
 
 const Tab = createBottomTabNavigator();
 
-const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get('window');
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-export default function MainScreen({navigation}) {
+export default function MainScreen({ navigation }) {
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarStyle: styles.tabBar
+        tabBarStyle: styles.tabBar,
       }}
     >
       <Tab.Screen
@@ -103,7 +103,7 @@ export default function MainScreen({navigation}) {
         options={{
           headerShown: false,
           tabBarShowLabel: false,
-          tabBarButton: () => <View style={{width: 0, height: 0}}></View>,
+          tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,
           tabBarVisible: false, //hide tab bar on this screen
         }}
       />
@@ -114,7 +114,7 @@ export default function MainScreen({navigation}) {
         options={{
           headerShown: false,
           tabBarShowLabel: false,
-          tabBarButton: () => <View style={{width: 0, height: 0}}></View>,
+          tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,
           tabBarVisible: false,
         }}
       />
@@ -124,7 +124,7 @@ export default function MainScreen({navigation}) {
         options={{
           headerShown: false,
           tabBarShowLabel: false,
-          tabBarButton: () => <View style={{width: 0, height: 0}}></View>,
+          tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,
           tabBarVisible: false,
         }}
       />
@@ -134,7 +134,7 @@ export default function MainScreen({navigation}) {
         options={{
           headerShown: false,
           tabBarShowLabel: false,
-          tabBarButton: () => <View style={{width: 0, height: 0}}></View>,
+          tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,
           tabBarVisible: false,
         }}
       />

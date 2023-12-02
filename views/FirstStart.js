@@ -6,15 +6,17 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  ImageBackground
+  ImageBackground,
+  KeyboardAvoidingView,
 } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {useRoute} from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 import * as Clipboard from "expo-clipboard";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
+import { Alert } from "react-native";
 
 const FCM_SERVER_KEY =
   "AAAAUCMBJiU:APA91bEs9fOJNe6l2ILHFI88jep5rw9wqR-qTWWbBrKxj7JQnKQ8ZAp4tJbn_yXcL2aP0ydygPIcT89XB6h38vhIozsJ5J61s7w2znBL9hPQG6a18sQcUFkMitr2pkvoCmmfslVQmk-u";
@@ -61,7 +63,7 @@ async function registerForPushNotificationsAsync() {
   return token.data;
 }
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
 const FirstStart = ({ navigation }) => {
   const [devicePushToken, setDevicePushToken] = useState("");
@@ -80,148 +82,175 @@ const FirstStart = ({ navigation }) => {
     }
     await Clipboard.setStringAsync(familyCode);
   };
-  const getAllKeys = async () => {
-    let keys = [];
-    try {
-      keys = await AsyncStorage.getAllKeys();
-      await AsyncStorage.multiRemove(keys);
-    } catch (e) {
-      // 키를 가져오는데 에러 발생 시 처리
-    }
-    return keys;
-  };
 
   useEffect(() => {
     registerForPushNotificationsAsync().then((token) =>
-      setDevicePushToken(token),
+      setDevicePushToken(token)
     );
   }, []);
   return (
-    <View style={styles.container}>
-      <View
-        style={{
-          marginVertical: 30,
-          backgroundColor: "black",
-          borderRadius: 30,
-          paddingHorizontal: 30,
-          paddingVertical: 30,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <TextInput
-          value={plantName}
-          placeholder="새싹이 이름을 입력해주세요"
-          style={styles.input}
-          onChangeText={onChangePlantName}
-        />
-        <TextInput
-          value={ufoName}
-          placeholder="우주선 이름을 입력해주세요"
-          style={styles.input}
-          onChangeText={onChangeUfoName}
-        />
+    <ImageBackground
+      source={require("../assets/img/pinkBtn.png")}
+      style={styles.backgroundImage}
+    >
+      <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
+        <View
+          style={{
+            backgroundColor: "white",
+            borderRadius: 30,
+            flex: 0.5,
+            width: 0.85 * width,
+          }}
+        >
+          <View
+            style={{
+              marginTop: 35,
+              flex: 0.9,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <View
+              style={{
+                marginVertical: 5,
+                borderRadius: 30,
+                paddingHorizontal: 30,
+                paddingVertical: 30,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <View>
+                <TextInput
+                  value={plantName}
+                  placeholder="새싹이 이름을 입력해주세요"
+                  style={{
+                    ...styles.input,
+                    borderColor: "#F213A6",
+                    borderWidth: 3,
+                    marginBottom: 10,
+                    width: 250,
+                    height: 70,
+                  }}
+                  onChangeText={onChangePlantName}
+                />
+              </View>
+              <View>
+                <TextInput
+                  value={ufoName}
+                  placeholder="우주선 이름을 입력해주세요"
+                  style={{
+                    ...styles.input,
+                    borderColor: "#F213A6",
+                    borderWidth: 3,
+                    marginBottom: 10,
+                    width: 250,
+                    height: 70,
+                  }}
+                  onChangeText={onChangeUfoName}
+                />
+              </View>
+            </View>
+          </View>
+          <View style={{ alignItems: "center", justifyContent: "center" }}>
+            <View
+              style={{
+                overflow: "hidden",
+                borderRadius: 15,
+                width: 175,
+                marginTop: 20,
+              }}
+            >
+              <ImageBackground source={require("../assets/img/pinkBtn.png")}>
+                <TouchableOpacity
+                  onPress={async () => {
+                    // console.log(plantName, ufoName);
+                    await AsyncStorage.setItem("plantName", plantName);
+                    await AsyncStorage.setItem("ufoName", ufoName);
+                    if (!plantName) {
+                      Alert.alert("새싹이 이름을 지어주세요");
+                    } else if (!ufoName) {
+                      Alert.alert("우주선 이름을 지어주세요");
+                    } else {
+                      navigation.navigate("FirstRegister", {
+                        cameFrom: "FirstStart",
+                      });
+                    }
+                  }}
+                  style={{
+                    borderRadius: 50,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginVertical: 5,
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: "white",
+                      marginHorizontal: 30,
+                      marginVertical: 10,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    제출하기
+                  </Text>
+                </TouchableOpacity>
+              </ImageBackground>
+            </View>
+          </View>
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              marginVertical: 10,
+            }}
+          >
+            <View style={{ overflow: "hidden", borderRadius: 15, width: 175 }}>
+              <ImageBackground source={require("../assets/img/grayBtn.png")}>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("ClickBox")}
+                  style={{
+                    borderRadius: 50,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginVertical: 5,
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: "white",
+                      marginHorizontal: 30,
+                      marginVertical: 10,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    이전 페이지로
+                  </Text>
+                </TouchableOpacity>
+              </ImageBackground>
+            </View>
+          </View>
+        </View>
       </View>
-      <Text>{familyCode}</Text>
-
-      <TouchableOpacity
-        onPress={async () => {
-          const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
-          const ServerAccessToken =
-            await AsyncStorage.getItem("ServerAccessToken");
-          await axios({
-            method: "POST",
-            url: SERVER_ADDRESS + "/api/register/newFamily",
-            headers: {
-              Authorization: "Bearer: " + ServerAccessToken,
-            },
-            data: {
-              ufoName: ufoName,
-              plantName: plantName,
-              code: familyCode,
-              firebaseToken: devicePushToken,
-            },
-          })
-            .then(async (resp) => {
-              const UserServerAccessToken =
-                resp.data.data.tokenInfo.accessToken;
-              const UserServerRefreshToken =
-                resp.data.data.tokenInfo.refreshToken;
-              await AsyncStorage.setItem(
-                "UserServerAccessToken",
-                UserServerAccessToken,
-              );
-              await AsyncStorage.setItem(
-                "UserServerRefreshToken",
-                UserServerRefreshToken,
-              );
-              const members = resp.data.data.familyResponseDto.members;
-              const familyId = resp.data.data.familyResponseDto.familyId;
-              const chatroomId = resp.data.data.familyResponseDto.chatroomId;
-              const plant = resp.data.data.familyResponseDto.plant;
-
-              var myDB = {};
-              for (let i = 0; i < members.length; i++) {
-                const newkey = members[i].memberId;
-                myDB[newkey] = members[i];
-              }
-              await AsyncStorage.setItem("myDB", JSON.stringify(myDB));
-              await AsyncStorage.setItem("familyId", JSON.stringify(familyId));
-              await AsyncStorage.setItem(
-                "chatroomId",
-                JSON.stringify(chatroomId),
-              );
-              await AsyncStorage.setItem("plantInfo", JSON.stringify(plant));
-              await AsyncStorage.setItem(
-                "devicePushToken",
-                JSON.stringify(devicePushToken),
-              );
-              navigation.navigate("MainDrawer");
-            })
-            .catch(function (error) {
-              console.log("server error", error);
-            });
-        }}
-        style={{
-          backgroundColor: "black",
-          borderRadius: 50,
-          alignItems: "center",
-          justifyContent: "center",
-          marginVertical: 20,
-        }}
-      >
-        <ImageBackground
-          source={require("../assets/img/pinkBtn.png")}
-          imageStyle={{borderRadius: 15}} >
-          <Text style={styles.pinkBtnTxt}>다음페이지로</Text>
-        </ImageBackground>
-      </TouchableOpacity>
-    </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    input: {
-        backgroundColor: "white",
-        paddingVertical: 15,
-        paddingHorizontal: 20,
-        borderRadius: 15,
-        marginTop: 20,
-        fontSize: 18,
-        marginVertical: 20,
-    },
-    pinkBtnTxt:{
-      padding: 20,
-      fontSize: 20,
-      color: '#FFF',
-      backgroundColor: '#D63CE3',
-      borderRadius: 15
-    },
+  input: {
+    backgroundColor: "white",
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    fontSize: 18,
+    marginVertical: 5,
+  },
+  backgroundImage: {
+    flex: 1,
+    resizeMode: "cover",
+  },
 });
 
 export default FirstStart;
