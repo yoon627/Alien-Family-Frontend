@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
 import Login from "./views/Login";
 import FirstRegister from "./views/FirstRegister";
 import ChooseCharacter from "./views/ChooseCharacter";
@@ -22,8 +21,8 @@ import ImageDetailForm from "./views/ImageDetailForm";
 import store from "./redux/store";
 import Attendance from "./views/Attendance";
 import AlbumScreen from "./views/AlbumScreen";
-import {useFonts} from "expo-font";
-import {createStackNavigator} from "@react-navigation/stack";
+import { useFonts } from "expo-font";
+import { createStackNavigator } from "@react-navigation/stack";
 import ImageUploadForm from "./views/ImageUploadForm";
 import Greet from "./views/Greet";
 import Lab from "./views/Lab";
@@ -31,7 +30,6 @@ import {
   MD3LightTheme as DefaultTheme,
   PaperProvider,
 } from "react-native-paper";
-import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 
 const Stack = createStackNavigator();
@@ -84,9 +82,21 @@ export default function App() {
             <Stack.Screen name="Roulette" component={RouletteScreen} />
             <Stack.Screen name="Mole" component={NewGame} />
             <Stack.Screen name="Chat" component={ChatRoom} />
-          <Stack.Screen name="AlbumScreen" component={AlbumScreen} options={{headerShown: false}}/>
-          <Stack.Screen name="ImageUploadForm" component={ImageUploadForm} options={{headerShown: false}}/>
-          <Stack.Screen name="ImageDetailForm" component={ImageDetailForm} options={{headerShown: false}}/>
+            <Stack.Screen
+              name="AlbumScreen"
+              component={AlbumScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="ImageUploadForm"
+              component={ImageUploadForm}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="ImageDetailForm"
+              component={ImageDetailForm}
+              options={{ headerShown: false }}
+            />
             <Stack.Screen
               name="MainDrawer"
               component={MainDrawer}

@@ -1,55 +1,55 @@
-import React, {Fragment, useEffect, useState} from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import {
-  Text,
-  View,
-  StyleSheet,
-  Pressable,
-  Platform,
   ActionSheetIOS,
+  Dimensions,
   FlatList,
   Image,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
   TouchableOpacity,
-  Dimensions,
+  View,
 } from "react-native";
-import {ImagePlus} from "lucide-react-native";
 import UploadModeModal from "../components/UploadModeModal";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ImageUploadForm from "./ImageUploadForm";
-import Checkbox from 'expo-checkbox';
 
-const SCREEN_WIDTH = Dimensions.get('window').width;
+const SCREEN_WIDTH = Dimensions.get("window").width;
 
 const TAG_OPTION = [
   {
-    item: '# 아빠',
-    id: 'DAD',
+    item: "# 아빠",
+    id: "DAD",
   },
   {
-    item: '# 엄마',
-    id: 'MOM',
+    item: "# 엄마",
+    id: "MOM",
   },
   {
-    item: '# 첫째',
-    id: 'FIRST',
+    item: "# 첫째",
+    id: "FIRST",
   },
   {
-    item: '# 둘째',
-    id: 'SECOND',
+    item: "# 둘째",
+    id: "SECOND",
   },
   {
-    item: '# 기타',
-    id: 'EXTRA',
+    item: "# 기타",
+    id: "EXTRA",
   },
-]
+];
 
-export default function AlbumScreen({navigation}) {
+export default function AlbumScreen({ navigation }) {
   // 카메라 권한 요청을 위한 훅
-  const [cameraStatus, cameraRequestPermission] = ImagePicker.useCameraPermissions();
+  const [cameraStatus, cameraRequestPermission] =
+    ImagePicker.useCameraPermissions();
   // 앨범 권한 요청을 위한 훅
-  const [albumStatus, albumRequestPermission] = ImagePicker.useMediaLibraryPermissions();
+  const [albumStatus, albumRequestPermission] =
+    ImagePicker.useMediaLibraryPermissions();
   // 선택한 이미지 객체 저장
-  const [chosenImage, setChosenImage] = useState('');
+  const [chosenImage, setChosenImage] = useState("");
   // 안드로이드를 위한 모달 visible 상태값
   const [modalVisible, setModalVisible] = useState(false);
   // 앨범에 보여줄 이미지 목록 (s3에서 불러온 이미지들)
@@ -62,18 +62,20 @@ export default function AlbumScreen({navigation}) {
 
   const handleUploadComplete = () => {
     setShowUploadForm(false);
-  }
+  };
 
   useEffect(() => {
     // 서버에서 s3 이미지 url 받아옴
     const fetchData = async () => {
-      const UserServerAccessToken = await AsyncStorage.getItem("UserServerAccessToken");
+      const UserServerAccessToken = await AsyncStorage.getItem(
+        "UserServerAccessToken",
+      );
       try {
-        const response = await fetch(`http://43.202.241.133:12345/photo/list`, {
+        const response = await fetch(`http://43.202.241.133:1998/photo/list`, {
           method: "GET",
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + UserServerAccessToken,
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + UserServerAccessToken,
           },
         });
 
@@ -117,10 +119,10 @@ export default function AlbumScreen({navigation}) {
           } else if (buttonIndex === 1) {
             onLaunchImageLibrary();
           }
-        }
-      )
+        },
+      );
     }
-  }
+  };
 
   // 카메라 촬영
   const onLaunchCamera = async () => {
@@ -152,7 +154,7 @@ export default function AlbumScreen({navigation}) {
     } catch (error) {
       console.error("카메라 Error!!!!! : ", error);
     }
-  }
+  };
 
   // 갤러리에서 사진 선택
   const onLaunchImageLibrary = async () => {
@@ -165,7 +167,8 @@ export default function AlbumScreen({navigation}) {
         }
       } else {
         // 이미지 선택 (화면용, 실제로 s3에 업로드 한 이미지 아님)
-        const result = await ImagePicker.launchImageLibraryAsync(imagePickerOption);
+        const result =
+          await ImagePicker.launchImageLibraryAsync(imagePickerOption);
         // 이미지 업로드 취소한 경우
         if (result.canceled) {
           return null;
@@ -184,7 +187,7 @@ export default function AlbumScreen({navigation}) {
     } catch (error) {
       console.error("갤러리 Error!!!!! : ", error);
     }
-  }
+  };
 
   const toggleTagSelection = (tagId) => {
     setSelectedTags((prevTags) => {
@@ -206,13 +209,15 @@ export default function AlbumScreen({navigation}) {
     }
 
     const filteredImages = imageData.filter((item) => {
-      const hasMatchingTag = item.photoTags.some((tag) => selectedTags.includes(tag));
+      const hasMatchingTag = item.photoTags.some((tag) =>
+        selectedTags.includes(tag),
+      );
       // console.log(`Item ${item.photoId} - hasMatchingTag: ${hasMatchingTag}`);
       return hasMatchingTag;
     });
 
     return filteredImages;
-  }
+  };
 
   useEffect(() => {
     // console.log("선택한 태그 (useEffect):", selectedTags);
@@ -229,15 +234,16 @@ export default function AlbumScreen({navigation}) {
                 style={[
                   styles.tagItem,
                   selectedTags.includes(tag.id) && styles.selectedTagItem,
-                  index !== TAG_OPTION.length - 1 && {marginRight: 7},
+                  index !== TAG_OPTION.length - 1 && { marginRight: 7 },
                 ]}
                 onPress={() => toggleTagSelection(tag.id)}
               >
                 <Text
                   style={{
-                    color: selectedTags.includes(tag.id) ? 'black' : 'black',
-                    fontWeight: selectedTags.includes(tag.id) ? 'bold' : 'normal',
-
+                    color: selectedTags.includes(tag.id) ? "black" : "black",
+                    fontWeight: selectedTags.includes(tag.id)
+                      ? "bold"
+                      : "normal",
                   }}
                 >
                   {tag.item}
@@ -249,22 +255,25 @@ export default function AlbumScreen({navigation}) {
             numColumns={4}
             data={filterImages()}
             keyExtractor={(item) => item.photoId.toString()}
-            renderItem={({item}) => (
+            renderItem={({ item }) => (
               <View style={styles.imageContainer}>
                 <TouchableOpacity
-                  onPress={() => navigation.navigate("ImageDetailForm", {
-                    photoInfo: {
-                      photoId: item.photoId,
-                      createAt: item.createAt,
-                      photoKey: item.photoKey,
-                      photoTags: item.photoTags,
-                      description: item.description,
-                      writer: item.writer,
-                    },
-                    albumList: albumList,
-                  })}>
+                  onPress={() =>
+                    navigation.navigate("ImageDetailForm", {
+                      photoInfo: {
+                        photoId: item.photoId,
+                        createAt: item.createAt,
+                        photoKey: item.photoKey,
+                        photoTags: item.photoTags,
+                        description: item.description,
+                        writer: item.writer,
+                      },
+                      albumList: albumList,
+                    })
+                  }
+                >
                   <Image
-                    source={{uri: item.photoKey}}
+                    source={{ uri: item.photoKey }}
                     style={styles.image}
                     resizeMode="cover"
                   />
@@ -272,16 +281,22 @@ export default function AlbumScreen({navigation}) {
               </View>
             )}
           />
-          <Pressable
-            style={styles.imagePlusContainer}
-            onPress={modalOpen}>
+          <Pressable style={styles.imagePlusContainer} onPress={modalOpen}>
             <Image
-              source={require('../assets/img/plus.png')}
-              style={{width: SCREEN_WIDTH * 0.13, height: SCREEN_WIDTH * 0.13, resizeMode: "contain"}}/>
+              source={require("../assets/img/plus.png")}
+              style={{
+                width: SCREEN_WIDTH * 0.13,
+                height: SCREEN_WIDTH * 0.13,
+                resizeMode: "contain",
+              }}
+            />
           </Pressable>
         </Fragment>
       ) : (
-        <ImageUploadForm uri={chosenImage.uri} onUploadComplete={handleUploadComplete}/>
+        <ImageUploadForm
+          uri={chosenImage.uri}
+          onUploadComplete={handleUploadComplete}
+        />
       )}
       <UploadModeModal
         visible={modalVisible}
@@ -290,8 +305,7 @@ export default function AlbumScreen({navigation}) {
         onLaunchImageLibrary={onLaunchImageLibrary}
       />
     </View>
-  )
-    ;
+  );
 }
 
 const styles = StyleSheet.create({
@@ -299,7 +313,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
   },
   image: {
     resizeMode: "contain",
@@ -316,18 +330,18 @@ const styles = StyleSheet.create({
     margin: 2,
   },
   tagContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingVertical: 10,
   },
   tagItem: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingHorizontal: 12,
     paddingVertical: 10,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
   },
   selectedTagItem: {
     borderColor: "#E0EBF2",

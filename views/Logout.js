@@ -1,7 +1,7 @@
 import React from "react";
-import { View, Text, Button } from "react-native";
-import { Alert } from "react-native";
+import { Alert, Button, Text, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
 export default function Logout({ navigation }) {
   return (
     <View>
@@ -13,7 +13,8 @@ export default function Logout({ navigation }) {
             {
               text: "yes",
               onPress: async () => {
-                await AsyncStorage.removeItem("UserServerAccessToken");
+                // await AsyncStorage.removeItem("UserServerAccessToken");
+                await AsyncStorage.clear();
                 navigation.navigate("Login");
               },
             },
