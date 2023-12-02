@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Platform,
   StyleSheet,
@@ -9,21 +9,22 @@ import {
   View,
   ImageBackground,
   Dimensions,
-} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Device from 'expo-device';
-import * as Notifications from 'expo-notifications';
-import Constants from 'expo-constants';
+  Alert,
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
 
 async function registerForPushNotificationsAsync() {
   let token;
 
-  if (Platform.OS === 'android') {
-    Notifications.setNotificationChannelAsync('default', {
-      name: 'default',
+  if (Platform.OS === "android") {
+    Notifications.setNotificationChannelAsync("default", {
+      name: "default",
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C',
+      lightColor: "#FF231F7C",
     });
   }
 
@@ -31,29 +32,29 @@ async function registerForPushNotificationsAsync() {
     const { status: existingStatus } =
       await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
-    if (existingStatus !== 'granted') {
+    if (existingStatus !== "granted") {
       const { status } = await Notifications.requestPermissionsAsync();
       finalStatus = status;
     }
-    if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
+    if (finalStatus !== "granted") {
+      alert("Failed to get push token for push notification!");
       return;
     }
     token = await Notifications.getDevicePushTokenAsync({
       projectId: Constants.expoConfig.extra.eas.projectId,
     });
   } else {
-    alert('Must use physical device for Push Notifications');
+    alert("Must use physical device for Push Notifications");
   }
 
   return token.data;
 }
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 const InvitationScreen = ({ navigation }) => {
   const [devicePushToken, setDevicePushToken] = useState("");
-  const [InvitationCode, setInvitationCode] = useState('');
+  const [InvitationCode, setInvitationCode] = useState("");
   const onChangeInvitationCode = (payload) => setInvitationCode(payload);
   useEffect(() => {
     registerForPushNotificationsAsync().then((token) =>
@@ -62,142 +63,167 @@ const InvitationScreen = ({ navigation }) => {
   }, []);
   return (
     <ImageBackground
-      source={require('../assets/img/pinkBtn.png')}
-      style={styles.backgroundImage}>
-      <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+      source={require("../assets/img/pinkBtn.png")}
+      style={styles.backgroundImage}
+    >
+      <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
         <View
           style={{
-            backgroundColor: 'white',
+            backgroundColor: "white",
             borderRadius: 30,
             flex: 0.5,
             width: 0.85 * width,
-          }}>
+          }}
+        >
           <View
             style={{
               marginTop: 35,
               flex: 0.9,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
             <View
               style={{
                 marginVertical: 5,
                 borderRadius: 30,
                 paddingHorizontal: 30,
                 paddingVertical: 30,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
               <View>
                 <TextInput
                   value={InvitationCode}
                   placeholder="초대코드를 입력해주세요"
                   style={{
                     ...styles.input,
-                    borderColor: '#F213A6',
+                    borderColor: "#F213A6",
                     borderWidth: 3,
                     marginBottom: 10,
+                    height:70
                   }}
                   onChangeText={onChangeInvitationCode}
                 />
               </View>
             </View>
           </View>
-          <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+          <View style={{ alignItems: "center", justifyContent: "center" }}>
             <View
               style={{
-                overflow: 'hidden',
+                overflow: "hidden",
                 borderRadius: 15,
                 width: 175,
                 marginTop: 20,
-              }}>
-              <ImageBackground source={require('../assets/img/pinkBtn.png')}>
+              }}
+            >
+              <ImageBackground source={require("../assets/img/pinkBtn.png")}>
                 <TouchableOpacity
                   onPress={async () => {
                     const SERVER_ADDRESS = await AsyncStorage.getItem(
-                      'ServerAddress'
+                      "ServerAddress"
                     );
-                    const ServerAccessToken = await AsyncStorage.getItem(
-                      'ServerAccessToken'
-                    );
-                    await AsyncStorage.setItem('familyCode', InvitationCode);
-                    await axios({
-                      method: 'POST',
-                      url: SERVER_ADDRESS + '/api/register/currentFamily',
-                      headers: {
-                        Authorization: 'Bearer: ' + ServerAccessToken,
-                      },
-                      data: {
-                        code: InvitationCode,
-                        firebaseToken: devicePushToken,
-                      },
-                    })
-                      .then(async (resp) => {
-                        const UserServerAccessToken =
-                          resp.data.data.tokenInfo.accessToken;
-                        const UserServerRefreshToken =
-                          resp.data.data.tokenInfo.refreshToken;
-                        await AsyncStorage.setItem(
-                          'UserServerAccessToken',
-                          UserServerAccessToken
-                        );
-                        await AsyncStorage.setItem(
-                          'UserServerRefreshToken',
-                          UserServerRefreshToken
-                        );
-                        await AsyncStorage.setItem(
-                          'devicePushToken',
-                          devicePushToken
-                        );
-                        const members =
-                          resp.data.data.familyResponseDto.members;
-                        const familyId =
-                          resp.data.data.familyResponseDto.familyId;
-                        const chatroomId =
-                          resp.data.data.familyResponseDto.chatroomId;
-                        const plant = resp.data.data.familyResponseDto.plant;
-
-                        var myDB = {};
-                        for (let i = 0; i < members.length; i++) {
-                          const newkey = members[i].memberId;
-                          myDB[newkey] = members[i];
-                        }
-                        await AsyncStorage.setItem(
-                          'myDB',
-                          JSON.stringify(myDB)
-                        );
-                        await AsyncStorage.setItem(
-                          'familyId',
-                          JSON.stringify(familyId)
-                        );
-                        await AsyncStorage.setItem(
-                          'chatroomId',
-                          JSON.stringify(chatroomId)
-                        );
-                        await AsyncStorage.setItem(
-                          'plantInfo',
-                          JSON.stringify(plant)
-                        );
-                        navigation.navigate('FirstRegister',{cameFrom:"InvitationScreen"});
-                      })
-                      .catch(function (error) {
-                        console.log('server error', error);
-                      });
+                    if (!InvitationCode) {
+                      Alert.alert("초대코드를 입력해주세요");
+                    } else {
+                      console.log(InvitationCode);
+                      await axios({
+                        method: "GET",
+                        url:
+                          SERVER_ADDRESS +
+                          "/api/reagister/familyCode/" +
+                          InvitationCode,
+                      }).then((resp) => console.log(resp));
+                    }
                   }}
+                  // onPress={async () => {
+                  //   const SERVER_ADDRESS = await AsyncStorage.getItem(
+                  //     'ServerAddress'
+                  //   );
+                  //   const ServerAccessToken = await AsyncStorage.getItem(
+                  //     'ServerAccessToken'
+                  //   );
+                  //   await AsyncStorage.setItem('familyCode', InvitationCode);
+                  //   await axios({
+                  //     method: 'POST',
+                  //     url: SERVER_ADDRESS + '/api/register/currentFamily',
+                  //     headers: {
+                  //       Authorization: 'Bearer: ' + ServerAccessToken,
+                  //     },
+                  //     data: {
+                  //       code: InvitationCode,
+                  //       firebaseToken: devicePushToken,
+                  //     },
+                  //   })
+                  //     .then(async (resp) => {
+                  //       const UserServerAccessToken =
+                  //         resp.data.data.tokenInfo.accessToken;
+                  //       const UserServerRefreshToken =
+                  //         resp.data.data.tokenInfo.refreshToken;
+                  //       await AsyncStorage.setItem(
+                  //         'UserServerAccessToken',
+                  //         UserServerAccessToken
+                  //       );
+                  //       await AsyncStorage.setItem(
+                  //         'UserServerRefreshToken',
+                  //         UserServerRefreshToken
+                  //       );
+                  //       await AsyncStorage.setItem(
+                  //         'devicePushToken',
+                  //         devicePushToken
+                  //       );
+                  //       const members =
+                  //         resp.data.data.familyResponseDto.members;
+                  //       const familyId =
+                  //         resp.data.data.familyResponseDto.familyId;
+                  //       const chatroomId =
+                  //         resp.data.data.familyResponseDto.chatroomId;
+                  //       const plant = resp.data.data.familyResponseDto.plant;
+
+                  //       var myDB = {};
+                  //       for (let i = 0; i < members.length; i++) {
+                  //         const newkey = members[i].memberId;
+                  //         myDB[newkey] = members[i];
+                  //       }
+                  //       await AsyncStorage.setItem(
+                  //         'myDB',
+                  //         JSON.stringify(myDB)
+                  //       );
+                  //       await AsyncStorage.setItem(
+                  //         'familyId',
+                  //         JSON.stringify(familyId)
+                  //       );
+                  //       await AsyncStorage.setItem(
+                  //         'chatroomId',
+                  //         JSON.stringify(chatroomId)
+                  //       );
+                  //       await AsyncStorage.setItem(
+                  //         'plantInfo',
+                  //         JSON.stringify(plant)
+                  //       );
+                  //       navigation.navigate('FirstRegister',{cameFrom:"InvitationScreen"});
+                  //     })
+                  //     .catch(function (error) {
+                  //       console.log('server error', error);
+                  //     });
+                  // }}
                   style={{
                     borderRadius: 50,
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    alignItems: "center",
+                    justifyContent: "center",
                     marginVertical: 5,
-                  }}>
+                  }}
+                >
                   <Text
                     style={{
-                      color: 'white',
+                      color: "white",
                       marginHorizontal: 30,
                       marginVertical: 10,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}>
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
                     제출하기
                   </Text>
                 </TouchableOpacity>
@@ -206,28 +232,31 @@ const InvitationScreen = ({ navigation }) => {
           </View>
           <View
             style={{
-              justifyContent: 'center',
-              alignItems: 'center',
+              justifyContent: "center",
+              alignItems: "center",
               marginVertical: 10,
-            }}>
-            <View style={{ overflow: 'hidden', borderRadius: 15, width: 175 }}>
-              <ImageBackground source={require('../assets/img/grayBtn.png')}>
+            }}
+          >
+            <View style={{ overflow: "hidden", borderRadius: 15, width: 175 }}>
+              <ImageBackground source={require("../assets/img/grayBtn.png")}>
                 <TouchableOpacity
-                  onPress={() => navigation.navigate('Greet')}
+                  onPress={() => navigation.navigate("Greet")}
                   style={{
                     borderRadius: 50,
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    alignItems: "center",
+                    justifyContent: "center",
                     marginVertical: 5,
-                  }}>
+                  }}
+                >
                   <Text
                     style={{
-                      color: 'white',
+                      color: "white",
                       marginHorizontal: 30,
                       marginVertical: 10,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}>
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
                     이전 페이지로
                   </Text>
                 </TouchableOpacity>
@@ -242,7 +271,7 @@ const InvitationScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   input: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 20,
@@ -251,7 +280,7 @@ const styles = StyleSheet.create({
   },
   backgroundImage: {
     flex: 1,
-    resizeMode: 'cover',
+    resizeMode: "cover",
   },
 });
 

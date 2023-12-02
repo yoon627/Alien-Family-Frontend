@@ -223,7 +223,7 @@ const FirstRegister = ({ route, navigation }) => {
                   //     .catch(function (error) {
                   //       console.log('server error', error);
                   //     });
-                  // }}
+                  // }} 
                   style={{
                     borderRadius: 50,
                     alignItems: "center",

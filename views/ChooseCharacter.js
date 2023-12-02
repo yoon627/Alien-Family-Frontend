@@ -54,10 +54,10 @@ async function registerForPushNotificationsAsync() {
 
 const ChooseCharacter = ({ navigation }) => {
   const [alienType, setAlienType] = useState("BASIC");
-  const [selectedToggle, setSelectedToggle] = useState(58);
-  const [activeButton, setActiveButton] = useState(58);
+  const [selectedToggle, setSelectedToggle] = useState(0);
+  const [activeButton, setActiveButton] = useState(0);
   const [devicePushToken, setDevicePushToken] = useState("");
-  const scrollViewRef = useRef(null);
+  const scrollViewRef = useRef(0);
   const imageList = [
     require("../assets/img/character/BASIC.png"),
     require("../assets/img/character/GLASSES.png"),
@@ -86,7 +86,7 @@ const ChooseCharacter = ({ navigation }) => {
     const { width } = Dimensions.get("window");
     const offset = event.nativeEvent.contentOffset.x;
     const page = Math.round(offset / (width * 0.85 - 20));
-    setActiveButton(page + 58);
+    setActiveButton(page);
     if (page >= 0 && page < iconList.length) {
       var type = [
         "BASIC",
@@ -101,20 +101,18 @@ const ChooseCharacter = ({ navigation }) => {
         "PIRATE",
       ];
       setAlienType(type[page]);
-      setSelectedToggle(iconList[page] + 58);
+      setSelectedToggle(page);
     }
   };
   const handleToggleChange = (value) => {
-    console.log(value);
     // setActiveButton(value);
-    const index = iconList.indexOf(value);
+    const index = value;
     if (index !== -1) {
       scrollViewRef.current.scrollTo({
         x: index * (SCREEN_WIDTH * 0.85 - 20),
         // animated: true,
       });
-      // console.log(value-53)
-      var tmp = value - 58;
+      var tmp = value;
       var type = [
         "BASIC",
         "GLASSES",
@@ -206,17 +204,17 @@ const ChooseCharacter = ({ navigation }) => {
                         borderRadius: 20,
                         resizeMode: "contain",
                         borderColor:
-                          activeButton === characterIcon
+                          activeButton === index
                             ? "#F213A6"
                             : "#DED1DF",
                         borderWidth: 3,
                       }}
                     />
                   )}
-                  value={characterIcon}
+                  value={index}
                   style={{ marginRight: index % 5 !== 4 ? 10 : 0 }}
                   onPress={() => {
-                    handleToggleChange(characterIcon);
+                    handleToggleChange(index);
                   }}
                 />
               ))}
@@ -281,7 +279,7 @@ const ChooseCharacter = ({ navigation }) => {
                         })
                           .then((resp) => {
                             console.log(resp);
-                            navigation.navigate("MainDrawer");
+                            // navigation.navigate("MainDrawer");
                           })
                           .catch((e) => console.log(e));
                       } else {
@@ -301,7 +299,7 @@ const ChooseCharacter = ({ navigation }) => {
                         })
                           .then((resp) => {
                             console.log(resp);
-                            navigation.navigate("MainDrawer");
+                            // navigation.navigate("MainDrawer");
                           })
                           .catch((e) => console.log(e));
                       }
