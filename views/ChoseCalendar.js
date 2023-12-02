@@ -69,7 +69,7 @@ export default function ChoseCalendar() {
         try {
           const token = await AsyncStorage.getItem("UserServerAccessToken");
           const response = await fetch(
-            "http://43.202.241.133:12345/calendarEvent",
+            "http://43.202.241.133:1998/calendarEvent",
             {
               method: "POST",
               headers: {

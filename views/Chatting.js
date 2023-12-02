@@ -37,7 +37,7 @@ const ChatRoom = () => {
         const chatroomId = await AsyncStorage.getItem("chatroomId");
 
         const response = await fetch(
-          "http://" + `${myIP}` + ":12345/chat/list?id=" + chatroomId,
+          "http://" + `${myIP}` + ":1998/chat/list?id=" + chatroomId,
           {
             method: "get",
             headers: {
@@ -70,7 +70,7 @@ const ChatRoom = () => {
         setroomNumber(chatroomId);
 
         const client = new Client({
-          brokerURL: "ws://" + `${myIP}` + ":12345/ws",
+          brokerURL: "ws://" + `${myIP}` + ":1998/ws",
           connectHeaders: {
             Authorization: token,
           },

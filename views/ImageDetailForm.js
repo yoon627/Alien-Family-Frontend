@@ -1,59 +1,63 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import {
+  Image,
   KeyboardAvoidingView,
   Platform,
-  Image,
-  Text,
-  View,
+  Pressable,
   StyleSheet,
+  Text,
   TextInput,
-  Pressable
+  View,
 } from "react-native";
-import Swiper from 'react-native-web-swiper';
+import Swiper from "react-native-web-swiper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const TAG_OPTION = [
   {
-    item: '아빠',
-    id: 'DAD',
+    item: "아빠",
+    id: "DAD",
   },
   {
-    item: '엄마',
-    id: 'MOM',
+    item: "엄마",
+    id: "MOM",
   },
   {
-    item: '첫째',
-    id: 'FIRST',
+    item: "첫째",
+    id: "FIRST",
   },
   {
-    item: '둘째',
-    id: 'SECOND',
+    item: "둘째",
+    id: "SECOND",
   },
   {
-    item: '기타',
-    id: 'EXTRA',
-  }
-]
+    item: "기타",
+    id: "EXTRA",
+  },
+];
 
-export default function ImageDetailForm({route, navigation}) {
-  const [comment, setComment] = useState('');
+export default function ImageDetailForm({ route, navigation }) {
+  const [comment, setComment] = useState("");
 
-  const {photoInfo, albumList} = route.params;
-  const index = albumList.findIndex((item) => item.photoKey === photoInfo.photoKey);
+  const { photoInfo, albumList } = route.params;
+  const index = albumList.findIndex(
+    (item) => item.photoKey === photoInfo.photoKey,
+  );
   const sendToComment = async () => {
-    const UserServerAccessToken = await AsyncStorage.getItem("UserServerAccessToken");
+    const UserServerAccessToken = await AsyncStorage.getItem(
+      "UserServerAccessToken",
+    );
     const data = {
       photoId: photoInfo.photoId,
-      comment: comment
-    }
+      comment: comment,
+    };
 
     try {
-      const response = await fetch('http://43.202.241.133:12345/comment', {
-        method: 'POST',
+      const response = await fetch("http://43.202.241.133:1998/comment", {
+        method: "POST",
         body: JSON.stringify(data),
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + UserServerAccessToken
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + UserServerAccessToken,
         },
       });
       if (response.ok) {
@@ -68,10 +72,7 @@ export default function ImageDetailForm({route, navigation}) {
 
   return (
     <View style={styles.container}>
-      <Swiper
-        controlsEnabled={true}
-        from={index}
-      >
+      <Swiper controlsEnabled={true} from={index}>
         {albumList.map((item, index) => {
           const nowYear = new Date().getFullYear();
           const createDate = new Date(item.createAt);
@@ -86,13 +87,17 @@ export default function ImageDetailForm({route, navigation}) {
           return (
             <KeyboardAvoidingView
               key={index}
-              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
               style={styles.container}
             >
               <View key={index} style={styles.slide}>
-                <View style={{alignItems: "flex-start", width: "90%"}}>
+                <View style={{ alignItems: "flex-start", width: "90%" }}>
                   <Text style={styles.writer}>{item.writer}</Text>
-                  <Image style={styles.uploadImage} source={{uri: item.photoKey}} resizeMode="contain"/>
+                  <Image
+                    style={styles.uploadImage}
+                    source={{ uri: item.photoKey }}
+                    resizeMode="contain"
+                  />
                   <Text style={styles.date}>
                     {nowYear === year ? formattedDate : year + formattedDate}
                   </Text>
@@ -101,14 +106,22 @@ export default function ImageDetailForm({route, navigation}) {
                 <View style={styles.tagButtonsContainer}>
                   <View style={styles.tagButton}>
                     {item.photoTags.map((tag, index) => (
-                      <Text key={index} style={{fontWeight: "bold"}}>{tag}</Text>
+                      <Text key={index} style={{ fontWeight: "bold" }}>
+                        {tag}
+                      </Text>
                     ))}
                   </View>
                 </View>
 
                 <Text style={styles.description}>{item.description}</Text>
 
-                <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center",}}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
                   <TextInput
                     value={comment}
                     style={styles.comment}
@@ -116,26 +129,21 @@ export default function ImageDetailForm({route, navigation}) {
                     multiline
                     placeholder="댓글..."
                   />
-                  <Pressable
-                    onPress={sendToComment}>
-                    <Text
-                      style={{paddingLeft: 10, top: 10}}
-                    >
-                      작성
-                    </Text>
+                  <Pressable onPress={sendToComment}>
+                    <Text style={{ paddingLeft: 10, top: 10 }}>작성</Text>
                   </Pressable>
                 </View>
 
-                <View style={{flexDirection: "row", marginVertical: 10}}>
-                  <Pressable
-                    style={[styles.button, styles.buttonWrite]}
-                  >
-                    <Text style={{...styles.textStyle, color: "#fff"}}>수정</Text>
+                <View style={{ flexDirection: "row", marginVertical: 10 }}>
+                  <Pressable style={[styles.button, styles.buttonWrite]}>
+                    <Text style={{ ...styles.textStyle, color: "#fff" }}>
+                      수정
+                    </Text>
                   </Pressable>
-                  <Pressable
-                    style={[styles.button, styles.buttonClose]}
-                  >
-                    <Text style={{...styles.textStyle, color: "#727272"}}>삭제</Text>
+                  <Pressable style={[styles.button, styles.buttonClose]}>
+                    <Text style={{ ...styles.textStyle, color: "#727272" }}>
+                      삭제
+                    </Text>
                   </Pressable>
                 </View>
               </View>
@@ -172,13 +180,13 @@ const styles = StyleSheet.create({
   comment: {
     fontSize: 15,
     marginTop: 40,
-    width: '80%',
-    borderColor: '#C1BABD',
+    width: "80%",
+    borderColor: "#C1BABD",
     borderWidth: 1,
     borderRadius: 10,
     marginBottom: 20,
     paddingLeft: 10,
-    height: '45%',
+    height: "45%",
   },
   writer: {
     fontSize: 20,
@@ -210,18 +218,18 @@ const styles = StyleSheet.create({
     fontFamily: "dnf",
   },
   tagButtonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   tagButton: {
     marginTop: 20,
-    alignItems: 'center',
+    alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 13,
     paddingVertical: 10,
     borderWidth: 1,
     borderRadius: 30,
-    borderColor: '#E0EBF2',
-    backgroundColor: '#E0EBF2',
+    borderColor: "#E0EBF2",
+    backgroundColor: "#E0EBF2",
   },
 });
