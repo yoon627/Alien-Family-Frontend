@@ -49,10 +49,10 @@ export default function App() {
           <Stack.Screen name="Ladder" component={LadderScreen}/>
           <Stack.Screen name="Roulette" component={RouletteScreen}/>
           <Stack.Screen name="Mole" component={NewGame}/>
-          <Stack.Screen name="Chat" component={ChatRoom}/>
-          <Stack.Screen name="AlbumScreen" component={AlbumScreen}/>
-          <Stack.Screen name="ImageUploadForm" component={ImageUploadForm}/>
-          <Stack.Screen name="ImageDetailForm" component={ImageDetailForm}/>
+          <Stack.Screen name="Chat" component={ChatRoom} options={{headerShown: false}}/>
+          <Stack.Screen name="AlbumScreen" component={AlbumScreen} options={{headerShown: false}}/>
+          <Stack.Screen name="ImageUploadForm" component={ImageUploadForm} options={{headerShown: false}}/>
+          <Stack.Screen name="ImageDetailForm" component={ImageDetailForm} options={{headerShown: false}}/>
 
           <Stack.Screen
             name="MainDrawer"

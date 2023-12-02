@@ -1,6 +1,5 @@
 import React, {useState} from "react";
 import {
-  Button,
   View,
   Image,
   TextInput,
@@ -8,11 +7,9 @@ import {
   ScrollView,
   Platform,
   KeyboardAvoidingView,
-  ImageBackground, Dimensions, Pressable, Text
+  Dimensions, Pressable, Text
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {value} from "lodash/seq";
-import image from "react-native-reanimated/src/reanimated2/component/Image";
 
 const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get('window');
 
@@ -209,6 +206,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 20,
     paddingLeft: 10,
+    paddingVertical: 10,
   },
   description: {
     height: 100,

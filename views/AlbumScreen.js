@@ -207,7 +207,7 @@ export default function AlbumScreen({navigation}) {
 
     const filteredImages = imageData.filter((item) => {
       const hasMatchingTag = item.photoTags.some((tag) => selectedTags.includes(tag));
-      console.log(`Item ${item.photoId} - hasMatchingTag: ${hasMatchingTag}`);
+      // console.log(`Item ${item.photoId} - hasMatchingTag: ${hasMatchingTag}`);
       return hasMatchingTag;
     });
 
@@ -215,7 +215,7 @@ export default function AlbumScreen({navigation}) {
   }
 
   useEffect(() => {
-    console.log("선택한 태그 (useEffect):", selectedTags);
+    // console.log("선택한 태그 (useEffect):", selectedTags);
   }, [selectedTags]);
 
   return (
