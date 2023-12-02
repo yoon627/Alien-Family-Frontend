@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "UFO-Front",
-    "slug": "UFO-Front",
+    "slug": "ufo-front",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -65,7 +65,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "756dda6d-2cad-498a-ae4f-40fec83a4c68"
+        "projectId": "5c2d898c-1258-4e8d-8924-8dc561dc38b1"
       }
     }
   }

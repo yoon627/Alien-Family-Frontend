@@ -1,30 +1,20 @@
-import React, { useEffect, useState } from "react";
-
+import axios from "axios";
+import React, { useState, useEffect } from "react";
 import {
-  Dimensions,
   Platform,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
+  ImageBackground,
+  Dimensions,
+  Alert,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
-
-const FCM_SERVER_KEY =
-  "AAAAUCMBJiU:APA91bEs9fOJNe6l2ILHFI88jep5rw9wqR-qTWWbBrKxj7JQnKQ8ZAp4tJbn_yXcL2aP0ydygPIcT89XB6h38vhIozsJ5J61s7w2znBL9hPQG6a18sQcUFkMitr2pkvoCmmfslVQmk-u";
-
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-  }),
-});
 
 async function registerForPushNotificationsAsync() {
   let token;
@@ -60,7 +50,7 @@ async function registerForPushNotificationsAsync() {
   return token.data;
 }
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
 const InvitationScreen = ({ navigation }) => {
   const [devicePushToken, setDevicePushToken] = useState("");
@@ -68,173 +58,237 @@ const InvitationScreen = ({ navigation }) => {
   const onChangeInvitationCode = (payload) => setInvitationCode(payload);
   useEffect(() => {
     registerForPushNotificationsAsync().then((token) =>
-      setDevicePushToken(token),
+      setDevicePushToken(token)
     );
   }, []);
   return (
-    <View style={styles.container}>
-      <View
-        style={{
-          marginVertical: 30,
-          backgroundColor: "black",
-          borderRadius: 8,
-          paddingHorizontal: 30,
-          paddingVertical: 30,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <TextInput
-          placeholder="초대코드를 입력해주세요"
-          style={styles.input}
-          value={InvitationCode}
-          onChangeText={onChangeInvitationCode}
-        />
-      </View>
-      <TouchableOpacity
-        onPress={async () => {
-          const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
-          const ServerAccessToken =
-            await AsyncStorage.getItem("ServerAccessToken");
-          await AsyncStorage.setItem("familyCode", InvitationCode);
-          await axios({
-            method: "POST",
-            url: SERVER_ADDRESS + "/api/register/currentFamily",
-            headers: {
-              Authorization: "Bearer: " + ServerAccessToken,
-            },
-            data: {
-              code: InvitationCode,
-              firebaseToken: devicePushToken,
-            },
-          })
-            .then(async (resp) => {
-              const UserServerAccessToken =
-                resp.data.data.tokenInfo.accessToken;
-              const UserServerRefreshToken =
-                resp.data.data.tokenInfo.refreshToken;
-              await AsyncStorage.setItem(
-                "UserServerAccessToken",
-                UserServerAccessToken,
-              );
-              await AsyncStorage.setItem(
-                "UserServerRefreshToken",
-                UserServerRefreshToken,
-              );
-              await AsyncStorage.setItem("devicePushToken", devicePushToken);
-              const members = resp.data.data.familyResponseDto.members;
-              const familyId = resp.data.data.familyResponseDto.familyId;
-              const chatroomId = resp.data.data.familyResponseDto.chatroomId;
-              const plant = resp.data.data.familyResponseDto.plant;
+    <ImageBackground
+      source={require("../assets/img/pinkBtn.png")}
+      style={styles.backgroundImage}
+    >
+      <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
+        <View
+          style={{
+            backgroundColor: "white",
+            borderRadius: 30,
+            flex: 0.5,
+            width: 0.85 * width,
+          }}
+        >
+          <View
+            style={{
+              marginTop: 35,
+              flex: 0.9,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <View
+              style={{
+                marginVertical: 5,
+                borderRadius: 30,
+                paddingHorizontal: 30,
+                paddingVertical: 30,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <View>
+                <TextInput
+                  value={InvitationCode}
+                  placeholder="초대코드를 입력해주세요"
+                  style={{
+                    ...styles.input,
+                    borderColor: "#F213A6",
+                    borderWidth: 3,
+                    marginBottom: 10,
+                    height: 70,
+                  }}
+                  onChangeText={onChangeInvitationCode}
+                />
+              </View>
+            </View>
+          </View>
+          <View style={{ alignItems: "center", justifyContent: "center" }}>
+            <View
+              style={{
+                overflow: "hidden",
+                borderRadius: 15,
+                width: 175,
+                marginTop: 20,
+              }}
+            >
+              <ImageBackground source={require("../assets/img/pinkBtn.png")}>
+                <TouchableOpacity
+                  onPress={async () => {
+                    const SERVER_ADDRESS = await AsyncStorage.getItem(
+                      "ServerAddress"
+                    );
+                    if (!InvitationCode) {
+                      Alert.alert("초대코드를 입력해주세요");
+                    } else {
+                      console.log(InvitationCode);
+                      await axios({
+                        method: "GET",
+                        url:
+                          SERVER_ADDRESS +
+                          "/api/register/familyCode/" +
+                          InvitationCode,
+                      })
+                        .then((resp) => {
+                          if (resp.data.data){
+                            navigation.navigate("FirstRegister");
+                          }else{
+                            Alert.alert("유효하지 않은 초대코드입니다");
+                          }
+                        })
+                        .catch((e) => console.log(e));
+                    }
+                  }}
+                  // onPress={async () => {
+                  //   const SERVER_ADDRESS = await AsyncStorage.getItem(
+                  //     'ServerAddress'
+                  //   );
+                  //   const ServerAccessToken = await AsyncStorage.getItem(
+                  //     'ServerAccessToken'
+                  //   );
+                  //   await AsyncStorage.setItem('familyCode', InvitationCode);
+                  //   await axios({
+                  //     method: 'POST',
+                  //     url: SERVER_ADDRESS + '/api/register/currentFamily',
+                  //     headers: {
+                  //       Authorization: 'Bearer: ' + ServerAccessToken,
+                  //     },
+                  //     data: {
+                  //       code: InvitationCode,
+                  //       firebaseToken: devicePushToken,
+                  //     },
+                  //   })
+                  //     .then(async (resp) => {
+                  //       const UserServerAccessToken =
+                  //         resp.data.data.tokenInfo.accessToken;
+                  //       const UserServerRefreshToken =
+                  //         resp.data.data.tokenInfo.refreshToken;
+                  //       await AsyncStorage.setItem(
+                  //         'UserServerAccessToken',
+                  //         UserServerAccessToken
+                  //       );
+                  //       await AsyncStorage.setItem(
+                  //         'UserServerRefreshToken',
+                  //         UserServerRefreshToken
+                  //       );
+                  //       await AsyncStorage.setItem(
+                  //         'devicePushToken',
+                  //         devicePushToken
+                  //       );
+                  //       const members =
+                  //         resp.data.data.familyResponseDto.members;
+                  //       const familyId =
+                  //         resp.data.data.familyResponseDto.familyId;
+                  //       const chatroomId =
+                  //         resp.data.data.familyResponseDto.chatroomId;
+                  //       const plant = resp.data.data.familyResponseDto.plant;
 
-              var myDB = {};
-              for (let i = 0; i < members.length; i++) {
-                const newkey = members[i].memberId;
-                myDB[newkey] = members[i];
-              }
-              await AsyncStorage.setItem("myDB", JSON.stringify(myDB));
-              await AsyncStorage.setItem("familyId", JSON.stringify(familyId));
-              await AsyncStorage.setItem(
-                "chatroomId",
-                JSON.stringify(chatroomId),
-              );
-              await AsyncStorage.setItem("plantInfo", JSON.stringify(plant));
-              navigation.navigate("MainDrawer");
-            })
-            .catch(function (error) {
-              console.log("server error", error);
-            });
-        }}
-      >
-        <Text
-          style={{
-            color: "white",
-            marginHorizontal: 30,
-            marginVertical: 30,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => navigation.navigate("ClickBox")}
-        style={{
-          backgroundColor: "black",
-          borderRadius: 8,
-          alignItems: "center",
-          justifyContent: "center",
-          marginVertical: 20,
-        }}
-      >
-        <Text
-          style={{
-            color: "white",
-            marginHorizontal: 30,
-            marginVertical: 10,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          초대코드가 없으신가요?
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => navigation.navigate("ClickBox")}
-        style={{
-          backgroundColor: "black",
-          borderRadius: 8,
-          alignItems: "center",
-          justifyContent: "center",
-          marginVertical: 20,
-        }}
-      >
-        <Text
-          style={{
-            color: "white",
-            marginHorizontal: 30,
-            marginVertical: 10,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          다음페이지로
-        </Text>
-      </TouchableOpacity>
-    </View>
+                  //       var myDB = {};
+                  //       for (let i = 0; i < members.length; i++) {
+                  //         const newkey = members[i].memberId;
+                  //         myDB[newkey] = members[i];
+                  //       }
+                  //       await AsyncStorage.setItem(
+                  //         'myDB',
+                  //         JSON.stringify(myDB)
+                  //       );
+                  //       await AsyncStorage.setItem(
+                  //         'familyId',
+                  //         JSON.stringify(familyId)
+                  //       );
+                  //       await AsyncStorage.setItem(
+                  //         'chatroomId',
+                  //         JSON.stringify(chatroomId)
+                  //       );
+                  //       await AsyncStorage.setItem(
+                  //         'plantInfo',
+                  //         JSON.stringify(plant)
+                  //       );
+                  //       navigation.navigate('FirstRegister',{cameFrom:"InvitationScreen"});
+                  //     })
+                  //     .catch(function (error) {
+                  //       console.log('server error', error);
+                  //     });
+                  // }}
+                  style={{
+                    borderRadius: 50,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginVertical: 5,
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: "white",
+                      marginHorizontal: 30,
+                      marginVertical: 10,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    제출하기
+                  </Text>
+                </TouchableOpacity>
+              </ImageBackground>
+            </View>
+          </View>
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              marginVertical: 10,
+            }}
+          >
+            <View style={{ overflow: "hidden", borderRadius: 15, width: 175 }}>
+              <ImageBackground source={require("../assets/img/grayBtn.png")}>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("Greet")}
+                  style={{
+                    borderRadius: 50,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginVertical: 5,
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: "white",
+                      marginHorizontal: 30,
+                      marginVertical: 10,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    이전 페이지로
+                  </Text>
+                </TouchableOpacity>
+              </ImageBackground>
+            </View>
+          </View>
+        </View>
+      </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loginText: {
-    fontSize: 24,
-    marginBottom: 16,
-  },
-  footer: {
-    flexDirection: "row",
-    marginTop: "auto",
-  },
-  character: {
-    width: SCREEN_WIDTH,
-    alignItems: "flex-start",
-    paddingHorizontal: 20,
-  },
-  characterFont: {
-    fontSize: 500,
-  },
   input: {
     backgroundColor: "white",
     paddingVertical: 15,
     paddingHorizontal: 20,
-    borderRadius: 8,
-    marginTop: 20,
+    borderRadius: 20,
     fontSize: 18,
-    marginVertical: 20,
+    marginVertical: 5,
+  },
+  backgroundImage: {
+    flex: 1,
+    resizeMode: "cover",
   },
 });
 
