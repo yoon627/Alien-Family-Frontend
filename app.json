@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "UFO-Front",
-    "slug": "ufo-front",
+    "slug": "UFO-Front",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

@@ -135,10 +135,15 @@ const InvitationScreen = ({ navigation }) => {
                           "/api/register/familyCode/" +
                           InvitationCode,
                       })
-                        .then((resp) => {
-                          if (resp.data.data){
-                            navigation.navigate("FirstRegister");
-                          }else{
+                        .then(async (resp) => {
+                          if (resp.data.data) {
+                            await AsyncStorage.setItem(
+                              "familyCode",
+                              InvitationCode
+                            )
+                              .then(navigation.navigate("FirstRegister"))
+                              .catch((e) => console.log(e));
+                          } else {
                             Alert.alert("유효하지 않은 초대코드입니다");
                           }
                         })

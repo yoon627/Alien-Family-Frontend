@@ -13,7 +13,7 @@ import axios from "axios";
 
 const saveServer = async () => {
   try {
-    await AsyncStorage.setItem("ServerAddress", "http://43.202.241.133:12346");
+    await AsyncStorage.setItem("ServerAddress", "http://43.202.241.133:1998");
     await AsyncStorage.setItem(
       "FcmServerKey",
       "AAAAUCMBJiU:APA91bEs9fOJNe6l2ILHFI88jep5rw9wqR-qTWWbBrKxj7JQnKQ8ZAp4tJbn_yXcL2aP0ydygPIcT89XB6h38vhIozsJ5J61s7w2znBL9hPQG6a18sQcUFkMitr2pkvoCmmfslVQmk-u"
