@@ -95,6 +95,34 @@ const Login = ({ navigation }) => {
                       },
                     })
                       .then(async (resp) => {
+                        const members =
+                          resp.data.data.familyResponseDto.members;
+                        const familyId =
+                          resp.data.data.familyResponseDto.familyId;
+                        const chatroomId =
+                          resp.data.data.familyResponseDto.chatroomId;
+                        const plant = resp.data.data.familyResponseDto.plant;
+                        var myDB = {};
+                        for (let i = 0; i < members.length; i++) {
+                          const newkey = members[i].memberId;
+                          myDB[newkey] = members[i];
+                        }
+                        await AsyncStorage.setItem(
+                          "myDB",
+                          JSON.stringify(myDB)
+                        );
+                        await AsyncStorage.setItem(
+                          "familyId",
+                          JSON.stringify(familyId)
+                        );
+                        await AsyncStorage.setItem(
+                          "chatroomId",
+                          JSON.stringify(chatroomId)
+                        );
+                        await AsyncStorage.setItem(
+                          "plantInfo",
+                          JSON.stringify(plant)
+                        );
                         await AsyncStorage.setItem(
                           "AccessToken",
                           resp.data.data.tokenInfo.accessToken
@@ -129,7 +157,7 @@ const Login = ({ navigation }) => {
               </TouchableOpacity>
             </ImageBackground>
           </View>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={async () => {
               const SERVER_ADDRESS = await AsyncStorage.getItem(
                 "ServerAddress"
@@ -174,7 +202,7 @@ const Login = ({ navigation }) => {
             >
               카카오계정으로 회원가입
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </View>
     </ImageBackground>

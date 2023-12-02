@@ -204,9 +204,7 @@ const ChooseCharacter = ({ navigation }) => {
                         borderRadius: 20,
                         resizeMode: "contain",
                         borderColor:
-                          activeButton === index
-                            ? "#F213A6"
-                            : "#DED1DF",
+                          activeButton === index ? "#F213A6" : "#DED1DF",
                         borderWidth: 3,
                       }}
                     />
@@ -277,9 +275,40 @@ const ChooseCharacter = ({ navigation }) => {
                             alienType: alienType,
                           },
                         })
-                          .then(async(resp) => {
-                            await AsyncStorage.setItem("AccessToken",resp.data.data.tokenInfo.accessToken);
-                            console.log(resp.data.data.tokenInfo.accessToken);
+                          .then(async (resp) => {
+                            await AsyncStorage.setItem(
+                              "AccessToken",
+                              resp.data.data.tokenInfo.accessToken
+                            );
+                            const members =
+                              resp.data.data.familyResponseDto.members;
+                            const familyId =
+                              resp.data.data.familyResponseDto.familyId;
+                            const chatroomId =
+                              resp.data.data.familyResponseDto.chatroomId;
+                            const plant =
+                              resp.data.data.familyResponseDto.plant;
+                            var myDB = {};
+                            for (let i = 0; i < members.length; i++) {
+                              const newkey = members[i].memberId;
+                              myDB[newkey] = members[i];
+                            }
+                            await AsyncStorage.setItem(
+                              "myDB",
+                              JSON.stringify(myDB)
+                            );
+                            await AsyncStorage.setItem(
+                              "familyId",
+                              JSON.stringify(familyId)
+                            );
+                            await AsyncStorage.setItem(
+                              "chatroomId",
+                              JSON.stringify(chatroomId)
+                            );
+                            await AsyncStorage.setItem(
+                              "plantInfo",
+                              JSON.stringify(plant)
+                            );
                             navigation.navigate("MainDrawer");
                           })
                           .catch((e) => console.log(e));
@@ -298,9 +327,40 @@ const ChooseCharacter = ({ navigation }) => {
                             alienType: alienType,
                           },
                         })
-                          .then(async(resp) => {
-                            await AsyncStorage.setItem("AccessToken",resp.data.data.tokenInfo.accessToken);
-                            console.log(resp.data.data.tokenInfo.accessToken);
+                          .then(async (resp) => {
+                            await AsyncStorage.setItem(
+                              "AccessToken",
+                              resp.data.data.tokenInfo.accessToken
+                            );
+                            const members =
+                              resp.data.data.familyResponseDto.members;
+                            const familyId =
+                              resp.data.data.familyResponseDto.familyId;
+                            const chatroomId =
+                              resp.data.data.familyResponseDto.chatroomId;
+                            const plant =
+                              resp.data.data.familyResponseDto.plant;
+                            var myDB = {};
+                            for (let i = 0; i < members.length; i++) {
+                              const newkey = members[i].memberId;
+                              myDB[newkey] = members[i];
+                            }
+                            await AsyncStorage.setItem(
+                              "myDB",
+                              JSON.stringify(myDB)
+                            );
+                            await AsyncStorage.setItem(
+                              "familyId",
+                              JSON.stringify(familyId)
+                            );
+                            await AsyncStorage.setItem(
+                              "chatroomId",
+                              JSON.stringify(chatroomId)
+                            );
+                            await AsyncStorage.setItem(
+                              "plantInfo",
+                              JSON.stringify(plant)
+                            );
                             navigation.navigate("MainDrawer");
                           })
                           .catch((e) => console.log(e));
