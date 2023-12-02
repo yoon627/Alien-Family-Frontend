@@ -22,6 +22,7 @@ import store from "./redux/store";
 import Attendance from "./views/Attendance";
 import AlbumScreen from "./views/AlbumScreen";
 import Greet from "./views/Greet";
+import Lab from "./views/Lab";
 import {
   MD3LightTheme as DefaultTheme,
   PaperProvider,
@@ -63,7 +64,7 @@ export default function App() {
       <PaperProvider theme={{ ...theme}}>
         <NavigationContainer>
           <Stack.Navigator
-            initialRouteName="Login"
+            initialRouteName="Lab"
             screenOptions={{ headerShown: false,animationEnabled:false }}
           >
             <Stack.Screen name="Login" component={Login} />
@@ -97,6 +98,7 @@ export default function App() {
             />
             <Stack.Screen name="MainScreen" component={MainScreen} />
             <Stack.Screen name="Attendance" component={Attendance} />
+            <Stack.Screen name="Lab" component={Lab} />
           </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>
