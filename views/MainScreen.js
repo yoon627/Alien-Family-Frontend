@@ -1,6 +1,6 @@
 import React from "react";
-import { Dimensions, Image, StyleSheet, View } from "react-native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import {Image, View, StyleSheet, Dimensions, Platform} from "react-native";
+import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import AlbumScreen from "./AlbumScreen";
 import Home from "./Home";
 import CalendarScreen from "./CalendarScreen";
@@ -29,7 +29,7 @@ export default function MainScreen({ navigation }) {
           headerShown: false,
           tabBarIcon: () => (
             <Image
-              source={require("../assets/img/navbarIcon/home2.png")}
+              source={require('../assets/img/navbarIcon/home3.png')}
               style={styles.icon}
             />
           ),
@@ -44,7 +44,7 @@ export default function MainScreen({ navigation }) {
           headerShown: false,
           tabBarIcon: () => (
             <Image
-              source={require("../assets/img/navbarIcon/album2.png")}
+              source={require('../assets/img/navbarIcon/album3.png')}
               style={styles.icon}
             />
           ),
@@ -59,7 +59,7 @@ export default function MainScreen({ navigation }) {
           headerShown: false,
           tabBarIcon: () => (
             <Image
-              source={require("../assets/img/navbarIcon/chat2.png")}
+              source={require('../assets/img/navbarIcon/chat3.png')}
               style={styles.chat}
             />
           ),
@@ -74,7 +74,7 @@ export default function MainScreen({ navigation }) {
           headerShown: false,
           tabBarIcon: () => (
             <Image
-              source={require("../assets/img/navbarIcon/calendar2.png")}
+              source={require('../assets/img/navbarIcon/calendar3.png')}
               style={styles.icon}
             />
           ),
@@ -89,7 +89,7 @@ export default function MainScreen({ navigation }) {
           headerShown: false,
           tabBarIcon: () => (
             <Image
-              source={require("../assets/img/navbarIcon/alarm2.png")}
+              source={require('../assets/img/navbarIcon/alarm3.png')}
               style={styles.icon}
             />
           ),
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
   tabBar: {
-    backgroundColor: "#E0EBF2", // 탭 바의 배경색
-    height: SCREEN_HEIGHT * 0.1,
-  },
+    backgroundColor: "#8FB7D2", // 탭 바 색
+    height: Platform.OS === 'ios' ? SCREEN_HEIGHT * 0.11 : SCREEN_HEIGHT * 0.09,
+  }
 });
