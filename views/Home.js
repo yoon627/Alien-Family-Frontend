@@ -110,10 +110,10 @@ export default function Home({ navigation, fonts }) {
       notificationListener.current =
         Notifications.addNotificationReceivedListener((notification) => {
           setNotification(notification);
-          console.log(notification);
-          console.log(notification.request);
-          console.log(notification.request.content);
-          console.log(notification.request.content.data);
+          // console.log(notification);
+          // console.log(notification.request);
+          // console.log(notification.request.content);
+          // console.log(notification.request.content.data);
         });
 
       responseListener.current =

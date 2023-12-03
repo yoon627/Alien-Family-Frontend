@@ -1,177 +1,107 @@
-import { useState, useEffect, useRef } from "react";
-import { Text, View, Button, Platform } from "react-native";
-import * as Device from "expo-device";
-import * as Notifications from "expo-notifications";
-import Constants from "expo-constants";
+import { useState, useEffect, useRef } from 'react';
+import { Text, View, Button, Platform } from 'react-native';
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
 
-const FCM_SERVER_KEY =
-  "AAAAUCMBJiU:APA91bEs9fOJNe6l2ILHFI88jep5rw9wqR-qTWWbBrKxj7JQnKQ8ZAp4tJbn_yXcL2aP0ydygPIcT89XB6h38vhIozsJ5J61s7w2znBL9hPQG6a18sQcUFkMitr2pkvoCmmfslVQmk-u";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
   }),
 });
 
+
 // Can use this function below or use Expo's Push Notification Tool from: https://expo.dev/notifications
 async function sendPushNotification(devicePushToken) {
-  // const devicePushToken = await AsyncStorage.getItem(
-  //   "firebaseToken"
-  // );
-  await fetch("https://fcm.googleapis.com/fcm/send", {
-    method: "POST",
+  const message = {
+    to: devicePushToken,
+    sound: 'default',
+    title: 'Original Title',
+    body: 'And here is the body!',
+    data: { someData: 'goes here' },
+  };
+
+  await fetch('https://exp.host/--/api/v2/push/send', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
-      Authorization: `key=${FCM_SERVER_KEY}`,
+      Accept: 'application/json',
+      'Accept-encoding': 'gzip, deflate',
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      to: devicePushToken,
-      priority: "normal",
-      data: {
-        experienceId: "whddbs627/UFO-Front",
-        scopeKey: "whddbs627/UFO-Front",
-        title: "📧 You've got mail",
-        message: "Hello world! 🌐",
-      },
-    }),
-  })
-    .then((resp) => console.log("axios response: " + resp))
-    .catch((e) => console.log(e));
+    body: JSON.stringify(message),
+  });
 }
 
 async function registerForPushNotificationsAsync() {
   let token;
 
-  if (Platform.OS === "android") {
-    Notifications.setNotificationChannelAsync("default", {
-      name: "default",
+  if (Platform.OS === 'android') {
+    Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 250, 250, 250],
-      lightColor: "#FF231F7C",
+      lightColor: '#FF231F7C',
     });
   }
 
   if (Device.isDevice) {
-    const { status: existingStatus } =
-      await Notifications.getPermissionsAsync();
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
-    if (existingStatus !== "granted") {
+    if (existingStatus !== 'granted') {
       const { status } = await Notifications.requestPermissionsAsync();
       finalStatus = status;
     }
-    if (finalStatus !== "granted") {
-      alert("Failed to get push token for push notification!");
+    if (finalStatus !== 'granted') {
+      alert('Failed to get push token for push notification!');
       return;
     }
-    token = await Notifications.getDevicePushTokenAsync({
+    token = await Notifications.getExpoPushTokenAsync({
       projectId: Constants.expoConfig.extra.eas.projectId,
     });
-    console.log(token.data);
+    // console.log(token);
   } else {
-    alert("Must use physical device for Push Notifications");
+    alert('Must use physical device for Push Notifications');
   }
 
   return token.data;
 }
 
-export default function Feed() {
-  const [devicePushToken, setDevicePushToken] = useState("");
+export default function App() {
+  const [devicePushToken, setDevicePushToken] = useState('');
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
 
   useEffect(() => {
-    registerForPushNotificationsAsync().then((token) =>
-      setDevicePushToken(token)
-    );
+    registerForPushNotificationsAsync().then(token => setDevicePushToken(token));
 
-    notificationListener.current =
-      Notifications.addNotificationReceivedListener((notification) => {
-        setNotification(notification);
-        console.log(notification.request);
-        console.log(notification.request.content);
-        console.log(notification.request.content.title);
-        console.log(notification.request.content.body);
-        console.log(notification.request.content.data);
-        // async function fetchData() {
-        //   const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
-        //   const UserServerAccessToken = await AsyncStorage.getItem(
-        //     "UserServerAccessToken"
-        //   );
-        //   const familyId = await AsyncStorage.getItem("familyId");
-        //   await axios({
-        //     method: "GET",
-        //     url: SERVER_ADDRESS + "/familyTmi",
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      setNotification(notification);
+      console.log(notification.request);
+      console.log(notification.request.content);
+      console.log(notification.request.content.data);
+    });
 
-        //     headers: {
-        //       Authorization: "Bearer: " + UserServerAccessToken,
-        //     },
-        //   })
-        //     .then((resp) => {
-        //       const tmis = resp.data;
-        //       var mytmi = "";
-        //       for (let i = 0; i < tmis.length; i++) {
-        //         mytmi = mytmi + tmis[i].writer + ": " + tmis[i].content + "  ";
-        //       }
-        //       setTodayTMI(mytmi);
-        //     })
-        //     .catch((e) => console.log(e));
-        // }
-        // fetchData();
-      });
-
-    responseListener.current =
-      Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log("responseListener: " + response);
-      });
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+      // console.log(response);
+    });
 
     return () => {
-      Notifications.removeNotificationSubscription(
-        notificationListener.current
-      );
+      Notifications.removeNotificationSubscription(notificationListener.current);
       Notifications.removeNotificationSubscription(responseListener.current);
     };
   }, []);
 
   return (
-    <View
-      style={{ flex: 1, alignItems: "center", justifyContent: "space-around" }}
-    >
-      <Text>Your device push token: {devicePushToken}</Text>
-      <View style={{ alignItems: "center", justifyContent: "center" }}>
-        <Text>
-          Title: {notification && notification.request.content.title}{" "}
-        </Text>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'space-around' }}>
+      <Text>Your expo push token: {devicePushToken}</Text>
+      <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+        <Text>Title: {notification && notification.request.content.title} </Text>
         <Text>Body: {notification && notification.request.content.body}</Text>
-        <Text>
-          Message: {notification && notification.request.content.message}
-        </Text>
-        <Text>
-          stringify Data:{" "}
-          {notification && JSON.stringify(notification.request.content.data)}
-        </Text>
         <Text>Data: {notification && notification.request.content.data}</Text>
-        <Text>
-          stringify content:{" "}
-          {notification && JSON.stringify(notification.request.content)}
-        </Text>
-        <Text>content: {notification && notification.request.content}</Text>
-        <Text>
-          stringify song:{" "}
-          {notification && JSON.stringify(notification.request.content.song)}
-        </Text>
-        <Text>song: {notification && notification.request.content.song}</Text>
-        <Text>
-          message: {notification && notification.request.content.message}
-        </Text>
-        <Text>
-          stringify request: {notification && JSON.stringify(notification.request)}
-        </Text>
-        <Text>
-          request: {notification && notification.request}
-        </Text>
       </View>
       <Button
         title="Press to Send Notification"

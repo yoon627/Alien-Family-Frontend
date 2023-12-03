@@ -317,7 +317,7 @@ const ChooseCharacter = ({ navigation }) => {
                                 "plantInfo",
                                 JSON.stringify(plant)
                               );
-                              // navigation.navigate("MainDrawer");
+                              navigation.navigate("MainDrawer");
                             })
                             .catch((e) => console.log(e));
                         } else {
