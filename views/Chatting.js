@@ -90,7 +90,7 @@ const ChatRoom = () => {
 
         const interval = setInterval(() => {
           if (!client.connected) {
-            console.log("연결시도중");
+            // console.log("연결시도중");
             client.activate();
           }
         }, 1000); // 1초마다 연결 상태 체크

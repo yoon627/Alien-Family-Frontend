@@ -21,6 +21,14 @@ import axios from "axios";
 import * as Notifications from "expo-notifications";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
+
 const FCM_SERVER_KEY =
   "AAAAUCMBJiU:APA91bEs9fOJNe6l2ILHFI88jep5rw9wqR-qTWWbBrKxj7JQnKQ8ZAp4tJbn_yXcL2aP0ydygPIcT89XB6h38vhIozsJ5J61s7w2znBL9hPQG6a18sQcUFkMitr2pkvoCmmfslVQmk-u";
 
@@ -57,13 +65,14 @@ export default function Home({ navigation, fonts }) {
   };
   const movingObject = () => {
     const movingValue = useRef(new Animated.Value(0)).current;
-    var alienType = "";
+    const [alienType,setAlienType] = useState("BASIC");
     useEffect(() => {
       const fetchAlienType = async () => {
         try {
-          alienType = await AsyncStorage.getItem('alienType');
+          // alienType = await AsyncStorage.getItem("alienType");
+          setAlienType(await AsyncStorage.getItem("alienType"))
         } catch (error) {
-          console.error('Error fetching alienType from AsyncStorage:', error);
+          console.error("Error fetching alienType from AsyncStorage:", error);
         }
       };
       fetchAlienType();
@@ -97,17 +106,123 @@ export default function Home({ navigation, fonts }) {
       outputRange: [-1, 1],
     });
 
+    useEffect(() => {
+      notificationListener.current =
+        Notifications.addNotificationReceivedListener((notification) => {
+          setNotification(notification);
+          console.log(notification);
+          console.log(notification.request);
+          console.log(notification.request.content);
+          console.log(notification.request.content.data);
+        });
+
+      responseListener.current =
+        Notifications.addNotificationResponseReceivedListener((response) => {
+          console.log("responseListener: " + response);
+        });
+
+      return () => {
+        Notifications.removeNotificationSubscription(
+          notificationListener.current
+        );
+        Notifications.removeNotificationSubscription(responseListener.current);
+      };
+    }, []);
+
     return (
       <Animated.View style={{ transform: [{ translateX: interpolated }] }}>
         <TouchableOpacity onPress={() => navigation.navigate("Mini Games")}>
-          <Image
-            source={require(`../assets/img/character/BASIC.png`)}
-            style={{
-              width: SCREEN_WIDTH * 0.22,
-              height: SCREEN_HEIGHT * 0.2,
-              resizeMode: "contain",
-            }}
-          />
+          {alienType === "BASIC" ? (
+            <Image
+              source={require(`../assets/img/character/BASIC.png`)}
+              style={{
+                width: SCREEN_WIDTH * 0.22,
+                height: SCREEN_HEIGHT * 0.2,
+                resizeMode: "contain",
+              }}
+            />
+          ) : alienType === "GLASSES" ? (
+            <Image
+              source={require(`../assets/img/character/GLASSES.png`)}
+              style={{
+                width: SCREEN_WIDTH * 0.22,
+                height: SCREEN_HEIGHT * 0.2,
+                resizeMode: "contain",
+              }}
+            />
+          ) : alienType === "GIRL" ? (
+            <Image
+              source={require(`../assets/img/character/GIRL.png`)}
+              style={{
+                width: SCREEN_WIDTH * 0.22,
+                height: SCREEN_HEIGHT * 0.2,
+                resizeMode: "contain",
+              }}
+            />
+          ) : alienType === "BAND_AID" ? (
+            <Image
+              source={require(`../assets/img/character/BAND_AID.png`)}
+              style={{
+                width: SCREEN_WIDTH * 0.22,
+                height: SCREEN_HEIGHT * 0.2,
+                resizeMode: "contain",
+              }}
+            />
+          ) : alienType === "RABBIT" ? (
+            <Image
+              source={require(`../assets/img/character/RABBIT.png`)}
+              style={{
+                width: SCREEN_WIDTH * 0.22,
+                height: SCREEN_HEIGHT * 0.2,
+                resizeMode: "contain",
+              }}
+            />
+          ) : alienType === "HEADBAND" ? (
+            <Image
+              source={require(`../assets/img/character/HEADBAND.png`)}
+              style={{
+                width: SCREEN_WIDTH * 0.22,
+                height: SCREEN_HEIGHT * 0.2,
+                resizeMode: "contain",
+              }}
+            />
+          ) : alienType === "TOMATO" ? (
+            <Image
+              source={require(`../assets/img/character/TOMATO.png`)}
+              style={{
+                width: SCREEN_WIDTH * 0.22,
+                height: SCREEN_HEIGHT * 0.2,
+                resizeMode: "contain",
+              }}
+            />
+          ) : alienType === "CHRISTMAS_TREE" ? (
+            <Image
+              source={require(`../assets/img/character/CHRISTMAS_TREE.png`)}
+              style={{
+                width: SCREEN_WIDTH * 0.22,
+                height: SCREEN_HEIGHT * 0.2,
+                resizeMode: "contain",
+              }}
+            />
+          ) : alienType === "SANTA" ? (
+            <Image
+              source={require(`../assets/img/character/SANTA.png`)}
+              style={{
+                width: SCREEN_WIDTH * 0.22,
+                height: SCREEN_HEIGHT * 0.2,
+                resizeMode: "contain",
+              }}
+            />
+          ) : (
+            <Image
+              source={require(`../assets/img/character/PIRATE.png`)}
+              style={{
+                width: SCREEN_WIDTH * 0.22,
+                height: SCREEN_HEIGHT * 0.2,
+                resizeMode: "contain",
+              }}
+            />
+          )}
         </TouchableOpacity>
       </Animated.View>
     );
@@ -161,8 +276,7 @@ export default function Home({ navigation, fonts }) {
       });
 
     responseListener.current =
-      Notifications.addNotificationResponseReceivedListener((response) => {
-      });
+      Notifications.addNotificationResponseReceivedListener((response) => {});
 
     return () => {
       Notifications.removeNotificationSubscription(
@@ -269,8 +383,6 @@ export default function Home({ navigation, fonts }) {
                   speed={0.4}
                   marqueeOnStart
                   loop
-
-
                   delay={1000}
                 >
                   {todayTMI}나는 계속 배가 고프다 , 배가 고픈데 어쩌죠
@@ -369,13 +481,17 @@ export default function Home({ navigation, fonts }) {
                           setModalVisible(!modalVisible);
                         }}
                       >
-                        <Text style={{...styles.textStyle, color: "#fff"}}>작성</Text>
+                        <Text style={{ ...styles.textStyle, color: "#fff" }}>
+                          작성
+                        </Text>
                       </Pressable>
                       <Pressable
                         style={[styles.button, styles.buttonClose]}
                         onPress={() => setModalVisible(!modalVisible)}
                       >
-                        <Text style={{...styles.textStyle, color: "#727272"}}>취소</Text>
+                        <Text style={{ ...styles.textStyle, color: "#727272" }}>
+                          취소
+                        </Text>
                       </Pressable>
                     </View>
                   </View>
