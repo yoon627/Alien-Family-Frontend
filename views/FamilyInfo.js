@@ -1,8 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState, useRef, } from "react";
-import { View, Text, StyleSheet, Image, Animated, Dimensions, Easing, ImageBackground, } from "react-native";
+import { View, Text, StyleSheet, Image, Animated, Dimensions, Easing, ImageBackground, TouchableOpacity,  } from "react-native";
 
 import { useFocusEffect } from '@react-navigation/native';
+import AlienModal from "../components/AlienModal";
 
 
 const SCREEN_WIDTH = Dimensions.get('window').width ;
@@ -22,6 +23,21 @@ export default function FamilyInfo({ navigation }) {
   const animations = useRef([]);
   const FAMILY_MEMBER_CNT = useRef(0);
   const [isLoading, setIsLoading] = useState(true);
+
+  // 모달
+  const [selectedAlien, setSelectedAlien] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  
+  const handleImageClick = (alien) => {
+    setSelectedAlien(alien);
+    setIsModalVisible(true);
+  };
+
+  
+  const closeModal = () => {
+    setIsModalVisible(false);
+  };
 
   useEffect(() => {
     return () => {
@@ -125,7 +141,7 @@ export default function FamilyInfo({ navigation }) {
           useNativeDriver: false,
         }),
         Animated.timing(animation.translateY, {
-          toValue: animation.translateY._value <= 0 ? 1 : animation.translateY._value >= DIFF_HEIGHT - 5 ? DIFF_HEIGHT - 1 : animation.translateY._value,
+          toValue: animation.translateY._value <= 0 ? 1 : animation.translateY._value >= DIFF_HEIGHT - ALIEN_SIZE ? DIFF_HEIGHT - 1 : animation.translateY._value,
           duration: 0,
           useNativeDriver: false,
         }),
@@ -145,30 +161,28 @@ export default function FamilyInfo({ navigation }) {
         source={require("../assets/img/galaxyBg.jpg")}                
         imageStyle={{resizeMode: 'cover', height:  Dimensions.get('window').height , width: SCREEN_WIDTH }}
       >
-        {animations.current.map((animation, index) => (
-          <Animated.View key={index} style={[{transform: [
-                {translateX: animation.translateX },
-                {translateY: animation.translateY}]}
-          ]}>
-
-            {Object.keys(Family).map((alienKey, index) => (
-
+        {Object.keys(Family).map((alienKey, index) => (
+          <View key={index}>
+            <Animated.View style={[{transform: [
+              {translateX: animations.current[index]?.translateX || RANDOM_WIDTH},
+              {translateY: animations.current[index]?.translateY || RANDOM_HEIGHT}
+            ]}]}>
               <View style={styles.alien}>
-
-                <Text style={styles.nickname}>{Family[alienKey].nickname}</Text>
-                {/* createAt, modifiedAt, memberId, name, email, picture, role, nickname, familyRole, birthdate, roleKey */}
-                <Image style={styles.image} source={require("../assets/img/alien4.png")} />
-
+                <TouchableOpacity onPress={() => handleImageClick(Family[alienKey])}>
+                    <Text style={styles.nickname}>{Family[alienKey].nickname}</Text>
+                    <Image style={styles.image} source={require("../assets/img/alien4.png")} />
+                </TouchableOpacity>
               </View>
-            ))}
-          </Animated.View>
-        ))}
+            </Animated.View>
+          </View>
+      ))}
+        {/* 모달 */}
+        <AlienModal visible={isModalVisible} onClose={closeModal} alienInfo={selectedAlien}/>
       </ImageBackground>
     </View>
     
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
