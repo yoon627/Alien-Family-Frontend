@@ -61,7 +61,7 @@ const ChatRoom = () => {
   useEffect(() => {
     const connection = async () => {
       try {
-        const name = await AsyncStorage.getItem("MyName");
+        const name = await AsyncStorage.getItem("nickname");
         const token = await AsyncStorage.getItem("UserServerAccessToken");
         const familyId = await AsyncStorage.getItem("familyId");
         const chatroomId = await AsyncStorage.getItem("chatroomId");
