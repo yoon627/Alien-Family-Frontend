@@ -1,10 +1,13 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Alert,
-  Animated, Dimensions,
+  Animated,
+  Dimensions,
   Image,
-  ImageBackground, KeyboardAvoidingView,
-  Modal, Platform,
+  ImageBackground,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -16,12 +19,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import MarqueeText from "react-native-marquee";
 import axios from "axios";
 import * as Notifications from "expo-notifications";
-import {TouchableOpacity} from "react-native-gesture-handler";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const FCM_SERVER_KEY =
   "AAAAUCMBJiU:APA91bEs9fOJNe6l2ILHFI88jep5rw9wqR-qTWWbBrKxj7JQnKQ8ZAp4tJbn_yXcL2aP0ydygPIcT89XB6h38vhIozsJ5J61s7w2znBL9hPQG6a18sQcUFkMitr2pkvoCmmfslVQmk-u";
 
-const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get('window');
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const fontRatio = SCREEN_HEIGHT / 800;
 
 const Container = styled.View`
@@ -38,7 +41,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-export default function Home({ navigation,fonts }) {
+export default function Home({ navigation, fonts }) {
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
@@ -48,14 +51,23 @@ export default function Home({ navigation,fonts }) {
   const [todayTMI, setTodayTMI] = useState("");
   const [flower, setFlower] = useState(false);
   const [plant, setPlant] = useState(null);
-
   const openModal = () => {
-    setTMI('');   // 모달 열릴 때 tmi 초기화
+    setTMI(""); // 모달 열릴 때 tmi 초기화
     setModalVisible(true);
-  }
+  };
   const movingObject = () => {
     const movingValue = useRef(new Animated.Value(0)).current;
-
+    var alienType = "";
+    useEffect(() => {
+      const fetchAlienType = async () => {
+        try {
+          alienType = await AsyncStorage.getItem('alienType');
+        } catch (error) {
+          console.error('Error fetching alienType from AsyncStorage:', error);
+        }
+      };
+      fetchAlienType();
+    }, []);
     useEffect(() => {
       Animated.loop(
         Animated.sequence([
@@ -77,7 +89,7 @@ export default function Home({ navigation,fonts }) {
             duration: 5000,
             useNativeDriver: true,
           }),
-        ]),
+        ])
       ).start();
     }, []);
     const interpolated = movingValue.interpolate({
@@ -86,16 +98,14 @@ export default function Home({ navigation,fonts }) {
     });
 
     return (
-      <Animated.View style={{transform: [{translateX: interpolated}]}}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Mini Games")}
-        >
+      <Animated.View style={{ transform: [{ translateX: interpolated }] }}>
+        <TouchableOpacity onPress={() => navigation.navigate("Mini Games")}>
           <Image
-            source={require('../assets/img/homeAlien.png')}
+            source={require(`../assets/img/character/BASIC.png`)}
             style={{
               width: SCREEN_WIDTH * 0.22,
               height: SCREEN_HEIGHT * 0.2,
-              resizeMode: "contain"
+              resizeMode: "contain",
             }}
           />
         </TouchableOpacity>
@@ -106,7 +116,7 @@ export default function Home({ navigation,fonts }) {
   async function fetchData() {
     const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
     const UserServerAccessToken = await AsyncStorage.getItem(
-      "UserServerAccessToken",
+      "UserServerAccessToken"
     );
     const familyId = await AsyncStorage.getItem("familyId");
     await axios({
@@ -136,7 +146,7 @@ export default function Home({ navigation,fonts }) {
           level: 5,
           point: 100,
           name: "Sunflower",
-        }),
+        })
       );
     } catch (error) {
       console.error("Error getMsg:", error);
@@ -156,7 +166,7 @@ export default function Home({ navigation,fonts }) {
 
     return () => {
       Notifications.removeNotificationSubscription(
-        notificationListener.current,
+        notificationListener.current
       );
       Notifications.removeNotificationSubscription(responseListener.current);
     };
@@ -234,7 +244,7 @@ export default function Home({ navigation,fonts }) {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
     >
       <ImageBackground
@@ -244,11 +254,11 @@ export default function Home({ navigation,fonts }) {
         <Container>
           <View style={styles.tmiTool}>
             <Image
-              source={require('../assets/img/tmiTool.png')}
+              source={require("../assets/img/tmiTool.png")}
               style={{
                 width: SCREEN_WIDTH * 0.85,
                 height: SCREEN_HEIGHT * 0.5,
-                resizeMode: "contain"
+                resizeMode: "contain",
               }}
             />
             <View style={styles.tmiContainer}>
@@ -270,9 +280,7 @@ export default function Home({ navigation,fonts }) {
           </View>
 
           <View style={styles.tmiTextContainer}>
-            <TouchableOpacity
-              onPress={openModal}
-            >
+            <TouchableOpacity onPress={openModal}>
               <Text
                 style={{
                   color: "white",
@@ -285,13 +293,12 @@ export default function Home({ navigation,fonts }) {
             </TouchableOpacity>
           </View>
           <View
-            style={{flex: 1, justifyContent: "center", alignItems: "center"}}
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
           ></View>
           <View style={styles.alien}>{movingObject()}</View>
 
           <View style={styles.bottomContainer}>
-            <TouchableOpacity
-              onPress={increasePlantLevel}>
+            <TouchableOpacity onPress={increasePlantLevel}>
               {renderFlower()}
             </TouchableOpacity>
           </View>
@@ -331,12 +338,13 @@ export default function Home({ navigation,fonts }) {
                         textAlign: "center",
                       }}
                     />
-                    <View style={{flexDirection: "row", marginVertical: 10}}>
+                    <View style={{ flexDirection: "row", marginVertical: 10 }}>
                       <Pressable
                         style={[styles.button, styles.buttonWrite]}
                         onPress={async () => {
-                          const SERVER_ADDRESS =
-                            await AsyncStorage.getItem("ServerAddress");
+                          const SERVER_ADDRESS = await AsyncStorage.getItem(
+                            "ServerAddress"
+                          );
                           const UserServerAccessToken =
                             await AsyncStorage.getItem("UserServerAccessToken");
                           await axios({
@@ -375,16 +383,19 @@ export default function Home({ navigation,fonts }) {
               </Modal>
             </View>
 
-            <View style={{
-              left: "-25%",
-              bottom: 5,
-            }}>
+            <View
+              style={{
+                left: "-25%",
+                bottom: 5,
+              }}
+            >
               <TouchableOpacity
                 onPress={async () => {
-                  const SERVER_ADDRESS =
-                    await AsyncStorage.getItem("ServerAddress");
+                  const SERVER_ADDRESS = await AsyncStorage.getItem(
+                    "ServerAddress"
+                  );
                   const UserServerAccessToken = await AsyncStorage.getItem(
-                    "UserServerAccessToken",
+                    "UserServerAccessToken"
                   );
                   await axios({
                     method: "GET",
@@ -419,7 +430,7 @@ export default function Home({ navigation,fonts }) {
                 }}
               >
                 <Image
-                  source={require('../assets/img/wateringCan.png')}
+                  source={require("../assets/img/wateringCan.png")}
                   style={styles.wateringCan}
                 />
               </TouchableOpacity>
@@ -444,7 +455,7 @@ const styles = StyleSheet.create({
   },
   tmiTextContainer: {
     position: "absolute",
-    top: Platform.OS === 'ios' ? '6%' : '5%'
+    top: Platform.OS === "ios" ? "6%" : "5%",
   },
   tmiContainer: {
     bottom: "38%",
@@ -532,7 +543,7 @@ const styles = StyleSheet.create({
   plant: {
     width: SCREEN_WIDTH * 0.23,
     height: SCREEN_HEIGHT * 0.2,
-    resizeMode: "contain"
+    resizeMode: "contain",
   },
   alien: {
     position: "absolute",
