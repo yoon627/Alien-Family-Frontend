@@ -29,6 +29,7 @@
     "aws-sdk": "^2.1502.0",
     "axios": "^1.6.2",
     "base64-arraybuffer": "^1.0.2",
+    "dayjs": "^1.11.10",
     "expo": "~49.0.15",
     "expo-asset": "^8.10.1",
     "expo-av": "~13.4.1",
