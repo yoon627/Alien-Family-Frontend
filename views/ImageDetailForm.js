@@ -1,8 +1,6 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import {
   Image,
-  KeyboardAvoidingView,
-  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -35,10 +33,10 @@ const TAG_OPTION = [
   },
 ];
 
-export default function ImageDetailForm({ route, navigation }) {
+export default function ImageDetailForm({route, navigation}) {
   const [comment, setComment] = useState("");
 
-  const { photoInfo, albumList } = route.params;
+  const {photoInfo, albumList} = route.params;
   const index = albumList.findIndex(
     (item) => item.photoKey === photoInfo.photoKey,
   );
@@ -85,72 +83,65 @@ export default function ImageDetailForm({ route, navigation }) {
           const formattedDate = `${month}월 ${day}일 ${hours}:${minutes}`;
 
           return (
-            <KeyboardAvoidingView
-              key={index}
-              behavior={Platform.OS === "ios" ? "padding" : "height"}
-              style={styles.container}
-            >
-              <View key={index} style={styles.slide}>
-                <View style={{ alignItems: "flex-start", width: "90%" }}>
-                  <Text style={styles.writer}>{item.writer}</Text>
-                  <Image
-                    style={styles.uploadImage}
-                    source={{ uri: item.photoKey }}
-                    resizeMode="contain"
-                  />
-                  <Text style={styles.date}>
-                    {nowYear === year ? formattedDate : year + formattedDate}
-                  </Text>
-                </View>
+            <View key={index} style={styles.slide}>
+              <View style={{alignItems: "flex-start", width: "90%"}}>
+                <Text style={styles.writer}>{item.writer}</Text>
+                <Image
+                  style={styles.uploadImage}
+                  source={{uri: item.photoKey}}
+                  resizeMode="contain"
+                />
+                <Text style={styles.date}>
+                  {nowYear === year ? formattedDate : year + formattedDate}
+                </Text>
+              </View>
 
-                <View style={styles.tagButtonsContainer}>
-                  <View style={styles.tagButton}>
-                    {item.photoTags.map((tag, index) => (
-                      <Text key={index} style={{ fontWeight: "bold" }}>
-                        {tag}
-                      </Text>
-                    ))}
-                  </View>
-                </View>
-
-                <Text style={styles.description}>{item.description}</Text>
-
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <TextInput
-                    value={comment}
-                    style={styles.comment}
-                    onChangeText={setComment}
-                    multiline
-                    placeholder="댓글..."
-                  />
-                  <Pressable onPress={sendToComment}>
-                    <Text style={{ paddingLeft: 10, top: 10 }}>작성</Text>
-                  </Pressable>
-                </View>
-
-                <View style={{ flexDirection: "row", marginVertical: 10 }}>
-                  <Pressable style={[styles.button, styles.buttonWrite]}>
-                    <Text style={{ ...styles.textStyle, color: "#fff" }}>
-                      수정
+              <View style={styles.tagButtonsContainer}>
+                <View style={styles.tagButton}>
+                  {item.photoTags.map((tag, index) => (
+                    <Text key={index} style={{fontWeight: "bold"}}>
+                      {tag}
                     </Text>
-                  </Pressable>
-                  <Pressable style={[styles.button, styles.buttonClose]}>
-                    <Text style={{ ...styles.textStyle, color: "#727272" }}>
-                      삭제
-                    </Text>
-                  </Pressable>
-                  <Pressable onPress={()=>navigation.navigate("Home")}>
-                    <Text>앨범으로</Text>
-                  </Pressable>
+                  ))}
                 </View>
               </View>
-            </KeyboardAvoidingView>
+
+              <Text style={styles.description}>{item.description}</Text>
+
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <TextInput
+                  value={comment}
+                  style={styles.comment}
+                  onChangeText={setComment}
+                  placeholder="댓글..."
+                />
+                <Pressable onPress={sendToComment}>
+                  <Text style={{paddingLeft: 10, top: 10}}>작성</Text>
+                </Pressable>
+              </View>
+
+              <View style={{flexDirection: "row", marginVertical: 10}}>
+                <Pressable style={[styles.button, styles.buttonWrite]}>
+                  <Text style={{...styles.textStyle, color: "#fff"}}>
+                    수정
+                  </Text>
+                </Pressable>
+                <Pressable style={[styles.button, styles.buttonClose]}>
+                  <Text style={{...styles.textStyle, color: "#727272"}}>
+                    삭제
+                  </Text>
+                </Pressable>
+                <Pressable onPress={() => navigation.navigate("Home")}>
+                  <Text>앨범으로</Text>
+                </Pressable>
+              </View>
+            </View>
           );
         })}
       </Swiper>
