@@ -160,7 +160,7 @@ const Login = ({ navigation }) => {
           </View>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate("FirstRegister");
+              navigation.navigate("Greet");
             }}
             style={{
               borderRadius: 50,

@@ -285,7 +285,23 @@ export default function Home({ navigation, fonts }) {
       Notifications.removeNotificationSubscription(responseListener.current);
     };
   }, []);
+  useEffect(() => {
+    notificationListener.current =
+    Notifications.addNotificationReceivedListener((notification) => {
+      setNotification(notification);
+      fetchData();
+      });
 
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {});
+
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, [notification]);
   const [plantlevel, setPlantlevel] = useState(null);
 
   useEffect(() => {

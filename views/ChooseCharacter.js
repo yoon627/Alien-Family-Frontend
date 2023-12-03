@@ -7,6 +7,7 @@ import {
   Dimensions,
   Image,
   ImageBackground,
+  KeyboardAvoidingView,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -140,293 +141,302 @@ const ChooseCharacter = ({ navigation }) => {
   }, []);
   return (
     <ImageBackground style={styles.backgroundImage}>
-      <View style={styles.container}>
-        <View style={{ flex: 1, width: 0.85 * SCREEN_WIDTH }}>
-          <View style={{ flex: 0.03 }} />
-          <View style={{ flex: 0.6, paddingHorizontal: 10 }}>
-            <ScrollView
-              ref={scrollViewRef}
-              indicatorStyle="black"
-              pagingEnabled
-              horizontal
-              onScroll={ChooseType}
-              showsHorizontalScrollIndicator={false}
-              style={{
-                backgroundColor: "#DED1DF",
-                borderRadius: 20,
-                overflow: "hidden",
-              }}
-            >
-              {imageList.map((character, index) => (
-                <View key={index} style={{ flexDirection: "row" }}>
-                  <View style={{}} />
-                  <View
-                    key={index}
-                    style={{
-                      width: SCREEN_WIDTH * 0.85 - 20,
-                      height: SCREEN_HEIGHT * 0.8,
-                      justifyContent: "flex-end", // 아래 정렬
-                      alignItems: "flex-end", // 오른쪽 정렬
-                      overflow: "hidden",
-                    }}
-                  >
-                    <Image source={character} style={styles.character} />
+        <View style={styles.container}>
+          <View style={{ flex: 1, width: 0.85 * SCREEN_WIDTH }}>
+            <View style={{ flex: 0.03 }} />
+            <View style={{ flex: 0.6, paddingHorizontal: 10 }}>
+              <ScrollView
+                ref={scrollViewRef}
+                indicatorStyle="black"
+                pagingEnabled
+                horizontal
+                onScroll={ChooseType}
+                showsHorizontalScrollIndicator={false}
+                style={{
+                  backgroundColor: "#DED1DF",
+                  borderRadius: 20,
+                  overflow: "hidden",
+                }}
+              >
+                {imageList.map((character, index) => (
+                  <View key={index} style={{ flexDirection: "row" }}>
+                    <View style={{}} />
+                    <View
+                      key={index}
+                      style={{
+                        width: SCREEN_WIDTH * 0.85 - 20,
+                        height: SCREEN_HEIGHT * 0.8,
+                        justifyContent: "flex-end", // 아래 정렬
+                        alignItems: "flex-end", // 오른쪽 정렬
+                        overflow: "hidden",
+                      }}
+                    >
+                      <Image source={character} style={styles.character} />
+                    </View>
+                    <View style={{}} />
                   </View>
-                  <View style={{}} />
-                </View>
-              ))}
-            </ScrollView>
-          </View>
-          <View
-            style={{
-              flex: 0.1,
-              justifyContent: "center",
-              alignItems: "center",
-              marginTop: 20,
-            }}
-          >
+                ))}
+              </ScrollView>
+            </View>
             <View
               style={{
-                flexDirection: "row",
-                flexWrap: "wrap",
-                width: 260,
+                flex: 0.1,
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: 20,
               }}
             >
-              {iconList.map((characterIcon, index) => (
-                <ToggleButton
-                  key={index}
-                  icon={() => (
-                    <Image
-                      source={characterIcon}
-                      style={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: 20,
-                        resizeMode: "contain",
-                        borderColor:
-                          activeButton === index ? "#F213A6" : "#DED1DF",
-                        borderWidth: 3,
-                      }}
-                    />
-                  )}
-                  value={index}
-                  style={{ marginRight: index % 5 !== 4 ? 10 : 0 }}
-                  onPress={() => {
-                    handleToggleChange(index);
-                  }}
-                />
-              ))}
-            </View>
-          </View>
-          <View style={{ flex: 0.2 }}>
-            <View style={{ alignItems: "center", justifyContent: "center" }}>
               <View
                 style={{
-                  overflow: "hidden",
-                  borderRadius: 15,
-                  width: 175,
-                  marginTop: 20,
+                  flexDirection: "row",
+                  flexWrap: "wrap",
+                  width: 260,
                 }}
               >
-                <ImageBackground source={require("../assets/img/pinkBtn.png")}>
-                  <TouchableOpacity
-                    onPress={async () => {
-                      await AsyncStorage.setItem("alienType", alienType);
-                      const SERVER_ADDRESS = await AsyncStorage.getItem(
-                        "ServerAddress"
-                      );
-                      const nickname = await AsyncStorage.getItem("nickname");
-                      const birthday = await AsyncStorage.getItem("birthday");
-                      const familyRole = await AsyncStorage.getItem(
-                        "familyRole"
-                      );
-                      const familyCode = await AsyncStorage.getItem(
-                        "familyCode"
-                      );
-                      const kakaoEmail = await AsyncStorage.getItem(
-                        "kakaoEmail"
-                      );
-                      const plantName = await AsyncStorage.getItem("plantName");
-                      const ufoName = await AsyncStorage.getItem("ufoName");
-
-                      // console.log(nickname);
-                      // console.log(birthday);
-                      // console.log(familyRole);
-                      // console.log(devicePushToken);
-                      // console.log(alienType);
-                      // console.log(familyCode);
-                      // console.log(kakaoEmail);
-                      // console.log(plantName);
-                      // console.log(ufoName);
-                      if (ufoName && plantName) {
-                        await axios({
-                          method: "POST",
-                          url: SERVER_ADDRESS + "/api/register/newFamily",
-                          headers: {},
-                          data: {
-                            ufoName: ufoName,
-                            plantName: plantName,
-                            code: familyCode,
-                            firebaseToken: devicePushToken,
-                            email: kakaoEmail,
-                            nickname: nickname,
-                            birthdate: birthday,
-                            familyRole: familyRole,
-                            alienType: alienType,
-                          },
-                        })
-                          .then(async (resp) => {
-                            await AsyncStorage.setItem(
-                              "UserServerAccessToken",
-                              resp.data.data.tokenInfo.accessToken
-                            );
-                            const members =
-                              resp.data.data.familyResponseDto.members;
-                            const familyId =
-                              resp.data.data.familyResponseDto.familyId;
-                            const chatroomId =
-                              resp.data.data.familyResponseDto.chatroomId;
-                            const plant =
-                              resp.data.data.familyResponseDto.plant;
-                            var myDB = {};
-                            for (let i = 0; i < members.length; i++) {
-                              const newkey = members[i].memberId;
-                              myDB[newkey] = members[i];
-                            }
-                            await AsyncStorage.setItem(
-                              "myDB",
-                              JSON.stringify(myDB)
-                            );
-                            await AsyncStorage.setItem(
-                              "familyId",
-                              JSON.stringify(familyId)
-                            );
-                            await AsyncStorage.setItem(
-                              "chatroomId",
-                              JSON.stringify(chatroomId)
-                            );
-                            await AsyncStorage.setItem(
-                              "plantInfo",
-                              JSON.stringify(plant)
-                            );
-                            navigation.navigate("MainDrawer");
-                          })
-                          .catch((e) => console.log(e));
-                      } else {
-                        await axios({
-                          method: "POST",
-                          url: SERVER_ADDRESS + "/api/register/currentFamily",
-                          headers: {},
-                          data: {
-                            code: familyCode,
-                            firebaseToken: devicePushToken,
-                            email: kakaoEmail,
-                            nickname: nickname,
-                            birthdate: birthday,
-                            familyRole: familyRole,
-                            alienType: alienType,
-                          },
-                        })
-                          .then(async (resp) => {
-                            await AsyncStorage.setItem(
-                              "UserServerAccessToken",
-                              resp.data.data.tokenInfo.accessToken
-                            );
-                            const members =
-                              resp.data.data.familyResponseDto.members;
-                            const familyId =
-                              resp.data.data.familyResponseDto.familyId;
-                            const chatroomId =
-                              resp.data.data.familyResponseDto.chatroomId;
-                            const plant =
-                              resp.data.data.familyResponseDto.plant;
-                            var myDB = {};
-                            for (let i = 0; i < members.length; i++) {
-                              const newkey = members[i].memberId;
-                              myDB[newkey] = members[i];
-                            }
-                            await AsyncStorage.setItem(
-                              "myDB",
-                              JSON.stringify(myDB)
-                            );
-                            await AsyncStorage.setItem(
-                              "familyId",
-                              JSON.stringify(familyId)
-                            );
-                            await AsyncStorage.setItem(
-                              "chatroomId",
-                              JSON.stringify(chatroomId)
-                            );
-                            await AsyncStorage.setItem(
-                              "plantInfo",
-                              JSON.stringify(plant)
-                            );
-                            navigation.navigate("MainDrawer");
-                          })
-                          .catch((e) => console.log(e));
-                      }
+                {iconList.map((characterIcon, index) => (
+                  <ToggleButton
+                    key={index}
+                    icon={() => (
+                      <Image
+                        source={characterIcon}
+                        style={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: 20,
+                          resizeMode: "contain",
+                          borderColor:
+                            activeButton === index ? "#F213A6" : "#DED1DF",
+                          borderWidth: 3,
+                        }}
+                      />
+                    )}
+                    value={index}
+                    style={{ marginRight: index % 5 !== 4 ? 10 : 0 }}
+                    onPress={() => {
+                      handleToggleChange(index);
                     }}
-                    style={{
-                      borderRadius: 50,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      marginVertical: 5,
-                    }}
-                  >
-                    <Text
-                      style={{
-                        color: "white",
-                        marginHorizontal: 30,
-                        marginVertical: 10,
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      선택완료!
-                    </Text>
-                  </TouchableOpacity>
-                </ImageBackground>
+                  />
+                ))}
               </View>
             </View>
-            <View style={{ alignItems: "center", justifyContent: "center" }}>
-              <View
-                style={{
-                  overflow: "hidden",
-                  borderRadius: 15,
-                  width: 175,
-                  marginTop: 20,
-                }}
-              >
-                <ImageBackground source={require("../assets/img/grayBtn.png")}>
-                  <TouchableOpacity
-                    onPress={async () => {
-                      navigation.navigate("FirstRegister");
-                    }}
-                    style={{
-                      borderRadius: 50,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      marginVertical: 5,
-                    }}
+            <View style={{ flex: 0.2 }}>
+              <View style={{ alignItems: "center", justifyContent: "center" }}>
+                <View
+                  style={{
+                    overflow: "hidden",
+                    borderRadius: 15,
+                    width: 175,
+                    marginTop: 20,
+                  }}
+                >
+                  <ImageBackground
+                    source={require("../assets/img/pinkBtn.png")}
                   >
-                    <Text
+                    <TouchableOpacity
+                      onPress={async () => {
+                        await AsyncStorage.setItem("alienType", alienType);
+                        const SERVER_ADDRESS = await AsyncStorage.getItem(
+                          "ServerAddress"
+                        );
+                        const nickname = await AsyncStorage.getItem("nickname");
+                        const birthday = await AsyncStorage.getItem("birthday");
+                        const familyRole = await AsyncStorage.getItem(
+                          "familyRole"
+                        );
+                        const familyCode = await AsyncStorage.getItem(
+                          "familyCode"
+                        );
+                        const kakaoEmail = await AsyncStorage.getItem(
+                          "kakaoEmail"
+                        );
+                        const plantName = await AsyncStorage.getItem(
+                          "plantName"
+                        );
+                        const ufoName = await AsyncStorage.getItem("ufoName");
+
+                        // console.log(nickname);
+                        // console.log(birthday);
+                        // console.log(familyRole);
+                        // console.log(devicePushToken);
+                        // console.log(alienType);
+                        // console.log(familyCode);
+                        // console.log(kakaoEmail);
+                        // console.log(plantName);
+                        // console.log(ufoName);
+                        if (ufoName && plantName) {
+                          await axios({
+                            method: "POST",
+                            url: SERVER_ADDRESS + "/api/register/newFamily",
+                            headers: {},
+                            data: {
+                              ufoName: ufoName,
+                              plantName: plantName,
+                              code: familyCode,
+                              firebaseToken: devicePushToken,
+                              email: kakaoEmail,
+                              nickname: nickname,
+                              birthdate: birthday,
+                              familyRole: familyRole,
+                              alienType: alienType,
+                            },
+                          })
+                            .then(async (resp) => {
+                              await AsyncStorage.setItem(
+                                "UserServerAccessToken",
+                                resp.data.data.tokenInfo.accessToken
+                              );
+                              const members =
+                                resp.data.data.familyResponseDto.members;
+                              console.log(
+                                resp.data.data.familyResponseDto.members[0]
+                              );
+                              const familyId =
+                                resp.data.data.familyResponseDto.familyId;
+                              const chatroomId =
+                                resp.data.data.familyResponseDto.chatroomId;
+                              const plant =
+                                resp.data.data.familyResponseDto.plant;
+                              var myDB = {};
+                              for (let i = 0; i < members.length; i++) {
+                                const newkey = members[i].memberId;
+                                myDB[newkey] = members[i];
+                              }
+                              await AsyncStorage.setItem(
+                                "myDB",
+                                JSON.stringify(myDB)
+                              );
+                              await AsyncStorage.setItem(
+                                "familyId",
+                                JSON.stringify(familyId)
+                              );
+                              await AsyncStorage.setItem(
+                                "chatroomId",
+                                JSON.stringify(chatroomId)
+                              );
+                              await AsyncStorage.setItem(
+                                "plantInfo",
+                                JSON.stringify(plant)
+                              );
+                              // navigation.navigate("MainDrawer");
+                            })
+                            .catch((e) => console.log(e));
+                        } else {
+                          await axios({
+                            method: "POST",
+                            url: SERVER_ADDRESS + "/api/register/currentFamily",
+                            headers: {},
+                            data: {
+                              code: familyCode,
+                              firebaseToken: devicePushToken,
+                              email: kakaoEmail,
+                              nickname: nickname,
+                              birthdate: birthday,
+                              familyRole: familyRole,
+                              alienType: alienType,
+                            },
+                          })
+                            .then(async (resp) => {
+                              await AsyncStorage.setItem(
+                                "UserServerAccessToken",
+                                resp.data.data.tokenInfo.accessToken
+                              );
+                              const members =
+                                resp.data.data.familyResponseDto.members;
+                              const familyId =
+                                resp.data.data.familyResponseDto.familyId;
+                              const chatroomId =
+                                resp.data.data.familyResponseDto.chatroomId;
+                              const plant =
+                                resp.data.data.familyResponseDto.plant;
+                              var myDB = {};
+                              for (let i = 0; i < members.length; i++) {
+                                const newkey = members[i].memberId;
+                                myDB[newkey] = members[i];
+                              }
+                              await AsyncStorage.setItem(
+                                "myDB",
+                                JSON.stringify(myDB)
+                              );
+                              await AsyncStorage.setItem(
+                                "familyId",
+                                JSON.stringify(familyId)
+                              );
+                              await AsyncStorage.setItem(
+                                "chatroomId",
+                                JSON.stringify(chatroomId)
+                              );
+                              await AsyncStorage.setItem(
+                                "plantInfo",
+                                JSON.stringify(plant)
+                              );
+                              navigation.navigate("MainDrawer");
+                            })
+                            .catch((e) => console.log(e));
+                        }
+                      }}
                       style={{
-                        color: "white",
-                        marginHorizontal: 30,
-                        marginVertical: 10,
+                        borderRadius: 50,
                         alignItems: "center",
                         justifyContent: "center",
+                        marginVertical: 5,
                       }}
                     >
-                      이전 페이지로
-                    </Text>
-                  </TouchableOpacity>
-                </ImageBackground>
+                      <Text
+                        style={{
+                          color: "white",
+                          marginHorizontal: 30,
+                          marginVertical: 10,
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        선택완료!
+                      </Text>
+                    </TouchableOpacity>
+                  </ImageBackground>
+                </View>
+              </View>
+              <View style={{ alignItems: "center", justifyContent: "center" }}>
+                <View
+                  style={{
+                    overflow: "hidden",
+                    borderRadius: 15,
+                    width: 175,
+                    marginTop: 20,
+                  }}
+                >
+                  <ImageBackground
+                    source={require("../assets/img/grayBtn.png")}
+                  >
+                    <TouchableOpacity
+                      onPress={async () => {
+                        navigation.navigate("FirstRegister");
+                      }}
+                      style={{
+                        borderRadius: 50,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginVertical: 5,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: "white",
+                          marginHorizontal: 30,
+                          marginVertical: 10,
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        이전 페이지로
+                      </Text>
+                    </TouchableOpacity>
+                  </ImageBackground>
+                </View>
               </View>
             </View>
           </View>
         </View>
-      </View>
     </ImageBackground>
   );
 };

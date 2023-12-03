@@ -23,7 +23,7 @@ async function sendPushNotification(devicePushToken) {
   await fetch("https://fcm.googleapis.com/fcm/send", {
     method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       Authorization: `key=${FCM_SERVER_KEY}`,
     },
     body: JSON.stringify({
@@ -65,7 +65,7 @@ async function registerForPushNotificationsAsync() {
       alert("Failed to get push token for push notification!");
       return;
     }
-    token = await Notifications.getExpoPushTokenAsync({
+    token = await Notifications.getDevicePushTokenAsync({
       projectId: Constants.expoConfig.extra.eas.projectId,
     });
     console.log(token.data);
@@ -90,10 +90,36 @@ export default function Feed() {
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
         setNotification(notification);
-        console.log(notification);
         console.log(notification.request);
         console.log(notification.request.content);
+        console.log(notification.request.content.title);
+        console.log(notification.request.content.body);
         console.log(notification.request.content.data);
+        // async function fetchData() {
+        //   const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
+        //   const UserServerAccessToken = await AsyncStorage.getItem(
+        //     "UserServerAccessToken"
+        //   );
+        //   const familyId = await AsyncStorage.getItem("familyId");
+        //   await axios({
+        //     method: "GET",
+        //     url: SERVER_ADDRESS + "/familyTmi",
+
+        //     headers: {
+        //       Authorization: "Bearer: " + UserServerAccessToken,
+        //     },
+        //   })
+        //     .then((resp) => {
+        //       const tmis = resp.data;
+        //       var mytmi = "";
+        //       for (let i = 0; i < tmis.length; i++) {
+        //         mytmi = mytmi + tmis[i].writer + ": " + tmis[i].content + "  ";
+        //       }
+        //       setTodayTMI(mytmi);
+        //     })
+        //     .catch((e) => console.log(e));
+        // }
+        // fetchData();
       });
 
     responseListener.current =
@@ -120,8 +146,31 @@ export default function Feed() {
         </Text>
         <Text>Body: {notification && notification.request.content.body}</Text>
         <Text>
-          Data:{" "}
+          Message: {notification && notification.request.content.message}
+        </Text>
+        <Text>
+          stringify Data:{" "}
           {notification && JSON.stringify(notification.request.content.data)}
+        </Text>
+        <Text>Data: {notification && notification.request.content.data}</Text>
+        <Text>
+          stringify content:{" "}
+          {notification && JSON.stringify(notification.request.content)}
+        </Text>
+        <Text>content: {notification && notification.request.content}</Text>
+        <Text>
+          stringify song:{" "}
+          {notification && JSON.stringify(notification.request.content.song)}
+        </Text>
+        <Text>song: {notification && notification.request.content.song}</Text>
+        <Text>
+          message: {notification && notification.request.content.message}
+        </Text>
+        <Text>
+          stringify request: {notification && JSON.stringify(notification.request)}
+        </Text>
+        <Text>
+          request: {notification && notification.request}
         </Text>
       </View>
       <Button
