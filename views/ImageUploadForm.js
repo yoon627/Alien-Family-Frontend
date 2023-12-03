@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  Alert,
   Dimensions,
   Image,
   KeyboardAvoidingView,
@@ -119,7 +120,7 @@ export default function ImageUploadForm({ uri, onUploadComplete }) {
           },
         });
         console.log("👌🏻 이미지 업로드 성공");
-        // console.log(imageInfo);
+        Alert.alert("사진 올리기 성공!");
         onUploadComplete();
       } else {
         console.error("❌ 이미지 업로드 실패");
