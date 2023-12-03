@@ -67,7 +67,7 @@ export default function App() {
       <PaperProvider theme={{ ...theme }}>
         <NavigationContainer onReady={onLayoutRootView}>
           <Stack.Navigator
-            initialRouteName="Login"
+            initialRouteName="Home"
             screenOptions={{ headerShown: false, animationEnabled: false }}
           >
             <Stack.Screen name="Login" component={Login} />
