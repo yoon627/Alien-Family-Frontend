@@ -15,7 +15,6 @@ import RouletteScreen from "./views/RouletteScreen";
 import NewGame from "./views/NewGame";
 import MainScreen from "./views/MainScreen";
 import { Provider as StoreProvider } from "react-redux";
-
 import ChatRoom from "./views/Chatting";
 import ImageDetailForm from "./views/ImageDetailForm";
 import store from "./redux/store";

@@ -145,6 +145,9 @@ export default function ImageDetailForm({ route, navigation }) {
                       삭제
                     </Text>
                   </Pressable>
+                  <Pressable onPress={()=>navigation.navigate("Home")}>
+                    <Text>앨범으로</Text>
+                  </Pressable>
                 </View>
               </View>
             </KeyboardAvoidingView>
