@@ -5,7 +5,8 @@ import MainScreen from "./MainScreen";
 import Logout from "./Logout";
 import FamilyInfo from "./FamilyInfo";
 import ChoseCalendar from "./ChoseCalendar";
-import { PaperProvider } from "react-native-paper";
+import {PaperProvider} from "react-native-paper";
+import Settings from "./Settings";
 
 const Drawer = createDrawerNavigator();
 
@@ -16,17 +17,18 @@ export default function MainDrawer({ navigation }) {
     <PaperProvider>
       <Drawer.Navigator
         screenOptions={{
-          headerTintColor: "#D63CE3",
-          drawerActiveBackgroundColor: "#F0E1EE",
-          drawerActiveTintColor: "#434343",
-          drawerInactiveTintColor: "#CC95D0",
+          headerTintColor: '#C336CF',
+          drawerActiveBackgroundColor: '#F0E1EE',
+          drawerActiveTintColor: '#434343',
+          drawerInactiveTintColor: '#CC95D0',
           headerTitleStyle: {
             color: "#fff",
           },
           headerStyle: {
-            height: SCREEN_HEIGHT * 0.11,
-            backgroundColor: "#fff",
-          },
+
+            height: SCREEN_HEIGHT * 0.1,
+            backgroundColor: "#fff"
+          }
         }}
       >
         <Drawer.Screen

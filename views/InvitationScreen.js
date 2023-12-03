@@ -137,6 +137,8 @@ const InvitationScreen = ({ navigation }) => {
                       })
                         .then(async (resp) => {
                           if (resp.data.data) {
+                            await AsyncStorage.removeItem("ufoName");
+                            await AsyncStorage.removeItem("plantName");
                             await AsyncStorage.setItem(
                               "familyCode",
                               InvitationCode

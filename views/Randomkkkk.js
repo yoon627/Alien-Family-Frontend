@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { View, TouchableOpacity } from "react-native";
+import React, { useEffect, useState } from "react";
+import { TouchableOpacity, View } from "react-native";
 import { Stomp } from "@stomp/stompjs";
 
 const Randomkkkk = () => {
   const [stompClient, setStompClient] = useState(null);
 
   useEffect(() => {
-    const stomp = Stomp.client("ws://192.249.20.103:12345/ws");
+    const stomp = Stomp.client("ws://192.249.20.103:1998/ws");
     stomp.connect({}, () => setStompClient(stomp));
 
     return () => {
