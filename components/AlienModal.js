@@ -54,7 +54,7 @@ const AlienModal = ({ visible, onClose, alienInfo }) => {
             {alienInfo && (
               <>
               <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-                <Text style={{fontSize: 20, padding: 5, paddingHorizontal: 14}}>X</Text>
+                <Text style={{fontSize: 20, padding: 5, paddingHorizontal: 10}}>X</Text>
               </TouchableOpacity>
               <View style={styles.imageBox}>
                 <Image style={styles.image} source={alienImagePath[alienInfo.alien.type]} />
@@ -129,29 +129,24 @@ const styles = StyleSheet.create({
   },
   subtitleContainer:{
     flexDirection: 'row',
-    marginBottom: 4
+    marginBottom: 4,
   },
   subtitle:{
+    fontWeight: '700',
     fontSize: 19,
-    // color: '#FFF',
-    // backgroundColor: 'gray'
   },
 
   subtitleContent:{
     fontSize: 18,
-    // color: '#FFF',
     
   },
   closeBtn:{
     position: 'absolute',
-    top: 0,
-    right: 0,
+    top: '4%',
+    right: '5.5%',
     backgroundColor: '#FFF',
-    margin: 16,
-    marginRight: 20,
-    // marginTop: 25,
-    // marginRight: 10
-
+    // margin: 16,
+    // marginRight: 18,
   }
 })
 export default AlienModal;
