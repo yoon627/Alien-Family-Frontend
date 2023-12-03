@@ -29,7 +29,7 @@ import {
   MD3LightTheme as DefaultTheme,
   PaperProvider,
 } from "react-native-paper";
-import * as SplashScreen from "expo-splash-screen";
+// import * as SplashScreen from "expo-splash-screen";
 import Feed from "./views/Feed";
 import * as Notifications from "expo-notifications";
 
@@ -47,18 +47,18 @@ const theme = {
 const fontConfig = {
   android: { regular: { fontFamily: "" } },
 };
-SplashScreen.preventAutoHideAsync();
+// SplashScreen.preventAutoHideAsync();
 export default function App() {
   const [fontsLoaded] = useFonts({
     dnf: require("./assets/font/DNFBitBitv2.ttf"),
     sammul: require("./assets/font/DOSSaemmul.ttf"),
   });
 
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
+  // const onLayoutRootView = useCallback(async () => {
+  //   if (fontsLoaded) {
+  //     await SplashScreen.hideAsync();
+  //   }
+  // }, [fontsLoaded]);
 
   if (!fontsLoaded) {
     return null;
@@ -68,7 +68,7 @@ export default function App() {
     <StoreProvider store={store}>
       <PaperProvider theme={{ ...theme }}>
         <NavigationContainer
-          onReady={onLayoutRootView}
+          // onReady={onLayoutRootView}
           linking={{
             config: {
               // Configuration for linking
