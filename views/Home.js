@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import {
   Alert,
   Animated,
@@ -20,7 +20,7 @@ import MarqueeText from "react-native-marquee";
 import axios from "axios";
 import * as Notifications from "expo-notifications";
 import { TouchableOpacity } from "react-native-gesture-handler";
-
+import { useFocusEffect } from "@react-navigation/native";
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -227,7 +227,7 @@ export default function Home({ navigation, fonts }) {
         setTodayTMI(mytmi);
       })
       .catch((e) => console.log(e));
-  };
+  }
   useEffect(() => {
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
@@ -268,7 +268,7 @@ export default function Home({ navigation, fonts }) {
   useEffect(() => {
     fetchData();
     getplantInfo();
-    // renderFlower();
+    renderFlower();
   }, []);
 
   const renderFlower = () => {
@@ -320,6 +320,16 @@ export default function Home({ navigation, fonts }) {
         setPlantlevel(0);
     }
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+      // 여기에 다른 포커스를 받았을 때 실행하고 싶은 작업들을 추가할 수 있습니다.
+      return () => {
+        // 스크린이 포커스를 잃을 때 정리 작업을 수행할 수 있습니다.
+      };
+    }, []) // 두 번째 매개변수로 빈 배열을 전달하여 컴포넌트가 처음 마운트될 때만 실행되도록 합니다.
+  );
 
   return (
     <KeyboardAvoidingView
@@ -375,7 +385,7 @@ export default function Home({ navigation, fonts }) {
           <View style={styles.alien}>{movingObject()}</View>
           <View style={styles.bottomContainer}>
             {/* <TouchableOpacity onPress={()=>console.log("hello")}> */}
-              {renderFlower()}
+            {renderFlower()}
             {/* </TouchableOpacity> */}
           </View>
           <View

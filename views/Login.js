@@ -11,10 +11,10 @@ import axios from "axios";
 
 const saveServer = async () => {
   try {
-    await AsyncStorage.setItem("ServerAddress", "http://43.202.241.133:1998");
+    await AsyncStorage.setItem("ServerAddress", "http://43.202.241.133:1996");
     await AsyncStorage.setItem(
       "FcmServerKey",
-      "AAAAUCMBJiU:APA91bEs9fOJNe6l2ILHFI88jep5rw9wqR-qTWWbBrKxj7JQnKQ8ZAp4tJbn_yXcL2aP0ydygPIcT89XB6h38vhIozsJ5J61s7w2znBL9hPQG6a18sQcUFkMitr2pkvoCmmfslVQmk-u",
+      "AAAAUCMBJiU:APA91bEs9fOJNe6l2ILHFI88jep5rw9wqR-qTWWbBrKxj7JQnKQ8ZAp4tJbn_yXcL2aP0ydygPIcT89XB6h38vhIozsJ5J61s7w2znBL9hPQG6a18sQcUFkMitr2pkvoCmmfslVQmk-u"
     );
   } catch (error) {
     console.log(error);
@@ -109,19 +109,19 @@ const Login = ({ navigation }) => {
                         }
                         await AsyncStorage.setItem(
                           "myDB",
-                          JSON.stringify(myDB),
+                          JSON.stringify(myDB)
                         );
                         await AsyncStorage.setItem(
                           "familyId",
-                          JSON.stringify(familyId),
+                          JSON.stringify(familyId)
                         );
                         await AsyncStorage.setItem(
                           "chatroomId",
-                          JSON.stringify(chatroomId),
+                          JSON.stringify(chatroomId)
                         );
                         await AsyncStorage.setItem(
                           "plantInfo",
-                          JSON.stringify(plant),
+                          JSON.stringify(plant)
                         );
                         await AsyncStorage.setItem(
                           "UserServerAccessToken",
