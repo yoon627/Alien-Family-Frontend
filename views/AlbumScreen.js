@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, {Fragment, useEffect, useState} from "react";
 import {
   ActionSheetIOS,
   Dimensions,
@@ -15,6 +15,7 @@ import UploadModeModal from "../components/UploadModeModal";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ImageUploadForm from "./ImageUploadForm";
+import ExpoFastImage from "expo-fast-image";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -41,7 +42,7 @@ const TAG_OPTION = [
   },
 ];
 
-export default function AlbumScreen({ navigation }) {
+export default function AlbumScreen({navigation}) {
   // 카메라 권한 요청을 위한 훅
   const [cameraStatus, cameraRequestPermission] =
     ImagePicker.useCameraPermissions();
@@ -53,12 +54,11 @@ export default function AlbumScreen({ navigation }) {
   // 안드로이드를 위한 모달 visible 상태값
   const [modalVisible, setModalVisible] = useState(false);
   // 앨범에 보여줄 이미지 목록 (s3에서 불러온 이미지들)
-  const [imageData, setImageData] = useState([]);
+  const [albumList, setAlbumList] = useState([]);
   // 이미지 올리는 form
   const [showUploadForm, setShowUploadForm] = useState(false);
   // 선택한 태그
   const [selectedTags, setSelectedTags] = useState([]);
-  const [albumList, setAlbumList] = useState([]);
 
   const handleUploadComplete = () => {
     setShowUploadForm(false);
@@ -81,7 +81,6 @@ export default function AlbumScreen({ navigation }) {
 
         const data = await response.json();
         // 받아온 이미지 데이터 상태에 저장
-        setImageData(data.data);
         setAlbumList(data.data);
         // console.log("받은 데이터!!!!!!!!!", data.data)
         // console.log("👉🏻앨범 이미지 리스트: ", data.data.map(item => item.photoKey));
@@ -146,7 +145,6 @@ export default function AlbumScreen({ navigation }) {
           setChosenImage(chosenImage);
           // console.log("🌄 저장한 이미지 -> ", chosenImage);
           setShowUploadForm(true);
-          // ImageUploadForm(chosenImage.uri); // 이미지 선택 후 폼 작성 + 서버로 업로드
         } else {
           console.log("No assets found!");
         }
@@ -179,7 +177,6 @@ export default function AlbumScreen({ navigation }) {
           setChosenImage(chosenImage);
           // console.log("🌄 저장한 이미지 -> ", chosenImage);
           setShowUploadForm(true);
-          // ImageUploadForm({uri}); // 이미지 선택 후 폼 작성 + 서버로 업로드
         } else {
           console.log("No assets found!");
         }
@@ -203,12 +200,12 @@ export default function AlbumScreen({ navigation }) {
 
   const filterImages = () => {
     // console.log("선택한 태그:", selectedTags);
-
     if (selectedTags.length === 0) {
-      return imageData;
+      // console.log("@@@@@@@ 정렬된 데이따", albumList.sort((a, b) => b.photoId - a.photoId));
+      return albumList.sort((a, b) => b.photoId - a.photoId);
     }
 
-    const filteredImages = imageData.filter((item) => {
+    const filteredImages = albumList.filter((item) => {
       const hasMatchingTag = item.photoTags.some((tag) =>
         selectedTags.includes(tag),
       );
@@ -216,7 +213,11 @@ export default function AlbumScreen({ navigation }) {
       return hasMatchingTag;
     });
 
-    return filteredImages;
+    // 내림차순 정렬
+    const sortedImages = filteredImages.sort((a, b) => b.photoId - a.photoId);
+    // console.log("@@@@@@@ 정렬된 데이따", sortedImages);
+
+    return sortedImages;
   };
 
   useEffect(() => {
@@ -234,7 +235,7 @@ export default function AlbumScreen({ navigation }) {
                 style={[
                   styles.tagItem,
                   selectedTags.includes(tag.id) && styles.selectedTagItem,
-                  index !== TAG_OPTION.length - 1 && { marginRight: 7 },
+                  index !== TAG_OPTION.length - 1 && {marginRight: 7},
                 ]}
                 onPress={() => toggleTagSelection(tag.id)}
               >
@@ -252,10 +253,11 @@ export default function AlbumScreen({ navigation }) {
             ))}
           </View>
           <FlatList
+            style={styles.album}
             numColumns={4}
             data={filterImages()}
             keyExtractor={(item) => item.photoId.toString()}
-            renderItem={({ item }) => (
+            renderItem={({item}) => (
               <View style={styles.imageContainer}>
                 <TouchableOpacity
                   onPress={() =>
@@ -272,14 +274,16 @@ export default function AlbumScreen({ navigation }) {
                     })
                   }
                 >
-                  <Image
-                    source={{ uri: item.photoKey }}
+                  <ExpoFastImage
+                    uri={item.photoKey}
+                    cacheKey={item.photoId.toString()}
                     style={styles.image}
                     resizeMode="cover"
                   />
                 </TouchableOpacity>
               </View>
             )}
+            contentContainerStyle={styles.flatListContentContainer}
           />
           <Pressable style={styles.imagePlusContainer} onPress={modalOpen}>
             <Image
@@ -316,7 +320,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   image: {
-    resizeMode: "contain",
     width: SCREEN_WIDTH / 4 - 7, // 이미지의 가로 크기 (한 행에 4개씩 배치하고 간격 조절)
     height: SCREEN_WIDTH / 4 - 7, // 이미지의 세로 크기
   },
@@ -347,4 +350,11 @@ const styles = StyleSheet.create({
     borderColor: "#E0EBF2",
     backgroundColor: "#E0EBF2",
   },
+  flatListContentContainer: {
+    paddingLeft: 5,
+    paddingRight: 5,
+    justifyContent: 'flex-start', // 세로 정렬을 상단으로 설정
+    alignItems: 'flex-start', // 가로 정렬을 좌측으로 설정
+  },
+  album: {}
 });
