@@ -71,7 +71,7 @@ export default function AlbumScreen({navigation}) {
         "UserServerAccessToken",
       );
       try {
-        const response = await fetch(`http://43.202.241.133:1998/photo/list`, {
+        const response = await fetch(`http://43.202.241.133:1998/photo`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
