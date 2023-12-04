@@ -17,7 +17,19 @@ const RANDOM_HEIGHT = Math.random() * (DIFF_HEIGHT);
 
 
 export default function FamilyInfo({ navigation }) {
-
+  
+  const alienImagePath = {
+    BASIC: require(`../assets/img/character/BASIC.png`),
+    GLASSES: require(`../assets/img/character/GLASSES.png`),
+    GIRL: require(`../assets/img/character/GIRL.png`),
+    BAND_AID: require(`../assets/img/character/BAND_AID.png`),
+    RABBIT: require(`../assets/img/character/RABBIT.png`),
+    HEADBAND: require(`../assets/img/character/HEADBAND.png`),
+    TOMATO: require(`../assets/img/character/TOMATO.png`),
+    CHRISTMAS_TREE: require(`../assets/img/character/CHRISTMAS_TREE.png`),
+    SANTA : require(`../assets/img/character/SANTA.png`),
+    PIRATE: require(`../assets/img/character/PIRATE.png`),
+  }
   const [Family, setFamily] = useState({});
   const isUnmountedRef = useRef(false);
   const animations = useRef([]);
@@ -54,7 +66,6 @@ export default function FamilyInfo({ navigation }) {
       };
     }, [])
   );
-  
 
   // 가족정보
   useEffect(() => {
@@ -136,12 +147,12 @@ export default function FamilyInfo({ navigation }) {
     if (!isUnmountedRef.current) {
       Animated.parallel([
         Animated.timing(animation.translateX, {
-          toValue: animation.translateX._value <= 0 ? 1 : animation.translateX._value >= DIFF_WIDTH - 5 ? DIFF_WIDTH - 1 : animation.translateX._value,
+          toValue: animation.translateX._value <= 0 ? 1 : animation.translateX._value >= DIFF_WIDTH ? DIFF_WIDTH - 1 : animation.translateX._value,
           duration: 0, 
           useNativeDriver: false,
         }),
         Animated.timing(animation.translateY, {
-          toValue: animation.translateY._value <= 0 ? 1 : animation.translateY._value >= DIFF_HEIGHT - ALIEN_SIZE ? DIFF_HEIGHT - 1 : animation.translateY._value,
+          toValue: animation.translateY._value <= 0 ? 1 : animation.translateY._value >= DIFF_HEIGHT ? DIFF_HEIGHT - 1 : animation.translateY._value,
           duration: 0,
           useNativeDriver: false,
         }),
@@ -161,16 +172,16 @@ export default function FamilyInfo({ navigation }) {
         source={require("../assets/img/galaxyBg.jpg")}                
         imageStyle={{resizeMode: 'cover', height:  Dimensions.get('window').height , width: SCREEN_WIDTH }}
       >
-        {Object.keys(Family).map((alienKey, index) => (
+        {Object.keys(Family).map((memberId, index) => (
           <View key={index}>
             <Animated.View style={[{transform: [
               {translateX: animations.current[index]?.translateX || RANDOM_WIDTH},
               {translateY: animations.current[index]?.translateY || RANDOM_HEIGHT}
             ]}]}>
               <View style={styles.alien}>
-                <TouchableOpacity onPress={() => handleImageClick(Family[alienKey])}>
-                    <Text style={styles.nickname}>{Family[alienKey].nickname}</Text>
-                    <Image style={styles.image} source={require("../assets/img/alien4.png")} />
+                <TouchableOpacity onPress={() => handleImageClick(Family[memberId])}>
+                    <Text style={styles.nickname}>{Family[memberId].nickname}</Text>
+                    <Image style={styles.image} source={alienImagePath[Family[memberId].alien.type]} />
                 </TouchableOpacity>
               </View>
             </Animated.View>
