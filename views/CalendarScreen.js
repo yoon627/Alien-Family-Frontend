@@ -24,6 +24,7 @@ import {
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
 import {LocaleConfig} from "react-native-calendars/src/index";
+
 LocaleConfig.locales["ko"] = {
   monthNames: [
     "1월",
@@ -100,8 +101,8 @@ export default function CalendarScreen({navigation}) {
     setLocaleSet(true);
     setStartAt(new Date());
     setEndAt(new Date());
-    console.log("78778678678987",startAt.getHours());
-    console.log("end",endAt);
+    // console.log("78778678678987", startAt.getHours());
+    // console.log("end", endAt);
   }, []);
 
   useEffect(() => {
@@ -217,7 +218,7 @@ export default function CalendarScreen({navigation}) {
   const checkYear = (date, compareDate) => {
     const sameYear = dayjs(date).year() === dayjs(compareDate).year();
     return dayjs(date).format(
-      sameYear ? "MM월 D일 (dd)" : "YY년 MM월 D일 (dd)",
+      sameYear ? "M월 D일 (dd)" : "YY년 M월 D일 (dd)",
     );
   };
 
@@ -314,7 +315,7 @@ export default function CalendarScreen({navigation}) {
         throw new Error("HTTP error! status: " + response.status);
       }
 
-      console.log("페이로드",payload);
+      // console.log("페이로드", payload);
 
       const data = await response.json(); // 응답을 JSON으로 변환
       const newEvent = {
@@ -344,7 +345,7 @@ export default function CalendarScreen({navigation}) {
   const openEditModal = (event) => {
     setEditingEvent({...event});
     setStartAt(event.startDate);
-    console.log("스따뚜", startAt);
+    // console.log("스따뚜", startAt);
     setEndAt(event.endDate);
 
     setModalVisible(true);
@@ -398,6 +399,7 @@ export default function CalendarScreen({navigation}) {
     const newEvent = {
       ...editingEvent,
       title: editingEvent.title,
+      memo: editingEvent.memo,
       startDate: startAt,
       endDate: endAt,
     };
@@ -563,7 +565,7 @@ export default function CalendarScreen({navigation}) {
   };
 
   return (
-    <View style={{backgroundColor: "white"}}>
+    <View style={{backgroundColor: "white", flex: 1,}}>
       <Calendar
         onDayPress={onDayPress}
         markedDates={getMarkedDates()}
@@ -583,8 +585,8 @@ export default function CalendarScreen({navigation}) {
         >
           {localeSet
             ? selected
-              ? dayjs(selected).format("YYYY년 MM월 D일 (dd)")
-              : dayjs().format("YYYY년 MM월 D일 (dd)")
+              ? dayjs(selected).format("YYYY년 M월 D일 (dd)")
+              : dayjs().format("YYYY년 M월 D일 (dd)")
             : null}
         </Text>
         <TouchableOpacity
@@ -650,6 +652,14 @@ export default function CalendarScreen({navigation}) {
           <View style={{alignItems: "center"}}>
             <View style={styles.separator}/>
           </View>
+
+          <Pressable
+            style={{position: "absolute", right: 0, marginTop: 20,}}
+            onPress={() => setModalVisible(false)}
+          >
+            <Ionicons name="close" size={24} color="black" />
+          </Pressable>
+
           <TextInput
             style={styles.title}
             value={editingEvent?.title}
@@ -669,8 +679,8 @@ export default function CalendarScreen({navigation}) {
               onPress={() => setShowEndDatePicker(true)}>
               <Text style={styles.dateText}>{checkYear(endAt, startAt)}</Text>
             </Pressable>
-
           </View>
+
           <View>
             {showStartDatePicker && (
               <DateTimePicker
@@ -690,18 +700,38 @@ export default function CalendarScreen({navigation}) {
             )}
           </View>
 
-          <Button title="수정하기" onPress={handleEditEvent}/>
-          <Button
-            title="Delete Event"
-            onPress={() => deleteEvent(editingEvent.id)}
-            color="red"
-          />
-          <Button
-            title="취소"
-            onPress={() => setModalVisible(false)}
-            color="red"
+          <View style={styles.memo}>
+            <MaterialCommunityIcons
+              name="note-text-outline"
+              size={24}
+              color="gray"
+            />
+            <TextInput
+              value={editingEvent?.memo}
+              onChangeText={(text) => {
+                if (text.length <= 20) {
+                  setEditingEvent({...editingEvent, memo: text});
+                }
+              }}
+              placeholder="메모"
+              style={styles.memoText}
+            />
+          </View>
+
+        </View>
+
+        <View style={styles.check}>
+          <Pressable onPress={() => deleteEvent(editingEvent.id)}>
+            <Ionicons style={{paddingRight: 20}} name="ios-trash-outline" size={30} color="gray"/>
+          </Pressable>
+          <Octicons
+            name="check-circle-fill"
+            size={56}
+            color="black"
+            onPress={handleEditEvent}
           />
         </View>
+
       </Modal>
 
       <Modal
