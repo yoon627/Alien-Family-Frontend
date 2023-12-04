@@ -80,7 +80,7 @@ export default function Attendance({ navigation }) {
       },
     })
       .then((resp) => {
-        // console.log(resp.data.data)
+        console.log(resp.data.data)
         const tmpJson = {};
         const tmptmis = resp.data.data;
         for (let i = 0; i < week.length; i++) {
@@ -91,7 +91,7 @@ export default function Attendance({ navigation }) {
               arr.push(tmp[j].member.nickname + " : " + tmp[j].content);
             }
           }
-          // console.log(arr)
+          console.log(arr)
           tmpJson[week[i]] = arr;
         }
         setTmiJson(tmpJson);
@@ -102,11 +102,11 @@ export default function Attendance({ navigation }) {
   useEffect(() => {
     fetchData();
   }, []);
-  // const test = { a: "b" };
   return (
-    
     <View style={styles.container}>
+      <View style={{alignItems:"center",justifyContent:"center"}}>
       <Text style={styles.main_title}>Attendance</Text>
+      </View>
       <ScrollView>
         {week.map((day) => (
           <View key={day} style={styles.attendence_container}>
@@ -158,8 +158,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontSize : 60,
     padding:10,
-    backgroundColor: 'white',
-    alignSelf: 'flex-mid',
+    // backgroundColor: 'white',
     width:'100%',
     textAlign:'center',
     shadowColor: "#000",

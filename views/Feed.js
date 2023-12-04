@@ -15,9 +15,9 @@ Notifications.setNotificationHandler({
 
 
 // Can use this function below or use Expo's Push Notification Tool from: https://expo.dev/notifications
-async function sendPushNotification(devicePushToken) {
+async function sendPushNotification(expoPushToken) {
   const message = {
-    to: devicePushToken,
+    to: expoPushToken,
     sound: 'default',
     title: 'Original Title',
     body: 'And here is the body!',
@@ -58,10 +58,10 @@ async function registerForPushNotificationsAsync() {
       alert('Failed to get push token for push notification!');
       return;
     }
-    token = await Notifications.getDevicePushTokenAsync({
+    token = await Notifications.getExpoPushTokenAsync({
       projectId: Constants.expoConfig.extra.eas.projectId,
     });
-    // console.log(token);
+    console.log(token.data);
   } else {
     alert('Must use physical device for Push Notifications');
   }
@@ -70,13 +70,13 @@ async function registerForPushNotificationsAsync() {
 }
 
 export default function App() {
-  const [devicePushToken, setDevicePushToken] = useState('');
+  const [expoPushToken, setExpoPushToken] = useState('');
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
 
   useEffect(() => {
-    registerForPushNotificationsAsync().then(token => setDevicePushToken(token));
+    registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
 
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
       setNotification(notification);
@@ -97,7 +97,7 @@ export default function App() {
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'space-around' }}>
-      <Text>Your device push token: {devicePushToken}</Text>
+      <Text>Your expo push token: {expoPushToken}</Text>
       <View style={{ alignItems: 'center', justifyContent: 'center' }}>
         <Text>Title: {notification && notification.request.content.title} </Text>
         <Text>Body: {notification && notification.request.content.body}</Text>
@@ -106,7 +106,7 @@ export default function App() {
       <Button
         title="Press to Send Notification"
         onPress={async () => {
-          await sendPushNotification(devicePushToken);
+          await sendPushNotification(expoPushToken);
         }}
       />
     </View>
