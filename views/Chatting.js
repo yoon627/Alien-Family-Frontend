@@ -47,24 +47,6 @@ const ChatRoom = () => {
   const myIP = "43.202.241.133";
   const ICONONON = imageList.find((item) => item.name === "SANTA");
 
-  function getAlienTypeByNickname(data, nickname) {
-    for (const key in data) {
-      if (data[key].nickname === nickname) {
-        return data[key].alien.type;
-      }
-    }
-    return null; // nickname에 해당하는 사용자가 없는 경우
-  }
-
-  const data = JSON.parse(familyInfo);
-
-  function findImageByName(sender) {
-    const alienName = getAlienTypeByNickname(data, sender);
-    return imageList.find((item) => item.name === alienName).image;
-  }
-
-  console.log("해당 프사", findImageByName("asd"));
-
   useEffect(() => {
     const getData = async () => {
       try {

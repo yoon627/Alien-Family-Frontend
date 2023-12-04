@@ -61,7 +61,6 @@ const Sadari = ({ cnt, name, familyInfo }) => {
   }
 
   const data = familyInfo;
-  console.log("데이탁", data);
 
   function findImageByName(sender) {
     const alienName = getAlienTypeByNickname(data, sender);

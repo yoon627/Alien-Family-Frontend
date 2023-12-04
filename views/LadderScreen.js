@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
 import {
+  Alert,
   Dimensions,
   StyleSheet,
   Text,
@@ -18,6 +19,7 @@ function LadderScreen() {
   const [showSadari, setShowSadari] = useState(false);
   const [name, setname] = useState([]);
   const [myfam, setMyfam] = useState(null);
+  const [selectedNames, setSelectedNames] = useState(""); // 선택된 이름 상태
   const toggleSadari = () => {
     setShowSadari(!showSadari);
   };
@@ -38,6 +40,17 @@ function LadderScreen() {
     fetchData();
   }, []);
 
+  const toggleName = (n) => {
+    if (selectedNames.includes(n)) {
+      setSelectedNames(selectedNames.filter((name) => name !== n));
+    } else {
+      if (selectedNames.length >= 10) {
+        Alert.alert("최대 10개까지만 선택 가능합니다.");
+        return;
+      }
+      setSelectedNames([...selectedNames, n]);
+    }
+  };
   return (
     <View
       style={{
@@ -59,12 +72,36 @@ function LadderScreen() {
         </TouchableOpacity>
       </View>
       {!showSadari && (
-        <TouchableOpacity style={styles.button} onPress={toggleSadari}>
-          <Text>사다리 보기/숨기기</Text>
+        <TouchableOpacity style={{ top: "10%" }} onPress={toggleSadari}>
+          <Text>참여할 사람을 선택하고 눌러주세요 !!!</Text>
         </TouchableOpacity>
       )}
 
-      {showSadari && <Sadari cnt={cnt} name={name} familyInfo={myfam} />}
+      {/* 이름 목록 */}
+      {!showSadari && (
+        <View style={styles.nameListContainer}>
+          {name.map((n, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[
+                styles.nameItem,
+                selectedNames.includes(n) ? styles.selectedItem : null,
+              ]}
+              onPress={() => toggleName(n)}
+            >
+              <Text>{n}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+
+      {showSadari && (
+        <Sadari
+          cnt={selectedNames.length}
+          name={selectedNames}
+          familyInfo={myfam}
+        />
+      )}
     </View>
   );
 }
@@ -88,6 +125,23 @@ const styles = StyleSheet.create({
     bottom: 100, // 화면의 바닥에 위치
     width: "100%", // 너비를 화면 전체로 설정
     alignItems: "center",
+  },
+  nameItem: {
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#cd0beb",
+    margin: 5,
+    borderRadius: 5,
+  },
+  selectedItem: {
+    backgroundColor: "#cd0beb",
+  },
+  nameListContainer: {
+    flexDirection: "row", // 이름 목록을 가로 방향으로 나열
+    flexWrap: "wrap", // 내용이 넘치면 다음 줄로 넘어가도록 설정
+    alignItems: "center",
+    justifyContent: "center",
+    top: "25%",
   },
 });
 
