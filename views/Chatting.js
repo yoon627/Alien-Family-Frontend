@@ -20,16 +20,19 @@ Object.assign("global", {
 });
 
 const imageList = [
-  require("../assets/img/character/BASIC.png"),
-  require("../assets/img/character/GLASSES.png"),
-  require("../assets/img/character/GIRL.png"),
-  require("../assets/img/character/BAND_AID.png"),
-  require("../assets/img/character/RABBIT.png"),
-  require("../assets/img/character/HEADBAND.png"),
-  require("../assets/img/character/TOMATO.png"),
-  require("../assets/img/character/CHRISTMAS_TREE.png"),
-  require("../assets/img/character/SANTA.png"),
-  require("../assets/img/character/PIRATE.png"),
+  { name: "BASIC", image: require("../assets/img/character/BASIC.png") },
+  { name: "GLASSES", image: require("../assets/img/character/GLASSES.png") },
+  { name: "GIRL", image: require("../assets/img/character/GIRL.png") },
+  { name: "BAND_AID", image: require("../assets/img/character/BAND_AID.png") },
+  { name: "RABBIT", image: require("../assets/img/character/RABBIT.png") },
+  { name: "HEADBAND", image: require("../assets/img/character/HEADBAND.png") },
+  { name: "TOMATO", image: require("../assets/img/character/TOMATO.png") },
+  {
+    name: "CHRISTMAS_TREE",
+    image: require("../assets/img/character/CHRISTMAS_TREE.png"),
+  },
+  { name: "SANTA", image: require("../assets/img/character/SANTA.png") },
+  { name: "PIRATE", image: require("../assets/img/character/PIRATE.png") },
 ];
 
 const ChatRoom = () => {
@@ -38,17 +41,36 @@ const ChatRoom = () => {
   const [messages, setMessages] = useState([]);
   const [myname, setMyname] = useState(null);
   const [roomNumber, setroomNumber] = useState(null);
+  const [familyInfo, setFamilyInfo] = useState([]);
   const scrollViewRef = useRef(); // ScrollView 참조 생성
 
   const myIP = "43.202.241.133";
-  // const myIP = '13.209.81.119';
+  const ICONONON = imageList.find((item) => item.name === "SANTA");
+
+  function getAlienTypeByNickname(data, nickname) {
+    for (const key in data) {
+      if (data[key].nickname === nickname) {
+        return data[key].alien.type;
+      }
+    }
+    return null; // nickname에 해당하는 사용자가 없는 경우
+  }
+
+  const data = JSON.parse(familyInfo);
+
+  function findImageByName(sender) {
+    const alienName = getAlienTypeByNickname(data, sender);
+    return imageList.find((item) => item.name === alienName).image;
+  }
+
+  console.log("해당 프사", findImageByName("asd"));
 
   useEffect(() => {
     const getData = async () => {
       try {
         const token = await AsyncStorage.getItem("UserServerAccessToken");
         const chatroomId = await AsyncStorage.getItem("chatroomId");
-
+        setFamilyInfo(await AsyncStorage.getItem("myDB"));
         const response = await fetch(
           "http://" + `${myIP}` + ":1998/chat/list?id=" + chatroomId,
           {
@@ -172,10 +194,7 @@ const ChatRoom = () => {
               }}
             >
               {msg.sender !== myname && (
-                <Image
-                  source={imageList[randomNum]}
-                  style={styles.profilePic}
-                />
+                <Image source={ICONONON.image} style={styles.profilePic} />
               )}
               <View style={{ flex: 1 }}>
                 {msg.sender !== myname && (

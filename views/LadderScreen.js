@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dimensions,
   StyleSheet,
@@ -8,18 +8,45 @@ import {
   View,
 } from "react-native";
 import Sadari from "../components/sadari";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const windowWidth = Dimensions.get("screen").width;
 const windowHeight = Dimensions.get("screen").height;
 
 function LadderScreen() {
   const [cnt, onChangeCnt] = useState(2);
+  const [showSadari, setShowSadari] = useState(false);
+  const [name, setname] = useState([]);
+  const toggleSadari = () => {
+    setShowSadari(!showSadari);
+  };
+
   const onPress = () => onChangeCnt((cur) => cur + 1);
   const onPress2 = () => onChangeCnt((cur) => cur - 1);
 
+  useEffect(() => {
+    async function fetchData() {
+      const myfaminfo = await AsyncStorage.getItem("myDB");
+      const data = JSON.parse(myfaminfo);
+      let nicknames = Object.values(data).map((user) => user.nickname);
+      onChangeCnt(nicknames.length);
+      setname(nicknames);
+      console.log("닉네임 ", nicknames);
+    }
+
+    fetchData();
+  }, []);
+
   return (
-    <View style={{ flex: 1, alignItems: "center", top: 10 }}>
-      <Text>사다리 게임 ㅋㅋ 사람수 ㅋㅋ {cnt}</Text>
+    <View
+      style={{
+        flex: 1,
+        alignItems: "center",
+        top: "10%",
+        backgroundColor: "grey",
+      }}
+    >
+      <Text style={{ fontSize: 20, fontFamily: "dnf" }}>사다리 게임 </Text>
 
       <View style={{ flexDirection: "row", justifyContent: "flex-start" }}>
         <TouchableOpacity style={styles.button} onPress={onPress2}>
@@ -30,15 +57,20 @@ function LadderScreen() {
           <Text>++</Text>
         </TouchableOpacity>
       </View>
+      {!showSadari && (
+        <TouchableOpacity style={styles.button} onPress={toggleSadari}>
+          <Text>사다리 보기/숨기기</Text>
+        </TouchableOpacity>
+      )}
 
-      <Sadari cnt={cnt} />
+      {showSadari && <Sadari cnt={cnt} name={name} />}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: "#264b62", // 버튼 색상
+    backgroundColor: "#cd0beb", // 버튼 색상
     paddingVertical: 10, // 세로 패딩
     paddingHorizontal: 10, // 가로 패딩
     borderRadius: 5, // 테두리 둥글게
