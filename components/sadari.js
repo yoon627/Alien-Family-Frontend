@@ -18,14 +18,12 @@ const Sadari = ({ cnt }) => {
   const [positions, setPositions] = useState([]);
   const [horizontalLines, setHorizontalLines] = useState([]);
   const [columnsWithHorizontalLines, setColumnsWithHorizontalLines] = useState(
-    []
+    [],
   );
   const [finalIndexes, setFinalIndexes] = useState(Array(cnt).fill(null)); // 각 세로줄의 최종 lineIndex를 저장하는 state
   const columnWidth = windowWidth / (1 * cnt);
   const ladderHeight = windowHeight * 0.5;
-  const imageUriArray = [
-    "https://i.namu.wiki/i/NB_qC6YRjH7hv6elNznBIBOBZ5AwE-PKYEWKcU03aFzGsc60bOt9KLxocyvB01OxAbOG8joW9mgkShFmTaTKsQ.webp",
-  ];
+  const imageUriArray = [require("../assets/img/alien.png")];
   const [userTexts, setUserTexts] = useState(Array(cnt).fill("걸림ㅋㅋ"));
 
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -132,7 +130,7 @@ const Sadari = ({ cnt }) => {
               toValue: columnsWithHorizontalLines[lineIndex][j].yPosition - 10,
               duration: (500 - currentY) * 1,
               useNativeDriver: true,
-            })
+            }),
           );
           currentY = columnsWithHorizontalLines[lineIndex][j].yPosition;
           // console.log("움직였다....");
@@ -161,7 +159,7 @@ const Sadari = ({ cnt }) => {
           toValue: currentX,
           duration: 300,
           useNativeDriver: true,
-        })
+        }),
       );
 
       let lastidx = columnsWithHorizontalLines[lineIndex].length - 1;
@@ -174,7 +172,7 @@ const Sadari = ({ cnt }) => {
             toValue: ladderHeight + 50,
             duration: (500 - currentY) * 1,
             useNativeDriver: true,
-          })
+          }),
         );
         currentY = 9999;
         break;
@@ -197,7 +195,7 @@ const Sadari = ({ cnt }) => {
 
   const renderHorizontalLine = (index) => {
     const lines = horizontalLines.filter(
-      (line) => line.fromColumn === index || line.toColumn === index
+      (line) => line.fromColumn === index || line.toColumn === index,
     );
 
     return lines.map((line, lineIndex) => (
@@ -250,7 +248,7 @@ const Sadari = ({ cnt }) => {
           }}
         >
           <Image
-            source={{ uri: imageUriArray[i % imageUriArray.length] }}
+            source={imageUriArray[i % imageUriArray.length]}
             style={{ width: 50, height: 50, margin: 5 }}
           />
         </Animated.View>
@@ -299,7 +297,7 @@ const Sadari = ({ cnt }) => {
                 }}
               >
                 <Image
-                  source={{ uri: imageUriArray[i % imageUriArray.length] }}
+                  source={imageUriArray[i % imageUriArray.length]}
                   style={{ width: 50, height: 50, margin: 5 }}
                 />
               </Animated.View>

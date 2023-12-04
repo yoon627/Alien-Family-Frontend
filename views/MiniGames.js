@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState, useRef } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   Alert,
@@ -6,36 +6,22 @@ import {
   Dimensions,
   Image,
   ImageBackground,
+  PanResponder,
   StyleSheet,
   TouchableOpacity,
-  PanResponder,
   View,
-  Platform,
 } from "react-native";
 import LottieView from "lottie-react-native";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Client } from "@stomp/stompjs";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Tab = createBottomTabNavigator();
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 export default function MiniGames({ navigation }) {
-  // alienId 가져오기
-  // const [db, setDb] = useState({});
-  //
-  // useEffect(() => {
-  //     const viewDb = async () => {
-  //         const info = await AsyncStorage.getItem("myDB")
-  //         console.log(info);
-  //         // setDb(info);
-  //     };
-  // }, []);
-
-  const [stompClient, setStompClient] = useState(null);
   const [coordinates, setCoordinates] = useState({ x: 0, y: 0 });
+
   const [characterPosition, setCharacterPosition] = useState({
     x: 200,
     y: 200,
@@ -47,136 +33,71 @@ export default function MiniGames({ navigation }) {
     door: false,
   });
 
-  // console.log("받아온 좌표!!!!!: ", coordinates.x, coordinates.y);
-  const SOME_THRESHOLD = 100;
+  const SOME_THRESHOLD = 160;
+  const maxDistance = 30;
+  const sensitivity = 1; // 조이스틱 민감도 조절 (낮을수록 더 민감)
+
   const joystickPosition = useRef(new Animated.ValueXY()).current;
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
-      onPanResponderMove: Animated.event(
-        [null, { dx: joystickPosition.x, dy: joystickPosition.y }],
-        { useNativeDriver: false }
-      ),
+      onPanResponderMove: (evt, gestureState) => {
+        // 조이스틱이 최대 거리를 넘지 않도록 제한
+        const distance = Math.sqrt(
+          Math.pow(gestureState.dx, 2) + Math.pow(gestureState.dy, 2),
+        );
+        const angle = Math.atan2(gestureState.dy, gestureState.dx);
+        const x =
+          distance > maxDistance
+            ? maxDistance * Math.cos(angle)
+            : gestureState.dx;
+        const y =
+          distance > maxDistance
+            ? maxDistance * Math.sin(angle)
+            : gestureState.dy;
+
+        joystickPosition.setValue({ x, y });
+      },
       onPanResponderRelease: () => {
-        // // 좌표 서버로 전송
-        // if (stompClient && coordinates.x !== 0 && coordinates.y !== 0) {
-        //   const headerData = {
-        //     Authorization:
-        //       "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNDEiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZmFtaWx5IjoiMzQ5IiwiZXhwIjoxNzAwOTczMjEzfQ.IeHipzx60fWJRD2ZGs8SCKwpOjfSpN837Rjq2qrTli4",
-        //   };
-        //   const sendData = {
-        //     familyId: 356,
-        //     x: joystickPosition.x,
-        //     y: joystickPosition.y,
-        //   };
-        //   stompClient.publish({
-        //     destination: "/pub/map",
-        //     headers: headerData,
-        //     body: JSON.stringify(sendData),
-        //   });
-        //   setCoordinates({ x: 0, y: 0 });
-        // }
         Animated.spring(joystickPosition, {
           toValue: { x: 0, y: 0 },
           friction: 5,
           useNativeDriver: false,
         }).start();
       },
-    })
+    }),
   ).current;
 
-  // useEffect(() => {
-  // //   여기서 웹소켓 연결 및 이벤트 리스너 등록
-    // const sokcet = new WebSocket("ws://43.202.241.133:8080/ws");
-    // const client = new Client({
-    //   brokerURL: "ws://43.202.241.133:8080/ws",
-    //   connectHeaders: {
-    //     Authorization:
-    //       "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNDEiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZmFtaWx5IjoiMzQ5IiwiZXhwIjoxNzAwOTczMjEzfQ.IeHipzx60fWJRD2ZGs8SCKwpOjfSpN837Rjq2qrTli4",
-    //   },
-    //   onConnect: () => {
-    //     // console.log("👌🏻connect 성공: 웹소켓 서버 연결~~~~");
-    //     // 이 땐 좌표 받아오는 거
-    //     client.subscribe("/sub/map/356", (message) => {
-    //       const receiveCoordinates = JSON.parse(message.body);
-    //       // console.log(receiveCoordinates);
-    //       setCoordinates((prevCoordinates) => ({
-    //         x: Math.max(
-    //           0,
-    //           Math.min(
-    //             prevCoordinates.x + receiveCoordinates.x,
-    //             SCREEN_WIDTH - SCREEN_WIDTH * 0.12
-    //           )
-    //         ),
-    //         y: Math.max(
-    //           0,
-    //           Math.min(
-    //             prevCoordinates.y - receiveCoordinates.y,
-    //             SCREEN_HEIGHT - SCREEN_HEIGHT * 0.1
-    //           )
-    //         ),
-    //       }));
-    //       // console.log("💭받은 좌표", receiveCoordinates.x, receiveCoordinates.y);
-    //     });
-    //   },
-    //   onStompError: (frame) => {
-    //     console.error("Broker reported error:", frame.headers["message"]);
-    //     console.error("Additional details:", frame.body);
-    //   },
-    // });
-
-    // sokcet.onopen = () => {
-    //   // console.log("🚀 WebSokcet open");
-    //   setStompClient(client);
-    // };
-    //
-    // sokcet.onerror = (error) => {
-    //   // console.log("❌ sokcet error");
-    // };
-    //
-    // sokcet.onclose = (event) => {
-    //   // console.log("👋🏻 WebSokcet close");
-    // };
-
+  useEffect(() => {
     joystickPosition.addListener((position) => {
       // 조이스틱 움직임에 따라 캐릭터 위치 업데이트
       const deltaX = position.x * 0.1;
       const deltaY = -position.y * 0.1;
-      // 캐릭터 위치 업데이트
+      // ... 캐릭터 위치 업데이트 로직 ...
       setCharacterPosition((prevPosition) => ({
         x: Math.max(
           0,
-          Math.min(prevPosition.x + deltaX, SCREEN_WIDTH - SCREEN_WIDTH * 0.12)
+          Math.min(prevPosition.x + deltaX, SCREEN_WIDTH - SCREEN_WIDTH * 0.12),
         ),
         y: Math.max(
           0,
-          Math.min(prevPosition.y - deltaY, SCREEN_HEIGHT - SCREEN_HEIGHT * 0.1)
+          Math.min(
+            prevPosition.y - deltaY,
+            SCREEN_HEIGHT - SCREEN_HEIGHT * 0.1,
+          ),
         ),
       }));
     });
 
-  //   const interval = setInterval(() => {
-  //     if (!client.connected) {
-  //       client.activate();
-  //     }
-  //   }, 1000); // 1초마다 연결 상태 체크
-  //   setStompClient(client);
-  //
-  //   // 언마운트시 연결 해제
-  //   return () => {
-  //     clearInterval(interval);
-  //     if (client) {
-  //       client.deactivate();
-  //     }
-  //     sokcet.close();
-  //     joystickPosition.removeAllListeners();
-  //   };
-  // }, []);
+    return () => {
+      joystickPosition.removeAllListeners();
+    };
+  }, []);
 
   // 게임 이미지 & 캐릭터 사이 거리 계산
   const calculateDistance = (pos1, pos2) => {
     return Math.sqrt(
-      Math.pow(pos1.x - pos2.x, 2) + Math.pow(pos1.y - pos2.y, 2)
+      Math.pow(pos1.x - pos2.x, 2) + Math.pow(pos1.y - pos2.y, 2),
     );
   };
 
@@ -193,7 +114,7 @@ export default function MiniGames({ navigation }) {
     Object.keys(gameImgPosition).forEach((button) => {
       const distance = calculateDistance(
         characterPosition,
-        gameImgPosition[button]
+        gameImgPosition[button],
       );
       updatedShowButton[button] = distance < SOME_THRESHOLD;
     });
@@ -203,9 +124,7 @@ export default function MiniGames({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <ImageBackground
-        style={styles.bgImage}
-      >
+      <ImageBackground style={styles.bgImage}>
         <StatusBar style="light" />
         <View style={styles.doorForm}>
           <Image
@@ -328,33 +247,6 @@ export default function MiniGames({ navigation }) {
           <Image
             style={styles.alien}
             source={require("../assets/img/alien.png")}
-          />
-        </View>
-
-        {/*에일리언들*/}
-        <View
-          style={{
-            position: "absolute",
-            left: coordinates.x,
-            top: coordinates.y,
-          }}
-        >
-          <Image
-            style={styles.alien}
-            source={require("../assets/img/alien2.png")}
-          />
-        </View>
-
-        <View style={{ position: "absolute", left: "20%", top: "20%" }}>
-          <Image
-            style={styles.alien}
-            source={require("../assets/img/alien3.png")}
-          />
-        </View>
-        <View style={{ position: "absolute", left: "70%", top: "35%" }}>
-          <Image
-            style={styles.alien}
-            source={require("../assets/img/alien4.png")}
           />
         </View>
       </ImageBackground>

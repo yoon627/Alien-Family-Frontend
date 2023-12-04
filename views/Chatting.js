@@ -19,6 +19,19 @@ Object.assign("global", {
   TextDecoder: TextEncodingPolyfill.TextDecoder,
 });
 
+const imageList = [
+  require("../assets/img/character/BASIC.png"),
+  require("../assets/img/character/GLASSES.png"),
+  require("../assets/img/character/GIRL.png"),
+  require("../assets/img/character/BAND_AID.png"),
+  require("../assets/img/character/RABBIT.png"),
+  require("../assets/img/character/HEADBAND.png"),
+  require("../assets/img/character/TOMATO.png"),
+  require("../assets/img/character/CHRISTMAS_TREE.png"),
+  require("../assets/img/character/SANTA.png"),
+  require("../assets/img/character/PIRATE.png"),
+];
+
 const ChatRoom = () => {
   const [stompClient, setStompClient] = useState(null);
   const [message, setMessage] = useState("");
@@ -136,12 +149,15 @@ const ChatRoom = () => {
         // ... 기존 로직
         stompClient.subscribe("/sub/chat/room/" + roomNumber, (message) => {
           const receivedMessage = JSON.parse(message.body);
+          console.log("받은 메세지", receivedMessage);
           setMessages((prevMessages) => [...prevMessages, receivedMessage]);
           scrollViewRef.current?.scrollToEnd({ animated: true }); // 여기에 스크롤 로직 추가
         });
       };
     }
   }, [stompClient]);
+
+  let randomNum = Math.floor(Math.random() * 10) + 1;
 
   return (
     <View style={{ flex: 1, padding: 20 }}>
@@ -157,7 +173,7 @@ const ChatRoom = () => {
             >
               {msg.sender !== myname && (
                 <Image
-                  source={require("../assets/img/profile.jpg")}
+                  source={imageList[randomNum]}
                   style={styles.profilePic}
                 />
               )}
