@@ -13,8 +13,29 @@ import {
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height; // 디바이스의 높이
+const imageUriArray = [
+  { name: "BASIC", image: require("../assets/img/character/BASIC.png") },
+  { name: "GLASSES", image: require("../assets/img/character/GLASSES.png") },
+  { name: "GIRL", image: require("../assets/img/character/GIRL.png") },
+  {
+    name: "BAND_AID",
+    image: require("../assets/img/character/BAND_AID.png"),
+  },
+  { name: "RABBIT", image: require("../assets/img/character/RABBIT.png") },
+  {
+    name: "HEADBAND",
+    image: require("../assets/img/character/HEADBAND.png"),
+  },
+  { name: "TOMATO", image: require("../assets/img/character/TOMATO.png") },
+  {
+    name: "CHRISTMAS_TREE",
+    image: require("../assets/img/character/CHRISTMAS_TREE.png"),
+  },
+  { name: "SANTA", image: require("../assets/img/character/SANTA.png") },
+  { name: "PIRATE", image: require("../assets/img/character/PIRATE.png") },
+];
 
-const Sadari = ({ cnt, name }) => {
+const Sadari = ({ cnt, name, familyInfo }) => {
   const [positions, setPositions] = useState([]);
   const [horizontalLines, setHorizontalLines] = useState([]);
   const [columnsWithHorizontalLines, setColumnsWithHorizontalLines] = useState(
@@ -25,24 +46,27 @@ const Sadari = ({ cnt, name }) => {
 
   const columnWidth = windowWidth / (1 * cnt);
   const ladderHeight = windowHeight * 0.5;
-  const imageUriArray = [
-    {
-      image: require("../assets/img/character/BAND_AID.png"),
-      name: name[4],
-    },
-    { image: require("../assets/img/character/GIRL.png"), name: name[0] },
-    {
-      image: require("../assets/img/character/CHRISTMAS_TREE.png"),
-      name: name[1],
-    },
-    { image: require("../assets/img/character/SANTA.png"), name: name[2] },
-    { image: require("../assets/img/character/PIRATE.png"), name: name[3] },
-    { image: require("../assets/img/character/RABBIT.png"), name: "Rabbit" },
-    { image: require("../assets/img/character/TOMATO.png"), name: "Tomato" },
-  ];
+
   const [userTexts, setUserTexts] = useState(Array(cnt).fill("걸림ㅋ"));
 
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  function getAlienTypeByNickname(data, nickname) {
+    for (const key in data) {
+      if (data[key].nickname === nickname) {
+        return data[key].alien.type;
+      }
+    }
+    return null; // nickname에 해당하는 사용자가 없는 경우
+  }
+
+  const data = familyInfo;
+  console.log("데이탁", data);
+
+  function findImageByName(sender) {
+    const alienName = getAlienTypeByNickname(data, sender);
+    return imageUriArray.find((item) => item.name === alienName).image;
+  }
 
   const openModal = () => {
     setIsModalVisible(true);
@@ -59,7 +83,7 @@ const Sadari = ({ cnt, name }) => {
       return (
         <View key={`result-${i}`} style={styles.resultRow}>
           <Text>
-            {imageUriArray[i % imageUriArray.length].name} ----> {resultText}
+            {name[i]} ----> {resultText}
           </Text>
         </View>
       );
@@ -80,9 +104,8 @@ const Sadari = ({ cnt, name }) => {
 
     for (let i = 0; i < cnt - 1; i++) {
       const randomLineCnt = Math.floor(Math.random() * 3) + 1;
-      let lastYPosition = 100; // 각 세로선에 대한 초기 yPosition 설정
+      let lastYPosition = 100;
       for (let j = 0; j < randomLineCnt; j++) {
-        // 각 세로선당 3개의 가로선
         // const yPosition = lastYPosition + Math.floor(Math.random() * 150) + 50;
         const yPosition =
           lastYPosition +
@@ -95,13 +118,11 @@ const Sadari = ({ cnt, name }) => {
           yPosition: yPosition,
         });
 
-        // 현재 세로선에 시작하는 가로선 정보 추가
         columnsWithHorizontalLines[i].push({
           toColumn: i + 1,
           yPosition: yPosition,
         });
 
-        // 인접한 세로선에 연결되는 가로선 정보 추가
         columnsWithHorizontalLines[i + 1].push({
           fromColumn: i,
           yPosition: yPosition,
@@ -113,9 +134,7 @@ const Sadari = ({ cnt, name }) => {
         return newTexts;
       });
     }
-    // console.log(columnsWithHorizontalLines);
     setHorizontalLines(newHorizontalLines);
-    // columnsWithHorizontalLines에 각 세로줄별 가로줄 정보가 저장됩니다.
     setColumnsWithHorizontalLines(columnsWithHorizontalLines);
     for (let j = 0; j < columnsWithHorizontalLines.length; j++) {
       columnsWithHorizontalLines[j].sort((a, b) => a.yPosition - b.yPosition);
@@ -230,53 +249,6 @@ const Sadari = ({ cnt, name }) => {
     ));
   };
 
-  const renderLines = () => {
-    return positions.map((_, i) => (
-      <View
-        key={`line-${i}`}
-        style={{
-          position: "relative",
-          width: columnWidth,
-          alignItems: "center",
-        }}
-      >
-        {renderHorizontalLine(i)}
-        <View
-          style={{
-            position: "absolute",
-            width: 10,
-            height: 600,
-            backgroundColor: "black",
-            left: columnWidth / 2 - 5,
-            top: 90,
-          }}
-        />
-      </View>
-    ));
-  };
-
-  // 이미지를 렌더링하는 함수
-  const renderImages = () => {
-    return positions.map((position, i) => (
-      <TouchableOpacity
-        key={`image-${i}`}
-        onPress={() => moveImage(i)}
-        style={{ position: "absolute" }}
-      >
-        <Animated.View
-          style={{
-            transform: [{ translateX: position.x }, { translateY: position.y }],
-          }}
-        >
-          <Image
-            source={imageUriArray[i % imageUriArray.length]}
-            style={{ width: 50, height: 50, margin: 5 }}
-          />
-        </Animated.View>
-      </TouchableOpacity>
-    ));
-  };
-
   return (
     <View style={{ flex: 1, flexDirection: "column" }}>
       <View
@@ -323,7 +295,7 @@ const Sadari = ({ cnt, name }) => {
                 }}
               >
                 <Image
-                  source={imageUriArray[i % imageUriArray.length].image}
+                  source={findImageByName(name[i])}
                   style={{
                     width: 50,
                     height: 50,

@@ -17,6 +17,7 @@ function LadderScreen() {
   const [cnt, onChangeCnt] = useState(2);
   const [showSadari, setShowSadari] = useState(false);
   const [name, setname] = useState([]);
+  const [myfam, setMyfam] = useState(null);
   const toggleSadari = () => {
     setShowSadari(!showSadari);
   };
@@ -29,9 +30,9 @@ function LadderScreen() {
       const myfaminfo = await AsyncStorage.getItem("myDB");
       const data = JSON.parse(myfaminfo);
       let nicknames = Object.values(data).map((user) => user.nickname);
+      setMyfam(data);
       onChangeCnt(nicknames.length);
       setname(nicknames);
-      console.log("닉네임 ", nicknames);
     }
 
     fetchData();
@@ -63,7 +64,7 @@ function LadderScreen() {
         </TouchableOpacity>
       )}
 
-      {showSadari && <Sadari cnt={cnt} name={name} />}
+      {showSadari && <Sadari cnt={cnt} name={name} familyInfo={myfam} />}
     </View>
   );
 }
