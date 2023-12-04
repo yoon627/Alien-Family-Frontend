@@ -21,6 +21,7 @@ import axios from "axios";
 import * as Notifications from "expo-notifications";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useFocusEffect } from "@react-navigation/native";
+
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -28,9 +29,6 @@ Notifications.setNotificationHandler({
     shouldSetBadge: true,
   }),
 });
-
-const FCM_SERVER_KEY =
-  "AAAAUCMBJiU:APA91bEs9fOJNe6l2ILHFI88jep5rw9wqR-qTWWbBrKxj7JQnKQ8ZAp4tJbn_yXcL2aP0ydygPIcT89XB6h38vhIozsJ5J61s7w2znBL9hPQG6a18sQcUFkMitr2pkvoCmmfslVQmk-u";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const fontRatio = SCREEN_HEIGHT / 800;
@@ -40,14 +38,6 @@ const Container = styled.View`
   justify-content: center;
   align-items: center;
 `;
-
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
-  }),
-});
 
 export default function Home({ navigation, fonts }) {
   const [notification, setNotification] = useState(false);
@@ -267,12 +257,12 @@ export default function Home({ navigation, fonts }) {
   };
   useEffect(() => {
     fetchData();
-    getplantInfo();
+    // getplantInfo();
     renderFlower();
   }, []);
 
   const renderFlower = () => {
-    // if (flower) {
+    getplantInfo();
     // 레벨에 따라 다른 이미지 렌더링
     switch (plantlevel) {
       case 0:

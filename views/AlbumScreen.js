@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState} from "react";
+import React, { Fragment, useEffect, useState, useCallback, useRef } from "react";
 import {
   ActionSheetIOS,
   Dimensions,
@@ -16,6 +16,8 @@ import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ImageUploadForm from "./ImageUploadForm";
 import ExpoFastImage from "expo-fast-image";
+import * as Notifications from "expo-notifications";
+import { useFocusEffect } from "@react-navigation/native";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -42,7 +44,15 @@ const TAG_OPTION = [
   },
 ];
 
-export default function AlbumScreen({navigation}) {
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
+
+export default function AlbumScreen({ navigation }) {
   // 카메라 권한 요청을 위한 훅
   const [cameraStatus, cameraRequestPermission] =
     ImagePicker.useCameraPermissions();
@@ -59,7 +69,8 @@ export default function AlbumScreen({navigation}) {
   const [showUploadForm, setShowUploadForm] = useState(false);
   // 선택한 태그
   const [selectedTags, setSelectedTags] = useState([]);
-
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
   const handleUploadComplete = () => {
     setShowUploadForm(false);
   };
@@ -67,11 +78,13 @@ export default function AlbumScreen({navigation}) {
   useEffect(() => {
     // 서버에서 s3 이미지 url 받아옴
     const fetchData = async () => {
+      const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
       const UserServerAccessToken = await AsyncStorage.getItem(
-        "UserServerAccessToken",
+        "UserServerAccessToken"
       );
       try {
-        const response = await fetch(`http://43.202.241.133:1998/photo/list`, {
+        console.log(SERVER_ADDRESS);
+        const response = await fetch(SERVER_ADDRESS + `/photo/list`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -118,7 +131,7 @@ export default function AlbumScreen({navigation}) {
           } else if (buttonIndex === 1) {
             onLaunchImageLibrary();
           }
-        },
+        }
       );
     }
   };
@@ -165,8 +178,9 @@ export default function AlbumScreen({navigation}) {
         }
       } else {
         // 이미지 선택 (화면용, 실제로 s3에 업로드 한 이미지 아님)
-        const result =
-          await ImagePicker.launchImageLibraryAsync(imagePickerOption);
+        const result = await ImagePicker.launchImageLibraryAsync(
+          imagePickerOption
+        );
         // 이미지 업로드 취소한 경우
         if (result.canceled) {
           return null;
@@ -207,7 +221,7 @@ export default function AlbumScreen({navigation}) {
 
     const filteredImages = albumList.filter((item) => {
       const hasMatchingTag = item.photoTags.some((tag) =>
-        selectedTags.includes(tag),
+        selectedTags.includes(tag)
       );
       // console.log(`Item ${item.photoId} - hasMatchingTag: ${hasMatchingTag}`);
       return hasMatchingTag;
@@ -224,6 +238,102 @@ export default function AlbumScreen({navigation}) {
     // console.log("선택한 태그 (useEffect):", selectedTags);
   }, [selectedTags]);
 
+  useEffect(() => {
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        setNotification(notification);
+        if (notification.request.content.title == "Family") {
+          console.log("update Family");
+        } else if (notification.request.content.title == "TMI") {
+          console.log("update TMI");
+        } else if (notification.request.content.title == "Calendar") {
+          console.log("update Calendar");
+        } else if (notification.request.content.title == "Photo") {
+          console.log("update Photo");
+          const fetchData = async () => {
+            const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
+            const UserServerAccessToken = await AsyncStorage.getItem(
+              "UserServerAccessToken"
+            );
+            try {
+              console.log(SERVER_ADDRESS);
+              const response = await fetch(SERVER_ADDRESS + `/photo/list`, {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: "Bearer " + UserServerAccessToken,
+                },
+              });
+
+              const data = await response.json();
+              // 받아온 이미지 데이터 상태에 저장
+              setAlbumList(data.data);
+              // console.log("받은 데이터!!!!!!!!!", data.data)
+              // console.log("👉🏻앨범 이미지 리스트: ", data.data.map(item => item.photoKey));
+            } catch (error) {
+              console.error(
+                "이미지 url을 가져오는 중에 오류가 발생했습니다.",
+                error
+              );
+            }
+          };
+          // 이미지 업로드가 완료되면 이미지 데이터를 다시 불러옴
+          if (!showUploadForm) {
+            fetchData();
+          }
+        } else if (notification.request.content.title == "Plant") {
+          console.log("update Plant");
+        } else {
+          console.log("update Chatting");
+        }
+      });
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+    };
+  }, [notification]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
+        const UserServerAccessToken = await AsyncStorage.getItem(
+          "UserServerAccessToken"
+        );
+        try {
+          console.log(SERVER_ADDRESS);
+          const response = await fetch(SERVER_ADDRESS + `/photo/list`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + UserServerAccessToken,
+            },
+          });
+
+          const data = await response.json();
+          // 받아온 이미지 데이터 상태에 저장
+          setAlbumList(data.data);
+          // console.log("받은 데이터!!!!!!!!!", data.data)
+          // console.log("👉🏻앨범 이미지 리스트: ", data.data.map(item => item.photoKey));
+        } catch (error) {
+          console.error(
+            "이미지 url을 가져오는 중에 오류가 발생했습니다.",
+            error
+          );
+        }
+      };
+      // 이미지 업로드가 완료되면 이미지 데이터를 다시 불러옴
+      if (!showUploadForm) {
+        fetchData();
+      }
+      // 여기에 다른 포커스를 받았을 때 실행하고 싶은 작업들을 추가할 수 있습니다.
+      return () => {
+        // 스크린이 포커스를 잃을 때 정리 작업을 수행할 수 있습니다.
+      };
+    }, []) // 두 번째 매개변수로 빈 배열을 전달하여 컴포넌트가 처음 마운트될 때만 실행되도록 합니다.
+  );
+
   return (
     <View style={styles.container}>
       {!showUploadForm ? (
@@ -235,7 +345,7 @@ export default function AlbumScreen({navigation}) {
                 style={[
                   styles.tagItem,
                   selectedTags.includes(tag.id) && styles.selectedTagItem,
-                  index !== TAG_OPTION.length - 1 && {marginRight: 7},
+                  index !== TAG_OPTION.length - 1 && { marginRight: 7 },
                 ]}
                 onPress={() => toggleTagSelection(tag.id)}
               >
@@ -257,7 +367,7 @@ export default function AlbumScreen({navigation}) {
             numColumns={4}
             data={filterImages()}
             keyExtractor={(item) => item.photoId.toString()}
-            renderItem={({item}) => (
+            renderItem={({ item }) => (
               <View style={styles.imageContainer}>
                 <TouchableOpacity
                   onPress={() =>
@@ -353,8 +463,8 @@ const styles = StyleSheet.create({
   flatListContentContainer: {
     paddingLeft: 5,
     paddingRight: 5,
-    justifyContent: 'flex-start', // 세로 정렬을 상단으로 설정
-    alignItems: 'flex-start', // 가로 정렬을 좌측으로 설정
+    justifyContent: "flex-start", // 세로 정렬을 상단으로 설정
+    alignItems: "flex-start", // 가로 정렬을 좌측으로 설정
   },
-  album: {}
+  album: {},
 });

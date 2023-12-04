@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import {
   View,
   Text,
@@ -11,9 +11,17 @@ import {
   ImageBackground,
   TouchableOpacity,
 } from "react-native";
-
 import { useFocusEffect } from "@react-navigation/native";
 import AlienModal from "../components/AlienModal";
+import * as Notifications from "expo-notifications";
+import axios from "axios";
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SCREEN_HEIGHT = Dimensions.get("window").height * 0.7;
@@ -24,7 +32,8 @@ const RANDOM_WIDTH = Math.random() * DIFF_WIDTH;
 const RANDOM_HEIGHT = Math.random() * DIFF_HEIGHT;
 
 export default function FamilyInfo({ navigation }) {
-  
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
   const alienImagePath = {
     BASIC: require(`../assets/img/character/BASIC.png`),
     GLASSES: require(`../assets/img/character/GLASSES.png`),
@@ -34,9 +43,9 @@ export default function FamilyInfo({ navigation }) {
     HEADBAND: require(`../assets/img/character/HEADBAND.png`),
     TOMATO: require(`../assets/img/character/TOMATO.png`),
     CHRISTMAS_TREE: require(`../assets/img/character/CHRISTMAS_TREE.png`),
-    SANTA : require(`../assets/img/character/SANTA.png`),
+    SANTA: require(`../assets/img/character/SANTA.png`),
     PIRATE: require(`../assets/img/character/PIRATE.png`),
-  }
+  };
   const [Family, setFamily] = useState({});
   const isUnmountedRef = useRef(false);
   const animations = useRef([]);
@@ -63,9 +72,11 @@ export default function FamilyInfo({ navigation }) {
   }, []);
 
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       isUnmountedRef.current = false;
       startAnimations();
+      getFamilyInfo();
+      updateFamilyData();
       return () => {
         isUnmountedRef.current = true;
       };
@@ -86,9 +97,9 @@ export default function FamilyInfo({ navigation }) {
     viewFamily();
   }, []);
 
-  useEffect(() => {
-    updateFamilyData();
-  }, [Family]);
+  // useEffect(() => {
+  //   updateFamilyData();
+  // }, [Family]);
 
   const updateFamilyData = async () => {
     FAMILY_MEMBER_CNT.current = Object.keys(Family).length;
@@ -150,12 +161,22 @@ export default function FamilyInfo({ navigation }) {
     if (!isUnmountedRef.current) {
       Animated.parallel([
         Animated.timing(animation.translateX, {
-          toValue: animation.translateX._value <= 0 ? 1 : animation.translateX._value >= DIFF_WIDTH ? DIFF_WIDTH - 1 : animation.translateX._value,
-          duration: 0, 
+          toValue:
+            animation.translateX._value <= 0
+              ? 1
+              : animation.translateX._value >= DIFF_WIDTH
+              ? DIFF_WIDTH - 1
+              : animation.translateX._value,
+          duration: 0,
           useNativeDriver: false,
         }),
         Animated.timing(animation.translateY, {
-          toValue: animation.translateY._value <= 0 ? 1 : animation.translateY._value >= DIFF_HEIGHT ? DIFF_HEIGHT - 1 : animation.translateY._value,
+          toValue:
+            animation.translateY._value <= 0
+              ? 1
+              : animation.translateY._value >= DIFF_HEIGHT
+              ? DIFF_HEIGHT - 1
+              : animation.translateY._value,
           duration: 0,
           useNativeDriver: false,
         }),
@@ -166,6 +187,54 @@ export default function FamilyInfo({ navigation }) {
       });
     }
   };
+  async function getFamilyInfo() {
+    const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
+    const UserServerAccessToken = await AsyncStorage.getItem(
+      "UserServerAccessToken"
+    );
+    await axios({
+      method: "GET",
+      url: SERVER_ADDRESS + "/api/family",
+      headers: { Authorization: "Bearer " + UserServerAccessToken },
+    })
+      .then(async (resp) => {
+        const members = resp.data.data.members;
+        var myDB = {};
+        for (let i = 0; i < members.length; i++) {
+          const newkey = members[i].memberId;
+          myDB[newkey] = members[i];
+        }
+        await AsyncStorage.setItem("myDB", JSON.stringify(myDB));
+      })
+      .catch((e) => console.log(e));
+  }
+
+  useEffect(() => {
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        setNotification(notification);
+        if (notification.request.content.title == "Family") {
+          console.log("update Family");
+          getFamilyInfo();
+          updateFamilyData();
+        } else if (notification.request.content.title == "TMI") {
+          console.log("update TMI");
+        } else if (notification.request.content.title == "Calendar") {
+          console.log("update Calendar");
+        } else if (notification.request.content.title == "Photo") {
+          console.log("update Photo");
+        } else if (notification.request.content.title == "Plant") {
+          console.log("update Plant");
+        } else {
+          console.log("update Chatting");
+        }
+      });
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+    };
+  }, [notification]);
 
   return (
     <View style={styles.container}>
@@ -196,9 +265,16 @@ export default function FamilyInfo({ navigation }) {
               ]}
             >
               <View style={styles.alien}>
-                <TouchableOpacity onPress={() => handleImageClick(Family[memberId])}>
-                    <Text style={styles.nickname}>{Family[memberId].nickname}</Text>
-                    <Image style={styles.image} source={alienImagePath[Family[memberId].alien.type]} />
+                <TouchableOpacity
+                  onPress={() => handleImageClick(Family[memberId])}
+                >
+                  <Text style={styles.nickname}>
+                    {Family[memberId].nickname}
+                  </Text>
+                  <Image
+                    style={styles.image}
+                    source={alienImagePath[Family[memberId].alien.type]}
+                  />
                 </TouchableOpacity>
               </View>
             </Animated.View>
