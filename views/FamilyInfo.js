@@ -70,11 +70,60 @@ export default function FamilyInfo({ navigation }) {
       isUnmountedRef.current = true;
     };
   }, []);
+  async function getFamilyInfo() {
+    const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
+    const UserServerAccessToken = await AsyncStorage.getItem(
+      "UserServerAccessToken"
+    );
+    await axios({
+      method: "GET",
+      url: SERVER_ADDRESS + "/api/family",
+      headers: { Authorization: "Bearer " + UserServerAccessToken },
+    })
+      .then(async (resp) => {
+        console.log(resp.data.data.members[0]);
+        const members = resp.data.data.members;
+        var myDB = {};
+        for (let i = 0; i < members.length; i++) {
+          const newkey = members[i].memberId;
+          myDB[newkey] = members[i];
+        }
+        await AsyncStorage.setItem("myDB", JSON.stringify(myDB));
+        setFamily(myDB || {});
+      })
+      .catch((e) => console.log(e));
+  }
+
+  useEffect(() => {
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        setNotification(notification);
+        if (notification.request.content.title == "Family") {
+          console.log("update Family");
+          getFamilyInfo();
+          updateFamilyData();
+        } else if (notification.request.content.title == "TMI") {
+          console.log("update TMI");
+        } else if (notification.request.content.title == "Calendar") {
+          console.log("update Calendar");
+        } else if (notification.request.content.title == "Photo") {
+          console.log("update Photo");
+        } else if (notification.request.content.title == "Plant") {
+          console.log("update Plant");
+        } else {
+          console.log("update Chatting");
+        }
+      });
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+    };
+  }, [notification]);
 
   useFocusEffect(
     useCallback(() => {
       isUnmountedRef.current = false;
-      startAnimations();
       getFamilyInfo();
       updateFamilyData();
       return () => {
@@ -97,9 +146,9 @@ export default function FamilyInfo({ navigation }) {
     viewFamily();
   }, []);
 
-  // useEffect(() => {
-  //   updateFamilyData();
-  // }, [Family]);
+  useEffect(() => {
+    updateFamilyData();
+  }, [Family]);
 
   const updateFamilyData = async () => {
     FAMILY_MEMBER_CNT.current = Object.keys(Family).length;
@@ -108,7 +157,9 @@ export default function FamilyInfo({ navigation }) {
       { length: FAMILY_MEMBER_CNT.current },
       createAnimation
     );
+    console.log(newAnimations);
     animations.current = newAnimations;
+    console.log(Family);
     startAnimations();
   };
 
@@ -187,54 +238,6 @@ export default function FamilyInfo({ navigation }) {
       });
     }
   };
-  async function getFamilyInfo() {
-    const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
-    const UserServerAccessToken = await AsyncStorage.getItem(
-      "UserServerAccessToken"
-    );
-    await axios({
-      method: "GET",
-      url: SERVER_ADDRESS + "/api/family",
-      headers: { Authorization: "Bearer " + UserServerAccessToken },
-    })
-      .then(async (resp) => {
-        const members = resp.data.data.members;
-        var myDB = {};
-        for (let i = 0; i < members.length; i++) {
-          const newkey = members[i].memberId;
-          myDB[newkey] = members[i];
-        }
-        await AsyncStorage.setItem("myDB", JSON.stringify(myDB));
-      })
-      .catch((e) => console.log(e));
-  }
-
-  useEffect(() => {
-    notificationListener.current =
-      Notifications.addNotificationReceivedListener((notification) => {
-        setNotification(notification);
-        if (notification.request.content.title == "Family") {
-          console.log("update Family");
-          getFamilyInfo();
-          updateFamilyData();
-        } else if (notification.request.content.title == "TMI") {
-          console.log("update TMI");
-        } else if (notification.request.content.title == "Calendar") {
-          console.log("update Calendar");
-        } else if (notification.request.content.title == "Photo") {
-          console.log("update Photo");
-        } else if (notification.request.content.title == "Plant") {
-          console.log("update Plant");
-        } else {
-          console.log("update Chatting");
-        }
-      });
-    return () => {
-      Notifications.removeNotificationSubscription(
-        notificationListener.current
-      );
-    };
-  }, [notification]);
 
   return (
     <View style={styles.container}>

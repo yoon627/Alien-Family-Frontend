@@ -15,9 +15,9 @@ Notifications.setNotificationHandler({
 });
 
 // Can use this function below or use Expo's Push Notification Tool from: https://expo.dev/notifications
-async function sendPushNotification(expoPushToken) {
+async function sendPushNotification(devicePushToken) {
   const message = {
-    to: expoPushToken,
+    to: devicePushToken,
     sound: "default",
     title: "Original Title",
     body: "And here is the body!",
@@ -59,7 +59,7 @@ async function registerForPushNotificationsAsync() {
       alert("Failed to get push token for push notification!");
       return;
     }
-    token = await Notifications.getExpoPushTokenAsync({
+    token = await Notifications.getDevicePushTokenAsync({
       projectId: Constants.expoConfig.extra.eas.projectId,
     });
     console.log(token.data);
@@ -71,14 +71,14 @@ async function registerForPushNotificationsAsync() {
 }
 
 export default function App() {
-  const [expoPushToken, setExpoPushToken] = useState("");
+  const [devicePushToken, setDevicePushToken] = useState("");
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
 
   useEffect(() => {
     registerForPushNotificationsAsync().then((token) =>
-      setExpoPushToken(token)
+      setDevicePushToken(token)
     );
 
     notificationListener.current =
@@ -106,7 +106,7 @@ export default function App() {
     <View
       style={{ flex: 1, alignItems: "center", justifyContent: "space-around" }}
     >
-      <Text>Your expo push token: {expoPushToken}</Text>
+      <Text>Your Device push token: {devicePushToken}</Text>
       <View style={{ alignItems: "center", justifyContent: "center" }}>
         <Text>
           Title: {notification && notification.request.content.title}{" "}
