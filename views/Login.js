@@ -1,4 +1,4 @@
-import React from "react";
+import React,{ useCallback,useRef,useState,useEffect } from "react";
 import {
   ImageBackground,
   StyleSheet,
@@ -8,10 +8,14 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import * as Notifications from "expo-notifications";
+import FamilyInfo from "./FamilyInfo";
+import MainDrawer from "./MainDrawer";
+import MainScreen from "./MainScreen";
 
 const saveServer = async () => {
   try {
-    await AsyncStorage.setItem("ServerAddress", "http://43.202.241.133:1996");
+    await AsyncStorage.setItem("ServerAddress", "http://43.202.241.133:1998");
     await AsyncStorage.setItem(
       "FcmServerKey",
       "AAAAUCMBJiU:APA91bEs9fOJNe6l2ILHFI88jep5rw9wqR-qTWWbBrKxj7JQnKQ8ZAp4tJbn_yXcL2aP0ydygPIcT89XB6h38vhIozsJ5J61s7w2znBL9hPQG6a18sQcUFkMitr2pkvoCmmfslVQmk-u"
@@ -32,7 +36,38 @@ const getData = async () => {
 getData();
 
 const Login = ({ navigation }) => {
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
   saveServer();
+  useEffect(() => {
+    // Set up a custom handler for background notifications
+    const backgroundNotificationHandler = async (notification) => {
+      // Handle the notification payload here
+      console.log(notification);
+      const screenName = notification.notification.request.content.title;
+      
+      if (screenName) {
+        if (screenName==="Family"){
+          navigation.navigate("FamilyInfo", {
+            screen: "MainDrawer",
+            params: { showFamilyInfo: true },
+          });
+        }
+        // If the notification contains a screen name, navigate to that screen
+        // navigationRef.current?.navigate(screenName);
+      }
+    };
+
+    // Subscribe to the background notification handler
+    const backgroundNotificationSubscription = Notifications.addNotificationResponseReceivedListener(
+      backgroundNotificationHandler
+    );
+
+    // Clean up subscriptions when the component unmounts
+    return () => {
+      backgroundNotificationSubscription.remove();
+    };
+  }, []);
   return (
     <ImageBackground
       source={require("../assets/img/loginScreen.png")}

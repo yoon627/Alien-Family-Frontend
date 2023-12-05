@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback,useRef,useState,useEffect } from "react";
 import { StyleSheet, Linking } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import Login from "./views/Login";
@@ -32,6 +32,7 @@ import {
 // import * as SplashScreen from "expo-splash-screen";
 import Feed from "./views/Feed";
 import * as Notifications from "expo-notifications";
+import FamilyInfo from "./views/FamilyInfo";
 
 const Stack = createStackNavigator();
 
@@ -59,6 +60,7 @@ export default function App() {
   //     await SplashScreen.hideAsync();
   //   }
   // }, [fontsLoaded]);
+
 
   if (!fontsLoaded) {
     return null;
@@ -168,6 +170,7 @@ export default function App() {
             <Stack.Screen name="MainScreen" component={MainScreen} />
             <Stack.Screen name="Attendance" component={Attendance} />
             <Stack.Screen name="Feed" component={Feed} />
+            <Stack.Screen name="FamilyInfo" component={FamilyInfo} />
           </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>

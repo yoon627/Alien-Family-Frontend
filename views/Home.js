@@ -217,6 +217,7 @@ export default function Home({ navigation, fonts }) {
         setTodayTMI(mytmi);
       })
       .catch((e) => console.log(e));
+    
   }
   useEffect(() => {
     notificationListener.current =
@@ -249,7 +250,8 @@ export default function Home({ navigation, fonts }) {
   const getplantInfo = async () => {
     try {
       const plant = await AsyncStorage.getItem("plantInfo");
-      setPlantlevel(JSON.parse(plant).level);
+      console.log(JSON.parse(plant))
+      setPlantlevel(JSON.parse(plant).point);
       setPlant(plant);
     } catch (error) {
       console.error("Error getMsg:", error);
@@ -257,7 +259,7 @@ export default function Home({ navigation, fonts }) {
   };
   useEffect(() => {
     fetchData();
-    // getplantInfo();
+    getplantInfo();
     renderFlower();
   }, []);
 

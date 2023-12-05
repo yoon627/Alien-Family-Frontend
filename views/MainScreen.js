@@ -15,7 +15,13 @@ const Tab = createBottomTabNavigator();
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-export default function MainScreen({ navigation }) {
+export default function MainScreen({ navigation,route }) {
+  // const showFamilyInfo = route.params?.showFamilyInfo || false;
+  // if (showFamilyInfo){
+  //   console.log("hi");
+  //   navigation.navigate("FamilyInfo");
+  //   console.log("hi2");
+  // }
   return (
     <Tab.Navigator
       screenOptions={{
