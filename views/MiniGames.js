@@ -1,4 +1,5 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState, useRef } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StatusBar } from "expo-status-bar";
 import {
   Alert,
@@ -10,17 +11,44 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
+  Text
 } from "react-native";
 import LottieView from "lottie-react-native";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 const Tab = createBottomTabNavigator();
+const ALIEN_SIZE = 120;
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const SCREEN_WIDTH = Dimensions.get("window").width;
+const SCREEN_HEIGHT = Dimensions.get("window").height+45;
 
 export default function MiniGames({ navigation }) {
   const [coordinates, setCoordinates] = useState({ x: 0, y: 0 });
+  const alienImagePath = {
+    BASIC: require(`../assets/img/character/BASIC.png`),
+    GLASSES: require(`../assets/img/character/GLASSES.png`),
+    GIRL: require(`../assets/img/character/GIRL.png`),
+    BAND_AID: require(`../assets/img/character/BAND_AID.png`),
+    RABBIT: require(`../assets/img/character/RABBIT.png`),
+    HEADBAND: require(`../assets/img/character/HEADBAND.png`),
+    TOMATO: require(`../assets/img/character/TOMATO.png`),
+    CHRISTMAS_TREE: require(`../assets/img/character/CHRISTMAS_TREE.png`),
+    SANTA : require(`../assets/img/character/SANTA.png`),
+    PIRATE: require(`../assets/img/character/PIRATE.png`),
+  }
+  
+  useEffect(() => {
+    const fetchAlienType = async () => {
+      try {
+        setAlienType(await AsyncStorage.getItem("alienType"));
+
+      } catch (error) {
+        console.error("Error fetching alienType from AsyncStorage:", error);
+      }
+    };
+    fetchAlienType();
+  }, []);
 
   const [characterPosition, setCharacterPosition] = useState({
     x: 200,
@@ -33,10 +61,10 @@ export default function MiniGames({ navigation }) {
     door: false,
   });
 
-  const SOME_THRESHOLD = 160;
   const maxDistance = 30;
   const sensitivity = 1; // 조이스틱 민감도 조절 (낮을수록 더 민감)
 
+  const SOME_THRESHOLD = 100;
   const joystickPosition = useRef(new Animated.ValueXY()).current;
   const panResponder = useRef(
     PanResponder.create({
@@ -69,30 +97,39 @@ export default function MiniGames({ navigation }) {
   ).current;
 
   useEffect(() => {
-    joystickPosition.addListener((position) => {
-      // 조이스틱 움직임에 따라 캐릭터 위치 업데이트
-      const deltaX = position.x * 0.1;
-      const deltaY = -position.y * 0.1;
-      // ... 캐릭터 위치 업데이트 로직 ...
-      setCharacterPosition((prevPosition) => ({
-        x: Math.max(
-          0,
-          Math.min(prevPosition.x + deltaX, SCREEN_WIDTH - SCREEN_WIDTH * 0.12),
-        ),
-        y: Math.max(
-          0,
-          Math.min(
-            prevPosition.y - deltaY,
-            SCREEN_HEIGHT - SCREEN_HEIGHT * 0.1,
-          ),
-        ),
-      }));
-    });
 
+    const listener = joystickPosition.addListener((position) => {
+      // 이동 감도 조절
+      const sensitivity = 0.3; // 조절 가능한 값
+      const adjustedPosition = {
+        x: position.x * sensitivity,
+        y: -position.y * sensitivity,
+      };
+  
+      // 움직임이 발생한 경우에만 로그 및 캐릭터 위치 업데이트
+      if (Math.abs(adjustedPosition.x) > 0.01 || Math.abs(adjustedPosition.y) > 0.01) {
+        // console.log(adjustedPosition);
+        setCharacterPosition((prevPosition) => ({
+          x: Math.max(
+            0,
+            Math.min(prevPosition.x + adjustedPosition.x, SCREEN_WIDTH - SCREEN_WIDTH * 0.12)
+          ),
+          y: Math.max(
+            0,
+            Math.min(prevPosition.y - adjustedPosition.y, SCREEN_HEIGHT - SCREEN_HEIGHT * 0.1)
+          ),
+        }));
+      }
+    });
+  
     return () => {
-      joystickPosition.removeAllListeners();
+      // 컴포넌트 언마운트 시 리스너 제거
+      joystickPosition.removeListener(listener);
     };
   }, []);
+    
+    
+
 
   // 게임 이미지 & 캐릭터 사이 거리 계산
   const calculateDistance = (pos1, pos2) => {
@@ -103,10 +140,10 @@ export default function MiniGames({ navigation }) {
 
   useLayoutEffect(() => {
     const gameImgPosition = {
-      ladder: { x: SCREEN_WIDTH * 0.018, y: SCREEN_HEIGHT * 0.14 },
-      mole: { x: SCREEN_WIDTH * 0.9, y: SCREEN_HEIGHT * 0.2 },
-      roulette: { x: SCREEN_WIDTH * 0.3, y: SCREEN_HEIGHT * 0.6 },
-      door: { x: SCREEN_WIDTH * 0.95, y: SCREEN_HEIGHT * 0.65 },
+      ladder: { x: SCREEN_WIDTH * 0.007, y: SCREEN_HEIGHT * 0.35 },
+      mole: { x: SCREEN_WIDTH * 0.9, y: SCREEN_HEIGHT * 0.44 },
+      roulette: { x: SCREEN_WIDTH * 0.01, y: SCREEN_HEIGHT * 0.05 },
+      door: { x: SCREEN_WIDTH * 0.7, y: SCREEN_HEIGHT * 0.1 },
     };
 
     const updatedShowButton = {};
@@ -124,118 +161,91 @@ export default function MiniGames({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <ImageBackground style={styles.bgImage}>
-        <StatusBar style="light" />
-        <View style={styles.doorForm}>
-          <Image
-            style={styles.door}
-            source={require("../assets/img/close_door.png")}
-          />
-        </View>
-        {showButton.door ? (
-          <Animated.View style={styles.spaceshipForm}>
-            <TouchableOpacity
-              onPress={() => {
-                Alert.alert("맵을 나가시겠습니까?", null, [
-                  {
-                    text: "취소",
-                    style: "cancel",
-                  },
-                  {
-                    text: "나가기",
-                    onPress: () => {
-                      navigation.navigate("Home");
-                    },
-                  },
-                ]);
-              }}
-            >
-              <LottieView
-                style={styles.spaceship}
-                source={require("../assets/json/open_door.json")}
-                loop
-                autoPlay
-              />
-            </TouchableOpacity>
-          </Animated.View>
-        ) : null}
 
-        <View style={styles.ladderForm}>
-          <Image
-            style={styles.ladder}
-            source={require("../assets/img/ladder.png")}
-          />
-        </View>
-
-        {showButton.ladder ? (
-          <View style={styles.spaceshipForm}>
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate("Ladder");
-              }}
-            >
-              <Image
-                style={styles.ladder}
-                source={require("../assets/img/ladder.png")}
-              />
-            </TouchableOpacity>
-          </View>
-        ) : null}
-
-        <View style={styles.moleForm}>
-          <Image
-            style={styles.mole}
-            source={require("../assets/img/mole.png")}
-          />
-        </View>
-
-        {showButton.mole ? (
-          <View style={styles.spaceshipForm}>
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate("Mole");
-              }}
-            >
-              <Image
-                style={styles.mole}
-                source={require("../assets/img/mole.png")}
-              />
-            </TouchableOpacity>
-          </View>
-        ) : null}
-
+      <ImageBackground
+          source={require("../assets/img/gameMap.png")}                
+          imageStyle={{resizeMode: 'cover', height:  SCREEN_HEIGHT , width: SCREEN_WIDTH}}
+        >
+          {/* 조이스틱 */}
         <View style={styles.joystickArea}>
           <Animated.View
             {...panResponder.panHandlers}
             style={[joystickPosition.getLayout(), styles.joystick]}
           />
         </View>
+      
+        
 
-        <Animated.View style={styles.rouletteForm}>
-          <LottieView
-            style={styles.roulette}
-            source={require("../assets/json/roulette.json")}
-            autoPlay
-            loop
-          />
-        </Animated.View>
-
-        {showButton.roulette ? (
-          <View style={styles.spaceshipForm}>
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate("Roulette");
-              }}
-            >
-              <LottieView
-                style={styles.roulette}
-                source={require("../assets/json/roulette.json")}
-                autoPlay
-                loop
-              />
-            </TouchableOpacity>
-          </View>
+        {/* 문 */}
+        <View>
+        {showButton.door ? (
+          <TouchableOpacity
+            onPress={() => {
+              Alert.alert("맵을 나가시겠습니까?", null, [
+                {
+                  text: "취소",
+                  style: "cancel",
+                },
+                {
+                  text: "나가기",
+                  onPress: () => {
+                    navigation.navigate("Home");
+                  },
+                },
+              ]);
+            }}
+          >
+            <Image
+              style={styles.clickImage}
+              source={require("../assets/img/door.png")}
+            />
+          </TouchableOpacity>
         ) : null}
+</View>
+
+            
+        {/* 사다리 */}
+        <View>
+        {showButton.ladder ? (
+          <TouchableOpacity
+            onPress={() => { navigation.navigate("Ladder");}}
+          >
+            <Image
+              style={styles.clickImage}
+              source={require("../assets/img/ladder.png")}
+            />
+          </TouchableOpacity>
+        ) : null}
+        </View>
+
+
+        {/* 두더지 */}
+        <View>
+        {showButton.mole ? (
+          <TouchableOpacity
+            onPress={() => { navigation.navigate("Mole");}}
+          >
+            <Image
+              style={styles.clickImage}
+              source={require("../assets/img/mole.png")}
+            />
+          </TouchableOpacity>
+        ) : null}
+        </View>
+
+        {/* 룰렛 */}
+        <View>
+        {showButton.roulette ? (
+          <TouchableOpacity 
+            onPress={() => { navigation.navigate("Roulette"); }}
+          >
+            <Image
+              style={styles.clickImage}
+              source={require("../assets/img/roulette.png")}
+            />
+          </TouchableOpacity>
+        ) : null}
+        </View>
 
         <View
           style={{
@@ -244,116 +254,61 @@ export default function MiniGames({ navigation }) {
             top: characterPosition.y,
           }}
         >
-          <Image
-            style={styles.alien}
-            source={require("../assets/img/alien.png")}
-          />
+
+          <Image style={styles.image} source={alienImagePath[alienType]} />
         </View>
+        
+
       </ImageBackground>
-    </View>
+      </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  bgImage: {
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT,
-    backgroundColor: "#000000",
   },
-  ladderForm: {
-    position: "absolute",
-    left: -SCREEN_WIDTH * 0.018,
-    top: SCREEN_HEIGHT * 0.1,
-  },
-  ladder: {
-    width: SCREEN_WIDTH * 0.2,
-    height: SCREEN_HEIGHT * 0.07,
-    resizeMode: "contain",
-  },
-  moleForm: {
+  
+  clickImage: {
     position: "absolute",
     right: SCREEN_WIDTH * 0.05,
-    top: SCREEN_HEIGHT * 0.2,
-  },
-  mole: {
-    width: SCREEN_WIDTH * 0.15,
-    height: SCREEN_HEIGHT * 0.08,
+    top: SCREEN_HEIGHT * 0.83,
+    width: SCREEN_WIDTH*0.2,
+    height: SCREEN_HEIGHT *0.15,
     resizeMode: "contain",
   },
-  rouletteForm: {
-    position: "absolute",
-    left: SCREEN_WIDTH * 0.3,
-    bottom: SCREEN_HEIGHT * 0.3,
-  },
-  roulette: {
-    width: SCREEN_WIDTH * 0.08,
-    height: SCREEN_HEIGHT * 0.08,
-    resizeMode: "contain",
-  },
-  doorForm: {
-    position: "absolute",
-    right: -SCREEN_WIDTH * 0.02,
-    bottom: SCREEN_HEIGHT * 0.25,
-  },
-  door: {
-    width: SCREEN_WIDTH * 0.17,
-    height: SCREEN_HEIGHT * 0.17,
-    opacity: 0.5,
-    resizeMode: "contain",
-  },
-  spaceshipForm: {
-    position: "absolute",
-    right: "10%",
-    bottom: "9%",
-  },
-  spaceship: {
-    width: SCREEN_WIDTH * 0.1,
-    height: SCREEN_HEIGHT * 0.1,
-    resizeMode: "contain",
-    // backgroundColor: "rgba(255, 255, 255, 0)",
-    // ...Platform.select({
-    //     ios: {
-    //         shadowColor: 'lightyellow', // 그림자 색상
-    //         shadowOpacity: 1,
-    //         shadowRadius: 2,
-    //         shadowOffset: {width: 2, height: 2},
-    //     },
-    //     android: {
-    //         elevation: 5,
-    //     }
-    // })
-  },
+
   joystickArea: {
     position: "absolute",
-    left: "15%",
-    bottom: "17%",
+    left: SCREEN_WIDTH * 0.1,
+    top: SCREEN_HEIGHT * 0.8,
+    backgroundColor: 'gray',
+    borderColor: 'gray',
+    borderWidth: 13,
+    width: SCREEN_WIDTH * 0.3,
+    height: SCREEN_WIDTH * 0.3,
+    borderRadius: (SCREEN_WIDTH * 0.3) / 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+
   },
   joystick: {
-    position: "absolute",
     width: SCREEN_WIDTH * 0.13,
     height: SCREEN_WIDTH * 0.13,
     borderRadius: (SCREEN_WIDTH * 0.13) / 2,
     backgroundColor: "rgba(255, 255, 255, 0.5)",
-    // ...Platform.select({
-    //     ios: {
-    //         shadowColor: "rgb(250, 250, 250)", // 그림자 색상
-    //         shadowOpacity: 1,
-    //         shadowRadius: 6,
-    //         shadowOffset: {width: 3, height: 3},
-    //     },
-    //     android: {
-    //         elevation: 5,
-    //     },
-    // })
+    
   },
   alien: {
     width: SCREEN_WIDTH * 0.2,
     height: SCREEN_HEIGHT * 0.08,
     resizeMode: "contain",
   },
+  image: {
+    width: ALIEN_SIZE,
+    height: ALIEN_SIZE,
+    resizeMode: "contain",
+  },
+  
 });

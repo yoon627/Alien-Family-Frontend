@@ -6,6 +6,18 @@ const SCREEN_HEIGHT = Dimensions.get('window').height;
 const AlienModal = ({ visible, onClose, alienInfo }) => {
 
   const slideAnim = new Animated.Value(SCREEN_WIDTH);
+  const alienImagePath = {
+    BASIC: require(`../assets/img/character/BASIC.png`),
+    GLASSES: require(`../assets/img/character/GLASSES.png`),
+    GIRL: require(`../assets/img/character/GIRL.png`),
+    BAND_AID: require(`../assets/img/character/BAND_AID.png`),
+    RABBIT: require(`../assets/img/character/RABBIT.png`),
+    HEADBAND: require(`../assets/img/character/HEADBAND.png`),
+    TOMATO: require(`../assets/img/character/TOMATO.png`),
+    CHRISTMAS_TREE: require(`../assets/img/character/CHRISTMAS_TREE.png`),
+    SANTA : require(`../assets/img/character/SANTA.png`),
+    PIRATE: require(`../assets/img/character/PIRATE.png`),
+  }
 
   useEffect(() => {
     if (alienInfo) {
@@ -42,10 +54,10 @@ const AlienModal = ({ visible, onClose, alienInfo }) => {
             {alienInfo && (
               <>
               <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-                <Text style={{fontSize: 20, padding: 5, paddingHorizontal: 14}}>X</Text>
+                <Text style={{fontSize: 20, padding: 5, paddingHorizontal: 10}}>X</Text>
               </TouchableOpacity>
               <View style={styles.imageBox}>
-                <Image style={styles.image} source={require("../assets/img/alien4.png")} />
+                <Image style={styles.image} source={alienImagePath[alienInfo.alien.type]} />
               </View>
               <View style={styles.txtBox}>
                 <View style={styles.subtitleContainer}>
@@ -77,19 +89,8 @@ const styles = StyleSheet.create({
   container:{
     flex:1,
     flexDirection:'row',
-    // right: 0,
-    // position: 'absolute',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    // alignItems: 'stretch',
-    
-    // justifyContent: 'flex-end',
-    // alignItems: 'flex-end',
-    // alignContent: 'flex-end',
-    
-    // alignItems: 'flex-end',
-    // alignContent: 'flex-end',
-    
     
   },
   subContainer:{
@@ -104,8 +105,6 @@ const styles = StyleSheet.create({
     paddingTop: 30
   },
   imageBox:{
-    // width: 120,
-    // height: 120,
     borderRadius: 100,
     alignItems: 'center',
     borderColor: '#FFF',
@@ -130,28 +129,24 @@ const styles = StyleSheet.create({
   },
   subtitleContainer:{
     flexDirection: 'row',
-    marginBottom: 4
+    marginBottom: 4,
   },
   subtitle:{
-    fontSize: 18,
-    color: '#FFF',
+    fontWeight: '700',
+    fontSize: 19,
   },
 
   subtitleContent:{
     fontSize: 18,
-    color: '#FFF',
     
   },
   closeBtn:{
     position: 'absolute',
-    top: 0,
-    right: 0,
+    top: '4%',
+    right: '5.5%',
     backgroundColor: '#FFF',
-    margin: 16,
-    marginRight: 20,
-    // marginTop: 25,
-    // marginRight: 10
-
+    // margin: 16,
+    // marginRight: 18,
   }
 })
 export default AlienModal;

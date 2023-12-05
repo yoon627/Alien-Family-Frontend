@@ -567,7 +567,7 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
   tmiTool: {
-    position: "absolute",
+    // position: "absolute",
     alignItems: "center",
     top: "-22%",
   },
