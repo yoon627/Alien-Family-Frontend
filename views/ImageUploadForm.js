@@ -13,9 +13,7 @@ import {
   View,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
 const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
-
 const TAG_OPTION = [
   {
     item: "아빠",
@@ -38,11 +36,9 @@ const TAG_OPTION = [
     id: "EXTRA",
   },
 ];
-
 export default function ImageUploadForm({uri, onUploadComplete}) {
   const [photoTags, setPhotoTags] = useState([]);
   const [description, setDescription] = useState("");
-
   const toggleTag = (tag) => {
     // 선택된 태그 목록 업데이트
     if (photoTags.includes(tag)) {
@@ -51,7 +47,6 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
       setPhotoTags([...photoTags, tag]);
     }
   };
-
   // 클라에서 바로 presigned url로 업로드
   // 1단계: signed url을 요청해서 받는다.
   // 2단계: 받아온 url에 put으로 요청해서 업로드한다.
@@ -60,13 +55,11 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
     const UserServerAccessToken = await AsyncStorage.getItem(
       "UserServerAccessToken",
     );
-
     // 서버로 전송될 파일의 이름과 타입 지정
     const body = {
       prefix: familyId, // familyId
       fileName: uri.substring(uri.lastIndexOf("/") + 1),
     };
-
     try {
       // 1단계: 서버에 presigned url 요청
       const urlRes = await fetch("http://43.202.241.133:1998/photo/s3", {
@@ -77,13 +70,10 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
           Authorization: "Bearer " + UserServerAccessToken,
         },
       });
-
       const signedUrl = await urlRes.text();
       // console.log("👉🏻presigned url: ", signedUrl);
-
       const blob = await (await fetch(uri)).blob();
       // console.log("📝 blob: ", blob)
-
       // 2단계: 이미지를 해당 url에 put (upload)
       // 이미 파일 이름이나 경로 등은 url 받아올 때 지정해놨으므로 image 파일 객체와 content-type 정보만 넣어서 보냄
       // const access_token = await AsyncStorage.getItem("ServerAccessToken");
@@ -94,15 +84,12 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
           "Content-type": "image/jpeg",
         },
       });
-
       // 서버 응답 확인
       // console.log("🚀 서버에 업로드 한 정보: ", uploadRes);
-
       // 서버 응답이 성공적인지 확인하고 필요한 처리 수행
       if (uploadRes.ok) {
         const writer = await AsyncStorage.getItem("nickname");
         const list = signedUrl.split("?");
-
         const imageInfo = {
           writer: writer,
           photoKey:
@@ -110,7 +97,6 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
           photoTags: photoTags,
           description: description,
         };
-
         const response = await fetch("http://43.202.241.133:1998/photo", {
           method: "POST",
           body: JSON.stringify(imageInfo),
@@ -129,7 +115,6 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
       console.log("서버 업로드 에러..", err);
     }
   };
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -166,7 +151,6 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
             </Pressable>
           ))}
         </View>
-
         <TextInput
           style={[styles.input, styles.description]}
           value={description}
@@ -174,7 +158,6 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
           placeholder="문구를 입력하세요..."
           multiline
         />
-
         <View style={{flexDirection: "row", marginVertical: 10}}>
           <TouchableOpacity
             style={[styles.button, styles.buttonWrite]}
@@ -193,7 +176,6 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
     </KeyboardAvoidingView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

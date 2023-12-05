@@ -159,25 +159,15 @@ export default function Attendance({ navigation }) {
             <Text style={styles.sub_title}>
               # {JSON.stringify(day).slice(1, 11)}
             </Text>
-            <Text style={styles.sub_title}>
-              # {JSON.stringify(day).slice(1, 11)}
-            </Text>
             {tmiJson[day] && tmiJson[day].length > 0 ? (
               tmiJson[day].map((tmi, index) => (
                 <Text key={index} style={styles.tmi_txt}>
                   - {tmi}
                 </Text>
-              ))
-              tmiJson[day].map((tmi, index) => (
-                <Text key={index} style={styles.tmi_txt}>
-                  - {tmi}
-                </Text>
-              ))
-            ) : (
+              )))
+             : (
               <Text>TMI 없어요...</Text>
             )}
-
-
             <View style={styles.image_container}>
               {attendanceJson[day] && attendanceJson[day].length > 0 ? (
                 attendanceJson[day].map((attendant, index) =>
@@ -223,8 +213,6 @@ const styles = StyleSheet.create({
   },
 
   main_title: {
-
-  main_title: {
     marginBottom: 20,
     fontSize: 60,
     padding: 10,
@@ -243,8 +231,6 @@ const styles = StyleSheet.create({
 
   sub_title: {
     color: "#353535",
-  sub_title: {
-    color: "#353535",
     fontSize: 25,
     fontWeight: "700",
     fontWeight: "700",
@@ -254,7 +240,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: "#DED1DF",
   },
-  tmi_txt: {
   tmi_txt: {
     fontSize: 17,
     borderBottomWidth: 1,
@@ -267,7 +252,6 @@ const styles = StyleSheet.create({
   },
 
   image_container: {
-  image_container: {
     // backgroundColor: 'gray',
     flexDirection: "row",
     flexWrap: "wrap",
@@ -279,7 +263,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
 
-  attendant: {
   attendant: {
     fontSize: 15,
     padding: 9,

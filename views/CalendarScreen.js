@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   Button,
@@ -24,8 +24,6 @@ import {
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
 import { LocaleConfig } from "react-native-calendars/src/index";
-import * as Notifications from "expo-notifications";
-import { useFocusEffect } from "@react-navigation/native";
 
 LocaleConfig.locales["ko"] = {
   monthNames: [
@@ -76,14 +74,6 @@ const getRandomColor = (index) => {
   return colors[index % colors.length];
 };
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-  }),
-});
-
 export default function CalendarScreen({ navigation }) {
   const [selected, setSelected] = useState("");
   const [events, setEvents] = useState({});
@@ -105,8 +95,6 @@ export default function CalendarScreen({ navigation }) {
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
   const [localeSet, setLocaleSet] = useState(false);
-  const [notification, setNotification] = useState(false);
-  const notificationListener = useRef();
 
   useEffect(() => {
     dayjs.locale("ko");
@@ -149,11 +137,10 @@ export default function CalendarScreen({ navigation }) {
     const name = await AsyncStorage.getItem("MyName");
     const id = await AsyncStorage.getItem("familyId");
     const token = await AsyncStorage.getItem("UserServerAccessToken"); // 적절한 토큰 키 사용
-    const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
+
     try {
       const response = await fetch(
-        SERVER_ADDRESS +
-          "/calendarEvent/day/" +
+        "http://43.202.241.133:1998/calendarEvent/day/" +
           `${currentYear}/${currentMonth}`,
         {
           method: "GET",
@@ -161,7 +148,7 @@ export default function CalendarScreen({ navigation }) {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`, // 필요한 경우 인증 헤더 추가
           },
-        }
+        },
       );
 
       if (response.ok) {
@@ -182,7 +169,7 @@ export default function CalendarScreen({ navigation }) {
 
             const datesInRange = getDatesInRange(
               new Date(eventData.startDate),
-              new Date(eventData.endDate)
+              new Date(eventData.endDate),
             );
 
             datesInRange.forEach((date) => {
@@ -193,7 +180,7 @@ export default function CalendarScreen({ navigation }) {
           setEvents(newEvents);
           await AsyncStorage.setItem(
             "calendarEvents",
-            JSON.stringify(newEvents)
+            JSON.stringify(newEvents),
           );
         }
       } else {
@@ -231,7 +218,6 @@ export default function CalendarScreen({ navigation }) {
   const checkYear = (date, compareDate) => {
     const sameYear = dayjs(date).year() === dayjs(compareDate).year();
     return dayjs(date).format(sameYear ? "M월 D일 (dd)" : "YY년 M월 D일 (dd)");
-    return dayjs(date).format(sameYear ? "M월 D일 (dd)" : "YY년 M월 D일 (dd)");
   };
 
   function formatYYYYMMDD(date) {
@@ -263,10 +249,6 @@ export default function CalendarScreen({ navigation }) {
         <View style={{ ...styles.event, paddingVertical: 9 }}>
           <Ionicons name={"person"} size={17} color={getRandomColor(index)} />
           <Text style={{ fontSize: 17, fontWeight: "bold", paddingLeft: 10 }}>
-      <TouchableOpacity key={index} onPress={() => openEditModal(event)}>
-        <View style={{...styles.event, paddingVertical: 9}}>
-          <Ionicons name={"person"} size={17} color={getRandomColor(index)}/>
-          <Text style={{fontSize: 17, fontWeight: "bold", paddingLeft: 10}}>
             {event.name} : {event.title}
           </Text>
         </View>
@@ -292,7 +274,7 @@ export default function CalendarScreen({ navigation }) {
             text: "확인",
           },
         ],
-        { cancelable: true }
+        { cancelable: true },
       );
       return;
     }
@@ -306,7 +288,7 @@ export default function CalendarScreen({ navigation }) {
             text: "확인",
           },
         ],
-        { cancelable: true }
+        { cancelable: true },
       );
       return;
     }
@@ -317,8 +299,7 @@ export default function CalendarScreen({ navigation }) {
     console.log(startAt);
     try {
       const token = await AsyncStorage.getItem("UserServerAccessToken"); // 적절한 토큰 키 사용
-
-      const response = await fetch(SERVER_ADDRESS + "/calendarEvent", {
+      const response = await fetch("http://43.202.241.133:1998/calendarEvent", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -366,7 +347,6 @@ export default function CalendarScreen({ navigation }) {
   };
 
   const handleEditEvent = async () => {
-    const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
     if (startAt > endAt) {
       // 경고 창 바로 표시
       Alert.alert(
@@ -377,7 +357,7 @@ export default function CalendarScreen({ navigation }) {
             text: "확인",
           },
         ],
-        { cancelable: true }
+        { cancelable: true },
       );
       return;
     }
@@ -390,7 +370,7 @@ export default function CalendarScreen({ navigation }) {
             text: "확인",
           },
         ],
-        { cancelable: true }
+        { cancelable: true },
       );
       return;
     }
@@ -401,11 +381,11 @@ export default function CalendarScreen({ navigation }) {
     if (editingEvent) {
       const oldDates = getDatesInRange(
         new Date(editingEvent.startDate),
-        new Date(editingEvent.endDate)
+        new Date(editingEvent.endDate),
       );
       oldDates.forEach((date) => {
         updatedEvents[date] = updatedEvents[date].filter(
-          (event) => event.id !== editingEvent.id
+          (event) => event.id !== editingEvent.id,
         );
       });
     }
@@ -437,7 +417,7 @@ export default function CalendarScreen({ navigation }) {
     };
 
     const response = await fetch(
-      SERVER_ADDRESS + "/calendarEvent/" + editingEvent.id,
+      "http://43.202.241.133:1998/calendarEvent/" + editingEvent.id,
       {
         method: "PATCH",
         headers: {
@@ -445,7 +425,7 @@ export default function CalendarScreen({ navigation }) {
           Authorization: `Bearer ${token}`, // 필요한 경우 인증 헤더 추가
         },
         body: JSON.stringify(editPayload),
-      }
+      },
     );
 
     const data = await response.json();
@@ -479,18 +459,17 @@ export default function CalendarScreen({ navigation }) {
   };
 
   const deleteEvent = async (eventId) => {
-    const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
     try {
       const token = await AsyncStorage.getItem("UserServerAccessToken");
       const response = await fetch(
-        SERVER_ADDRESS + `/calendarEvent/${eventId}`,
+        `http://43.202.241.133:1998/calendarEvent/${eventId}`,
         {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -502,7 +481,7 @@ export default function CalendarScreen({ navigation }) {
         const updatedEvents = { ...prevEvents };
         Object.keys(updatedEvents).forEach((date) => {
           updatedEvents[date] = updatedEvents[date].filter(
-            (event) => event.id !== eventId
+            (event) => event.id !== eventId,
           );
         });
         return updatedEvents;
@@ -581,42 +560,8 @@ export default function CalendarScreen({ navigation }) {
     );
   };
 
-  useEffect(() => {
-    notificationListener.current =
-      Notifications.addNotificationReceivedListener((notification) => {
-        setNotification(notification);
-        if (notification.request.content.title == "Family") {
-          console.log("update Family");
-        } else if (notification.request.content.title == "TMI") {
-          console.log("update TMI");
-        } else if (notification.request.content.title == "Calendar") {
-          console.log("update Calendar");
-          getData();
-        } else if (notification.request.content.title == "Photo") {
-          console.log("update Photo");
-        } else if (notification.request.content.title == "Plant") {
-          console.log("update Plant");
-        } else {
-          console.log("update Chatting");
-        }
-      });
-    return () => {
-      Notifications.removeNotificationSubscription(
-        notificationListener.current
-      );
-    };
-  }, [notification]);
-  useFocusEffect(
-    useCallback(() => {
-      getData();
-      // 여기에 다른 포커스를 받았을 때 실행하고 싶은 작업들을 추가할 수 있습니다.
-      return () => {
-        // 스크린이 포커스를 잃을 때 정리 작업을 수행할 수 있습니다.
-      };
-    }, []) // 두 번째 매개변수로 빈 배열을 전달하여 컴포넌트가 처음 마운트될 때만 실행되도록 합니다.
-  );
   return (
-    <View style={{backgroundColor: "white", flex: 1}}>
+    <View style={{ backgroundColor: "white", flex: 1 }}>
       <Calendar
         onDayPress={onDayPress}
         markedDates={getMarkedDates()}
@@ -653,8 +598,9 @@ export default function CalendarScreen({ navigation }) {
         </TouchableOpacity>
         {selected && events[selected] ? (
           renderEvents()
-        ) : null
-        }
+        ) : (
+          <Text>등록된 일정이 없습니다.</Text>
+        )}
       </ScrollView>
 
       {/*<Modal*/}
@@ -708,10 +654,10 @@ export default function CalendarScreen({ navigation }) {
           </View>
 
           <Pressable
-            style={{position: "absolute", right: 0, marginTop: 20}}
+            style={{ position: "absolute", right: 0, marginTop: 20 }}
             onPress={() => setModalVisible(false)}
           >
-            <Ionicons name="close" size={24} color="black"/>
+            <Ionicons name="close" size={24} color="black" />
           </Pressable>
 
           <TextInput
@@ -734,7 +680,7 @@ export default function CalendarScreen({ navigation }) {
               name="navigate-next"
               size={24}
               color="black"
-              style={{paddingLeft: 10}}
+              style={{ paddingLeft: 10 }}
             />
             <Pressable onPress={() => setShowEndDatePicker(true)}>
               <Text style={styles.dateText}>{checkYear(endAt, startAt)}</Text>
@@ -782,7 +728,7 @@ export default function CalendarScreen({ navigation }) {
         <View style={styles.check}>
           <Pressable onPress={() => deleteEvent(editingEvent.id)}>
             <Ionicons
-              style={{paddingRight: 20}}
+              style={{ paddingRight: 20 }}
               name="ios-trash-outline"
               size={30}
               color="gray"

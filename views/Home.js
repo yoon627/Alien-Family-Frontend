@@ -270,7 +270,7 @@ export default function Home({ navigation, fonts }) {
 
   const renderFlower = () => {
     // 레벨에 따라 다른 이미지 렌더링
-    switch (plantPoint) {
+    switch (plantLevel) {
       case 0:
         return (
           <Image
