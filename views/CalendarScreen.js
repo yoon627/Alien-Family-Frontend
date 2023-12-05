@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Alert,
   Button,
@@ -14,7 +14,6 @@ import { Calendar } from "react-native-calendars";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import ChoseCalendar from "./ChoseCalendar";
 import {
   Ionicons,
   MaterialCommunityIcons,
@@ -26,6 +25,7 @@ import "dayjs/locale/ko";
 import { LocaleConfig } from "react-native-calendars/src/index";
 import * as Notifications from "expo-notifications";
 import { useFocusEffect } from "@react-navigation/native";
+import ChoseCalendar from "./ChoseCalendar";
 
 LocaleConfig.locales["ko"] = {
   monthNames: [
@@ -159,7 +159,7 @@ export default function CalendarScreen({ navigation }) {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`, // 필요한 경우 인증 헤더 추가
           },
-        }
+        },
       );
 
       if (response.ok) {
@@ -180,7 +180,7 @@ export default function CalendarScreen({ navigation }) {
 
             const datesInRange = getDatesInRange(
               new Date(eventData.startDate),
-              new Date(eventData.endDate)
+              new Date(eventData.endDate),
             );
 
             datesInRange.forEach((date) => {
@@ -191,7 +191,7 @@ export default function CalendarScreen({ navigation }) {
           setEvents(newEvents);
           await AsyncStorage.setItem(
             "calendarEvents",
-            JSON.stringify(newEvents)
+            JSON.stringify(newEvents),
           );
         }
       } else {
@@ -285,7 +285,7 @@ export default function CalendarScreen({ navigation }) {
             text: "확인",
           },
         ],
-        { cancelable: true }
+        { cancelable: true },
       );
       return;
     }
@@ -299,7 +299,7 @@ export default function CalendarScreen({ navigation }) {
             text: "확인",
           },
         ],
-        { cancelable: true }
+        { cancelable: true },
       );
       return;
     }
@@ -367,7 +367,7 @@ export default function CalendarScreen({ navigation }) {
             text: "확인",
           },
         ],
-        { cancelable: true }
+        { cancelable: true },
       );
       return;
     }
@@ -380,7 +380,7 @@ export default function CalendarScreen({ navigation }) {
             text: "확인",
           },
         ],
-        { cancelable: true }
+        { cancelable: true },
       );
       return;
     }
@@ -391,11 +391,11 @@ export default function CalendarScreen({ navigation }) {
     if (editingEvent) {
       const oldDates = getDatesInRange(
         new Date(editingEvent.startDate),
-        new Date(editingEvent.endDate)
+        new Date(editingEvent.endDate),
       );
       oldDates.forEach((date) => {
         updatedEvents[date] = updatedEvents[date].filter(
-          (event) => event.id !== editingEvent.id
+          (event) => event.id !== editingEvent.id,
         );
       });
     }
@@ -435,7 +435,7 @@ export default function CalendarScreen({ navigation }) {
           Authorization: `Bearer ${token}`, // 필요한 경우 인증 헤더 추가
         },
         body: JSON.stringify(editPayload),
-      }
+      },
     );
 
     const data = await response.json();
@@ -479,7 +479,7 @@ export default function CalendarScreen({ navigation }) {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -491,7 +491,7 @@ export default function CalendarScreen({ navigation }) {
         const updatedEvents = { ...prevEvents };
         Object.keys(updatedEvents).forEach((date) => {
           updatedEvents[date] = updatedEvents[date].filter(
-            (event) => event.id !== eventId
+            (event) => event.id !== eventId,
           );
         });
         return updatedEvents;
@@ -590,7 +590,7 @@ export default function CalendarScreen({ navigation }) {
       });
     return () => {
       Notifications.removeNotificationSubscription(
-        notificationListener.current
+        notificationListener.current,
       );
     };
   }, [notification]);
@@ -601,7 +601,7 @@ export default function CalendarScreen({ navigation }) {
       return () => {
         // 스크린이 포커스를 잃을 때 정리 작업을 수행할 수 있습니다.
       };
-    }, []) // 두 번째 매개변수로 빈 배열을 전달하여 컴포넌트가 처음 마운트될 때만 실행되도록 합니다.
+    }, []), // 두 번째 매개변수로 빈 배열을 전달하여 컴포넌트가 처음 마운트될 때만 실행되도록 합니다.
   );
   return (
     <View style={{ backgroundColor: "white", flex: 1 }}>
@@ -645,44 +645,6 @@ export default function CalendarScreen({ navigation }) {
           <Text>등록된 일정이 없습니다.</Text>
         )}
       </ScrollView>
-
-      {/*<Modal*/}
-      {/*  visible={isAddOrEditModalVisible}*/}
-      {/*  onRequestClose={toggleAddOrEditModal}*/}
-      {/*  transparent={true}*/}
-      {/*  animationType="slide"*/}
-      {/*>*/}
-      {/*  <View*/}
-      {/*    style={{*/}
-      {/*      flex: 1,*/}
-      {/*      justifyContent: "center",*/}
-      {/*      alignItems: "center",*/}
-      {/*    }}*/}
-      {/*  >*/}
-      {/*    <View*/}
-      {/*      style={{*/}
-      {/*        backgroundColor: "white",*/}
-      {/*        padding: 20,*/}
-      {/*        borderRadius: 10,*/}
-      {/*        shadowOpacity: 0.25,*/}
-      {/*        shadowRadius: 3.84,*/}
-      {/*        elevation: 5,*/}
-      {/*        width: "50%", // 너비 조정*/}
-      {/*        height: "17%", // 높이 조정*/}
-      {/*      }}*/}
-      {/*    >*/}
-      {/*      <Button*/}
-      {/*        title="새 일정 추가"*/}
-      {/*        onPress={() => {*/}
-      {/*          setNewEventModalVisible(true);*/}
-      {/*          toggleAddOrEditModal();*/}
-      {/*        }}*/}
-      {/*      />*/}
-
-      {/*      <Button title="취소" onPress={toggleAddOrEditModal}/>*/}
-      {/*    </View>*/}
-      {/*  </View>*/}
-      {/*</Modal>*/}
 
       <Modal
         presentationStyle="formSheet"
@@ -923,8 +885,10 @@ export default function CalendarScreen({ navigation }) {
               height: "50%", // 높이 조정
             }}
           >
-            <ChoseCalendar />
-
+            <ChoseCalendar
+              closeModal={setIsLocalCalendarModalVisible}
+              closeAddModal={setNewEventModalVisible}
+            />
             <Button
               title="취소"
               onPress={() => toggleLocalCalendarModal()}
