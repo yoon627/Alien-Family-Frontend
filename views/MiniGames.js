@@ -1,19 +1,16 @@
-import React, { useEffect, useLayoutEffect, useState, useRef } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { StatusBar } from "expo-status-bar";
 import {
   Alert,
   Animated,
   Dimensions,
   Image,
   ImageBackground,
+  PanResponder,
   StyleSheet,
   TouchableOpacity,
-  PanResponder,
   View,
-  Text
 } from "react-native";
-import LottieView from "lottie-react-native";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
@@ -21,9 +18,10 @@ const Tab = createBottomTabNavigator();
 const ALIEN_SIZE = 120;
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
-const SCREEN_HEIGHT = Dimensions.get("window").height+45;
+const SCREEN_HEIGHT = Dimensions.get("window").height + 45;
 
 export default function MiniGames({ navigation }) {
+  const [coordinates, setCoordinates] = useState({ x: 0, y: 0 });
   const [alienType, setAlienType] = useState("BASIC");
   const alienImagePath = {
     BASIC: require(`../assets/img/character/BASIC.png`),
@@ -34,15 +32,14 @@ export default function MiniGames({ navigation }) {
     HEADBAND: require(`../assets/img/character/HEADBAND.png`),
     TOMATO: require(`../assets/img/character/TOMATO.png`),
     CHRISTMAS_TREE: require(`../assets/img/character/CHRISTMAS_TREE.png`),
-    SANTA : require(`../assets/img/character/SANTA.png`),
+    SANTA: require(`../assets/img/character/SANTA.png`),
     PIRATE: require(`../assets/img/character/PIRATE.png`),
-  }
-  
+  };
+
   useEffect(() => {
     const fetchAlienType = async () => {
       try {
         setAlienType(await AsyncStorage.getItem("alienType"));
-
       } catch (error) {
         console.error("Error fetching alienType from AsyncStorage:", error);
       }
@@ -61,15 +58,31 @@ export default function MiniGames({ navigation }) {
     door: false,
   });
 
+  const maxDistance = 30;
+  const sensitivity = 1; // 조이스틱 민감도 조절 (낮을수록 더 민감)
+
   const SOME_THRESHOLD = 100;
   const joystickPosition = useRef(new Animated.ValueXY()).current;
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
-      onPanResponderMove: Animated.event(
-        [null, { dx: joystickPosition.x, dy: joystickPosition.y }],
-        { useNativeDriver: false }
-      ),
+      onPanResponderMove: (evt, gestureState) => {
+        // 조이스틱이 최대 거리를 넘지 않도록 제한
+        const distance = Math.sqrt(
+          Math.pow(gestureState.dx, 2) + Math.pow(gestureState.dy, 2),
+        );
+        const angle = Math.atan2(gestureState.dy, gestureState.dx);
+        const x =
+          distance > maxDistance
+            ? maxDistance * Math.cos(angle)
+            : gestureState.dx;
+        const y =
+          distance > maxDistance
+            ? maxDistance * Math.sin(angle)
+            : gestureState.dy;
+
+        joystickPosition.setValue({ x, y });
+      },
       onPanResponderRelease: () => {
         Animated.spring(joystickPosition, {
           toValue: { x: 0, y: 0 },
@@ -77,7 +90,7 @@ export default function MiniGames({ navigation }) {
           useNativeDriver: false,
         }).start();
       },
-    })
+    }),
   ).current;
 
   useEffect(() => {
@@ -88,36 +101,42 @@ export default function MiniGames({ navigation }) {
         x: position.x * sensitivity,
         y: -position.y * sensitivity,
       };
-  
+
       // 움직임이 발생한 경우에만 로그 및 캐릭터 위치 업데이트
-      if (Math.abs(adjustedPosition.x) > 0.01 || Math.abs(adjustedPosition.y) > 0.01) {
+      if (
+        Math.abs(adjustedPosition.x) > 0.01 ||
+        Math.abs(adjustedPosition.y) > 0.01
+      ) {
         // console.log(adjustedPosition);
         setCharacterPosition((prevPosition) => ({
           x: Math.max(
             0,
-            Math.min(prevPosition.x + adjustedPosition.x, SCREEN_WIDTH - SCREEN_WIDTH * 0.12)
+            Math.min(
+              prevPosition.x + adjustedPosition.x,
+              SCREEN_WIDTH - SCREEN_WIDTH * 0.12,
+            ),
           ),
           y: Math.max(
             0,
-            Math.min(prevPosition.y - adjustedPosition.y, SCREEN_HEIGHT - SCREEN_HEIGHT * 0.1)
+            Math.min(
+              prevPosition.y - adjustedPosition.y,
+              SCREEN_HEIGHT - SCREEN_HEIGHT * 0.1,
+            ),
           ),
         }));
       }
     });
-  
+
     return () => {
       // 컴포넌트 언마운트 시 리스너 제거
       joystickPosition.removeListener(listener);
     };
   }, []);
-    
-    
-
 
   // 게임 이미지 & 캐릭터 사이 거리 계산
   const calculateDistance = (pos1, pos2) => {
     return Math.sqrt(
-      Math.pow(pos1.x - pos2.x, 2) + Math.pow(pos1.y - pos2.y, 2)
+      Math.pow(pos1.x - pos2.x, 2) + Math.pow(pos1.y - pos2.y, 2),
     );
   };
 
@@ -134,7 +153,7 @@ export default function MiniGames({ navigation }) {
     Object.keys(gameImgPosition).forEach((button) => {
       const distance = calculateDistance(
         characterPosition,
-        gameImgPosition[button]
+        gameImgPosition[button],
       );
       updatedShowButton[button] = distance < SOME_THRESHOLD;
     });
@@ -145,88 +164,94 @@ export default function MiniGames({ navigation }) {
   return (
     <View style={styles.container}>
       <ImageBackground
-          source={require("../assets/img/gameMap.png")}                
-          imageStyle={{resizeMode: 'cover', height:  SCREEN_HEIGHT , width: SCREEN_WIDTH}}
-        >
-          {/* 조이스틱 */}
+        source={require("../assets/img/gameMap.png")}
+        imageStyle={{
+          resizeMode: "cover",
+          height: SCREEN_HEIGHT,
+          width: SCREEN_WIDTH,
+        }}
+      >
+        {/* 조이스틱 */}
         <View style={styles.joystickArea}>
           <Animated.View
             {...panResponder.panHandlers}
             style={[joystickPosition.getLayout(), styles.joystick]}
           />
         </View>
-      
-        
 
         {/* 문 */}
         <View>
-        {showButton.door ? (
-          <TouchableOpacity
-            onPress={() => {
-              Alert.alert("맵을 나가시겠습니까?", null, [
-                {
-                  text: "취소",
-                  style: "cancel",
-                },
-                {
-                  text: "나가기",
-                  onPress: () => {
-                    navigation.navigate("Home");
+          {showButton.door ? (
+            <TouchableOpacity
+              onPress={() => {
+                Alert.alert("맵을 나가시겠습니까?", null, [
+                  {
+                    text: "취소",
+                    style: "cancel",
                   },
-                },
-              ]);
-            }}
-          >
-            <Image
-              style={styles.clickImage}
-              source={require("../assets/img/door.png")}
-            />
-          </TouchableOpacity>
-        ) : null}
-</View>
-
-            
-        {/* 사다리 */}
-        <View>
-        {showButton.ladder ? (
-          <TouchableOpacity
-            onPress={() => { navigation.navigate("Ladder");}}
-          >
-            <Image
-              style={styles.clickImage}
-              source={require("../assets/img/ladder.png")}
-            />
-          </TouchableOpacity>
-        ) : null}
+                  {
+                    text: "나가기",
+                    onPress: () => {
+                      navigation.navigate("Home");
+                    },
+                  },
+                ]);
+              }}
+            >
+              <Image
+                style={styles.clickImage}
+                source={require("../assets/img/door.png")}
+              />
+            </TouchableOpacity>
+          ) : null}
         </View>
 
+        {/* 사다리 */}
+        <View>
+          {showButton.ladder ? (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("Ladder");
+              }}
+            >
+              <Image
+                style={styles.clickImage}
+                source={require("../assets/img/ladder.png")}
+              />
+            </TouchableOpacity>
+          ) : null}
+        </View>
 
         {/* 두더지 */}
         <View>
-        {showButton.mole ? (
-          <TouchableOpacity
-            onPress={() => { navigation.navigate("Mole");}}
-          >
-            <Image
-              style={styles.clickImage}
-              source={require("../assets/img/mole.png")}
-            />
-          </TouchableOpacity>
-        ) : null}
+          {showButton.mole ? (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("Mole");
+              }}
+            >
+              <Image
+                style={styles.clickImage}
+                source={require("../assets/img/mole.png")}
+              />
+            </TouchableOpacity>
+          ) : null}
         </View>
 
         {/* 룰렛 */}
         <View>
-        {showButton.roulette ? (
-          <TouchableOpacity 
-            onPress={() => { navigation.navigate("Roulette"); }}
-          >
-            <Image
-              style={styles.clickImage}
-              source={require("../assets/img/roulette.png")}
-            />
-          </TouchableOpacity>
-        ) : null}
+          {showButton.roulette ? (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("Roulette");
+              }}
+            >
+              <Image
+                style={styles.clickImage}
+                source={require("../assets/img/roulette.png")}
+              />
+            </TouchableOpacity>
+          ) : null}
         </View>
 
         <View
@@ -238,10 +263,8 @@ export default function MiniGames({ navigation }) {
         >
           <Image style={styles.image} source={alienImagePath[alienType]} />
         </View>
-        
-
       </ImageBackground>
-      </View>
+    </View>
   );
 }
 
@@ -250,13 +273,13 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT,
   },
-  
+
   clickImage: {
     position: "absolute",
     right: SCREEN_WIDTH * 0.05,
     top: SCREEN_HEIGHT * 0.83,
-    width: SCREEN_WIDTH*0.2,
-    height: SCREEN_HEIGHT *0.15,
+    width: SCREEN_WIDTH * 0.2,
+    height: SCREEN_HEIGHT * 0.15,
     resizeMode: "contain",
   },
 
@@ -264,22 +287,20 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: SCREEN_WIDTH * 0.1,
     top: SCREEN_HEIGHT * 0.8,
-    backgroundColor: 'gray',
-    borderColor: 'gray',
+    backgroundColor: "gray",
+    borderColor: "gray",
     borderWidth: 13,
     width: SCREEN_WIDTH * 0.3,
     height: SCREEN_WIDTH * 0.3,
     borderRadius: (SCREEN_WIDTH * 0.3) / 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-
+    justifyContent: "center",
+    alignItems: "center",
   },
   joystick: {
     width: SCREEN_WIDTH * 0.13,
     height: SCREEN_WIDTH * 0.13,
     borderRadius: (SCREEN_WIDTH * 0.13) / 2,
     backgroundColor: "rgba(255, 255, 255, 0.5)",
-    
   },
   alien: {
     width: SCREEN_WIDTH * 0.2,
@@ -291,5 +312,4 @@ const styles = StyleSheet.create({
     height: ALIEN_SIZE,
     resizeMode: "contain",
   },
-  
 });

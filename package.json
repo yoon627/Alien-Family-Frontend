@@ -50,7 +50,7 @@
     "fix": "^0.0.6",
     "lodash": "^4.17.21",
     "lottie-ios": "^4.3.3",
-    "lottie-react-native": "5.1.6",
+    "lottie-react-native": "^6.4.1",
     "lucide-react-native": "^0.293.0",
     "react": "18.2.0",
     "react-native": "0.72.6",

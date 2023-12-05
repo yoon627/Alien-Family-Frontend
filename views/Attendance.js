@@ -76,6 +76,7 @@ export default function Attendance({ navigation }) {
           let members = [];
           if (tmp) {
             members.push(tmp.length);
+            members.push(tmp.length);
           }
           tmpJson[week[i]] = members;
         }
@@ -158,7 +159,15 @@ export default function Attendance({ navigation }) {
             <Text style={styles.sub_title}>
               # {JSON.stringify(day).slice(1, 11)}
             </Text>
+            <Text style={styles.sub_title}>
+              # {JSON.stringify(day).slice(1, 11)}
+            </Text>
             {tmiJson[day] && tmiJson[day].length > 0 ? (
+              tmiJson[day].map((tmi, index) => (
+                <Text key={index} style={styles.tmi_txt}>
+                  - {tmi}
+                </Text>
+              ))
               tmiJson[day].map((tmi, index) => (
                 <Text key={index} style={styles.tmi_txt}>
                   - {tmi}
@@ -167,6 +176,7 @@ export default function Attendance({ navigation }) {
             ) : (
               <Text>TMI 없어요...</Text>
             )}
+
 
             <View style={styles.image_container}>
               {attendanceJson[day] && attendanceJson[day].length > 0 ? (
@@ -196,16 +206,23 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#DED1DF",
+    backgroundColor: "#DED1DF",
   },
 
+
   attendence_container: {
+    width: SCREEN_WIDTH * 0.8,
+    backgroundColor: "#FFFFFF70",
     width: SCREEN_WIDTH * 0.8,
     backgroundColor: "#FFFFFF70",
     borderRadius: 20,
     padding: 20,
     marginBottom: 30,
     borderColor: "gray",
+    borderColor: "gray",
   },
+
+  main_title: {
 
   main_title: {
     marginBottom: 20,
@@ -226,22 +243,36 @@ const styles = StyleSheet.create({
 
   sub_title: {
     color: "#353535",
+  sub_title: {
+    color: "#353535",
     fontSize: 25,
+    fontWeight: "700",
     fontWeight: "700",
     marginBottom: 12,
     borderBottomWidth: 1,
     borderColor: "#DED1DF",
+    borderBottomWidth: 1,
+    borderColor: "#DED1DF",
   },
+  tmi_txt: {
   tmi_txt: {
     fontSize: 17,
     borderBottomWidth: 1,
     borderColor: "#DED1DF",
+    borderBottomWidth: 1,
+    borderColor: "#DED1DF",
     paddingBottom: 2,
+    marginBottom: 18,
     marginBottom: 18,
   },
 
   image_container: {
+  image_container: {
     // backgroundColor: 'gray',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    width: "100%",
+    justifyContent: "flex-end",
     flexDirection: "row",
     flexWrap: "wrap",
     width: "100%",
@@ -249,9 +280,13 @@ const styles = StyleSheet.create({
   },
 
   attendant: {
+  attendant: {
     fontSize: 15,
     padding: 9,
     margin: 3,
+    alignItems: "flex-end",
+    borderColor: "#D63CE3",
+    border: "solid",
     alignItems: "flex-end",
     borderColor: "#D63CE3",
     border: "solid",

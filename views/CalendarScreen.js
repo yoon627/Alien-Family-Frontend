@@ -4,11 +4,11 @@ import {
   Button,
   Modal,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   View,
-  ScrollView,
 } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -113,8 +113,6 @@ export default function CalendarScreen({ navigation }) {
     setLocaleSet(true);
     setStartAt(new Date());
     setEndAt(new Date());
-    // console.log("78778678678987", startAt.getHours());
-    // console.log("end", endAt);
   }, []);
 
   useEffect(() => {
@@ -131,6 +129,8 @@ export default function CalendarScreen({ navigation }) {
     let month = date.month;
     setCurrentYear(year);
     setCurrentMonth(month);
+    let firstDate = date.dateString.substring(0, 8) + "01";
+    setSelected(firstDate);
   };
 
   const toggleAddOrEditModal = () => {
@@ -231,6 +231,7 @@ export default function CalendarScreen({ navigation }) {
   const checkYear = (date, compareDate) => {
     const sameYear = dayjs(date).year() === dayjs(compareDate).year();
     return dayjs(date).format(sameYear ? "M월 D일 (dd)" : "YY년 M월 D일 (dd)");
+    return dayjs(date).format(sameYear ? "M월 D일 (dd)" : "YY년 M월 D일 (dd)");
   };
 
   function formatYYYYMMDD(date) {
@@ -262,6 +263,10 @@ export default function CalendarScreen({ navigation }) {
         <View style={{ ...styles.event, paddingVertical: 9 }}>
           <Ionicons name={"person"} size={17} color={getRandomColor(index)} />
           <Text style={{ fontSize: 17, fontWeight: "bold", paddingLeft: 10 }}>
+      <TouchableOpacity key={index} onPress={() => openEditModal(event)}>
+        <View style={{...styles.event, paddingVertical: 9}}>
+          <Ionicons name={"person"} size={17} color={getRandomColor(index)}/>
+          <Text style={{fontSize: 17, fontWeight: "bold", paddingLeft: 10}}>
             {event.name} : {event.title}
           </Text>
         </View>
@@ -305,9 +310,11 @@ export default function CalendarScreen({ navigation }) {
       );
       return;
     }
-    // payload.startDate.setHours(payload.startDate.getHours() + 9);
-    // payload.endDate.setHours(payload.endDate.getHours() + 9);
-    const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
+    if (selected === "") {
+      startAt.setHours(startAt.getHours() + 9);
+      endAt.setHours(endAt.getHours() + 9);
+    }
+    console.log(startAt);
     try {
       const token = await AsyncStorage.getItem("UserServerAccessToken"); // 적절한 토큰 키 사용
 
@@ -323,8 +330,6 @@ export default function CalendarScreen({ navigation }) {
       if (!response.ok) {
         throw new Error("HTTP error! status: " + response.status);
       }
-
-      // console.log("페이로드", payload);
 
       const data = await response.json(); // 응답을 JSON으로 변환
       const newEvent = {
@@ -426,6 +431,7 @@ export default function CalendarScreen({ navigation }) {
     const editPayload = {
       eventId: editingEvent.id, // 이벤트 ID
       eventName: editingEvent.title, // 수정된 제목
+      memo: editingEvent.memo,
       startDate: startAt, // 수정된 시작 날짜
       endDate: endAt, // 수정된 종료 날짜
     };
@@ -610,7 +616,7 @@ export default function CalendarScreen({ navigation }) {
     }, []) // 두 번째 매개변수로 빈 배열을 전달하여 컴포넌트가 처음 마운트될 때만 실행되도록 합니다.
   );
   return (
-    <View style={{ backgroundColor: "white", flex: 1 }}>
+    <View style={{backgroundColor: "white", flex: 1}}>
       <Calendar
         onDayPress={onDayPress}
         markedDates={getMarkedDates()}
@@ -647,9 +653,8 @@ export default function CalendarScreen({ navigation }) {
         </TouchableOpacity>
         {selected && events[selected] ? (
           renderEvents()
-        ) : (
-          <Text>등록된 일정이 없습니다.</Text>
-        )}
+        ) : null
+        }
       </ScrollView>
 
       {/*<Modal*/}
@@ -703,10 +708,10 @@ export default function CalendarScreen({ navigation }) {
           </View>
 
           <Pressable
-            style={{ position: "absolute", right: 0, marginTop: 20 }}
+            style={{position: "absolute", right: 0, marginTop: 20}}
             onPress={() => setModalVisible(false)}
           >
-            <Ionicons name="close" size={24} color="black" />
+            <Ionicons name="close" size={24} color="black"/>
           </Pressable>
 
           <TextInput
@@ -729,7 +734,7 @@ export default function CalendarScreen({ navigation }) {
               name="navigate-next"
               size={24}
               color="black"
-              style={{ paddingLeft: 10 }}
+              style={{paddingLeft: 10}}
             />
             <Pressable onPress={() => setShowEndDatePicker(true)}>
               <Text style={styles.dateText}>{checkYear(endAt, startAt)}</Text>
@@ -777,7 +782,7 @@ export default function CalendarScreen({ navigation }) {
         <View style={styles.check}>
           <Pressable onPress={() => deleteEvent(editingEvent.id)}>
             <Ionicons
-              style={{ paddingRight: 20 }}
+              style={{paddingRight: 20}}
               name="ios-trash-outline"
               size={30}
               color="gray"

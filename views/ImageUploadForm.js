@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import {
   Alert,
   Dimensions,
@@ -9,12 +9,12 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
+  TextInput, TouchableOpacity,
   View,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
 
 const TAG_OPTION = [
   {
@@ -39,7 +39,7 @@ const TAG_OPTION = [
   },
 ];
 
-export default function ImageUploadForm({ uri, onUploadComplete }) {
+export default function ImageUploadForm({uri, onUploadComplete}) {
   const [photoTags, setPhotoTags] = useState([]);
   const [description, setDescription] = useState("");
 
@@ -138,10 +138,10 @@ export default function ImageUploadForm({ uri, onUploadComplete }) {
       <ScrollView contentContainerStyle={styles.container}>
         <Image
           style={styles.uploadImage}
-          source={{ uri: uri }}
+          source={{uri: uri}}
           resizeMode="contain"
         />
-        <View style={{ height: 20 }} />
+        <View style={{height: 20}}/>
         <View style={styles.tagButtonsContainer}>
           {TAG_OPTION.map((tagOption, index) => (
             <Pressable
@@ -149,7 +149,7 @@ export default function ImageUploadForm({ uri, onUploadComplete }) {
               style={[
                 styles.tagButton,
                 photoTags.includes(tagOption.id) && styles.tagButtonSelected,
-                index !== TAG_OPTION.length - 1 && { marginRight: 10 },
+                index !== TAG_OPTION.length - 1 && {marginRight: 10},
               ]}
               onPress={() => toggleTag(tagOption.id)}
             >
@@ -175,19 +175,19 @@ export default function ImageUploadForm({ uri, onUploadComplete }) {
           multiline
         />
 
-        <View style={{ flexDirection: "row", marginVertical: 10 }}>
-          <Pressable
+        <View style={{flexDirection: "row", marginVertical: 10}}>
+          <TouchableOpacity
             style={[styles.button, styles.buttonWrite]}
             onPress={uploadToServer}
           >
-            <Text style={{ ...styles.textStyle, color: "#fff" }}>공유</Text>
-          </Pressable>
-          <Pressable
+            <Text style={{...styles.textStyle, color: "#fff"}}>공유</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
             style={[styles.button, styles.buttonClose]}
             onPress={onUploadComplete}
           >
-            <Text style={{ ...styles.textStyle, color: "#727272" }}>취소</Text>
-          </Pressable>
+            <Text style={{...styles.textStyle, color: "#727272"}}>취소</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
