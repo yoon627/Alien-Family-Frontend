@@ -67,6 +67,8 @@ const ChatRoom = () => {
         }
         const data = await response.json();
         setMessages(data);
+        console.log("챗룸 아디", chatroomId);
+        console.log("가져온 채팅내역", data);
       } catch (error) {
         console.error("Error getMsg:", error);
       }
@@ -149,13 +151,16 @@ const ChatRoom = () => {
   }, []);
 
   const sendMessage = () => {
+    const now = new Date();
+    now.setHours(now.getHours() + 9); // 현재 시간에 9시간을 더함
+
     if (stompClient && message) {
       const messageData = {
         type: "TALK",
         roomId: roomNumber,
         sender: myname, // 적절한 멤버 ID 설정
         content: message,
-        time: new Date().toISOString(),
+        time: now.toISOString(),
       };
       const headerData = {
         // Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNTIiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZmFtaWx5IjoiMzU2IiwiZXhwIjoxNzAwOTgzOTE4fQ.EHLgXe4iFJrjr2veJlkZiHafd8tomybIyxty66xmU38'
