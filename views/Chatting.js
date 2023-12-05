@@ -45,7 +45,7 @@ const ChatRoom = () => {
   const scrollViewRef = useRef(); // ScrollView 참조 생성
 
   const myIP = "43.202.241.133";
-  const ICONONON = imageList.find((item) => item.name === "SANTA");
+  const ICONONON = imageList.find((item) => item.name === "SANTA").image;
 
   useEffect(() => {
     const getData = async () => {
@@ -74,6 +74,28 @@ const ChatRoom = () => {
 
     getData();
   }, []);
+
+  function getAlienTypeByNickname(data, nickname) {
+    for (const key in data) {
+      if (data[key].nickname === nickname) {
+        return data[key].alien.type;
+      }
+    }
+    return null;
+  }
+
+  function findImageByName(sender) {
+    let parseInfo = {};
+    if (familyInfo) {
+      parseInfo = JSON.parse(familyInfo);
+    }
+    const alienName = getAlienTypeByNickname(parseInfo, sender);
+    if (alienName === null) {
+      console.log("널 ");
+      return imageList[0].image;
+    }
+    return imageList.find((item) => item.name === alienName).image;
+  }
 
   useEffect(() => {
     const connection = async () => {
@@ -135,6 +157,7 @@ const ChatRoom = () => {
         content: message,
         time: new Date().toISOString(),
       };
+      console.log(messageData);
       const headerData = {
         // Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNTIiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZmFtaWx5IjoiMzU2IiwiZXhwIjoxNzAwOTgzOTE4fQ.EHLgXe4iFJrjr2veJlkZiHafd8tomybIyxty66xmU38'
       };
@@ -161,8 +184,6 @@ const ChatRoom = () => {
     }
   }, [stompClient]);
 
-  let randomNum = Math.floor(Math.random() * 10) + 1;
-
   return (
     <View style={{ flex: 1, padding: 20 }}>
       <ScrollView style={{ flex: 1, marginLeft: 10 }} ref={scrollViewRef}>
@@ -176,7 +197,10 @@ const ChatRoom = () => {
               }}
             >
               {msg.sender !== myname && (
-                <Image source={ICONONON.image} style={styles.profilePic} />
+                <Image
+                  source={findImageByName(msg.sender)}
+                  style={styles.profilePic}
+                />
               )}
               <View style={{ flex: 1 }}>
                 {msg.sender !== myname && (
