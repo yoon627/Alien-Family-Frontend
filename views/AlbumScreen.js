@@ -84,7 +84,7 @@ export default function AlbumScreen({ navigation }) {
       );
       try {
         console.log(SERVER_ADDRESS);
-        const response = await fetch(SERVER_ADDRESS + `/photo/list`, {
+        const response = await fetch(SERVER_ADDRESS + `/photo`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -257,7 +257,7 @@ export default function AlbumScreen({ navigation }) {
             );
             try {
               console.log(SERVER_ADDRESS);
-              const response = await fetch(SERVER_ADDRESS + `/photo/list`, {
+              const response = await fetch(SERVER_ADDRESS + `/photo`, {
                 method: "GET",
                 headers: {
                   "Content-Type": "application/json",
@@ -303,7 +303,7 @@ export default function AlbumScreen({ navigation }) {
         );
         try {
           console.log(SERVER_ADDRESS);
-          const response = await fetch(SERVER_ADDRESS + `/photo/list`, {
+          const response = await fetch(SERVER_ADDRESS + `/photo`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
@@ -362,8 +362,8 @@ export default function AlbumScreen({ navigation }) {
               </TouchableOpacity>
             ))}
           </View>
+
           <FlatList
-            style={styles.album}
             numColumns={4}
             data={filterImages()}
             keyExtractor={(item) => item.photoId.toString()}
@@ -426,8 +426,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center",
     backgroundColor: "#fff",
+    position: "relative"
   },
   image: {
     width: SCREEN_WIDTH / 4 - 7, // 이미지의 가로 크기 (한 행에 4개씩 배치하고 간격 조절)
@@ -444,9 +444,9 @@ const styles = StyleSheet.create({
   },
   tagContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
     paddingVertical: 10,
+    justifyContent: "center",
+    alignItems: "center",
   },
   tagItem: {
     alignItems: "center",
@@ -466,5 +466,5 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start", // 세로 정렬을 상단으로 설정
     alignItems: "flex-start", // 가로 정렬을 좌측으로 설정
   },
-  album: {},
+  album: {}
 });
