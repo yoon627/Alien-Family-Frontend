@@ -461,7 +461,7 @@ export default function CalendarScreen({ navigation }) {
     if (selected && !marked[selected]) {
       marked[selected] = {
         selected: true,
-        selectedColor: "#e0b3e8",
+        selectedColor: "#B9A9D3",
         disableTouchEvent: true,
       };
     }
@@ -641,9 +641,8 @@ export default function CalendarScreen({ navigation }) {
         </TouchableOpacity>
         {selected && events[selected] ? (
           renderEvents()
-        ) : (
-          <Text>등록된 일정이 없습니다.</Text>
-        )}
+        ) : null
+        }
       </ScrollView>
 
       <Modal

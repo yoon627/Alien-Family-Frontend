@@ -574,7 +574,7 @@ const styles = StyleSheet.create({
     top: Platform.OS === "ios" ? "6%" : "5%",
   },
   tmiContainer: {
-    bottom: "38%",
+    bottom: "39%",
     padding: "11%",
   },
   marqueeWrapper: {
