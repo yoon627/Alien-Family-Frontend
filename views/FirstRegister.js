@@ -1,5 +1,5 @@
 // import axios from "axios";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Button,
   Platform,
@@ -16,17 +16,35 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import RNPickerSelect from "react-native-picker-select";
 import { Alert } from "react-native";
+import axios from "axios";
 
 const FirstRegister = ({ route, navigation }) => {
-  const cameFrom = route.params;
+  const cameFrom = route.params.cameFrom;
+  const roleArr = route.params.roleArr;
+  // console.log(route.params.roleArr);
+  // console.log(route.params.cameFrom);
   const { width, height } = Dimensions.get("window");
   const [name, setName] = useState("");
   const [birthday, setBirthDay] = useState(new Date());
   const [birthdayCheck, setBirthDayCheck] = useState(false);
   const [showBirthDayPicker, setShowBirthDayPicker] = useState(false);
   const [familyRole, setFamilyRole] = useState("");
+  const [pickerItems, setPickerItems] = useState([]);
   const onChangeName = (payload) => setName(payload);
-
+  const changeRoleName = {
+    DAD: "아빠",
+    MOM: "엄마",
+    FIRST: "첫째",
+    SECOND: "둘째",
+    THIRD: "셋째",
+    FOURTH: "넷째",
+    FIFTH: "다섯째",
+    SIXTH: "여섯째",
+    GRANDFATHER: "할아버지",
+    GRANDMOTHER: "할머니",
+    UNCLE: "삼촌",
+    EXTRA: "기타",
+  };
   const onBirthDayChange = (event, selected) => {
     const birthDate = selected || birthday;
     if (Platform.OS === "android") {
@@ -43,7 +61,16 @@ const FirstRegister = ({ route, navigation }) => {
 
     return `${year}-${month}-${day}`;
   }
+  useEffect(() => {
+    // roleArr에 따라 적절한 items를 설정
+    const items = roleArr.map((role) => ({
+      label: changeRoleName[role],
+      value: role,
+    }));
 
+    // PickerItems 업데이트
+    setPickerItems(items);
+  }, []);
   return (
     <ImageBackground
       source={require("../assets/img/pinkBtn.png")}
@@ -149,14 +176,7 @@ const FirstRegister = ({ route, navigation }) => {
                       label: "호칭 선택",
                       color: "gray",
                     }}
-                    items={[
-                      { label: "할아버지", value: "GRANDFATHER" },
-                      { label: "할머니", value: "GRANDMOTHER" },
-                      { label: "아빠", value: "DAD" },
-                      { label: "엄마", value: "MOM" },
-                      { label: "첫째", value: "FIRST" },
-                      { label: "둘째", value: "SECOND" },
-                    ]}
+                    items={pickerItems}
                   />
                 </View>
               </View>
@@ -192,17 +212,64 @@ const FirstRegister = ({ route, navigation }) => {
                 <TouchableOpacity
                   onPress={async () => {
                     await AsyncStorage.setItem("nickname", name);
-                    await AsyncStorage.setItem("birthday", formatYYYYMMDD(birthday
-                    ));
+                    await AsyncStorage.setItem(
+                      "birthday",
+                      formatYYYYMMDD(birthday)
+                    );
                     await AsyncStorage.setItem("familyRole", familyRole);
-                    if (!name){
+                    if (!name) {
                       Alert.alert("이름을 적어주세요");
-                    }else if(formatYYYYMMDD(birthday)===formatYYYYMMDD(new Date())){
+                    } else if (
+                      formatYYYYMMDD(birthday) === formatYYYYMMDD(new Date())
+                    ) {
                       Alert.alert("생일을 알려주세요");
-                    }else if(!familyRole){
+                    } else if (!familyRole) {
                       Alert.alert("호칭을 알려주세요");
-                    }else{
-                      navigation.navigate("ChooseCharacter");
+                    } else {
+                      const SERVER_ADDRESS = await AsyncStorage.getItem(
+                        "ServerAddress"
+                      );
+                      const familyCode = await AsyncStorage.getItem(
+                        "familyCode"
+                      );
+                      if (cameFrom == "FirstStart") {
+                        var characterJson = {
+                          "BASIC":true,
+                          "GLASSES":true,
+                          "GIRL":true,
+                          "BAND_AID":true,
+                          "RABBIT":true,
+                          "HEADBAND":true,
+                          "TOMATO":true,
+                          "CHRISTMAS_TREE":true,
+                          "SANTA":true,
+                          "PIRATE":true,
+                        };
+                        navigation.navigate("ChooseCharacter", {
+                          characterJson: characterJson,
+                        });
+                      } else {
+                        await axios({
+                          method: "GET",
+                          url: SERVER_ADDRESS + "/api/familyInfo/" + familyCode,
+                        })
+                          .then((resp) => {
+                            const roles = resp.data.data.types;
+                            console.log(roles);
+                            var characterJson = {};
+                            for (let i = 0; i < roles.length; i++) {
+                              if (roles[i]["enabled"]) {
+                                characterJson[roles[i]["type"]]=roles[i]["enabled"];
+                              }
+                            }
+                            console.log(characterJson);
+                            navigation.navigate("ChooseCharacter", {
+                              characterJson: characterJson,
+                            });
+                          })
+                          .catch((e) => console.log(e));
+                        // navigation.navigate("ChooseCharacter");
+                      }
                     }
                   }}
                   style={{

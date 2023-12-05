@@ -15,7 +15,13 @@ const Tab = createBottomTabNavigator();
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-export default function MainScreen({ navigation }) {
+export default function MainScreen({ navigation,route }) {
+  // const showFamilyInfo = route.params?.showFamilyInfo || false;
+  // if (showFamilyInfo){
+  //   console.log("hi");
+  //   navigation.navigate("FamilyInfo");
+  //   console.log("hi2");
+  // }
   return (
     <Tab.Navigator
       screenOptions={{
@@ -83,8 +89,8 @@ export default function MainScreen({ navigation }) {
         }}
       />
       <Tab.Screen
-        name="Feed"
-        component={Feed}
+        name="Attendance"
+        component={Attendance}
         options={{
           headerShown: false,
           tabBarIcon: () => (
@@ -97,7 +103,7 @@ export default function MainScreen({ navigation }) {
           // tabBarActiveBackgroundColor: "gray",
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Attendance"
         component={Attendance}
         options={{
@@ -106,7 +112,7 @@ export default function MainScreen({ navigation }) {
           tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,
           tabBarVisible: false, //hide tab bar on this screen
         }}
-      />
+      /> */}
 
       <Tab.Screen
         name="Ladder"

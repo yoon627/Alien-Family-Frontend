@@ -1,12 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState, useRef, useCallback } from "react";
+import { StyleSheet, Text, View, Dimensions, Image } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { ScrollView } from "react-native-gesture-handler";
+import { Bold } from "lucide-react-native";
+import * as Notifications from "expo-notifications";
+import { useFocusEffect } from "@react-navigation/native";
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export default function Attendance({ navigation }) {
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
   const ktc = new Date();
   ktc.setHours(ktc.getHours() + 9);
   const today = new Date();
@@ -18,19 +30,19 @@ export default function Attendance({ navigation }) {
   const bbbbbtoday = new Date(ktc.setDate(ktc.getDate() - 1));
   const bbbbbbtoday = new Date(ktc.setDate(ktc.getDate() - 1));
   const str_today =
-    JSON.stringify(today).toString().slice(1, 11) + "T00:00:00.000+00:00";
+    JSON.stringify(today).toString().slice(1, 11);
   const str_btoday =
-    JSON.stringify(btoday).toString().slice(1, 11) + "T00:00:00.000+00:00";
+    JSON.stringify(btoday).toString().slice(1, 11);
   const str_bbtoday =
-    JSON.stringify(bbtoday).toString().slice(1, 11) + "T00:00:00.000+00:00";
+    JSON.stringify(bbtoday).toString().slice(1, 11);
   const str_bbbtoday =
-    JSON.stringify(bbbtoday).toString().slice(1, 11) + "T00:00:00.000+00:00";
+    JSON.stringify(bbbtoday).toString().slice(1, 11);
   const str_bbbbtoday =
-    JSON.stringify(bbbbtoday).toString().slice(1, 11) + "T00:00:00.000+00:00";
+    JSON.stringify(bbbbtoday).toString().slice(1, 11);
   const str_bbbbbtoday =
-    JSON.stringify(bbbbbtoday).toString().slice(1, 11) + "T00:00:00.000+00:00";
+    JSON.stringify(bbbbbtoday).toString().slice(1, 11);
   const str_bbbbbbtoday =
-    JSON.stringify(bbbbbbtoday).toString().slice(1, 11) + "T00:00:00.000+00:00";
+    JSON.stringify(bbbbbbtoday).toString().slice(1, 11);
   const week = [
     str_today,
     str_btoday,
@@ -46,7 +58,7 @@ export default function Attendance({ navigation }) {
   async function fetchData() {
     const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
     const UserServerAccessToken = await AsyncStorage.getItem(
-      "UserServerAccessToken",
+      "UserServerAccessToken"
     );
     await axios({
       method: "GET",
@@ -64,6 +76,7 @@ export default function Attendance({ navigation }) {
           let members = [];
           if (tmp) {
             members.push(tmp.length);
+            members.push(tmp.length);
           }
           tmpJson[week[i]] = members;
         }
@@ -73,13 +86,12 @@ export default function Attendance({ navigation }) {
     await axios({
       method: "GET",
       url: SERVER_ADDRESS + "/weeklyTmi",
-
       headers: {
         Authorization: "Bearer: " + UserServerAccessToken,
       },
     })
       .then((resp) => {
-        // console.log(resp.data.data)
+        console.log(resp.data.data)
         const tmpJson = {};
         const tmptmis = resp.data.data;
         for (let i = 0; i < week.length; i++) {
@@ -87,10 +99,9 @@ export default function Attendance({ navigation }) {
           let arr = [];
           if (tmp) {
             for (let j = 0; j < tmp.length; j++) {
-              arr.push(tmp[j].member.nickname + " : " + tmp[j].content);
+              arr.unshift(tmp[j].member.nickname + " : " + tmp[j].content);
             }
           }
-          // console.log(arr)
           tmpJson[week[i]] = arr;
         }
         setTmiJson(tmpJson);
@@ -101,13 +112,53 @@ export default function Attendance({ navigation }) {
   useEffect(() => {
     fetchData();
   }, []);
-  // const test = { a: "b" };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+      // 여기에 다른 포커스를 받았을 때 실행하고 싶은 작업들을 추가할 수 있습니다.
+      return () => {
+        // 스크린이 포커스를 잃을 때 정리 작업을 수행할 수 있습니다.
+      };
+    }, []) // 두 번째 매개변수로 빈 배열을 전달하여 컴포넌트가 처음 마운트될 때만 실행되도록 합니다.
+  );
+
+  useEffect(() => {
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        setNotification(notification);
+        if (notification.request.content.title == "Family") {
+          console.log("update Family");
+        } else if (notification.request.content.title == "TMI") {
+          console.log("update TMI");
+          fetchData();
+        } else if (notification.request.content.title == "Calendar") {
+          console.log("update Calendar");
+        } else if (notification.request.content.title == "Photo") {
+          console.log("update Photo");
+        } else if (notification.request.content.title == "Plant") {
+          console.log("update Plant");
+        } else {
+          console.log("update Chatting");
+        }
+      });
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+    };
+  }, [notification]);
   return (
     <View style={styles.container}>
-      <Text style={styles.main_title}>Attendance</Text>
+      <View style={{ alignItems: "center", justifyContent: "center" }}>
+        <Text style={styles.main_title}>Attendance</Text>
+      </View>
       <ScrollView>
         {week.map((day) => (
           <View key={day} style={styles.attendence_container}>
+            <Text style={styles.sub_title}>
+              # {JSON.stringify(day).slice(1, 11)}
+            </Text>
             <Text style={styles.sub_title}>
               # {JSON.stringify(day).slice(1, 11)}
             </Text>
@@ -117,9 +168,15 @@ export default function Attendance({ navigation }) {
                   - {tmi}
                 </Text>
               ))
+              tmiJson[day].map((tmi, index) => (
+                <Text key={index} style={styles.tmi_txt}>
+                  - {tmi}
+                </Text>
+              ))
             ) : (
-              <Text>없어요...</Text>
+              <Text>TMI 없어요...</Text>
             )}
+
 
             <View style={styles.image_container}>
               {attendanceJson[day] && attendanceJson[day].length > 0 ? (
@@ -130,10 +187,10 @@ export default function Attendance({ navigation }) {
                       style={{ width: 50, height: 50, marginLeft: 5 }}
                       source={require("../assets/img/attendance.png")}
                     />
-                  )),
+                  ))
                 )
               ) : (
-                <Text>없나요?...</Text>
+                <Text>출석한 사람이 없어요...</Text>
               )}
             </View>
           </View>
@@ -149,23 +206,29 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#DED1DF",
+    backgroundColor: "#DED1DF",
   },
 
+
   attendence_container: {
+    width: SCREEN_WIDTH * 0.8,
+    backgroundColor: "#FFFFFF70",
     width: SCREEN_WIDTH * 0.8,
     backgroundColor: "#FFFFFF70",
     borderRadius: 20,
     padding: 20,
     marginBottom: 30,
     borderColor: "gray",
+    borderColor: "gray",
   },
+
+  main_title: {
 
   main_title: {
     marginBottom: 20,
     fontSize: 60,
     padding: 10,
-    backgroundColor: "white",
-    alignSelf: "flex-mid",
+    // backgroundColor: 'white',
     width: "100%",
     textAlign: "center",
     shadowColor: "#000",
@@ -180,22 +243,36 @@ const styles = StyleSheet.create({
 
   sub_title: {
     color: "#353535",
+  sub_title: {
+    color: "#353535",
     fontSize: 25,
+    fontWeight: "700",
     fontWeight: "700",
     marginBottom: 12,
     borderBottomWidth: 1,
     borderColor: "#DED1DF",
+    borderBottomWidth: 1,
+    borderColor: "#DED1DF",
   },
+  tmi_txt: {
   tmi_txt: {
     fontSize: 17,
     borderBottomWidth: 1,
     borderColor: "#DED1DF",
+    borderBottomWidth: 1,
+    borderColor: "#DED1DF",
     paddingBottom: 2,
+    marginBottom: 18,
     marginBottom: 18,
   },
 
   image_container: {
+  image_container: {
     // backgroundColor: 'gray',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    width: "100%",
+    justifyContent: "flex-end",
     flexDirection: "row",
     flexWrap: "wrap",
     width: "100%",
@@ -203,14 +280,19 @@ const styles = StyleSheet.create({
   },
 
   attendant: {
+  attendant: {
     fontSize: 15,
     padding: 9,
     margin: 3,
     alignItems: "flex-end",
     borderColor: "#D63CE3",
     border: "solid",
+    alignItems: "flex-end",
+    borderColor: "#D63CE3",
+    border: "solid",
     borderWidth: 1,
     borderRadius: 13,
+    border: 3,
   },
 
   // log_container:{

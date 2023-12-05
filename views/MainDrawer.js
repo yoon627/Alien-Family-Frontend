@@ -12,7 +12,15 @@ const Drawer = createDrawerNavigator();
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 
-export default function MainDrawer({ navigation }) {
+export default function MainDrawer({ navigation,route }) {
+  const showFamilyInfo = route.params?.showFamilyInfo || false;
+  if (showFamilyInfo){
+    // navigation.navigate("Main",{params:{showFamilyInfo:true}});
+    console.log("hi");
+    navigation.navigate("FamilyInfo");
+    console.log("hi2");
+
+  }
   return (
     <PaperProvider>
       <Drawer.Navigator
@@ -48,7 +56,7 @@ export default function MainDrawer({ navigation }) {
         <Drawer.Screen
           name="Logout"
           component={Logout}
-          options={{ title: "로그아웃" }}
+          options={{ title: "회원 탈퇴" }}
         />
       </Drawer.Navigator>
     </PaperProvider>

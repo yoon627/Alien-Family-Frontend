@@ -49,11 +49,14 @@ const ChatRoom = () => {
   useEffect(() => {
     const getData = async () => {
       try {
+        const SERVER_ADDRESS = await AsyncStorage.getItem(
+          "ServerAddress"
+        );
         const token = await AsyncStorage.getItem("UserServerAccessToken");
         const chatroomId = await AsyncStorage.getItem("chatroomId");
         setFamilyInfo(await AsyncStorage.getItem("myDB"));
         const response = await fetch(
-          "http://" + `${myIP}` + ":1998/chat/list?id=" + chatroomId,
+          SERVER_ADDRESS + "/chat/list?id=" + chatroomId,
           {
             method: "get",
             headers: {
@@ -98,6 +101,9 @@ const ChatRoom = () => {
   useEffect(() => {
     const connection = async () => {
       try {
+        const SERVER_ADDRESS = await AsyncStorage.getItem(
+          "ServerAddress"
+        );
         const name = await AsyncStorage.getItem("nickname");
         const token = await AsyncStorage.getItem("UserServerAccessToken");
         const familyId = await AsyncStorage.getItem("familyId");
@@ -105,9 +111,9 @@ const ChatRoom = () => {
 
         setMyname(name);
         setroomNumber(chatroomId);
-
+        console.log(SERVER_ADDRESS.slice(7,))
         const client = new Client({
-          brokerURL: "ws://" + `${myIP}` + ":1998/ws",
+          brokerURL: "ws://" + SERVER_ADDRESS.slice(7,) + "/ws",
           connectHeaders: {
             Authorization: token,
           },
