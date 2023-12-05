@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {
   Image,
   StyleSheet,
@@ -9,6 +9,7 @@ import {
 import Swiper from "react-native-web-swiper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {Ionicons} from '@expo/vector-icons';
+import view from "react-native-reanimated/src/reanimated2/component/View";
 
 const TAG_OPTION = [
   {
@@ -35,11 +36,63 @@ const TAG_OPTION = [
 
 export default function ImageDetailForm({route, navigation}) {
   const [comment, setComment] = useState("");
+  const [familyInfo, setFamilyInfo] = useState([]);
 
   const {photoInfo, albumList} = route.params;
   const index = albumList.findIndex(
     (item) => item.photoKey === photoInfo.photoKey,
   );
+
+  const imageList = [
+    {name: "BASIC", image: require("../assets/img/character/BASIC.png")},
+    {name: "GLASSES", image: require("../assets/img/character/GLASSES.png")},
+    {name: "GIRL", image: require("../assets/img/character/GIRL.png")},
+    {name: "BAND_AID", image: require("../assets/img/character/BAND_AID.png")},
+    {name: "RABBIT", image: require("../assets/img/character/RABBIT.png")},
+    {name: "HEADBAND", image: require("../assets/img/character/HEADBAND.png")},
+    {name: "TOMATO", image: require("../assets/img/character/TOMATO.png")},
+    {
+      name: "CHRISTMAS_TREE",
+      image: require("../assets/img/character/CHRISTMAS_TREE.png"),
+    },
+    {name: "SANTA", image: require("../assets/img/character/SANTA.png")},
+    {name: "PIRATE", image: require("../assets/img/character/PIRATE.png")},
+  ];
+
+  // 가족 정보
+  useEffect(() => {
+    const viewFamily = async () => {
+      try {
+        const resp = await AsyncStorage.getItem("myDB");
+        setFamilyInfo(JSON.parse(resp));
+        console.log("👨‍👩‍👧‍👦나의 가족 정보", resp);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    viewFamily();
+  }, []);
+
+  function getAlienTypeByNickname(familyInfo, writer) {
+    for (const key in familyInfo) {
+      if (familyInfo[key].nickname === writer) {
+        return familyInfo[key].alien.type;
+      }
+    }
+    return null;
+  }
+
+  function findImageByName(writer) {
+    const alienName = getAlienTypeByNickname(familyInfo, writer);
+    console.log(alienName);
+    if (alienName === null) {
+      return imageList[0].image;
+    }
+    console.log(imageList.find((item) => item.name === 'SANTA').image);
+    return imageList.find((item) => item.name === alienName).image;
+  }
+
+
   const sendToComment = async () => {
     const UserServerAccessToken = await AsyncStorage.getItem(
       "UserServerAccessToken",
@@ -92,7 +145,15 @@ export default function ImageDetailForm({route, navigation}) {
 
               <View style={styles.slide}>
                 <View style={{alignItems: "flex-start", width: "100%"}}>
-                  <Text style={styles.writer}>{item.writer}</Text>
+
+                  <View style={{flexDirection: "row", marginBottom: 5, paddingHorizontal: "5%",}}>
+                    <Image
+                      source={findImageByName(item.writer)}
+                      style={styles.profilePic}
+                    />
+                    <Text style={styles.writer}>{item.writer}</Text>
+                  </View>
+
                   <Image
                     style={styles.uploadImage}
                     source={{uri: item.photoKey}}
@@ -134,7 +195,7 @@ export default function ImageDetailForm({route, navigation}) {
                   </TouchableOpacity>
                 </View>
 
-                <View style={{flexDirection: "row", justifyContent: "center",marginVertical: 10}}>
+                <View style={{flexDirection: "row", justifyContent: "center", marginVertical: 10}}>
                   <TouchableOpacity style={[styles.button, styles.buttonWrite]}>
                     <Text style={{...styles.textStyle, color: "#fff"}}>
                       수정
@@ -190,8 +251,6 @@ const styles = StyleSheet.create({
   writer: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 5,
-    paddingHorizontal: "5%",
   },
   date: {
     fontSize: 18,
@@ -222,7 +281,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     paddingHorizontal: "5%",
-    marginBottom: 10,
   },
   tagButton: {
     marginTop: 10,
@@ -234,5 +292,11 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     borderColor: "#E0EBF2",
     backgroundColor: "#E0EBF2",
+  },
+  profilePic: {
+    width: 30, // 이미지 크기 조절
+    height: 30, // 이미지 크기 조절
+    resizeMode: "contain",
+    borderRadius: 20, // 원형으로 만들기
   },
 });
