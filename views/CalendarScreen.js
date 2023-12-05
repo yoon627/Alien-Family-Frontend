@@ -4,11 +4,11 @@ import {
   Button,
   Modal,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   View,
-  ScrollView,
 } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -113,8 +113,6 @@ export default function CalendarScreen({ navigation }) {
     setLocaleSet(true);
     setStartAt(new Date());
     setEndAt(new Date());
-    // console.log("78778678678987", startAt.getHours());
-    // console.log("end", endAt);
   }, []);
 
   useEffect(() => {
@@ -131,6 +129,8 @@ export default function CalendarScreen({ navigation }) {
     let month = date.month;
     setCurrentYear(year);
     setCurrentMonth(month);
+    let firstDate = date.dateString.substring(0, 8) + "01";
+    setSelected(firstDate);
   };
 
   const toggleAddOrEditModal = () => {
@@ -152,9 +152,8 @@ export default function CalendarScreen({ navigation }) {
     const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
     try {
       const response = await fetch(
-        SERVER_ADDRESS +
-          "/calendarEvent/day/" +
-          `${currentYear}/${currentMonth}`,
+        "http://43.202.241.133:1998/calendarEvent/day/" +
+        `${currentYear}/${currentMonth}`,
         {
           method: "GET",
           headers: {
@@ -287,7 +286,7 @@ export default function CalendarScreen({ navigation }) {
             text: "확인",
           },
         ],
-        { cancelable: true }
+        {cancelable: true},
       );
       return;
     }
@@ -301,13 +300,13 @@ export default function CalendarScreen({ navigation }) {
             text: "확인",
           },
         ],
-        { cancelable: true }
+        {cancelable: true},
       );
       return;
     }
     // payload.startDate.setHours(payload.startDate.getHours() + 9);
     // payload.endDate.setHours(payload.endDate.getHours() + 9);
-    const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
+
     try {
       const token = await AsyncStorage.getItem("UserServerAccessToken"); // 적절한 토큰 키 사용
 
@@ -323,8 +322,6 @@ export default function CalendarScreen({ navigation }) {
       if (!response.ok) {
         throw new Error("HTTP error! status: " + response.status);
       }
-
-      // console.log("페이로드", payload);
 
       const data = await response.json(); // 응답을 JSON으로 변환
       const newEvent = {
@@ -372,7 +369,7 @@ export default function CalendarScreen({ navigation }) {
             text: "확인",
           },
         ],
-        { cancelable: true }
+        {cancelable: true},
       );
       return;
     }
@@ -385,7 +382,7 @@ export default function CalendarScreen({ navigation }) {
             text: "확인",
           },
         ],
-        { cancelable: true }
+        {cancelable: true},
       );
       return;
     }
@@ -426,6 +423,7 @@ export default function CalendarScreen({ navigation }) {
     const editPayload = {
       eventId: editingEvent.id, // 이벤트 ID
       eventName: editingEvent.title, // 수정된 제목
+      memo: editingEvent.memo,
       startDate: startAt, // 수정된 시작 날짜
       endDate: endAt, // 수정된 종료 날짜
     };

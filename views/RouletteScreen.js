@@ -40,7 +40,7 @@ function RouletteScreen() {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: "#78bd23", // 버튼 색상
+    backgroundColor: "#cd0beb", // 버튼 색상
     paddingVertical: 20, // 세로 패딩
     paddingHorizontal: 20, // 가로 패딩
     borderRadius: 5, // 테두리 둥글게

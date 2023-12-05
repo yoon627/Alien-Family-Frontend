@@ -171,13 +171,9 @@ export default function Attendance({ navigation }) {
             <View style={styles.image_container}>
               {attendanceJson[day] && attendanceJson[day].length > 0 ? (
                 attendanceJson[day].map((attendant, index) =>
-                  Array.from({ length: attendant }).map((_, subIndex) => (
-                    <Image
-                      key={subIndex}
-                      style={{ width: 50, height: 50, marginLeft: 5 }}
-                      source={require("../assets/img/attendance.png")}
-                    />
-                  ))
+                Array.from({ length: attendant }).map((_, subIndex) => (
+                  <Image key={subIndex} style={{width: 50, height: 50, marginLeft: 5}}source={require("../assets/img/attendance.png")} />
+                ))
                 )
               ) : (
                 <Text>출석한 사람이 없어요...</Text>
@@ -258,6 +254,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 13,
     border: 3,
+
   },
 
   // log_container:{

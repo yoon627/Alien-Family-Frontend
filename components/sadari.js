@@ -13,22 +13,59 @@ import {
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height; // 디바이스의 높이
+const imageUriArray = [
+  { name: "BASIC", image: require("../assets/img/character/BASIC.png") },
+  { name: "GLASSES", image: require("../assets/img/character/GLASSES.png") },
+  { name: "GIRL", image: require("../assets/img/character/GIRL.png") },
+  {
+    name: "BAND_AID",
+    image: require("../assets/img/character/BAND_AID.png"),
+  },
+  { name: "RABBIT", image: require("../assets/img/character/RABBIT.png") },
+  {
+    name: "HEADBAND",
+    image: require("../assets/img/character/HEADBAND.png"),
+  },
+  { name: "TOMATO", image: require("../assets/img/character/TOMATO.png") },
+  {
+    name: "CHRISTMAS_TREE",
+    image: require("../assets/img/character/CHRISTMAS_TREE.png"),
+  },
+  { name: "SANTA", image: require("../assets/img/character/SANTA.png") },
+  { name: "PIRATE", image: require("../assets/img/character/PIRATE.png") },
+];
 
-const Sadari = ({ cnt }) => {
+const Sadari = ({ cnt, name, familyInfo }) => {
   const [positions, setPositions] = useState([]);
   const [horizontalLines, setHorizontalLines] = useState([]);
   const [columnsWithHorizontalLines, setColumnsWithHorizontalLines] = useState(
-    []
+    [],
   );
-  const [finalIndexes, setFinalIndexes] = useState(Array(cnt).fill(null)); // 각 세로줄의 최종 lineIndex를 저장하는 state
+  const [finalIndexes, setFinalIndexes] = useState(Array(cnt).fill(null));
+  const [coverLadder, setCoverLadder] = useState(true);
+
   const columnWidth = windowWidth / (1 * cnt);
   const ladderHeight = windowHeight * 0.5;
-  const imageUriArray = [
-    "https://i.namu.wiki/i/NB_qC6YRjH7hv6elNznBIBOBZ5AwE-PKYEWKcU03aFzGsc60bOt9KLxocyvB01OxAbOG8joW9mgkShFmTaTKsQ.webp",
-  ];
-  const [userTexts, setUserTexts] = useState(Array(cnt).fill("걸림ㅋㅋ"));
+
+  const [userTexts, setUserTexts] = useState(Array(cnt).fill("걸림ㅋ"));
 
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  function getAlienTypeByNickname(data, nickname) {
+    for (const key in data) {
+      if (data[key].nickname === nickname) {
+        return data[key].alien.type;
+      }
+    }
+    return null; // nickname에 해당하는 사용자가 없는 경우
+  }
+
+  const data = familyInfo;
+
+  function findImageByName(sender) {
+    const alienName = getAlienTypeByNickname(data, sender);
+    return imageUriArray.find((item) => item.name === alienName).image;
+  }
 
   const openModal = () => {
     setIsModalVisible(true);
@@ -45,7 +82,7 @@ const Sadari = ({ cnt }) => {
       return (
         <View key={`result-${i}`} style={styles.resultRow}>
           <Text>
-            {i} goes to: {resultText}
+            {name[i]} ----> {resultText}
           </Text>
         </View>
       );
@@ -66,9 +103,8 @@ const Sadari = ({ cnt }) => {
 
     for (let i = 0; i < cnt - 1; i++) {
       const randomLineCnt = Math.floor(Math.random() * 3) + 1;
-      let lastYPosition = 100; // 각 세로선에 대한 초기 yPosition 설정
+      let lastYPosition = 100;
       for (let j = 0; j < randomLineCnt; j++) {
-        // 각 세로선당 3개의 가로선
         // const yPosition = lastYPosition + Math.floor(Math.random() * 150) + 50;
         const yPosition =
           lastYPosition +
@@ -81,13 +117,11 @@ const Sadari = ({ cnt }) => {
           yPosition: yPosition,
         });
 
-        // 현재 세로선에 시작하는 가로선 정보 추가
         columnsWithHorizontalLines[i].push({
           toColumn: i + 1,
           yPosition: yPosition,
         });
 
-        // 인접한 세로선에 연결되는 가로선 정보 추가
         columnsWithHorizontalLines[i + 1].push({
           fromColumn: i,
           yPosition: yPosition,
@@ -99,9 +133,7 @@ const Sadari = ({ cnt }) => {
         return newTexts;
       });
     }
-    // console.log(columnsWithHorizontalLines);
     setHorizontalLines(newHorizontalLines);
-    // columnsWithHorizontalLines에 각 세로줄별 가로줄 정보가 저장됩니다.
     setColumnsWithHorizontalLines(columnsWithHorizontalLines);
     for (let j = 0; j < columnsWithHorizontalLines.length; j++) {
       columnsWithHorizontalLines[j].sort((a, b) => a.yPosition - b.yPosition);
@@ -122,7 +154,7 @@ const Sadari = ({ cnt }) => {
     let currentX = 0;
     let movto = 0;
     let lineIndex = index;
-
+    setCoverLadder(false);
     while (currentY !== 9999) {
       let nowpos = 0;
       for (let j = 0; j < columnsWithHorizontalLines[lineIndex].length; j++) {
@@ -132,7 +164,7 @@ const Sadari = ({ cnt }) => {
               toValue: columnsWithHorizontalLines[lineIndex][j].yPosition - 10,
               duration: (500 - currentY) * 1,
               useNativeDriver: true,
-            })
+            }),
           );
           currentY = columnsWithHorizontalLines[lineIndex][j].yPosition;
           // console.log("움직였다....");
@@ -161,7 +193,7 @@ const Sadari = ({ cnt }) => {
           toValue: currentX,
           duration: 300,
           useNativeDriver: true,
-        })
+        }),
       );
 
       let lastidx = columnsWithHorizontalLines[lineIndex].length - 1;
@@ -174,7 +206,7 @@ const Sadari = ({ cnt }) => {
             toValue: ladderHeight + 50,
             duration: (500 - currentY) * 1,
             useNativeDriver: true,
-          })
+          }),
         );
         currentY = 9999;
         break;
@@ -197,7 +229,7 @@ const Sadari = ({ cnt }) => {
 
   const renderHorizontalLine = (index) => {
     const lines = horizontalLines.filter(
-      (line) => line.fromColumn === index || line.toColumn === index
+      (line) => line.fromColumn === index || line.toColumn === index,
     );
 
     return lines.map((line, lineIndex) => (
@@ -210,51 +242,9 @@ const Sadari = ({ cnt }) => {
           backgroundColor: "black",
           left: line.fromColumn === index ? columnWidth / 2 : -columnWidth / 2,
           top: line.yPosition,
+          zIndex: 0,
         }}
       />
-    ));
-  };
-
-  const renderLines = () => {
-    return positions.map((_, i) => (
-      <View
-        key={`line-${i}`}
-        style={{
-          position: "relative",
-          width: columnWidth,
-          alignItems: "center",
-        }}
-      >
-        {renderHorizontalLine(i)}
-        <View
-          style={{
-            position: "absolute",
-            width: 10,
-            height: 600,
-            backgroundColor: "black",
-            left: columnWidth / 2 - 5,
-            top: 90,
-          }}
-        />
-      </View>
-    ));
-  };
-
-  // 이미지를 렌더링하는 함수
-  const renderImages = () => {
-    return positions.map((position, i) => (
-      <TouchableOpacity key={`image-${i}`} onPress={() => moveImage(i)}>
-        <Animated.View
-          style={{
-            transform: [{ translateX: position.x }, { translateY: position.y }],
-          }}
-        >
-          <Image
-            source={{ uri: imageUriArray[i % imageUriArray.length] }}
-            style={{ width: 50, height: 50, margin: 5 }}
-          />
-        </Animated.View>
-      </TouchableOpacity>
     ));
   };
 
@@ -286,21 +276,31 @@ const Sadari = ({ cnt }) => {
                 backgroundColor: "black",
                 left: columnWidth / 2 - 5,
                 top: 90,
+                zIndex: 0,
               }}
             />
 
-            <TouchableOpacity onPress={() => moveImage(i)}>
+            <TouchableOpacity
+              onPress={() => moveImage(i)}
+              style={{ position: "absolute", zIndex: 100 }}
+            >
               <Animated.View
                 style={{
                   transform: [
                     { translateX: position.x },
                     { translateY: position.y },
                   ],
+                  zIndex: 100,
                 }}
               >
                 <Image
-                  source={{ uri: imageUriArray[i % imageUriArray.length] }}
-                  style={{ width: 50, height: 50, margin: 5 }}
+                  source={findImageByName(name[i])}
+                  style={{
+                    width: 50,
+                    height: 50,
+                    margin: 5,
+                    zIndex: 100,
+                  }}
                 />
               </Animated.View>
             </TouchableOpacity>
@@ -321,32 +321,51 @@ const Sadari = ({ cnt }) => {
           </View>
         ))}
       </View>
-      <View style={{ top: windowHeight - 360, alignItems: "left", left: 50 }}>
-        <TouchableOpacity
-          onPress={moveAllImages}
-          style={{ top: 33, left: 200 }}
-        >
-          <Text style={{ color: "black" }}>한방에 움직이기</Text>
-        </TouchableOpacity>
 
-        <TouchableOpacity style={{ marginTop: 20 }} onPress={openModal}>
-          <Text>결과 공개</Text>
-        </TouchableOpacity>
+      <View
+        style={{
+          top: "65%",
+          flex: 1,
+          flexDirection: "row",
+        }}
+      >
+        <View style={{ top: "65%", alignItems: "left", left: 50 }}>
+          <TouchableOpacity
+            onPress={moveAllImages}
+            style={{ marginTop: 20, left: 200 }}
+          >
+            <Text style={{ color: "black" }}>다같이 !!</Text>
+          </TouchableOpacity>
+        </View>
 
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={isModalVisible}
-          onRequestClose={() => setIsModalVisible(false)}
-        >
-          <View style={styles.modalContent}>
-            {renderModalContent()}
-            <TouchableOpacity onPress={() => setIsModalVisible(false)}>
-              <Text>Close</Text>
-            </TouchableOpacity>
-          </View>
-        </Modal>
+        <View style={{ top: "65%", alignItems: "left", left: 50 }}>
+          <TouchableOpacity style={{ marginTop: 20 }} onPress={openModal}>
+            <Text>결과 공개</Text>
+          </TouchableOpacity>
+        </View>
       </View>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={() => setIsModalVisible(false)}
+      >
+        <View style={styles.modalContent}>
+          {renderModalContent()}
+          <TouchableOpacity onPress={() => setIsModalVisible(false)}>
+            <Text>Close</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+
+      {coverLadder && (
+        <View style={styles.overlay}>
+          <View style={styles.hiddenContent}>
+            <Text>가림막</Text>
+          </View>
+        </View>
+      )}
     </View>
   );
 };
@@ -359,6 +378,24 @@ const styles = StyleSheet.create({
     margin: 50,
     borderRadius: 10,
   },
+  hiddenContent: {
+    width: "90%",
+    height: "60%",
+    backgroundColor: "#753497",
+    padding: 20,
+    borderRadius: 10,
+  },
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: "25%",
+    backgroundColor: "rgba(0, 0, 0, 0)", // 반투명 배경
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
   resultRow: {
     marginBottom: 10,
   },
