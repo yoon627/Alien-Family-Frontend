@@ -94,7 +94,11 @@ const FirstStart = ({ navigation }) => {
       style={styles.backgroundImage}
     >
       <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
-        <KeyboardAvoidingView behavior="height" style={{flex:1, alignItems:"center",justifyContent:"center"}} keyboardVerticalOffset={-100}>
+        <KeyboardAvoidingView
+          behavior="height"
+          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+          keyboardVerticalOffset={-100}
+        >
           <View
             style={{
               backgroundColor: "white",
@@ -166,6 +170,7 @@ const FirstStart = ({ navigation }) => {
                   <TouchableOpacity
                     onPress={async () => {
                       // console.log(plantName, ufoName);
+                      // console.log(familyCode);
                       await AsyncStorage.setItem("plantName", plantName);
                       await AsyncStorage.setItem("ufoName", ufoName);
                       if (!plantName) {
@@ -173,8 +178,23 @@ const FirstStart = ({ navigation }) => {
                       } else if (!ufoName) {
                         Alert.alert("우주선 이름을 지어주세요");
                       } else {
+                        const roleArr = [
+                          "DAD",
+                          "MOM",
+                          "FIRST",
+                          "SECOND",
+                          "THIRD",
+                          "FOURTH",
+                          "FIFTH",
+                          "SIXTH",
+                          "GRANDFATHER",
+                          "GRANDMOTHER",
+                          "UNCLE",
+                          "EXTRA",
+                        ];
                         navigation.navigate("FirstRegister", {
                           cameFrom: "FirstStart",
+                          roleArr: roleArr,
                         });
                       }
                     }}

@@ -30,19 +30,19 @@ export default function Attendance({ navigation }) {
   const bbbbbtoday = new Date(ktc.setDate(ktc.getDate() - 1));
   const bbbbbbtoday = new Date(ktc.setDate(ktc.getDate() - 1));
   const str_today =
-    JSON.stringify(today).toString().slice(1, 11) + "T00:00:00.000+00:00";
+    JSON.stringify(today).toString().slice(1, 11);
   const str_btoday =
-    JSON.stringify(btoday).toString().slice(1, 11) + "T00:00:00.000+00:00";
+    JSON.stringify(btoday).toString().slice(1, 11);
   const str_bbtoday =
-    JSON.stringify(bbtoday).toString().slice(1, 11) + "T00:00:00.000+00:00";
+    JSON.stringify(bbtoday).toString().slice(1, 11);
   const str_bbbtoday =
-    JSON.stringify(bbbtoday).toString().slice(1, 11) + "T00:00:00.000+00:00";
+    JSON.stringify(bbbtoday).toString().slice(1, 11);
   const str_bbbbtoday =
-    JSON.stringify(bbbbtoday).toString().slice(1, 11) + "T00:00:00.000+00:00";
+    JSON.stringify(bbbbtoday).toString().slice(1, 11);
   const str_bbbbbtoday =
-    JSON.stringify(bbbbbtoday).toString().slice(1, 11) + "T00:00:00.000+00:00";
+    JSON.stringify(bbbbbtoday).toString().slice(1, 11);
   const str_bbbbbbtoday =
-    JSON.stringify(bbbbbbtoday).toString().slice(1, 11) + "T00:00:00.000+00:00";
+    JSON.stringify(bbbbbbtoday).toString().slice(1, 11);
   const week = [
     str_today,
     str_btoday,
@@ -85,7 +85,6 @@ export default function Attendance({ navigation }) {
     await axios({
       method: "GET",
       url: SERVER_ADDRESS + "/weeklyTmi",
-
       headers: {
         Authorization: "Bearer: " + UserServerAccessToken,
       },

@@ -57,7 +57,7 @@ export default function MainDrawer({ navigation,route }) {
         <Drawer.Screen
           name="Logout"
           component={Logout}
-          options={{ title: "로그아웃" }}
+          options={{ title: "회원 탈퇴" }}
         />
       </Drawer.Navigator>
     </PaperProvider>

@@ -89,8 +89,8 @@ export default function MainScreen({ navigation,route }) {
         }}
       />
       <Tab.Screen
-        name="Feed"
-        component={Feed}
+        name="Attendance"
+        component={Attendance}
         options={{
           headerShown: false,
           tabBarIcon: () => (
@@ -103,7 +103,7 @@ export default function MainScreen({ navigation,route }) {
           // tabBarActiveBackgroundColor: "gray",
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Attendance"
         component={Attendance}
         options={{
@@ -112,7 +112,7 @@ export default function MainScreen({ navigation,route }) {
           tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,
           tabBarVisible: false, //hide tab bar on this screen
         }}
-      />
+      /> */}
 
       <Tab.Screen
         name="Ladder"

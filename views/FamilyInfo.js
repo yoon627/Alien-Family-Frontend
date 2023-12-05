@@ -66,6 +66,7 @@ export default function FamilyInfo({ navigation }) {
   };
 
   useEffect(() => {
+    isUnmountedRef.current = false;
     return () => {
       isUnmountedRef.current = true;
     };
@@ -95,13 +96,14 @@ export default function FamilyInfo({ navigation }) {
   }
 
   useEffect(() => {
+    isUnmountedRef.current = false;
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
         setNotification(notification);
         if (notification.request.content.title == "Family") {
           console.log("update Family");
           getFamilyInfo();
-          updateFamilyData();
+          getFamilyInfo();
         } else if (notification.request.content.title == "TMI") {
           console.log("update TMI");
         } else if (notification.request.content.title == "Calendar") {
@@ -118,6 +120,8 @@ export default function FamilyInfo({ navigation }) {
       Notifications.removeNotificationSubscription(
         notificationListener.current
       );
+      isUnmountedRef.current = true;
+      startAnimations();
     };
   }, [notification]);
 
@@ -125,7 +129,7 @@ export default function FamilyInfo({ navigation }) {
     useCallback(() => {
       isUnmountedRef.current = false;
       getFamilyInfo();
-      updateFamilyData();
+      getFamilyInfo();
       return () => {
         isUnmountedRef.current = true;
       };

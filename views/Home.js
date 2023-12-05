@@ -47,8 +47,11 @@ export default function Home({ navigation, fonts }) {
   const onChangeTMI = (payload) => setTMI(payload);
   const [modalVisible, setModalVisible] = useState(false);
   const [todayTMI, setTodayTMI] = useState("");
-  const [flower, setFlower] = useState(false);
   const [plant, setPlant] = useState(null);
+  const [plantLevel, setPlantLevel] = useState(null);
+  const [plantName, setPlantName] = useState(null);
+  const [plantPoint, setPlantPoint] = useState(null);
+  const [plantModal, setPlantModal] = useState(false);
   const openModal = () => {
     setTMI(""); // 모달 열릴 때 tmi 초기화
     setModalVisible(true);
@@ -59,15 +62,12 @@ export default function Home({ navigation, fonts }) {
     useEffect(() => {
       const fetchAlienType = async () => {
         try {
-          // alienType = await AsyncStorage.getItem("alienType");
           setAlienType(await AsyncStorage.getItem("alienType"));
         } catch (error) {
           console.error("Error fetching alienType from AsyncStorage:", error);
         }
       };
       fetchAlienType();
-    }, []);
-    useEffect(() => {
       Animated.loop(
         Animated.sequence([
           Animated.timing(movingValue, {
@@ -217,7 +217,6 @@ export default function Home({ navigation, fonts }) {
         setTodayTMI(mytmi);
       })
       .catch((e) => console.log(e));
-    
   }
   useEffect(() => {
     notificationListener.current =
@@ -235,7 +234,6 @@ export default function Home({ navigation, fonts }) {
         } else if (notification.request.content.title == "Plant") {
           console.log("update Plant");
           getplantInfo();
-          renderFlower();
         } else {
           console.log("update Chatting");
         }
@@ -246,27 +244,33 @@ export default function Home({ navigation, fonts }) {
       );
     };
   }, [notification]);
-  const [plantlevel, setPlantlevel] = useState(null);
+
   const getplantInfo = async () => {
     try {
-      const plant = await AsyncStorage.getItem("plantInfo");
-      console.log(JSON.parse(plant))
-      setPlantlevel(JSON.parse(plant).point);
-      setPlant(plant);
+      const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
+      const UserServerAccessToken = await AsyncStorage.getItem(
+        "UserServerAccessToken"
+      );
+      await axios({
+        method: "GET",
+        url: SERVER_ADDRESS + "/plant",
+        headers: {
+          Authorization: "Bearer: " + UserServerAccessToken,
+        },
+      }).then((resp) => {
+        const tmpPlant = resp.data.data;
+        setPlantLevel(tmpPlant.level);
+        setPlantName(tmpPlant.name);
+        setPlantPoint(tmpPlant.point);
+      });
     } catch (error) {
       console.error("Error getMsg:", error);
     }
   };
-  useEffect(() => {
-    fetchData();
-    getplantInfo();
-    renderFlower();
-  }, []);
 
   const renderFlower = () => {
-    getplantInfo();
     // 레벨에 따라 다른 이미지 렌더링
-    switch (plantlevel) {
+    switch (plantPoint) {
       case 0:
         return (
           <Image
@@ -309,13 +313,18 @@ export default function Home({ navigation, fonts }) {
 
       // 추가 레벨에 따른 이미지 케이스
       default:
-        setPlantlevel(0);
+        return (
+          <Image
+            source={require("../assets/img/level_0.png")}
+            style={styles.plant}
+          />
+        );
     }
   };
-
   useFocusEffect(
     useCallback(() => {
       fetchData();
+      getplantInfo();
       // 여기에 다른 포커스를 받았을 때 실행하고 싶은 작업들을 추가할 수 있습니다.
       return () => {
         // 스크린이 포커스를 잃을 때 정리 작업을 수행할 수 있습니다.
@@ -376,14 +385,38 @@ export default function Home({ navigation, fonts }) {
           ></View>
           <View style={styles.alien}>{movingObject()}</View>
           <View style={styles.bottomContainer}>
-            {/* <TouchableOpacity onPress={()=>console.log("hello")}> */}
-            {renderFlower()}
-            {/* </TouchableOpacity> */}
+            <TouchableOpacity onPress={() => setPlantModal(true)}>
+              {renderFlower()}
+            </TouchableOpacity>
+            <Modal
+              animationType="none"
+              transparent={true}
+              visible={plantModal}
+              onRequestClose={() => {
+                // Handle modal close
+              }}
+            >
+              <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                  {/* Modal content */}
+                  <Text style={styles.modalText}>이름: {plantName}</Text>
+                  <Text style={styles.modalText}>레벨: {plantLevel}</Text>
+                  <Text style={styles.modalText}>포인트: {plantPoint}</Text>
+                  {/* Close button */}
+                  <Pressable
+                    style={[styles.button, styles.buttonClose]}
+                    onPress={() => setPlantModal(false)}
+                  >
+                    <Text style={styles.textStyle}>닫기</Text>
+                  </Pressable>
+                </View>
+              </View>
+            </Modal>
           </View>
           <View
             style={{
               flex: 1,
-              jㄱustifyContent: "flex-end",
+              justifyContent: "flex-end",
               alignItems: "center",
               marginBottom: 50,
             }}
@@ -420,28 +453,35 @@ export default function Home({ navigation, fonts }) {
                       <Pressable
                         style={[styles.button, styles.buttonWrite]}
                         onPress={async () => {
-                          const SERVER_ADDRESS = await AsyncStorage.getItem(
-                            "ServerAddress"
-                          );
-                          const UserServerAccessToken =
-                            await AsyncStorage.getItem("UserServerAccessToken");
-                          await axios({
-                            method: "POST",
-                            url: SERVER_ADDRESS + "/tmi",
-                            headers: {
-                              Authorization: "Bearer: " + UserServerAccessToken,
-                            },
-                            data: {
-                              content: TMI,
-                            },
-                          })
-                            .then(async (resp) => {
-                              fetchData();
+                          if (!TMI) {
+                            Alert.alert("TMI를 작성해주세요!");
+                          } else {
+                            const SERVER_ADDRESS = await AsyncStorage.getItem(
+                              "ServerAddress"
+                            );
+                            const UserServerAccessToken =
+                              await AsyncStorage.getItem(
+                                "UserServerAccessToken"
+                              );
+                            await axios({
+                              method: "POST",
+                              url: SERVER_ADDRESS + "/tmi",
+                              headers: {
+                                Authorization:
+                                  "Bearer: " + UserServerAccessToken,
+                              },
+                              data: {
+                                content: TMI,
+                              },
                             })
-                            .catch(function (error) {
-                              console.log("server error", error);
-                            });
-                          setModalVisible(!modalVisible);
+                              .then(async (resp) => {
+                                fetchData();
+                              })
+                              .catch(function (error) {
+                                console.log("server error", error);
+                              });
+                            setModalVisible(!modalVisible);
+                          }
                         }}
                       >
                         <Text style={{ ...styles.textStyle, color: "#fff" }}>
@@ -495,12 +535,8 @@ export default function Home({ navigation, fonts }) {
                           },
                         })
                           .then((resp) => {
+                            getplantInfo();
                             Alert.alert(resp.data.message);
-                            if (flower) {
-                              setFlower(false);
-                            } else {
-                              setFlower(true);
-                            }
                           })
                           .catch((e) => console.log(e));
                       }
@@ -626,5 +662,44 @@ const styles = StyleSheet.create({
   alien: {
     position: "absolute",
     bottom: "22%",
+  },
+  plantModalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  plantModalView: {
+    margin: 5,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 10,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  plantModalText: {
+    marginBottom: 15,
+    textAlign: "center",
+    fontFamily: "dnf", // Customize the font family if needed
+    fontSize: 16, // Customize the font size if needed
+  },
+  plantButtonClose: {
+    backgroundColor: "#DED1DF",
+    marginHorizontal: 10,
+    borderRadius: 8,
+    padding: 10,
+    elevation: 2,
+  },
+  plantTextStyle: {
+    textAlign: "center",
+    fontFamily: "dnf",
+    color: "#727272",
   },
 });
