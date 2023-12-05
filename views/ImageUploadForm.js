@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import {
-  Alert,
   Dimensions,
   Image,
   KeyboardAvoidingView,
@@ -14,6 +13,7 @@ import {
   View,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import LottieView from "lottie-react-native";
 
 const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
 
@@ -116,7 +116,6 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
           },
         });
         console.log("👌🏻 이미지 업로드 성공");
-        Alert.alert("사진 올리기 성공!");
         onUploadComplete();
       } else {
         console.error("❌ 이미지 업로드 실패");
@@ -186,7 +185,13 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
         </View>
         {isLoading &&
           <View style={styles.loadingOverlay}>
-            <Text style={styles.loadingText}>Upload...</Text>
+            <LottieView
+              style={styles.loading}
+              source={require('../assets/json/upload.json')}
+              autoPlay
+              loop
+            />
+            <Text style={styles.loadingText}>Uploading...</Text>
           </View>
         }
       </ScrollView>
@@ -267,5 +272,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#fff', // 텍스트 색상을 흰색으로 설정
+  },
+  loading: {
+    position: "absolute",
+    width: SCREEN_WIDTH,
+    height: SCREEN_HEIGHT * 0.9,
+    resizeMode: "contain",
   },
 });
