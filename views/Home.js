@@ -362,7 +362,7 @@ export default function Home({navigation, fonts}) {
                   loop
                   delay={1000}
                 >
-                  {todayTMI ? todayTMI : "TMI없음"}
+                  {todayTMI ? todayTMI : "첫 TMI를 작성해주세요!"}
                 </MarqueeText>
               </View>
             </View>
@@ -585,6 +585,7 @@ const styles = StyleSheet.create({
   marqueeText: {
     marginTop: 5,
     fontSize: 20,
+    fontFamily: "DungGeunMo",
   },
   container: {
     flex: 1,

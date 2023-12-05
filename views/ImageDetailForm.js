@@ -228,11 +228,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   description: {
-    fontSize: 20,
+    fontSize: 16,
     paddingHorizontal: "7%",
   },
   comment: {
-    fontSize: 15,
+    fontSize: 16,
     marginTop: 40,
     width: "80%",
     borderColor: "#C1BABD",
