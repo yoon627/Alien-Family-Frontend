@@ -310,7 +310,7 @@ export default function CalendarScreen({ navigation }) {
     try {
       const token = await AsyncStorage.getItem("UserServerAccessToken"); // 적절한 토큰 키 사용
 
-      const response = await fetch(SERVER_ADDRESS + "/calendarEvent", {
+      const response = await fetch("http://43.202.241.133:1998/calendarEvent", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -429,7 +429,7 @@ export default function CalendarScreen({ navigation }) {
     };
 
     const response = await fetch(
-      SERVER_ADDRESS + "/calendarEvent/" + editingEvent.id,
+      "http://43.202.241.133:1998/calendarEvent/" + editingEvent.id,
       {
         method: "PATCH",
         headers: {
@@ -475,7 +475,7 @@ export default function CalendarScreen({ navigation }) {
     try {
       const token = await AsyncStorage.getItem("UserServerAccessToken");
       const response = await fetch(
-        SERVER_ADDRESS + `/calendarEvent/${eventId}`,
+        `http://43.202.241.133:1998/calendarEvent/${eventId}`,
         {
           method: "DELETE",
           headers: {
