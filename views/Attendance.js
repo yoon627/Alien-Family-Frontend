@@ -98,7 +98,7 @@ export default function Attendance({ navigation }) {
           let arr = [];
           if (tmp) {
             for (let j = 0; j < tmp.length; j++) {
-              arr.unshift(tmp[j].member.nickname + " : " + tmp[j].content);
+              arr.push(tmp[j].member.nickname + " : " + tmp[j].content);
             }
           }
           tmpJson[week[i]] = arr;

@@ -50,7 +50,7 @@ export default function MainDrawer({ navigation,route }) {
         />
         <Drawer.Screen
           name="Settings"
-          component={ChoseCalendar}
+          component={Settings}
           options={{ title: "설정" }}
         />
         <Drawer.Screen
