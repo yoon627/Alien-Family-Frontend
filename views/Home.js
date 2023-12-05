@@ -504,7 +504,7 @@ export default function Home({ navigation, fonts }) {
             <View
               style={{
                 left: "-25%",
-                bottom: 5,
+                bottom: 20,
               }}
             >
               <TouchableOpacity

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
   Alert,
   Button,
@@ -10,8 +10,8 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { Calendar } from "react-native-calendars";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import {Calendar} from "react-native-calendars";
+import {TouchableOpacity} from "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import ChoseCalendar from "./ChoseCalendar";
@@ -23,7 +23,7 @@ import {
 } from "@expo/vector-icons";
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
-import { LocaleConfig } from "react-native-calendars/src/index";
+import {LocaleConfig} from "react-native-calendars/src/index";
 
 LocaleConfig.locales["ko"] = {
   monthNames: [
@@ -74,7 +74,7 @@ const getRandomColor = (index) => {
   return colors[index % colors.length];
 };
 
-export default function CalendarScreen({ navigation }) {
+export default function CalendarScreen({navigation}) {
   const [selected, setSelected] = useState("");
   const [events, setEvents] = useState({});
   const [isModalVisible, setModalVisible] = useState(false);
@@ -139,7 +139,7 @@ export default function CalendarScreen({ navigation }) {
     try {
       const response = await fetch(
         "http://43.202.241.133:1998/calendarEvent/day/" +
-          `${currentYear}/${currentMonth}`,
+        `${currentYear}/${currentMonth}`,
         {
           method: "GET",
           headers: {
@@ -244,9 +244,9 @@ export default function CalendarScreen({ navigation }) {
   const renderEvents = () => {
     return events[selected]?.map((event, index) => (
       <TouchableOpacity key={index} onPress={() => openEditModal(event)}>
-        <View style={{ ...styles.event, paddingVertical: 9 }}>
-          <Ionicons name={"person"} size={17} color={getRandomColor(index)} />
-          <Text style={{ fontSize: 17, fontWeight: "bold", paddingLeft: 10 }}>
+        <View style={{...styles.event, paddingVertical: 9}}>
+          <Ionicons name={"person"} size={17} color={getRandomColor(index)}/>
+          <Text style={{fontSize: 17, fontWeight: "bold", paddingLeft: 10}}>
             {event.name} : {event.title}
           </Text>
         </View>
@@ -272,7 +272,7 @@ export default function CalendarScreen({ navigation }) {
             text: "확인",
           },
         ],
-        { cancelable: true },
+        {cancelable: true},
       );
       return;
     }
@@ -286,7 +286,7 @@ export default function CalendarScreen({ navigation }) {
             text: "확인",
           },
         ],
-        { cancelable: true },
+        {cancelable: true},
       );
       return;
     }
@@ -320,7 +320,7 @@ export default function CalendarScreen({ navigation }) {
         memo: memo,
       };
       const datesInRange = getDatesInRange(startAt, endAt);
-      const newEvents = { ...events };
+      const newEvents = {...events};
 
       datesInRange.forEach((date) => {
         newEvents[date] = [...(newEvents[date] || []), newEvent];
@@ -336,7 +336,7 @@ export default function CalendarScreen({ navigation }) {
   };
 
   const openEditModal = (event) => {
-    setEditingEvent({ ...event });
+    setEditingEvent({...event});
     setStartAt(event.startDate);
     // console.log("스따뚜", startAt);
     setEndAt(event.endDate);
@@ -355,7 +355,7 @@ export default function CalendarScreen({ navigation }) {
             text: "확인",
           },
         ],
-        { cancelable: true },
+        {cancelable: true},
       );
       return;
     }
@@ -368,12 +368,12 @@ export default function CalendarScreen({ navigation }) {
             text: "확인",
           },
         ],
-        { cancelable: true },
+        {cancelable: true},
       );
       return;
     }
 
-    const updatedEvents = { ...events };
+    const updatedEvents = {...events};
 
     // 기존 이벤트를 삭제
     if (editingEvent) {
@@ -442,7 +442,7 @@ export default function CalendarScreen({ navigation }) {
         };
       });
 
-      marked[date] = { periods: periods };
+      marked[date] = {periods: periods};
     });
 
     // Ensure the selected date is marked
@@ -476,7 +476,7 @@ export default function CalendarScreen({ navigation }) {
 
       // Update the UI to remove the deleted event
       setEvents((prevEvents) => {
-        const updatedEvents = { ...prevEvents };
+        const updatedEvents = {...prevEvents};
         Object.keys(updatedEvents).forEach((date) => {
           updatedEvents[date] = updatedEvents[date].filter(
             (event) => event.id !== eventId,
@@ -542,7 +542,7 @@ export default function CalendarScreen({ navigation }) {
               mode="date"
               display="spinner"
               onChange={setSelected}
-              style={{ alignSelf: "center" }}
+              style={{alignSelf: "center"}}
             />
           )}
         >
@@ -559,7 +559,7 @@ export default function CalendarScreen({ navigation }) {
   };
 
   return (
-    <View style={{ backgroundColor: "white", flex: 1 }}>
+    <View style={{backgroundColor: "white", flex: 1}}>
       <Calendar
         onDayPress={onDayPress}
         markedDates={getMarkedDates()}
@@ -591,14 +591,13 @@ export default function CalendarScreen({ navigation }) {
           }}
           style={styles.event}
         >
-          <MaterialCommunityIcons name="plus" size={24} color="black" />
-          <Text style={{ fontSize: 18, marginLeft: 10 }}>새로운 이벤트</Text>
+          <MaterialCommunityIcons name="plus" size={24} color="black"/>
+          <Text style={{fontSize: 18, marginLeft: 10}}>새로운 이벤트</Text>
         </TouchableOpacity>
         {selected && events[selected] ? (
           renderEvents()
-        ) : (
-          <Text>등록된 일정이 없습니다.</Text>
-        )}
+        ) : null
+        }
       </ScrollView>
 
       {/*<Modal*/}
@@ -647,22 +646,22 @@ export default function CalendarScreen({ navigation }) {
         animationType="slide"
       >
         <View style={styles.eventContainer}>
-          <View style={{ alignItems: "center" }}>
-            <View style={styles.separator} />
+          <View style={{alignItems: "center"}}>
+            <View style={styles.separator}/>
           </View>
 
           <Pressable
-            style={{ position: "absolute", right: 0, marginTop: 20 }}
+            style={{position: "absolute", right: 0, marginTop: 20}}
             onPress={() => setModalVisible(false)}
           >
-            <Ionicons name="close" size={24} color="black" />
+            <Ionicons name="close" size={24} color="black"/>
           </Pressable>
 
           <TextInput
             style={styles.title}
             value={editingEvent?.title}
             onChangeText={(text) =>
-              setEditingEvent({ ...editingEvent, title: text })
+              setEditingEvent({...editingEvent, title: text})
             }
           />
           <View style={styles.dateChoice}>
@@ -678,7 +677,7 @@ export default function CalendarScreen({ navigation }) {
               name="navigate-next"
               size={24}
               color="black"
-              style={{ paddingLeft: 10 }}
+              style={{paddingLeft: 10}}
             />
             <Pressable onPress={() => setShowEndDatePicker(true)}>
               <Text style={styles.dateText}>{checkYear(endAt, startAt)}</Text>
@@ -714,7 +713,7 @@ export default function CalendarScreen({ navigation }) {
               value={editingEvent?.memo}
               onChangeText={(text) => {
                 if (text.length <= 20) {
-                  setEditingEvent({ ...editingEvent, memo: text });
+                  setEditingEvent({...editingEvent, memo: text});
                 }
               }}
               placeholder="메모"
@@ -726,7 +725,7 @@ export default function CalendarScreen({ navigation }) {
         <View style={styles.check}>
           <Pressable onPress={() => deleteEvent(editingEvent.id)}>
             <Ionicons
-              style={{ paddingRight: 20 }}
+              style={{paddingRight: 20}}
               name="ios-trash-outline"
               size={30}
               color="gray"
@@ -749,8 +748,8 @@ export default function CalendarScreen({ navigation }) {
         animationType="slide"
       >
         <View style={styles.eventContainer}>
-          <View style={{ alignItems: "center" }}>
-            <View style={styles.separator} />
+          <View style={{alignItems: "center"}}>
+            <View style={styles.separator}/>
           </View>
           <TextInput
             style={styles.title}
@@ -773,21 +772,21 @@ export default function CalendarScreen({ navigation }) {
               name="navigate-next"
               size={24}
               color="black"
-              style={{ paddingLeft: 10 }}
+              style={{paddingLeft: 10}}
             />
             <Pressable onPress={() => setShowEndDatePicker(true)}>
               <Text style={styles.dateText}>{checkYear(endAt, startAt)}</Text>
             </Pressable>
           </View>
 
-          <View style={{ alignSelf: "center" }}>
+          <View style={{alignSelf: "center"}}>
             {showStartDatePicker && (
               <DateTimePicker
                 value={startAt}
                 mode="date"
                 display="spinner"
                 onChange={onStartDateChange}
-                style={{ alignSelf: "center" }}
+                style={{alignSelf: "center"}}
               />
             )}
 
@@ -797,7 +796,7 @@ export default function CalendarScreen({ navigation }) {
                 mode="date"
                 display="spinner"
                 onChange={onEndDateChange}
-                style={{ alignSelf: "center" }}
+                style={{alignSelf: "center"}}
               />
             )}
           </View>
@@ -840,7 +839,7 @@ export default function CalendarScreen({ navigation }) {
 
         <View style={styles.check}>
           <Pressable onPress={handleDelete}>
-            <Text style={{ paddingRight: 20, color: "gray" }}>
+            <Text style={{paddingRight: 20, color: "gray"}}>
               작성을 취소할래요
             </Text>
           </Pressable>
@@ -878,7 +877,7 @@ export default function CalendarScreen({ navigation }) {
               height: "50%", // 높이 조정
             }}
           >
-            <ChoseCalendar />
+            <ChoseCalendar/>
 
             <Button
               title="취소"

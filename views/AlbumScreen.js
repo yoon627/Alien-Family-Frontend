@@ -5,7 +5,6 @@ import {
   FlatList,
   Image,
   Platform,
-  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -82,7 +81,7 @@ export default function AlbumScreen({navigation}) {
         const data = await response.json();
         // 받아온 이미지 데이터 상태에 저장
         setAlbumList(data.data);
-        // console.log("받은 데이터!!!!!!!!!", data.data)
+        // console.log("받은 데이터!!!!!!!!!", data.data);
         // console.log("👉🏻앨범 이미지 리스트: ", data.data.map(item => item.photoKey));
       } catch (error) {
         console.error("이미지 url을 가져오는 중에 오류가 발생했습니다.", error);
@@ -97,7 +96,7 @@ export default function AlbumScreen({navigation}) {
   const imagePickerOption = {
     mediaTypes: ImagePicker.MediaTypeOptions.All,
     allowsEditing: false,
-    quality: 1,
+    quality: 0,
     aspect: [1, 1],
     includeBase64: Platform.OS === "android",
   };
@@ -141,7 +140,6 @@ export default function AlbumScreen({navigation}) {
         }
         // 이미지 업로드 결과 및 이미지 경로 업데이트
         if (result.assets && result.assets.length > 0) {
-          const chosenImage = result.assets[0];
           setChosenImage(chosenImage);
           // console.log("🌄 저장한 이미지 -> ", chosenImage);
           setShowUploadForm(true);
@@ -174,8 +172,9 @@ export default function AlbumScreen({navigation}) {
         // 이미지 업로드 결과 및 이미지 경로 업데이트
         if (result.assets && result.assets.length > 0) {
           const chosenImage = result.assets[0];
+          console.log("🌄 저장한 이미지 -> ", chosenImage);
           setChosenImage(chosenImage);
-          // console.log("🌄 저장한 이미지 -> ", chosenImage);
+
           setShowUploadForm(true);
         } else {
           console.log("No assets found!");
@@ -270,7 +269,7 @@ export default function AlbumScreen({navigation}) {
                         description: item.description,
                         writer: item.writer,
                       },
-                      albumList: albumList,
+                      albumList: albumList
                     })
                   }
                 >
@@ -285,7 +284,9 @@ export default function AlbumScreen({navigation}) {
             )}
             contentContainerStyle={styles.flatListContentContainer}
           />
-          <Pressable style={styles.imagePlusContainer} onPress={modalOpen}>
+          <TouchableOpacity
+            style={styles.imagePlusContainer}
+            onPress={modalOpen}>
             <Image
               source={require("../assets/img/plus.png")}
               style={{
@@ -294,7 +295,7 @@ export default function AlbumScreen({navigation}) {
                 resizeMode: "contain",
               }}
             />
-          </Pressable>
+          </TouchableOpacity>
         </Fragment>
       ) : (
         <ImageUploadForm
