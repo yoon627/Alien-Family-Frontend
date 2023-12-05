@@ -203,7 +203,7 @@ export default function FamilyInfo({ navigation }) {
           easing: Easing.linear,
           useNativeDriver: false,
         }),
-      ]).start(({ finished }) => {
+      ]).start(({finished}) => {
         if (finished && !isUnmountedRef.current) {
           bounceOffEdges(animation);
         }
@@ -235,7 +235,7 @@ export default function FamilyInfo({ navigation }) {
           duration: 0,
           useNativeDriver: false,
         }),
-      ]).start(({ finished }) => {
+      ]).start(({finished}) => {
         if (finished && !isUnmountedRef.current) {
           moveTarget(animation);
         }
@@ -316,7 +316,6 @@ const styles = StyleSheet.create({
 
     fontWeight: "700",
   },
-
   image: {
     width: ALIEN_SIZE,
     height: ALIEN_SIZE,

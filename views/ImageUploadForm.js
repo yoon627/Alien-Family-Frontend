@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
   Alert,
   Dimensions,
@@ -14,32 +14,39 @@ import {
   View,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
-const TAG_OPTION = [
-  {
-    item: "아빠",
-    id: "DAD",
-  },
-  {
-    item: "엄마",
-    id: "MOM",
-  },
-  {
-    item: "첫째",
-    id: "FIRST",
-  },
-  {
-    item: "둘째",
-    id: "SECOND",
-  },
-  {
-    item: "기타",
-    id: "EXTRA",
-  },
-];
-export default function ImageUploadForm({ uri, onUploadComplete }) {
+
+const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
+
+export default function ImageUploadForm({uri, onUploadComplete}) {
   const [photoTags, setPhotoTags] = useState([]);
   const [description, setDescription] = useState("");
+  const [tagList, setTagList] = useState([]);
+
+  // 가족 태그
+  useEffect(() => {
+    const fetchTagList = async () => {
+      const UserServerAccessToken = await AsyncStorage.getItem(
+        "UserServerAccessToken",
+      );
+      try {
+        const response = await fetch(`http://43.202.241.133:1998/api/family/koreanVer`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + UserServerAccessToken
+          }
+        });
+
+        const data = await response.json();
+        // console.log("하이!!!!!! 가족쿠 리스트", data.data);
+        setTagList(data.data);
+      } catch (error) {
+        console.error("가족 태그를 불러오지 못했습니다.", error);
+      }
+    }
+    fetchTagList();
+  }, []);
+
   const toggleTag = (tag) => {
     // 선택된 태그 목록 업데이트
     if (photoTags.includes(tag)) {
@@ -129,25 +136,25 @@ export default function ImageUploadForm({ uri, onUploadComplete }) {
         />
         <View style={{ height: 20 }} />
         <View style={styles.tagButtonsContainer}>
-          {TAG_OPTION.map((tagOption, index) => (
+          {tagList.map((tag, index) => (
             <Pressable
-              key={tagOption.id}
+              key={tag}
               style={[
                 styles.tagButton,
-                photoTags.includes(tagOption.id) && styles.tagButtonSelected,
-                index !== TAG_OPTION.length - 1 && { marginRight: 10 },
+                photoTags.includes(tag) && styles.tagButtonSelected,
+                index !== tagList.length - 1 && {marginRight: 10},
               ]}
-              onPress={() => toggleTag(tagOption.id)}
+              onPress={() => toggleTag(tag)}
             >
               <Text
                 style={{
                   ...styles.tagButtonText,
-                  fontWeight: photoTags.includes(tagOption.id)
+                  fontWeight: photoTags.includes(tag)
                     ? "bold"
                     : "normal",
                 }}
               >
-                {tagOption.item}
+                {tag}
               </Text>
             </Pressable>
           ))}

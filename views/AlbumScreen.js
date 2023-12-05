@@ -26,28 +26,7 @@ import * as Notifications from "expo-notifications";
 import { useFocusEffect } from "@react-navigation/native";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
-const TAG_OPTION = [
-  {
-    item: "# 아빠",
-    id: "DAD",
-  },
-  {
-    item: "# 엄마",
-    id: "MOM",
-  },
-  {
-    item: "# 첫째",
-    id: "FIRST",
-  },
-  {
-    item: "# 둘째",
-    id: "SECOND",
-  },
-  {
-    item: "# 기타",
-    id: "EXTRA",
-  },
-];
+export default function AlbumScreen({navigation}) {
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -55,7 +34,6 @@ Notifications.setNotificationHandler({
     shouldSetBadge: true,
   }),
 });
-export default function AlbumScreen({ navigation }) {
   // 카메라 권한 요청을 위한 훅
   const [cameraStatus, cameraRequestPermission] =
     ImagePicker.useCameraPermissions();
@@ -72,8 +50,35 @@ export default function AlbumScreen({ navigation }) {
   const [showUploadForm, setShowUploadForm] = useState(false);
   // 선택한 태그
   const [selectedTags, setSelectedTags] = useState([]);
+  const [tagList, setTagList] = useState([]);
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
+
+  // 가족 태그
+  useEffect(() => {
+    const fetchTagList = async () => {
+      const UserServerAccessToken = await AsyncStorage.getItem(
+        "UserServerAccessToken",
+      );
+      try {
+        const response = await fetch(`http://43.202.241.133:1998/api/family/koreanVer`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + UserServerAccessToken
+          }
+        });
+
+        const data = await response.json();
+        // console.log("하이!!!!!! 가족쿠 리스트", data.data);
+        setTagList(data.data);
+      } catch (error) {
+        console.error("가족 태그를 불러오지 못했습니다.", error);
+      }
+    }
+    fetchTagList();
+  }, []);
+
   const handleUploadComplete = () => {
     setShowUploadForm(false);
   };
@@ -183,7 +188,7 @@ export default function AlbumScreen({ navigation }) {
         // 이미지 업로드 결과 및 이미지 경로 업데이트
         if (result.assets && result.assets.length > 0) {
           const chosenImage = result.assets[0];
-          console.log("🌄 저장한 이미지 -> ", chosenImage);
+          // console.log("🌄 저장한 이미지 -> ", chosenImage);
           setChosenImage(chosenImage);
           setShowUploadForm(true);
         } else {
@@ -194,13 +199,13 @@ export default function AlbumScreen({ navigation }) {
       console.error("갤러리 Error!!!!! : ", error);
     }
   };
-  const toggleTagSelection = (tagId) => {
+  const toggleTagSelection = (tag) => {
     setSelectedTags((prevTags) => {
-      const isSelected = prevTags.includes(tagId);
+      const isSelected = prevTags.includes(tag);
       if (isSelected) {
-        return prevTags.filter((tag) => tag !== tagId);
+        return prevTags.filter((tag) => tag !== tag);
       } else {
-        return [...prevTags, tagId];
+        return [...prevTags, tag];
       }
     });
     // console.log("선택한 태그:", selectedTags);
@@ -327,26 +332,27 @@ export default function AlbumScreen({ navigation }) {
     <View style={styles.container}>
       {!showUploadForm ? (
         <Fragment>
+
           <View style={styles.tagContainer}>
-            {TAG_OPTION.map((tag, index) => (
+            {tagList.map((tag, index) => (
               <TouchableOpacity
-                key={tag.id}
+                key={tag}
                 style={[
                   styles.tagItem,
-                  selectedTags.includes(tag.id) && styles.selectedTagItem,
-                  index !== TAG_OPTION.length - 1 && { marginRight: 7 },
+                  selectedTags.includes(tag) && styles.selectedTagItem,
+                  index !== tagList.length - 1 && {marginRight: 7},
                 ]}
-                onPress={() => toggleTagSelection(tag.id)}
+                onPress={() => toggleTagSelection(tag)}
               >
                 <Text
                   style={{
-                    color: selectedTags.includes(tag.id) ? "black" : "black",
-                    fontWeight: selectedTags.includes(tag.id)
+                    color: "black",
+                    fontWeight: selectedTags.includes(tag)
                       ? "bold"
                       : "normal",
                   }}
                 >
-                  {tag.item}
+                  {`# ${tag}`}
                 </Text>
               </TouchableOpacity>
             ))}

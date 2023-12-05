@@ -9,62 +9,30 @@ import {
 } from "react-native";
 import Swiper from "react-native-web-swiper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Ionicons } from "@expo/vector-icons";
-import view from "react-native-reanimated/src/reanimated2/component/View";
-
-const TAG_OPTION = [
-  {
-    item: "아빠",
-    id: "DAD",
-  },
-  {
-    item: "엄마",
-    id: "MOM",
-  },
-  {
-    item: "첫째",
-    id: "FIRST",
-  },
-  {
-    item: "둘째",
-    id: "SECOND",
-  },
-  {
-    item: "기타",
-    id: "EXTRA",
-  },
-];
+import {Ionicons} from "@expo/vector-icons";
 
 export default function ImageDetailForm({ route, navigation }) {
   const [comment, setComment] = useState("");
   const [familyInfo, setFamilyInfo] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
 
   const { photoInfo, albumList } = route.params;
   const index = albumList.findIndex(
     (item) => item.photoKey === photoInfo.photoKey
   );
 
-  const imageList = [
-    { name: "BASIC", image: require("../assets/img/character/BASIC.png") },
-    { name: "GLASSES", image: require("../assets/img/character/GLASSES.png") },
-    { name: "GIRL", image: require("../assets/img/character/GIRL.png") },
-    {
-      name: "BAND_AID",
-      image: require("../assets/img/character/BAND_AID.png"),
-    },
-    { name: "RABBIT", image: require("../assets/img/character/RABBIT.png") },
-    {
-      name: "HEADBAND",
-      image: require("../assets/img/character/HEADBAND.png"),
-    },
-    { name: "TOMATO", image: require("../assets/img/character/TOMATO.png") },
-    {
-      name: "CHRISTMAS_TREE",
-      image: require("../assets/img/character/CHRISTMAS_TREE.png"),
-    },
-    { name: "SANTA", image: require("../assets/img/character/SANTA.png") },
-    { name: "PIRATE", image: require("../assets/img/character/PIRATE.png") },
-  ];
+  const imageList = {
+    BASIC: require(`../assets/img/character/BASIC.png`),
+    GLASSES: require(`../assets/img/character/GLASSES.png`),
+    GIRL: require(`../assets/img/character/GIRL.png`),
+    BAND_AID: require(`../assets/img/character/BAND_AID.png`),
+    RABBIT: require(`../assets/img/character/RABBIT.png`),
+    HEADBAND: require(`../assets/img/character/HEADBAND.png`),
+    TOMATO: require(`../assets/img/character/TOMATO.png`),
+    CHRISTMAS_TREE: require(`../assets/img/character/CHRISTMAS_TREE.png`),
+    SANTA: require(`../assets/img/character/SANTA.png`),
+    PIRATE: require(`../assets/img/character/PIRATE.png`),
+  };
 
   // 가족 정보
   useEffect(() => {
@@ -72,13 +40,19 @@ export default function ImageDetailForm({ route, navigation }) {
       try {
         const resp = await AsyncStorage.getItem("myDB");
         setFamilyInfo(JSON.parse(resp));
-        console.log("👨‍👩‍👧‍👦나의 가족 정보", resp);
       } catch (e) {
         console.log(e);
+      } finally {
+        setIsLoading(false); // 데이터 로딩이 완료되면 로딩 상태를 false로 설정
       }
     };
+
     viewFamily();
   }, []);
+
+  if (isLoading) {
+    return <Text>Loading...</Text>; // 로딩 중일 때 표시할 UI
+  }
 
   function getAlienTypeByNickname(familyInfo, writer) {
     for (const key in familyInfo) {
@@ -91,12 +65,10 @@ export default function ImageDetailForm({ route, navigation }) {
 
   function findImageByName(writer) {
     const alienName = getAlienTypeByNickname(familyInfo, writer);
-    console.log(alienName);
     if (alienName === null) {
-      return imageList[0].image;
+      return imageList["BASIC"];
     }
-    console.log(imageList.find((item) => item.name === "SANTA").image);
-    return imageList.find((item) => item.name === alienName).image;
+    return imageList[alienName];
   }
 
   const sendToComment = async () => {
@@ -144,36 +116,37 @@ export default function ImageDetailForm({ route, navigation }) {
           return (
             <View key={index} style={{ top: "7%" }}>
               <TouchableOpacity
-                style={{ alignItems: "flex-start", paddingHorizontal: "3%" }}
+                style={{alignItems: "flex-start", paddingHorizontal: "3%"}}
                 onPress={() => navigation.pop()}
               >
-                <Ionicons name="chevron-back" size={28} color="#C336CF" />
+                <Ionicons name="chevron-back" size={28} color="#C336CF"/>
               </TouchableOpacity>
 
               <View style={styles.slide}>
-                <View style={{ alignItems: "flex-start", width: "100%" }}>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      marginBottom: 5,
-                      paddingHorizontal: "5%",
-                    }}
-                  >
+                <View style={{alignItems: 'flex-start', width: '100%', marginBottom: 10,}}>
+                  <View style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    paddingHorizontal: '5%',
+                    alignItems: 'center'
+                  }}>
                     <Image
-                      source={findImageByName(item.writer)}
                       style={styles.profilePic}
+                      source={findImageByName(item.writer)}
                     />
                     <Text style={styles.writer}>{item.writer}</Text>
+                    <Text style={styles.date}>
+                      {nowYear === year ? formattedDate : year + formattedDate}
+                    </Text>
                   </View>
+                </View>
 
+                <View style={{borderTopWidth: 1, borderTopColor: '#CBCBCB'}}>
                   <Image
                     style={styles.uploadImage}
                     source={{ uri: item.photoKey }}
                     resizeMode="contain"
                   />
-                  <Text style={styles.date}>
-                    {nowYear === year ? formattedDate : year + formattedDate}
-                  </Text>
                 </View>
 
                 {item.photoTags.length !== 0 && (
@@ -244,16 +217,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   uploadImage: {
+    marginVertical: 15,
     width: "100%",
     aspectRatio: 1,
-    marginBottom: 10,
   },
   tag: {
     fontSize: 16,
   },
   description: {
     fontSize: 20,
-    paddingHorizontal: "5%",
+    paddingHorizontal: "7%",
   },
   comment: {
     fontSize: 15,
@@ -267,14 +240,16 @@ const styles = StyleSheet.create({
     height: "45%",
   },
   writer: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "bold",
   },
   date: {
-    fontSize: 18,
-    color: "gray",
-    marginBottom: 5,
     paddingHorizontal: "5%",
+    justifyContent: "flex-end",
+    width: "80%",
+    fontSize: 14,
+    color: "gray",
+    textAlign: 'right',
   },
   button: {
     width: 65,
@@ -296,12 +271,12 @@ const styles = StyleSheet.create({
     fontFamily: "dnf",
   },
   tagButtonsContainer: {
+    marginBottom: 10,
     flexDirection: "row",
     justifyContent: "space-between",
     paddingHorizontal: "5%",
   },
   tagButton: {
-    marginTop: 10,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 13,
@@ -312,9 +287,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#E0EBF2",
   },
   profilePic: {
-    width: 30, // 이미지 크기 조절
-    height: 30, // 이미지 크기 조절
-    resizeMode: "contain",
-    borderRadius: 20, // 원형으로 만들기
+    width: 35, // 이미지 크기 조절
+    height: 35, // 이미지 크기 조절
+    resizeMode: "cover",
+    borderRadius: 35 / 2, // 원형으로 만들기
+    backgroundColor: "#FFEEC3",
+    marginRight: 5,
   },
 });

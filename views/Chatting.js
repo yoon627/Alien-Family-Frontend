@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {
   Image,
   ScrollView,
@@ -8,9 +8,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Client } from "@stomp/stompjs";
+import {Client} from "@stomp/stompjs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Ionicons } from "@expo/vector-icons";
+import {Ionicons} from "@expo/vector-icons";
 
 const TextEncodingPolyfill = require("text-encoding");
 
@@ -20,19 +20,19 @@ Object.assign("global", {
 });
 
 const imageList = [
-  { name: "BASIC", image: require("../assets/img/character/BASIC.png") },
-  { name: "GLASSES", image: require("../assets/img/character/GLASSES.png") },
-  { name: "GIRL", image: require("../assets/img/character/GIRL.png") },
-  { name: "BAND_AID", image: require("../assets/img/character/BAND_AID.png") },
-  { name: "RABBIT", image: require("../assets/img/character/RABBIT.png") },
-  { name: "HEADBAND", image: require("../assets/img/character/HEADBAND.png") },
-  { name: "TOMATO", image: require("../assets/img/character/TOMATO.png") },
+  {name: "BASIC", image: require("../assets/img/character/BASIC.png")},
+  {name: "GLASSES", image: require("../assets/img/character/GLASSES.png")},
+  {name: "GIRL", image: require("../assets/img/character/GIRL.png")},
+  {name: "BAND_AID", image: require("../assets/img/character/BAND_AID.png")},
+  {name: "RABBIT", image: require("../assets/img/character/RABBIT.png")},
+  {name: "HEADBAND", image: require("../assets/img/character/HEADBAND.png")},
+  {name: "TOMATO", image: require("../assets/img/character/TOMATO.png")},
   {
     name: "CHRISTMAS_TREE",
     image: require("../assets/img/character/CHRISTMAS_TREE.png"),
   },
-  { name: "SANTA", image: require("../assets/img/character/SANTA.png") },
-  { name: "PIRATE", image: require("../assets/img/character/PIRATE.png") },
+  {name: "SANTA", image: require("../assets/img/character/SANTA.png")},
+  {name: "PIRATE", image: require("../assets/img/character/PIRATE.png")},
 ];
 
 const ChatRoom = () => {
@@ -119,7 +119,7 @@ const ChatRoom = () => {
               const receivedMessage = JSON.parse(message.body);
               console.log("리시브 메시지", receivedMessage);
               setMessages((prevMessages) => [...prevMessages, receivedMessage]);
-              scrollViewRef.current?.scrollToEnd({ animated: true }); // 여기에 스크롤 로직 추가
+              scrollViewRef.current?.scrollToEnd({animated: true}); // 여기에 스크롤 로직 추가
             });
           },
           onStompError: (frame) => {
@@ -178,7 +178,7 @@ const ChatRoom = () => {
           const receivedMessage = JSON.parse(message.body);
           console.log("받은 메세지", receivedMessage);
           setMessages((prevMessages) => [...prevMessages, receivedMessage]);
-          scrollViewRef.current?.scrollToEnd({ animated: true }); // 여기에 스크롤 로직 추가
+          scrollViewRef.current?.scrollToEnd({animated: true}); // 여기에 스크롤 로직 추가
         });
       };
     }
@@ -211,8 +211,8 @@ const ChatRoom = () => {
   }
 
   return (
-    <View style={{ flex: 1, padding: 20 }}>
-      <ScrollView style={{ flex: 1, marginLeft: 10 }} ref={scrollViewRef}>
+    <View style={{flex: 1, padding: 20}}>
+      <ScrollView style={{flex: 1, marginLeft: 10}} ref={scrollViewRef}>
         {messages.map((msg, index) => (
           <View key={index}>
             <View
@@ -228,7 +228,7 @@ const ChatRoom = () => {
                   style={styles.profilePic}
                 />
               )}
-              <View style={{ flex: 1 }}>
+              <View style={{flex: 1}}>
                 {msg.sender !== myname && (
                   <Text style={styles.senderName}>{msg.sender}</Text>
                 )}
@@ -266,7 +266,7 @@ const ChatRoom = () => {
           placeholder="Type a message"
         />
         <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
-          <Ionicons name="send" size={24} color="white" />
+          <Ionicons name="send" size={24} color="white"/>
         </TouchableOpacity>
       </View>
     </View>
