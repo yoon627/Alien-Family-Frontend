@@ -1,14 +1,13 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
+  Alert,
   Dimensions,
   Image,
   ImageBackground,
-  KeyboardAvoidingView,
-  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -55,8 +54,18 @@ async function registerForPushNotificationsAsync() {
 }
 
 const ChooseCharacter = ({ navigation, route }) => {
+  const [showImage, setShowImage] = useState(false); // 사진 표시 상태 관리
+
+  const handleNextPage = () => {
+    setShowImage(true); // 사진을 표시합니다.
+    setTimeout(() => {
+      setShowImage(false); // 사진 표시를 중단합니다.
+      navigation.navigate("MainDrawer"); // 다음 페이지로 넘어갑니다.
+    }, 5000); // 3000 밀리초(3초) 동안 사진을 표시합니다.
+  };
+
   const [characterJson, setCharacterJson] = useState(
-    route.params.characterJson
+    route.params.characterJson,
   );
   const [alienType, setAlienType] = useState("BASIC");
   const [selectedToggle, setSelectedToggle] = useState(0);
@@ -245,6 +254,14 @@ const ChooseCharacter = ({ navigation, route }) => {
               ))}
             </View>
           </View>
+
+          {showImage && (
+            <Image
+              source={require("../assets/img/instructor.png")}
+              style={styles.fullScreenImage}
+            />
+          )}
+
           <View style={{ flex: 0.2 }}>
             <View style={{ alignItems: "center", justifyContent: "center" }}>
               <View
@@ -258,21 +275,18 @@ const ChooseCharacter = ({ navigation, route }) => {
                 <ImageBackground source={require("../assets/img/pinkBtn.png")}>
                   <TouchableOpacity
                     onPress={async () => {
+                      await handleNextPage();
                       await AsyncStorage.setItem("alienType", alienType);
-                      const SERVER_ADDRESS = await AsyncStorage.getItem(
-                        "ServerAddress"
-                      );
+                      const SERVER_ADDRESS =
+                        await AsyncStorage.getItem("ServerAddress");
                       const nickname = await AsyncStorage.getItem("nickname");
                       const birthday = await AsyncStorage.getItem("birthday");
-                      const familyRole = await AsyncStorage.getItem(
-                        "familyRole"
-                      );
-                      const familyCode = await AsyncStorage.getItem(
-                        "familyCode"
-                      );
-                      const kakaoEmail = await AsyncStorage.getItem(
-                        "kakaoEmail"
-                      );
+                      const familyRole =
+                        await AsyncStorage.getItem("familyRole");
+                      const familyCode =
+                        await AsyncStorage.getItem("familyCode");
+                      const kakaoEmail =
+                        await AsyncStorage.getItem("kakaoEmail");
                       const plantName = await AsyncStorage.getItem("plantName");
                       const ufoName = await AsyncStorage.getItem("ufoName");
 
@@ -305,13 +319,11 @@ const ChooseCharacter = ({ navigation, route }) => {
                           .then(async (resp) => {
                             await AsyncStorage.setItem(
                               "UserServerAccessToken",
-                              resp.data.data.tokenInfo.accessToken
+                              resp.data.data.tokenInfo.accessToken,
                             );
                             const members =
                               resp.data.data.familyResponseDto.members;
-                            console.log(
-                              resp.data.data.familyResponseDto.members[0]
-                            );
+
                             const familyId =
                               resp.data.data.familyResponseDto.familyId;
                             const chatroomId =
@@ -325,21 +337,20 @@ const ChooseCharacter = ({ navigation, route }) => {
                             }
                             await AsyncStorage.setItem(
                               "myDB",
-                              JSON.stringify(myDB)
+                              JSON.stringify(myDB),
                             );
                             await AsyncStorage.setItem(
                               "familyId",
-                              JSON.stringify(familyId)
+                              JSON.stringify(familyId),
                             );
                             await AsyncStorage.setItem(
                               "chatroomId",
-                              JSON.stringify(chatroomId)
+                              JSON.stringify(chatroomId),
                             );
                             await AsyncStorage.setItem(
                               "plantInfo",
-                              JSON.stringify(plant)
+                              JSON.stringify(plant),
                             );
-                            navigation.navigate("MainDrawer");
                           })
                           .catch((e) => console.log(e));
                       } else {
@@ -349,13 +360,13 @@ const ChooseCharacter = ({ navigation, route }) => {
                         })
                           .then(async (resp) => {
                             const roles = resp.data.data.types;
-                            console.log(roles);
+
                             const tmpCharacterJson = {};
                             for (let i = 0; i < roles.length; i++) {
                               tmpCharacterJson[roles[i]["type"]] =
                                 roles[i]["enabled"];
                             }
-                            console.log(tmpCharacterJson);
+
                             if (tmpCharacterJson[alienType]) {
                               await axios({
                                 method: "POST",
@@ -376,7 +387,7 @@ const ChooseCharacter = ({ navigation, route }) => {
                                 .then(async (resp) => {
                                   await AsyncStorage.setItem(
                                     "UserServerAccessToken",
-                                    resp.data.data.tokenInfo.accessToken
+                                    resp.data.data.tokenInfo.accessToken,
                                   );
                                   const members =
                                     resp.data.data.familyResponseDto.members;
@@ -393,21 +404,20 @@ const ChooseCharacter = ({ navigation, route }) => {
                                   }
                                   await AsyncStorage.setItem(
                                     "myDB",
-                                    JSON.stringify(myDB)
+                                    JSON.stringify(myDB),
                                   );
                                   await AsyncStorage.setItem(
                                     "familyId",
-                                    JSON.stringify(familyId)
+                                    JSON.stringify(familyId),
                                   );
                                   await AsyncStorage.setItem(
                                     "chatroomId",
-                                    JSON.stringify(chatroomId)
+                                    JSON.stringify(chatroomId),
                                   );
                                   await AsyncStorage.setItem(
                                     "plantInfo",
-                                    JSON.stringify(plant)
+                                    JSON.stringify(plant),
                                   );
-                                  navigation.navigate("MainDrawer");
                                 })
                                 .catch((e) => console.log(e));
                             } else {
@@ -504,6 +514,13 @@ const styles = StyleSheet.create({
     flex: 1,
     resizeMode: "cover",
     backgroundColor: "white",
+  },
+  fullScreenImage: {
+    position: "absolute",
+    zIndex: 100,
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
   },
 });
 
