@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   buttonWrite: {
-    backgroundColor: "#C336CF",
+    backgroundColor: "#603D9B",
     marginHorizontal: 10,
   },
   buttonClose: {

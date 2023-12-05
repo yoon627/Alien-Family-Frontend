@@ -25,9 +25,9 @@ export default function MainDrawer({ navigation, route }) {
       <Drawer.Navigator
         screenOptions={{
           headerTintColor: "#603D9B",
-          drawerActiveBackgroundColor: "#F0E1EE",
+          drawerActiveBackgroundColor: "#CAC0DB",
           drawerActiveTintColor: "#434343",
-          drawerInactiveTintColor: "#CC95D0",
+          drawerInactiveTintColor: "#BCA6E0",
           headerTitleStyle: {
             color: "#fff",
           },
