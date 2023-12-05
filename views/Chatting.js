@@ -1,5 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import {
+  Dimensions,
   Image,
   ScrollView,
   StyleSheet,
@@ -34,6 +35,8 @@ const imageList = [
   {name: "SANTA", image: require("../assets/img/character/SANTA.png")},
   {name: "PIRATE", image: require("../assets/img/character/PIRATE.png")},
 ];
+
+const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
 
 const ChatRoom = () => {
   const [stompClient, setStompClient] = useState(null);
@@ -216,8 +219,8 @@ const ChatRoom = () => {
   }
 
   return (
-    <View style={{flex: 1, padding: 20}}>
-      <ScrollView style={{flex: 1, marginLeft: 10}} ref={scrollViewRef}>
+    <View style={{flex: 1, padding: 10, backgroundColor: "#fff"}}>
+      <ScrollView style={{flex: 1, marginHorizontal: 5}} ref={scrollViewRef}>
         {messages.map((msg, index) => (
           <View key={index}>
             <View
@@ -228,15 +231,15 @@ const ChatRoom = () => {
               }}
             >
               {msg.sender !== myname && (
-                <Image
-                  source={findImageByName(msg.sender)}
-                  style={styles.profilePic}
-                />
+                <View>
+                  <Text style={styles.senderName}>{msg.sender}</Text>
+                  <Image
+                    source={findImageByName(msg.sender)}
+                    style={styles.profilePic}
+                  />
+                </View>
               )}
               <View style={{flex: 1}}>
-                {msg.sender !== myname && (
-                  <Text style={styles.senderName}>{msg.sender}</Text>
-                )}
                 <View
                   style={[
                     styles.messageBubble,
@@ -291,7 +294,7 @@ const styles = StyleSheet.create({
   myMessage: {
     alignSelf: "flex-end",
     backgroundColor: "#603D9B",
-    marginRight: 8,
+    marginRight: 7,
     borderTopLeftRadius: 18,
     borderBottomLeftRadius: 18,
     borderBottomRightRadius: 2,
@@ -335,10 +338,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   profilePic: {
-    width: 60, // 이미지 크기 조절
-    height: 60, // 이미지 크기 조절
-    borderRadius: 20, // 원형으로 만들기
-    marginRight: 10, // 메시지 버블과의 간격
+    width: SCREEN_WIDTH * 0.1,
+    height: SCREEN_WIDTH * 0.1, // 이미지 크기 조절
+    borderRadius: SCREEN_WIDTH * 0.1 / 2, // 원형으로 만들기
+    marginRight: 10, // 메시지 버블과의 간격,
+    resizeMode: "contain",
+    backgroundColor: "#FFEEC3",
   },
   timeTextRight: {
     fontSize: 12,

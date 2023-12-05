@@ -397,15 +397,15 @@ export default function Home({navigation, fonts}) {
                 // Handle modal close
               }}
             >
-              <View style={styles.centeredView}>
+              <View style={styles.modalOverlay}>
                 <View style={styles.modalView}>
                   {/* Modal content */}
-                  <Text style={styles.modalText}>이름: {plantName}</Text>
-                  <Text style={styles.modalText}>레벨: {plantLevel}</Text>
-                  <Text style={styles.modalText}>포인트: {plantPoint}</Text>
+                  <Text style={{...styles.modalText, fontFamily: "dnf", fontSize: 20,}}>{plantName}</Text>
+                  <Text style={{...styles.modalText, fontWeight: "bold", fontSize: 16}}>level 🏆 {plantLevel}</Text>
+                  <Text style={{...styles.modalText, fontWeight: "bold"}}>{plantPoint} p</Text>
                   {/* Close button */}
                   <Pressable
-                    style={[styles.button, styles.buttonClose]}
+                    style={[styles.button, styles.buttonClose, {backgroundColor: "#CBCFC9"}]}
                     onPress={() => setPlantModal(false)}
                   >
                     <Text style={styles.textStyle}>닫기</Text>
@@ -596,14 +596,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: 22,
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalView: {
-    margin: 5,
-    backgroundColor: "white",
+    margin: 10,
+    backgroundColor: "#fff",
     borderRadius: 20,
-    padding: 10,
+    padding: 30,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
@@ -707,7 +705,7 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)', // 불투명한 검은 배경
+    backgroundColor: 'rgba(0, 0, 0, 0.8)', // 불투명한 검은 배경
     justifyContent: 'center',
     alignItems: 'center',
   },

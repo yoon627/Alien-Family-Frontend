@@ -39,7 +39,7 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
         });
 
         const data = await response.json();
-        // console.log("하이!!!!!! 가족쿠 리스트", data.data);
+        console.log("하이!!!!!! 가족쿠 리스트", data.data);
         setTagList(data.data);
       } catch (error) {
         console.error("가족 태그를 불러오지 못했습니다.", error);
@@ -49,13 +49,16 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
   }, []);
 
   const toggleTag = (tag) => {
-    // 선택된 태그 목록 업데이트
-    if (photoTags.includes(tag)) {
-      setPhotoTags(photoTags.filter((photoTags) => photoTags !== tag));
-    } else {
-      setPhotoTags([...photoTags, tag]);
-    }
+    setPhotoTags((prevTags) => {
+      if (prevTags.includes(tag)) {
+        return prevTags.filter((photoTag) => photoTag !== tag);
+      } else {
+        return [...prevTags, tag];
+      }
+    });
+    console.log("선택한 태그!!!!", photoTags);
   };
+
   // 클라에서 바로 presigned url로 업로드
   // 1단계: signed url을 요청해서 받는다.
   // 2단계: 받아온 url에 put으로 요청해서 업로드한다.
@@ -100,6 +103,7 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
       if (uploadRes.ok) {
         const writer = await AsyncStorage.getItem("nickname");
         const list = signedUrl.split("?");
+
         const imageInfo = {
           writer: writer,
           photoKey:
@@ -107,6 +111,8 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
           photoTags: photoTags,
           description: description,
         };
+        // console.log("이미지 인포!!!!!!!!!!", imageInfo);
+
         const response = await fetch("http://43.202.241.133:1998/photo", {
           method: "POST",
           body: JSON.stringify(imageInfo),
@@ -203,16 +209,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    // padding: 20,
   },
   uploadImage: {
     width: SCREEN_WIDTH,
-    height: SCREEN_HEIGHT * 0.4,
-    marginBottom: 20,
+    height: SCREEN_HEIGHT * 0.45,
   },
   input: {
     height: 40,
-    width: "80%",
+    width: "90%",
     borderColor: "#C1BABD",
     borderWidth: 1,
     borderRadius: 10,

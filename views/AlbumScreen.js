@@ -24,6 +24,7 @@ import ImageUploadForm from "./ImageUploadForm";
 import ExpoFastImage from "expo-fast-image";
 import * as Notifications from "expo-notifications";
 import { useFocusEffect } from "@react-navigation/native";
+
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export default function AlbumScreen({navigation}) {
@@ -99,7 +100,7 @@ Notifications.setNotificationHandler({
         const data = await response.json();
         // 받아온 이미지 데이터 상태에 저장
         setAlbumList(data.data);
-        // console.log("받은 데이터!!!!!!!!!", data.data);
+        console.log("받은 데이터!!!!!!!!!", data.data);
         // console.log("👉🏻앨범 이미지 리스트: ", data.data.map(item => item.photoKey));
       } catch (error) {
         console.error("이미지 url을 가져오는 중에 오류가 발생했습니다.", error);
@@ -117,6 +118,7 @@ Notifications.setNotificationHandler({
     aspect: [1, 1],
     includeBase64: Platform.OS === "android",
   };
+
   // 선택 모달 오픈
   const modalOpen = () => {
     if (Platform.OS === "android") {
@@ -137,6 +139,7 @@ Notifications.setNotificationHandler({
       );
     }
   };
+
   // 카메라 촬영
   const onLaunchCamera = async () => {
     try {
@@ -167,6 +170,7 @@ Notifications.setNotificationHandler({
       console.error("카메라 Error!!!!! : ", error);
     }
   };
+
   // 갤러리에서 사진 선택
   const onLaunchImageLibrary = async () => {
     try {
@@ -199,6 +203,7 @@ Notifications.setNotificationHandler({
       console.error("갤러리 Error!!!!! : ", error);
     }
   };
+
   const toggleTagSelection = (tag) => {
     setSelectedTags((prevTags) => {
       const isSelected = prevTags.includes(tag);

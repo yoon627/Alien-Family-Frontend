@@ -735,13 +735,13 @@ export default function CalendarScreen({ navigation }) {
               style={{ paddingRight: 20 }}
               name="ios-trash-outline"
               size={30}
-              color="gray"
+              color="#C2B4D9"
             />
           </Pressable>
           <Octicons
             name="check-circle-fill"
             size={56}
-            color="black"
+            color="#603D9B"
             onPress={handleEditEvent}
           />
         </View>
@@ -846,14 +846,14 @@ export default function CalendarScreen({ navigation }) {
 
         <View style={styles.check}>
           <Pressable onPress={handleDelete}>
-            <Text style={{ paddingRight: 20, color: "gray" }}>
+            <Text style={{ paddingRight: 20, color: "#AEA5BF" }}>
               작성을 취소할래요
             </Text>
           </Pressable>
           <Octicons
             name="check-circle-fill"
             size={56}
-            color="black"
+            color="#603D9B"
             onPress={addNewEvent}
           />
         </View>
@@ -940,7 +940,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 40,
-    backgroundColor: "rgba(161, 161, 161, 0.2)",
+    backgroundColor: "#D6D2DD",
     marginLeft: 10,
   },
   tagText: {
