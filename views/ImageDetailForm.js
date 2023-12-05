@@ -1,15 +1,15 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   StyleSheet,
   Text,
-  TextInput, TouchableOpacity,
+  TextInput,
+  TouchableOpacity,
   View,
 } from "react-native";
 import Swiper from "react-native-web-swiper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {Ionicons} from '@expo/vector-icons';
-import view from "react-native-reanimated/src/reanimated2/component/View";
+import { Ionicons } from "@expo/vector-icons";
 
 const TAG_OPTION = [
   {
@@ -34,30 +34,28 @@ const TAG_OPTION = [
   },
 ];
 
-export default function ImageDetailForm({route, navigation}) {
+export default function ImageDetailForm({ route, navigation }) {
   const [comment, setComment] = useState("");
   const [familyInfo, setFamilyInfo] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
 
-  const {photoInfo, albumList} = route.params;
+  const { photoInfo, albumList } = route.params;
   const index = albumList.findIndex(
     (item) => item.photoKey === photoInfo.photoKey,
   );
 
-  const imageList = [
-    {name: "BASIC", image: require("../assets/img/character/BASIC.png")},
-    {name: "GLASSES", image: require("../assets/img/character/GLASSES.png")},
-    {name: "GIRL", image: require("../assets/img/character/GIRL.png")},
-    {name: "BAND_AID", image: require("../assets/img/character/BAND_AID.png")},
-    {name: "RABBIT", image: require("../assets/img/character/RABBIT.png")},
-    {name: "HEADBAND", image: require("../assets/img/character/HEADBAND.png")},
-    {name: "TOMATO", image: require("../assets/img/character/TOMATO.png")},
-    {
-      name: "CHRISTMAS_TREE",
-      image: require("../assets/img/character/CHRISTMAS_TREE.png"),
-    },
-    {name: "SANTA", image: require("../assets/img/character/SANTA.png")},
-    {name: "PIRATE", image: require("../assets/img/character/PIRATE.png")},
-  ];
+  const imageList = {
+    BASIC: require(`../assets/img/character/BASIC.png`),
+    GLASSES: require(`../assets/img/character/GLASSES.png`),
+    GIRL: require(`../assets/img/character/GIRL.png`),
+    BAND_AID: require(`../assets/img/character/BAND_AID.png`),
+    RABBIT: require(`../assets/img/character/RABBIT.png`),
+    HEADBAND: require(`../assets/img/character/HEADBAND.png`),
+    TOMATO: require(`../assets/img/character/TOMATO.png`),
+    CHRISTMAS_TREE: require(`../assets/img/character/CHRISTMAS_TREE.png`),
+    SANTA: require(`../assets/img/character/SANTA.png`),
+    PIRATE: require(`../assets/img/character/PIRATE.png`),
+  };
 
   // 가족 정보
   useEffect(() => {
@@ -65,13 +63,19 @@ export default function ImageDetailForm({route, navigation}) {
       try {
         const resp = await AsyncStorage.getItem("myDB");
         setFamilyInfo(JSON.parse(resp));
-        console.log("👨‍👩‍👧‍👦나의 가족 정보", resp);
       } catch (e) {
         console.log(e);
+      } finally {
+        setIsLoading(false); // 데이터 로딩이 완료되면 로딩 상태를 false로 설정
       }
     };
+
     viewFamily();
   }, []);
+
+  if (isLoading) {
+    return <Text>Loading...</Text>; // 로딩 중일 때 표시할 UI
+  }
 
   function getAlienTypeByNickname(familyInfo, writer) {
     for (const key in familyInfo) {
@@ -84,14 +88,11 @@ export default function ImageDetailForm({route, navigation}) {
 
   function findImageByName(writer) {
     const alienName = getAlienTypeByNickname(familyInfo, writer);
-    console.log(alienName);
     if (alienName === null) {
-      return imageList[0].image;
+      return imageList["BASIC"];
     }
-    console.log(imageList.find((item) => item.name === 'SANTA').image);
-    return imageList.find((item) => item.name === alienName).image;
+    return imageList[alienName];
   }
-
 
   const sendToComment = async () => {
     const UserServerAccessToken = await AsyncStorage.getItem(
@@ -136,17 +137,23 @@ export default function ImageDetailForm({route, navigation}) {
           const formattedDate = `${month}월 ${day}일 ${hours}시 ${minutes}분`;
 
           return (
-            <View key={index} style={{top: "7%"}}>
+            <View key={index} style={{ top: "7%" }}>
               <TouchableOpacity
-                style={{alignItems: "flex-start", paddingHorizontal: "3%"}}
-                onPress={() => navigation.pop()}>
-                <Ionicons name="chevron-back" size={28} color="#C336CF"/>
+                style={{ alignItems: "flex-start", paddingHorizontal: "3%" }}
+                onPress={() => navigation.pop()}
+              >
+                <Ionicons name="chevron-back" size={28} color="#C336CF" />
               </TouchableOpacity>
 
               <View style={styles.slide}>
-                <View style={{alignItems: "flex-start", width: "100%"}}>
-
-                  <View style={{flexDirection: "row", marginBottom: 5, paddingHorizontal: "5%",}}>
+                <View style={{ alignItems: "flex-start", width: "100%" }}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      marginBottom: 5,
+                      paddingHorizontal: "5%",
+                    }}
+                  >
                     <Image
                       source={findImageByName(item.writer)}
                       style={styles.profilePic}
@@ -156,7 +163,7 @@ export default function ImageDetailForm({route, navigation}) {
 
                   <Image
                     style={styles.uploadImage}
-                    source={{uri: item.photoKey}}
+                    source={{ uri: item.photoKey }}
                     resizeMode="contain"
                   />
                   <Text style={styles.date}>
@@ -164,16 +171,17 @@ export default function ImageDetailForm({route, navigation}) {
                   </Text>
                 </View>
 
-                {item.photoTags.length !== 0 &&
+                {item.photoTags.length !== 0 && (
                   <View style={styles.tagButtonsContainer}>
                     <View style={styles.tagButton}>
                       {item.photoTags.map((tag, index) => (
-                        <Text key={tag} style={{fontWeight: "bold"}}>
+                        <Text key={tag} style={{ fontWeight: "bold" }}>
                           {tag}
                         </Text>
                       ))}
                     </View>
-                  </View>}
+                  </View>
+                )}
 
                 <Text style={styles.description}>{item.description}</Text>
 
@@ -191,26 +199,31 @@ export default function ImageDetailForm({route, navigation}) {
                     placeholder="댓글..."
                   />
                   <TouchableOpacity onPress={sendToComment}>
-                    <Text style={{paddingLeft: 10, top: 10}}>작성</Text>
+                    <Text style={{ paddingLeft: 10, top: 10 }}>작성</Text>
                   </TouchableOpacity>
                 </View>
 
-                <View style={{flexDirection: "row", justifyContent: "center", marginVertical: 10}}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    marginVertical: 10,
+                  }}
+                >
                   <TouchableOpacity style={[styles.button, styles.buttonWrite]}>
-                    <Text style={{...styles.textStyle, color: "#fff"}}>
+                    <Text style={{ ...styles.textStyle, color: "#fff" }}>
                       수정
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={[styles.button, styles.buttonClose]}>
-                    <Text style={{...styles.textStyle, color: "#727272"}}>
+                    <Text style={{ ...styles.textStyle, color: "#727272" }}>
                       삭제
                     </Text>
                   </TouchableOpacity>
                 </View>
               </View>
             </View>
-          )
-            ;
+          );
         })}
       </Swiper>
     </View>

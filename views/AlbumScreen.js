@@ -140,6 +140,7 @@ export default function AlbumScreen({navigation}) {
         }
         // 이미지 업로드 결과 및 이미지 경로 업데이트
         if (result.assets && result.assets.length > 0) {
+          const chosenImage = result.assets[0];
           setChosenImage(chosenImage);
           // console.log("🌄 저장한 이미지 -> ", chosenImage);
           setShowUploadForm(true);
@@ -172,9 +173,8 @@ export default function AlbumScreen({navigation}) {
         // 이미지 업로드 결과 및 이미지 경로 업데이트
         if (result.assets && result.assets.length > 0) {
           const chosenImage = result.assets[0];
-          console.log("🌄 저장한 이미지 -> ", chosenImage);
+          // console.log("🌄 저장한 이미지 -> ", chosenImage);
           setChosenImage(chosenImage);
-
           setShowUploadForm(true);
         } else {
           console.log("No assets found!");
