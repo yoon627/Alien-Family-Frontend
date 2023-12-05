@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
   Image,
   StyleSheet,
@@ -9,37 +9,14 @@ import {
 } from "react-native";
 import Swiper from "react-native-web-swiper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Ionicons } from "@expo/vector-icons";
+import {Ionicons} from "@expo/vector-icons";
 
-const TAG_OPTION = [
-  {
-    item: "아빠",
-    id: "DAD",
-  },
-  {
-    item: "엄마",
-    id: "MOM",
-  },
-  {
-    item: "첫째",
-    id: "FIRST",
-  },
-  {
-    item: "둘째",
-    id: "SECOND",
-  },
-  {
-    item: "기타",
-    id: "EXTRA",
-  },
-];
-
-export default function ImageDetailForm({ route, navigation }) {
+export default function ImageDetailForm({route, navigation}) {
   const [comment, setComment] = useState("");
   const [familyInfo, setFamilyInfo] = useState([]);
   const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
 
-  const { photoInfo, albumList } = route.params;
+  const {photoInfo, albumList} = route.params;
   const index = albumList.findIndex(
     (item) => item.photoKey === photoInfo.photoKey,
   );
@@ -137,45 +114,46 @@ export default function ImageDetailForm({ route, navigation }) {
           const formattedDate = `${month}월 ${day}일 ${hours}시 ${minutes}분`;
 
           return (
-            <View key={index} style={{ top: "7%" }}>
+            <View key={index} style={{top: "7%"}}>
               <TouchableOpacity
-                style={{ alignItems: "flex-start", paddingHorizontal: "3%" }}
+                style={{alignItems: "flex-start", paddingHorizontal: "3%"}}
                 onPress={() => navigation.pop()}
               >
-                <Ionicons name="chevron-back" size={28} color="#C336CF" />
+                <Ionicons name="chevron-back" size={28} color="#C336CF"/>
               </TouchableOpacity>
 
               <View style={styles.slide}>
-                <View style={{ alignItems: "flex-start", width: "100%" }}>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      marginBottom: 5,
-                      paddingHorizontal: "5%",
-                    }}
-                  >
+                <View style={{alignItems: 'flex-start', width: '100%', marginBottom: 10,}}>
+                  <View style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    paddingHorizontal: '5%',
+                    alignItems: 'center'
+                  }}>
                     <Image
-                      source={findImageByName(item.writer)}
                       style={styles.profilePic}
+                      source={findImageByName(item.writer)}
                     />
                     <Text style={styles.writer}>{item.writer}</Text>
+                    <Text style={styles.date}>
+                      {nowYear === year ? formattedDate : year + formattedDate}
+                    </Text>
                   </View>
+                </View>
 
+                <View style={{borderTopWidth: 1, borderTopColor: '#CBCBCB'}}>
                   <Image
                     style={styles.uploadImage}
-                    source={{ uri: item.photoKey }}
+                    source={{uri: item.photoKey}}
                     resizeMode="contain"
                   />
-                  <Text style={styles.date}>
-                    {nowYear === year ? formattedDate : year + formattedDate}
-                  </Text>
                 </View>
 
                 {item.photoTags.length !== 0 && (
                   <View style={styles.tagButtonsContainer}>
                     <View style={styles.tagButton}>
                       {item.photoTags.map((tag, index) => (
-                        <Text key={tag} style={{ fontWeight: "bold" }}>
+                        <Text key={tag} style={{fontWeight: "bold"}}>
                           {tag}
                         </Text>
                       ))}
@@ -199,7 +177,7 @@ export default function ImageDetailForm({ route, navigation }) {
                     placeholder="댓글..."
                   />
                   <TouchableOpacity onPress={sendToComment}>
-                    <Text style={{ paddingLeft: 10, top: 10 }}>작성</Text>
+                    <Text style={{paddingLeft: 10, top: 10}}>작성</Text>
                   </TouchableOpacity>
                 </View>
 
@@ -211,12 +189,12 @@ export default function ImageDetailForm({ route, navigation }) {
                   }}
                 >
                   <TouchableOpacity style={[styles.button, styles.buttonWrite]}>
-                    <Text style={{ ...styles.textStyle, color: "#fff" }}>
+                    <Text style={{...styles.textStyle, color: "#fff"}}>
                       수정
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={[styles.button, styles.buttonClose]}>
-                    <Text style={{ ...styles.textStyle, color: "#727272" }}>
+                    <Text style={{...styles.textStyle, color: "#727272"}}>
                       삭제
                     </Text>
                   </TouchableOpacity>
@@ -239,16 +217,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   uploadImage: {
+    marginVertical: 15,
     width: "100%",
     aspectRatio: 1,
-    marginBottom: 10,
   },
   tag: {
     fontSize: 16,
   },
   description: {
     fontSize: 20,
-    paddingHorizontal: "5%",
+    paddingHorizontal: "7%",
   },
   comment: {
     fontSize: 15,
@@ -262,14 +240,16 @@ const styles = StyleSheet.create({
     height: "45%",
   },
   writer: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "bold",
   },
   date: {
-    fontSize: 18,
-    color: "gray",
-    marginBottom: 5,
     paddingHorizontal: "5%",
+    justifyContent: "flex-end",
+    width: "80%",
+    fontSize: 14,
+    color: "gray",
+    textAlign: 'right',
   },
   button: {
     width: 65,
@@ -291,12 +271,12 @@ const styles = StyleSheet.create({
     fontFamily: "dnf",
   },
   tagButtonsContainer: {
+    marginBottom: 10,
     flexDirection: "row",
     justifyContent: "space-between",
     paddingHorizontal: "5%",
   },
   tagButton: {
-    marginTop: 10,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 13,
@@ -307,9 +287,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#E0EBF2",
   },
   profilePic: {
-    width: 30, // 이미지 크기 조절
-    height: 30, // 이미지 크기 조절
-    resizeMode: "contain",
-    borderRadius: 20, // 원형으로 만들기
+    width: 35, // 이미지 크기 조절
+    height: 35, // 이미지 크기 조절
+    resizeMode: "cover",
+    borderRadius: 35 / 2, // 원형으로 만들기
+    backgroundColor: "#FFEEC3",
+    marginRight: 5,
   },
 });
