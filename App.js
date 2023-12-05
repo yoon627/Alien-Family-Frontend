@@ -1,5 +1,5 @@
-import React, { useCallback } from "react";
-import { StyleSheet } from "react-native";
+import React, { useCallback, useRef, useState, useEffect } from "react";
+import { StyleSheet, Linking } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import Login from "./views/Login";
 import FirstRegister from "./views/FirstRegister";
@@ -29,7 +29,10 @@ import {
   MD3LightTheme as DefaultTheme,
   PaperProvider,
 } from "react-native-paper";
-import * as SplashScreen from "expo-splash-screen";
+// import * as SplashScreen from "expo-splash-screen";
+import Feed from "./views/Feed";
+import * as Notifications from "expo-notifications";
+import FamilyInfo from "./views/FamilyInfo";
 
 const Stack = createStackNavigator();
 
@@ -45,18 +48,18 @@ const theme = {
 const fontConfig = {
   android: { regular: { fontFamily: "" } },
 };
-SplashScreen.preventAutoHideAsync();
+// SplashScreen.preventAutoHideAsync();
 export default function App() {
   const [fontsLoaded] = useFonts({
     dnf: require("./assets/font/DNFBitBitv2.ttf"),
     sammul: require("./assets/font/DOSSaemmul.ttf"),
   });
 
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
+  // const onLayoutRootView = useCallback(async () => {
+  //   if (fontsLoaded) {
+  //     await SplashScreen.hideAsync();
+  //   }
+  // }, [fontsLoaded]);
 
   if (!fontsLoaded) {
     return null;
@@ -65,7 +68,58 @@ export default function App() {
   return (
     <StoreProvider store={store}>
       <PaperProvider theme={{ ...theme }}>
-        <NavigationContainer onReady={onLayoutRootView}>
+        <NavigationContainer
+          // onReady={onLayoutRootView}
+          linking={{
+            config: {
+              // Configuration for linking
+            },
+            async getInitialURL() {
+              // First, you may want to do the default deep link handling
+              // Check if app was opened from a deep link
+              const url = await Linking.getInitialURL();
+
+              if (url != null) {
+                return url;
+              }
+
+              // Handle URL from expo push notifications
+              const response =
+                await Notifications.getLastNotificationResponseAsync();
+
+              return response?.notification.request.content.data.url;
+            },
+            subscribe(listener) {
+              const onReceiveURL = (url) => listener(url);
+
+              // Listen to incoming links from deep linking
+              const eventListenerSubscription = Linking.addEventListener(
+                "url",
+                onReceiveURL
+              );
+
+              // Listen to expo push notifications
+              const subscription =
+                Notifications.addNotificationResponseReceivedListener(
+                  (response) => {
+                    const url = response.notification.request.content.data.url;
+
+                    // Any custom logic to see whether the URL needs to be handled
+                    //...
+
+                    // Let React Navigation handle the URL
+                    listener(url);
+                  }
+                );
+
+              return () => {
+                // Clean up the event listeners
+                eventListenerSubscription.remove();
+                subscription.remove();
+              };
+            },
+          }}
+        >
           <Stack.Navigator
             initialRouteName="Login"
             screenOptions={{ headerShown: false, animationEnabled: false }}
@@ -114,7 +168,8 @@ export default function App() {
             />
             <Stack.Screen name="MainScreen" component={MainScreen} />
             <Stack.Screen name="Attendance" component={Attendance} />
-            <Stack.Screen name="Lab" component={Lab} />
+            <Stack.Screen name="Feed" component={Feed} />
+            <Stack.Screen name="FamilyInfo" component={FamilyInfo} />
           </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>

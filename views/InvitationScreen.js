@@ -127,7 +127,7 @@ const InvitationScreen = ({ navigation }) => {
                     if (!InvitationCode) {
                       Alert.alert("초대코드를 입력해주세요");
                     } else {
-                      console.log(InvitationCode);
+                      // console.log(InvitationCode);
                       await axios({
                         method: "GET",
                         url:
@@ -136,6 +136,7 @@ const InvitationScreen = ({ navigation }) => {
                           InvitationCode,
                       })
                         .then(async (resp) => {
+                          // console.log(resp);
                           if (resp.data.data) {
                             await AsyncStorage.removeItem("ufoName");
                             await AsyncStorage.removeItem("plantName");
@@ -143,7 +144,31 @@ const InvitationScreen = ({ navigation }) => {
                               "familyCode",
                               InvitationCode
                             )
-                              .then(navigation.navigate("FirstRegister"))
+                              .then(async () => {
+                                await axios({
+                                  method: "GET",
+                                  url:
+                                    SERVER_ADDRESS +
+                                    "/api/familyInfo/" +
+                                    InvitationCode,
+                                })
+                                  .then((resp) => {
+                                    // console.log(resp.data.data.roles);
+                                    const roles = resp.data.data.roles;
+                                    var roleArr = [];
+                                    for (let i = 0; i < roles.length; i++) {
+                                      if (roles[i]["enabled"]) {
+                                        roleArr.push(roles[i]["role"]);
+                                      }
+                                    }
+                                    console.log(roleArr);
+                                    navigation.navigate("FirstRegister", {
+                                      roleArr: roleArr,
+                                    });
+                                  })
+                                  .catch((e) => console.log(e));
+                              })
+                              // .then(() => console.log("hi"))
                               .catch((e) => console.log(e));
                           } else {
                             Alert.alert("유효하지 않은 초대코드입니다");

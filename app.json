@@ -29,9 +29,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "bundleIdentifier": "com.whddbs627.UFOFront",
       "buildNumber": "1.0.0",
@@ -43,9 +41,7 @@
       }
     },
     "android": {
-      "blockedPermissions": [
-        "android.permission.RECORD_AUDIO"
-      ],
+      "blockedPermissions": ["android.permission.RECORD_AUDIO"],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -65,7 +61,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "c420dc44-45d7-4111-8e52-12f1bf4e79f7"
+        "projectId": "5c2d898c-1258-4e8d-8924-8dc561dc38b1"
       }
     }
   }

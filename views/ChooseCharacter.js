@@ -7,6 +7,8 @@ import {
   Dimensions,
   Image,
   ImageBackground,
+  KeyboardAvoidingView,
+  Alert,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -52,12 +54,27 @@ async function registerForPushNotificationsAsync() {
   return token.data;
 }
 
-const ChooseCharacter = ({ navigation }) => {
+const ChooseCharacter = ({ navigation, route }) => {
+  const [characterJson, setCharacterJson] = useState(
+    route.params.characterJson
+  );
   const [alienType, setAlienType] = useState("BASIC");
   const [selectedToggle, setSelectedToggle] = useState(0);
   const [activeButton, setActiveButton] = useState(0);
   const [devicePushToken, setDevicePushToken] = useState("");
   const scrollViewRef = useRef(0);
+  var typeOfAliens = [
+    "BASIC",
+    "GLASSES",
+    "GIRL",
+    "BAND_AID",
+    "RABBIT",
+    "HEADBAND",
+    "TOMATO",
+    "CHRISTMAS_TREE",
+    "SANTA",
+    "PIRATE",
+  ];
   const imageList = [
     require("../assets/img/character/BASIC.png"),
     require("../assets/img/character/GLASSES.png"),
@@ -170,6 +187,16 @@ const ChooseCharacter = ({ navigation }) => {
                       overflow: "hidden",
                     }}
                   >
+                    {characterJson[typeOfAliens[index]] ? null : (
+                      <Image
+                        source={require("../assets/img/character/soldout.png")}
+                        style={{
+                          ...styles.character,
+                          position: "absolute",
+                          zIndex: 100,
+                        }}
+                      />
+                    )}
                     <Image source={character} style={styles.character} />
                   </View>
                   <View style={{}} />
@@ -282,6 +309,9 @@ const ChooseCharacter = ({ navigation }) => {
                             );
                             const members =
                               resp.data.data.familyResponseDto.members;
+                            console.log(
+                              resp.data.data.familyResponseDto.members[0]
+                            );
                             const familyId =
                               resp.data.data.familyResponseDto.familyId;
                             const chatroomId =
@@ -314,54 +344,78 @@ const ChooseCharacter = ({ navigation }) => {
                           .catch((e) => console.log(e));
                       } else {
                         await axios({
-                          method: "POST",
-                          url: SERVER_ADDRESS + "/api/register/currentFamily",
-                          headers: {},
-                          data: {
-                            code: familyCode,
-                            firebaseToken: devicePushToken,
-                            email: kakaoEmail,
-                            nickname: nickname,
-                            birthdate: birthday,
-                            familyRole: familyRole,
-                            alienType: alienType,
-                          },
+                          method: "GET",
+                          url: SERVER_ADDRESS + "/api/familyInfo/" + familyCode,
                         })
                           .then(async (resp) => {
-                            await AsyncStorage.setItem(
-                              "UserServerAccessToken",
-                              resp.data.data.tokenInfo.accessToken
-                            );
-                            const members =
-                              resp.data.data.familyResponseDto.members;
-                            const familyId =
-                              resp.data.data.familyResponseDto.familyId;
-                            const chatroomId =
-                              resp.data.data.familyResponseDto.chatroomId;
-                            const plant =
-                              resp.data.data.familyResponseDto.plant;
-                            var myDB = {};
-                            for (let i = 0; i < members.length; i++) {
-                              const newkey = members[i].memberId;
-                              myDB[newkey] = members[i];
+                            const roles = resp.data.data.types;
+                            console.log(roles);
+                            const tmpCharacterJson = {};
+                            for (let i = 0; i < roles.length; i++) {
+                              tmpCharacterJson[roles[i]["type"]] =
+                                roles[i]["enabled"];
                             }
-                            await AsyncStorage.setItem(
-                              "myDB",
-                              JSON.stringify(myDB)
-                            );
-                            await AsyncStorage.setItem(
-                              "familyId",
-                              JSON.stringify(familyId)
-                            );
-                            await AsyncStorage.setItem(
-                              "chatroomId",
-                              JSON.stringify(chatroomId)
-                            );
-                            await AsyncStorage.setItem(
-                              "plantInfo",
-                              JSON.stringify(plant)
-                            );
-                            navigation.navigate("MainDrawer");
+                            console.log(tmpCharacterJson);
+                            if (tmpCharacterJson[alienType]) {
+                              await axios({
+                                method: "POST",
+                                url:
+                                  SERVER_ADDRESS +
+                                  "/api/register/currentFamily",
+                                headers: {},
+                                data: {
+                                  code: familyCode,
+                                  firebaseToken: devicePushToken,
+                                  email: kakaoEmail,
+                                  nickname: nickname,
+                                  birthdate: birthday,
+                                  familyRole: familyRole,
+                                  alienType: alienType,
+                                },
+                              })
+                                .then(async (resp) => {
+                                  await AsyncStorage.setItem(
+                                    "UserServerAccessToken",
+                                    resp.data.data.tokenInfo.accessToken
+                                  );
+                                  const members =
+                                    resp.data.data.familyResponseDto.members;
+                                  const familyId =
+                                    resp.data.data.familyResponseDto.familyId;
+                                  const chatroomId =
+                                    resp.data.data.familyResponseDto.chatroomId;
+                                  const plant =
+                                    resp.data.data.familyResponseDto.plant;
+                                  var myDB = {};
+                                  for (let i = 0; i < members.length; i++) {
+                                    const newkey = members[i].memberId;
+                                    myDB[newkey] = members[i];
+                                  }
+                                  await AsyncStorage.setItem(
+                                    "myDB",
+                                    JSON.stringify(myDB)
+                                  );
+                                  await AsyncStorage.setItem(
+                                    "familyId",
+                                    JSON.stringify(familyId)
+                                  );
+                                  await AsyncStorage.setItem(
+                                    "chatroomId",
+                                    JSON.stringify(chatroomId)
+                                  );
+                                  await AsyncStorage.setItem(
+                                    "plantInfo",
+                                    JSON.stringify(plant)
+                                  );
+                                  navigation.navigate("MainDrawer");
+                                })
+                                .catch((e) => console.log(e));
+                            } else {
+                              console.log(alienType);
+                              console.log(tmpCharacterJson[alienType]);
+                              setCharacterJson(tmpCharacterJson);
+                              Alert.alert("이미 선택된 외계인이에요!");
+                            }
                           })
                           .catch((e) => console.log(e));
                       }

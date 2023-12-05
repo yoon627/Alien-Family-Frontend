@@ -25,10 +25,10 @@ export default function ChoseCalendar() {
       const { status } = await Calendar.requestCalendarPermissionsAsync();
       if (status === "granted") {
         const calendars = await Calendar.getCalendarsAsync(
-          Calendar.EntityTypes.EVENT,
+          Calendar.EntityTypes.EVENT
         );
         setCalendars(
-          calendars.map((calendar) => ({ ...calendar, selected: false })),
+          calendars.map((calendar) => ({ ...calendar, selected: false }))
         );
       }
     })();
@@ -77,7 +77,7 @@ export default function ChoseCalendar() {
                 Authorization: `Bearer ${token}`,
               },
               body: JSON.stringify(payload),
-            },
+            }
           );
 
           if (!response.ok) {
@@ -117,7 +117,7 @@ export default function ChoseCalendar() {
     const calendarEvents = await Calendar.getEventsAsync(
       [calendarId],
       startDate,
-      endDate,
+      endDate
     );
 
     setEvents(calendarEvents);

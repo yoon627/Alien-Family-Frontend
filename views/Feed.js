@@ -3,42 +3,36 @@ import { Text, View, Button, Platform } from "react-native";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
-
-const FCM_SERVER_KEY =
-  "AAAAUCMBJiU:APA91bEs9fOJNe6l2ILHFI88jep5rw9wqR-qTWWbBrKxj7JQnKQ8ZAp4tJbn_yXcL2aP0ydygPIcT89XB6h38vhIozsJ5J61s7w2znBL9hPQG6a18sQcUFkMitr2pkvoCmmfslVQmk-u";
-
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { User } from "lucide-react-native";
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
   }),
 });
 
 // Can use this function below or use Expo's Push Notification Tool from: https://expo.dev/notifications
 async function sendPushNotification(devicePushToken) {
-  // const devicePushToken = await AsyncStorage.getItem(
-  //   "firebaseToken"
-  // );
-  await fetch("https://fcm.googleapis.com/fcm/send", {
+  const message = {
+    to: devicePushToken,
+    sound: "default",
+    title: "Original Title",
+    body: "And here is the body!",
+    data: { someData: "goes here" },
+  };
+
+  await fetch("https://exp.host/--/api/v2/push/send", {
     method: "POST",
     headers: {
-      'Content-Type': 'application/json',
-      Authorization: `key=${FCM_SERVER_KEY}`,
+      Accept: "application/json",
+      "Accept-encoding": "gzip, deflate",
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      to: devicePushToken,
-      priority: "normal",
-      data: {
-        experienceId: "whddbs627/UFO-Front",
-        scopeKey: "whddbs627/UFO-Front",
-        title: "📧 You've got mail",
-        message: "Hello world! 🌐",
-      },
-    }),
-  })
-    .then((resp) => console.log("axios response: " + resp))
-    .catch((e) => console.log(e));
+    body: JSON.stringify(message),
+  });
 }
 
 async function registerForPushNotificationsAsync() {
@@ -65,7 +59,7 @@ async function registerForPushNotificationsAsync() {
       alert("Failed to get push token for push notification!");
       return;
     }
-    token = await Notifications.getExpoPushTokenAsync({
+    token = await Notifications.getDevicePushTokenAsync({
       projectId: Constants.expoConfig.extra.eas.projectId,
     });
     console.log(token.data);
@@ -76,7 +70,7 @@ async function registerForPushNotificationsAsync() {
   return token.data;
 }
 
-export default function Feed() {
+export default function App() {
   const [devicePushToken, setDevicePushToken] = useState("");
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
@@ -90,7 +84,6 @@ export default function Feed() {
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
         setNotification(notification);
-        console.log(notification);
         console.log(notification.request);
         console.log(notification.request.content);
         console.log(notification.request.content.data);
@@ -98,7 +91,7 @@ export default function Feed() {
 
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log("responseListener: " + response);
+        // console.log(response);
       });
 
     return () => {
@@ -113,21 +106,30 @@ export default function Feed() {
     <View
       style={{ flex: 1, alignItems: "center", justifyContent: "space-around" }}
     >
-      <Text>Your device push token: {devicePushToken}</Text>
+      <Text>Your Device push token: {devicePushToken}</Text>
       <View style={{ alignItems: "center", justifyContent: "center" }}>
         <Text>
           Title: {notification && notification.request.content.title}{" "}
         </Text>
         <Text>Body: {notification && notification.request.content.body}</Text>
-        <Text>
-          Data:{" "}
-          {notification && JSON.stringify(notification.request.content.data)}
-        </Text>
+        <Text>Data: {notification && notification.request.content.data}</Text>
       </View>
       <Button
         title="Press to Send Notification"
         onPress={async () => {
-          await sendPushNotification(devicePushToken);
+          const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
+          const UserServerAccessToken = await AsyncStorage.getItem(
+            "UserServerAccessToken"
+          );
+          console.log(SERVER_ADDRESS);
+          console.log(UserServerAccessToken);
+          await axios({
+            method: "GET",
+            url: SERVER_ADDRESS + "/api/family",
+            headers: { Authorization: "Bearer " + UserServerAccessToken },
+          })
+            .then((resp) => console.log(resp.data.data.members))
+            .catch((e) => console.log(e));
         }}
       />
     </View>

@@ -94,145 +94,169 @@ const FirstStart = ({ navigation }) => {
       style={styles.backgroundImage}
     >
       <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
-        <View
-          style={{
-            backgroundColor: "white",
-            borderRadius: 30,
-            flex: 0.5,
-            width: 0.85 * width,
-          }}
+        <KeyboardAvoidingView
+          behavior="height"
+          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+          keyboardVerticalOffset={-100}
         >
           <View
             style={{
-              marginTop: 35,
-              flex: 0.9,
-              justifyContent: "center",
-              alignItems: "center",
+              backgroundColor: "white",
+              borderRadius: 30,
+              flex: 0.5,
+              width: 0.85 * width,
             }}
           >
             <View
               style={{
-                marginVertical: 5,
-                borderRadius: 30,
-                paddingHorizontal: 30,
-                paddingVertical: 30,
+                marginTop: 35,
+                flex: 0.9,
                 justifyContent: "center",
                 alignItems: "center",
               }}
             >
-              <View>
-                <TextInput
-                  value={plantName}
-                  placeholder="새싹이 이름을 입력해주세요"
-                  style={{
-                    ...styles.input,
-                    borderColor: "#F213A6",
-                    borderWidth: 3,
-                    marginBottom: 10,
-                    width: 250,
-                    height: 70,
-                  }}
-                  onChangeText={onChangePlantName}
-                />
-              </View>
-              <View>
-                <TextInput
-                  value={ufoName}
-                  placeholder="우주선 이름을 입력해주세요"
-                  style={{
-                    ...styles.input,
-                    borderColor: "#F213A6",
-                    borderWidth: 3,
-                    marginBottom: 10,
-                    width: 250,
-                    height: 70,
-                  }}
-                  onChangeText={onChangeUfoName}
-                />
+              <View
+                style={{
+                  marginVertical: 5,
+                  borderRadius: 30,
+                  paddingHorizontal: 30,
+                  paddingVertical: 30,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <View>
+                  <TextInput
+                    value={plantName}
+                    placeholder="새싹이 이름을 입력해주세요"
+                    style={{
+                      ...styles.input,
+                      borderColor: "#F213A6",
+                      borderWidth: 3,
+                      marginBottom: 10,
+                      width: 250,
+                      height: 70,
+                    }}
+                    onChangeText={onChangePlantName}
+                  />
+                </View>
+                <View>
+                  <TextInput
+                    value={ufoName}
+                    placeholder="우주선 이름을 입력해주세요"
+                    style={{
+                      ...styles.input,
+                      borderColor: "#F213A6",
+                      borderWidth: 3,
+                      marginBottom: 10,
+                      width: 250,
+                      height: 70,
+                    }}
+                    onChangeText={onChangeUfoName}
+                  />
+                </View>
               </View>
             </View>
-          </View>
-          <View style={{ alignItems: "center", justifyContent: "center" }}>
+            <View style={{ alignItems: "center", justifyContent: "center" }}>
+              <View
+                style={{
+                  overflow: "hidden",
+                  borderRadius: 15,
+                  width: 175,
+                  marginTop: 20,
+                }}
+              >
+                <ImageBackground source={require("../assets/img/pinkBtn.png")}>
+                  <TouchableOpacity
+                    onPress={async () => {
+                      // console.log(plantName, ufoName);
+                      // console.log(familyCode);
+                      await AsyncStorage.setItem("plantName", plantName);
+                      await AsyncStorage.setItem("ufoName", ufoName);
+                      if (!plantName) {
+                        Alert.alert("새싹이 이름을 지어주세요");
+                      } else if (!ufoName) {
+                        Alert.alert("우주선 이름을 지어주세요");
+                      } else {
+                        const roleArr = [
+                          "DAD",
+                          "MOM",
+                          "FIRST",
+                          "SECOND",
+                          "THIRD",
+                          "FOURTH",
+                          "FIFTH",
+                          "SIXTH",
+                          "GRANDFATHER",
+                          "GRANDMOTHER",
+                          "UNCLE",
+                          "EXTRA",
+                        ];
+                        navigation.navigate("FirstRegister", {
+                          cameFrom: "FirstStart",
+                          roleArr: roleArr,
+                        });
+                      }
+                    }}
+                    style={{
+                      borderRadius: 50,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginVertical: 5,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: "white",
+                        marginHorizontal: 30,
+                        marginVertical: 10,
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      제출하기
+                    </Text>
+                  </TouchableOpacity>
+                </ImageBackground>
+              </View>
+            </View>
             <View
               style={{
-                overflow: "hidden",
-                borderRadius: 15,
-                width: 175,
-                marginTop: 20,
+                justifyContent: "center",
+                alignItems: "center",
+                marginVertical: 10,
               }}
             >
-              <ImageBackground source={require("../assets/img/pinkBtn.png")}>
-                <TouchableOpacity
-                  onPress={async () => {
-                    // console.log(plantName, ufoName);
-                    await AsyncStorage.setItem("plantName", plantName);
-                    await AsyncStorage.setItem("ufoName", ufoName);
-                    if (!plantName) {
-                      Alert.alert("새싹이 이름을 지어주세요");
-                    } else if (!ufoName) {
-                      Alert.alert("우주선 이름을 지어주세요");
-                    } else {
-                      navigation.navigate("FirstRegister", {
-                        cameFrom: "FirstStart",
-                      });
-                    }
-                  }}
-                  style={{
-                    borderRadius: 50,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginVertical: 5,
-                  }}
-                >
-                  <Text
+              <View
+                style={{ overflow: "hidden", borderRadius: 15, width: 175 }}
+              >
+                <ImageBackground source={require("../assets/img/grayBtn.png")}>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("ClickBox")}
                     style={{
-                      color: "white",
-                      marginHorizontal: 30,
-                      marginVertical: 10,
+                      borderRadius: 50,
                       alignItems: "center",
                       justifyContent: "center",
+                      marginVertical: 5,
                     }}
                   >
-                    제출하기
-                  </Text>
-                </TouchableOpacity>
-              </ImageBackground>
+                    <Text
+                      style={{
+                        color: "white",
+                        marginHorizontal: 30,
+                        marginVertical: 10,
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      이전 페이지로
+                    </Text>
+                  </TouchableOpacity>
+                </ImageBackground>
+              </View>
             </View>
           </View>
-          <View
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-              marginVertical: 10,
-            }}
-          >
-            <View style={{ overflow: "hidden", borderRadius: 15, width: 175 }}>
-              <ImageBackground source={require("../assets/img/grayBtn.png")}>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("ClickBox")}
-                  style={{
-                    borderRadius: 50,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginVertical: 5,
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: "white",
-                      marginHorizontal: 30,
-                      marginVertical: 10,
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    이전 페이지로
-                  </Text>
-                </TouchableOpacity>
-              </ImageBackground>
-            </View>
-          </View>
-        </View>
+        </KeyboardAvoidingView>
       </View>
     </ImageBackground>
   );

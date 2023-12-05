@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   StyleSheet,
@@ -11,14 +11,14 @@ import Swiper from "react-native-web-swiper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {Ionicons} from "@expo/vector-icons";
 
-export default function ImageDetailForm({route, navigation}) {
+export default function ImageDetailForm({ route, navigation }) {
   const [comment, setComment] = useState("");
   const [familyInfo, setFamilyInfo] = useState([]);
   const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
 
-  const {photoInfo, albumList} = route.params;
+  const { photoInfo, albumList } = route.params;
   const index = albumList.findIndex(
-    (item) => item.photoKey === photoInfo.photoKey,
+    (item) => item.photoKey === photoInfo.photoKey
   );
 
   const imageList = {
@@ -73,7 +73,7 @@ export default function ImageDetailForm({route, navigation}) {
 
   const sendToComment = async () => {
     const UserServerAccessToken = await AsyncStorage.getItem(
-      "UserServerAccessToken",
+      "UserServerAccessToken"
     );
     const data = {
       photoId: photoInfo.photoId,
@@ -114,7 +114,7 @@ export default function ImageDetailForm({route, navigation}) {
           const formattedDate = `${month}월 ${day}일 ${hours}시 ${minutes}분`;
 
           return (
-            <View key={index} style={{top: "7%"}}>
+            <View key={index} style={{ top: "7%" }}>
               <TouchableOpacity
                 style={{alignItems: "flex-start", paddingHorizontal: "3%"}}
                 onPress={() => navigation.pop()}
@@ -144,7 +144,7 @@ export default function ImageDetailForm({route, navigation}) {
                 <View style={{borderTopWidth: 1, borderTopColor: '#CBCBCB'}}>
                   <Image
                     style={styles.uploadImage}
-                    source={{uri: item.photoKey}}
+                    source={{ uri: item.photoKey }}
                     resizeMode="contain"
                   />
                 </View>
@@ -153,7 +153,7 @@ export default function ImageDetailForm({route, navigation}) {
                   <View style={styles.tagButtonsContainer}>
                     <View style={styles.tagButton}>
                       {item.photoTags.map((tag, index) => (
-                        <Text key={tag} style={{fontWeight: "bold"}}>
+                        <Text key={tag} style={{ fontWeight: "bold" }}>
                           {tag}
                         </Text>
                       ))}
@@ -177,7 +177,7 @@ export default function ImageDetailForm({route, navigation}) {
                     placeholder="댓글..."
                   />
                   <TouchableOpacity onPress={sendToComment}>
-                    <Text style={{paddingLeft: 10, top: 10}}>작성</Text>
+                    <Text style={{ paddingLeft: 10, top: 10 }}>작성</Text>
                   </TouchableOpacity>
                 </View>
 
@@ -189,12 +189,12 @@ export default function ImageDetailForm({route, navigation}) {
                   }}
                 >
                   <TouchableOpacity style={[styles.button, styles.buttonWrite]}>
-                    <Text style={{...styles.textStyle, color: "#fff"}}>
+                    <Text style={{ ...styles.textStyle, color: "#fff" }}>
                       수정
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={[styles.button, styles.buttonClose]}>
-                    <Text style={{...styles.textStyle, color: "#727272"}}>
+                    <Text style={{ ...styles.textStyle, color: "#727272" }}>
                       삭제
                     </Text>
                   </TouchableOpacity>

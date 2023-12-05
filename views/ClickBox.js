@@ -29,7 +29,7 @@ const ClickBox = ({ navigation }) => {
         headers: {
           // Authorization: "Bearer " + kakaoEmail,
         },
-      }).then(async(resp)=>{
+      }).then(async (resp) => {
         setFamilyCode(resp.data.data);
         setShowBox(true);
         await AsyncStorage.setItem("familyCode", resp.data.data);

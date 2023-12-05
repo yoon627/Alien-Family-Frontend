@@ -46,7 +46,6 @@
     "expo-image-picker": "~14.3.2",
     "expo-media-library": "~15.4.1",
     "expo-notifications": "~0.20.1",
-    "expo-splash-screen": "~0.20.5",
     "expo-status-bar": "~1.6.0",
     "fix": "^0.0.6",
     "lodash": "^4.17.21",

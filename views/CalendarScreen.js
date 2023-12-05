@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import {
   Alert,
   Button,
@@ -10,8 +10,8 @@ import {
   TextInput,
   View,
 } from "react-native";
-import {Calendar} from "react-native-calendars";
-import {TouchableOpacity} from "react-native-gesture-handler";
+import { Calendar } from "react-native-calendars";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import ChoseCalendar from "./ChoseCalendar";
@@ -23,7 +23,9 @@ import {
 } from "@expo/vector-icons";
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
-import {LocaleConfig} from "react-native-calendars/src/index";
+import { LocaleConfig } from "react-native-calendars/src/index";
+import * as Notifications from "expo-notifications";
+import { useFocusEffect } from "@react-navigation/native";
 
 LocaleConfig.locales["ko"] = {
   monthNames: [
@@ -74,7 +76,15 @@ const getRandomColor = (index) => {
   return colors[index % colors.length];
 };
 
-export default function CalendarScreen({navigation}) {
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
+
+export default function CalendarScreen({ navigation }) {
   const [selected, setSelected] = useState("");
   const [events, setEvents] = useState({});
   const [isModalVisible, setModalVisible] = useState(false);
@@ -95,7 +105,8 @@ export default function CalendarScreen({navigation}) {
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
   const [localeSet, setLocaleSet] = useState(false);
-
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
   useEffect(() => {
     dayjs.locale("ko");
     setLocaleSet(true);
@@ -141,14 +152,14 @@ export default function CalendarScreen({navigation}) {
     try {
       const response = await fetch(
         "http://43.202.241.133:1998/calendarEvent/day/" +
-        `${currentYear}/${currentMonth}`,
+          `${currentYear}/${currentMonth}`,
         {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`, // 필요한 경우 인증 헤더 추가
           },
-        },
+        }
       );
 
       if (response.ok) {
@@ -169,7 +180,7 @@ export default function CalendarScreen({navigation}) {
 
             const datesInRange = getDatesInRange(
               new Date(eventData.startDate),
-              new Date(eventData.endDate),
+              new Date(eventData.endDate)
             );
 
             datesInRange.forEach((date) => {
@@ -180,7 +191,7 @@ export default function CalendarScreen({navigation}) {
           setEvents(newEvents);
           await AsyncStorage.setItem(
             "calendarEvents",
-            JSON.stringify(newEvents),
+            JSON.stringify(newEvents)
           );
         }
       } else {
@@ -246,9 +257,9 @@ export default function CalendarScreen({navigation}) {
   const renderEvents = () => {
     return events[selected]?.map((event, index) => (
       <TouchableOpacity key={index} onPress={() => openEditModal(event)}>
-        <View style={{...styles.event, paddingVertical: 9}}>
-          <Ionicons name={"person"} size={17} color={getRandomColor(index)}/>
-          <Text style={{fontSize: 17, fontWeight: "bold", paddingLeft: 10}}>
+        <View style={{ ...styles.event, paddingVertical: 9 }}>
+          <Ionicons name={"person"} size={17} color={getRandomColor(index)} />
+          <Text style={{ fontSize: 17, fontWeight: "bold", paddingLeft: 10 }}>
             {event.name} : {event.title}
           </Text>
         </View>
@@ -274,7 +285,7 @@ export default function CalendarScreen({navigation}) {
             text: "확인",
           },
         ],
-        {cancelable: true},
+        { cancelable: true }
       );
       return;
     }
@@ -288,17 +299,16 @@ export default function CalendarScreen({navigation}) {
             text: "확인",
           },
         ],
-        {cancelable: true},
+        { cancelable: true }
       );
       return;
     }
-    if (selected === "") {
-      startAt.setHours(startAt.getHours() + 9);
-      endAt.setHours(endAt.getHours() + 9);
-    }
-    console.log(startAt);
+
+    // payload.startDate.setHours(payload.startDate.getHours() + 9);
+    // payload.endDate.setHours(payload.endDate.getHours() + 9);
     try {
       const token = await AsyncStorage.getItem("UserServerAccessToken"); // 적절한 토큰 키 사용
+
       const response = await fetch("http://43.202.241.133:1998/calendarEvent", {
         method: "POST",
         headers: {
@@ -322,7 +332,7 @@ export default function CalendarScreen({navigation}) {
         memo: memo,
       };
       const datesInRange = getDatesInRange(startAt, endAt);
-      const newEvents = {...events};
+      const newEvents = { ...events };
 
       datesInRange.forEach((date) => {
         newEvents[date] = [...(newEvents[date] || []), newEvent];
@@ -338,7 +348,7 @@ export default function CalendarScreen({navigation}) {
   };
 
   const openEditModal = (event) => {
-    setEditingEvent({...event});
+    setEditingEvent({ ...event });
     setStartAt(event.startDate);
     // console.log("스따뚜", startAt);
     setEndAt(event.endDate);
@@ -357,7 +367,7 @@ export default function CalendarScreen({navigation}) {
             text: "확인",
           },
         ],
-        {cancelable: true},
+        { cancelable: true }
       );
       return;
     }
@@ -370,22 +380,22 @@ export default function CalendarScreen({navigation}) {
             text: "확인",
           },
         ],
-        {cancelable: true},
+        { cancelable: true }
       );
       return;
     }
 
-    const updatedEvents = {...events};
+    const updatedEvents = { ...events };
 
     // 기존 이벤트를 삭제
     if (editingEvent) {
       const oldDates = getDatesInRange(
         new Date(editingEvent.startDate),
-        new Date(editingEvent.endDate),
+        new Date(editingEvent.endDate)
       );
       oldDates.forEach((date) => {
         updatedEvents[date] = updatedEvents[date].filter(
-          (event) => event.id !== editingEvent.id,
+          (event) => event.id !== editingEvent.id
         );
       });
     }
@@ -425,7 +435,7 @@ export default function CalendarScreen({navigation}) {
           Authorization: `Bearer ${token}`, // 필요한 경우 인증 헤더 추가
         },
         body: JSON.stringify(editPayload),
-      },
+      }
     );
 
     const data = await response.json();
@@ -444,7 +454,7 @@ export default function CalendarScreen({navigation}) {
         };
       });
 
-      marked[date] = {periods: periods};
+      marked[date] = { periods: periods };
     });
 
     // Ensure the selected date is marked
@@ -469,7 +479,7 @@ export default function CalendarScreen({navigation}) {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
 
       if (!response.ok) {
@@ -478,10 +488,10 @@ export default function CalendarScreen({navigation}) {
 
       // Update the UI to remove the deleted event
       setEvents((prevEvents) => {
-        const updatedEvents = {...prevEvents};
+        const updatedEvents = { ...prevEvents };
         Object.keys(updatedEvents).forEach((date) => {
           updatedEvents[date] = updatedEvents[date].filter(
-            (event) => event.id !== eventId,
+            (event) => event.id !== eventId
           );
         });
         return updatedEvents;
@@ -544,7 +554,7 @@ export default function CalendarScreen({navigation}) {
               mode="date"
               display="spinner"
               onChange={setSelected}
-              style={{alignSelf: "center"}}
+              style={{ alignSelf: "center" }}
             />
           )}
         >
@@ -559,9 +569,42 @@ export default function CalendarScreen({navigation}) {
       </View>
     );
   };
-
+  useEffect(() => {
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        setNotification(notification);
+        if (notification.request.content.title == "Family") {
+          console.log("update Family");
+        } else if (notification.request.content.title == "TMI") {
+          console.log("update TMI");
+        } else if (notification.request.content.title == "Calendar") {
+          console.log("update Calendar");
+          getData();
+        } else if (notification.request.content.title == "Photo") {
+          console.log("update Photo");
+        } else if (notification.request.content.title == "Plant") {
+          console.log("update Plant");
+        } else {
+          console.log("update Chatting");
+        }
+      });
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+    };
+  }, [notification]);
+  useFocusEffect(
+    useCallback(() => {
+      getData();
+      // 여기에 다른 포커스를 받았을 때 실행하고 싶은 작업들을 추가할 수 있습니다.
+      return () => {
+        // 스크린이 포커스를 잃을 때 정리 작업을 수행할 수 있습니다.
+      };
+    }, []) // 두 번째 매개변수로 빈 배열을 전달하여 컴포넌트가 처음 마운트될 때만 실행되도록 합니다.
+  );
   return (
-    <View style={{backgroundColor: "white", flex: 1}}>
+    <View style={{ backgroundColor: "white", flex: 1 }}>
       <Calendar
         onDayPress={onDayPress}
         markedDates={getMarkedDates()}
@@ -593,13 +636,14 @@ export default function CalendarScreen({navigation}) {
           }}
           style={styles.event}
         >
-          <MaterialCommunityIcons name="plus" size={24} color="black"/>
-          <Text style={{fontSize: 18, marginLeft: 10}}>새로운 이벤트</Text>
+          <MaterialCommunityIcons name="plus" size={24} color="black" />
+          <Text style={{ fontSize: 18, marginLeft: 10 }}>새로운 이벤트</Text>
         </TouchableOpacity>
         {selected && events[selected] ? (
           renderEvents()
-        ) : null
-        }
+        ) : (
+          <Text>등록된 일정이 없습니다.</Text>
+        )}
       </ScrollView>
 
       {/*<Modal*/}
@@ -648,22 +692,22 @@ export default function CalendarScreen({navigation}) {
         animationType="slide"
       >
         <View style={styles.eventContainer}>
-          <View style={{alignItems: "center"}}>
-            <View style={styles.separator}/>
+          <View style={{ alignItems: "center" }}>
+            <View style={styles.separator} />
           </View>
 
           <Pressable
-            style={{position: "absolute", right: 0, marginTop: 20}}
+            style={{ position: "absolute", right: 0, marginTop: 20 }}
             onPress={() => setModalVisible(false)}
           >
-            <Ionicons name="close" size={24} color="black"/>
+            <Ionicons name="close" size={24} color="black" />
           </Pressable>
 
           <TextInput
             style={styles.title}
             value={editingEvent?.title}
             onChangeText={(text) =>
-              setEditingEvent({...editingEvent, title: text})
+              setEditingEvent({ ...editingEvent, title: text })
             }
           />
           <View style={styles.dateChoice}>
@@ -679,7 +723,7 @@ export default function CalendarScreen({navigation}) {
               name="navigate-next"
               size={24}
               color="black"
-              style={{paddingLeft: 10}}
+              style={{ paddingLeft: 10 }}
             />
             <Pressable onPress={() => setShowEndDatePicker(true)}>
               <Text style={styles.dateText}>{checkYear(endAt, startAt)}</Text>
@@ -715,7 +759,7 @@ export default function CalendarScreen({navigation}) {
               value={editingEvent?.memo}
               onChangeText={(text) => {
                 if (text.length <= 20) {
-                  setEditingEvent({...editingEvent, memo: text});
+                  setEditingEvent({ ...editingEvent, memo: text });
                 }
               }}
               placeholder="메모"
@@ -727,7 +771,7 @@ export default function CalendarScreen({navigation}) {
         <View style={styles.check}>
           <Pressable onPress={() => deleteEvent(editingEvent.id)}>
             <Ionicons
-              style={{paddingRight: 20}}
+              style={{ paddingRight: 20 }}
               name="ios-trash-outline"
               size={30}
               color="gray"
@@ -750,8 +794,8 @@ export default function CalendarScreen({navigation}) {
         animationType="slide"
       >
         <View style={styles.eventContainer}>
-          <View style={{alignItems: "center"}}>
-            <View style={styles.separator}/>
+          <View style={{ alignItems: "center" }}>
+            <View style={styles.separator} />
           </View>
           <TextInput
             style={styles.title}
@@ -774,21 +818,21 @@ export default function CalendarScreen({navigation}) {
               name="navigate-next"
               size={24}
               color="black"
-              style={{paddingLeft: 10}}
+              style={{ paddingLeft: 10 }}
             />
             <Pressable onPress={() => setShowEndDatePicker(true)}>
               <Text style={styles.dateText}>{checkYear(endAt, startAt)}</Text>
             </Pressable>
           </View>
 
-          <View style={{alignSelf: "center"}}>
+          <View style={{ alignSelf: "center" }}>
             {showStartDatePicker && (
               <DateTimePicker
                 value={startAt}
                 mode="date"
                 display="spinner"
                 onChange={onStartDateChange}
-                style={{alignSelf: "center"}}
+                style={{ alignSelf: "center" }}
               />
             )}
 
@@ -798,7 +842,7 @@ export default function CalendarScreen({navigation}) {
                 mode="date"
                 display="spinner"
                 onChange={onEndDateChange}
-                style={{alignSelf: "center"}}
+                style={{ alignSelf: "center" }}
               />
             )}
           </View>
@@ -841,7 +885,7 @@ export default function CalendarScreen({navigation}) {
 
         <View style={styles.check}>
           <Pressable onPress={handleDelete}>
-            <Text style={{paddingRight: 20, color: "gray"}}>
+            <Text style={{ paddingRight: 20, color: "gray" }}>
               작성을 취소할래요
             </Text>
           </Pressable>
@@ -879,7 +923,7 @@ export default function CalendarScreen({navigation}) {
               height: "50%", // 높이 조정
             }}
           >
-            <ChoseCalendar/>
+            <ChoseCalendar />
 
             <Button
               title="취소"
@@ -892,7 +936,6 @@ export default function CalendarScreen({navigation}) {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {},
   separator: {

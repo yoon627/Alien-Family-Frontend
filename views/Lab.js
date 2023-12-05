@@ -23,7 +23,7 @@ async function sendPushNotification(devicePushToken) {
   await fetch("https://fcm.googleapis.com/fcm/send", {
     method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       Authorization: `key=${FCM_SERVER_KEY}`,
     },
     body: JSON.stringify({
