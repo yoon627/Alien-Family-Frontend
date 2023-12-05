@@ -45,7 +45,6 @@ const ChatRoom = () => {
   const scrollViewRef = useRef(); // ScrollView 참조 생성
 
   const myIP = "43.202.241.133";
-  const ICONONON = imageList.find((item) => item.name === "SANTA").image;
 
   useEffect(() => {
     const getData = async () => {
@@ -91,7 +90,6 @@ const ChatRoom = () => {
     }
     const alienName = getAlienTypeByNickname(parseInfo, sender);
     if (alienName === null) {
-      console.log("널 ");
       return imageList[0].image;
     }
     return imageList.find((item) => item.name === alienName).image;
@@ -117,6 +115,7 @@ const ChatRoom = () => {
             console.log("Connected to the WebSocket server");
             client.subscribe("/sub/chat/room/" + chatroomId, (message) => {
               const receivedMessage = JSON.parse(message.body);
+              console.log("리시브 메시지", receivedMessage);
               setMessages((prevMessages) => [...prevMessages, receivedMessage]);
               scrollViewRef.current?.scrollToEnd({ animated: true }); // 여기에 스크롤 로직 추가
             });
@@ -157,7 +156,6 @@ const ChatRoom = () => {
         content: message,
         time: new Date().toISOString(),
       };
-      console.log(messageData);
       const headerData = {
         // Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNTIiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZmFtaWx5IjoiMzU2IiwiZXhwIjoxNzAwOTgzOTE4fQ.EHLgXe4iFJrjr2veJlkZiHafd8tomybIyxty66xmU38'
       };
@@ -183,6 +181,32 @@ const ChatRoom = () => {
       };
     }
   }, [stompClient]);
+
+  function formatTime(isoString) {
+    try {
+      let date = new Date(isoString);
+
+      // 날짜가 유효하지 않은 경우 현재 시각으로 설정
+      if (isNaN(date.getTime())) {
+        date = new Date();
+      }
+
+      return (
+        date.getHours().toString().padStart(2, "0") +
+        ":" +
+        date.getMinutes().toString().padStart(2, "0")
+      );
+    } catch (error) {
+      console.error("Date parsing error:", error);
+      // 에러 발생시 현재 시각을 반환
+      const now = new Date();
+      return (
+        now.getHours().toString().padStart(2, "0") +
+        ":" +
+        now.getMinutes().toString().padStart(2, "0")
+      );
+    }
+  }
 
   return (
     <View style={{ flex: 1, padding: 20 }}>
@@ -216,6 +240,17 @@ const ChatRoom = () => {
                 >
                   <Text style={styles.messageText}>{msg.content}</Text>
                 </View>
+
+                {msg.sender === myname && (
+                  <Text style={styles.timeTextRight}>
+                    {formatTime(msg.createAt)}
+                  </Text>
+                )}
+                {msg.sender !== myname && (
+                  <Text style={styles.timeTextLeft}>
+                    {formatTime(msg.createAt)}
+                  </Text>
+                )}
               </View>
             </View>
           </View>
@@ -297,6 +332,18 @@ const styles = StyleSheet.create({
     height: 60, // 이미지 크기 조절
     borderRadius: 20, // 원형으로 만들기
     marginRight: 10, // 메시지 버블과의 간격
+  },
+  timeTextRight: {
+    fontSize: 12,
+    color: "gray",
+    alignSelf: "flex-end", // Align right for sent messages
+    marginBottom: 2, // Adjust as needed
+  },
+  timeTextLeft: {
+    fontSize: 12,
+    color: "gray",
+    alignSelf: "flex-start", // Align left for received messages
+    marginBottom: 2, // Adjust as needed
   },
 });
 export default ChatRoom;
