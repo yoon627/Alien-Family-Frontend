@@ -19,23 +19,40 @@ Object.assign("global", {
   TextDecoder: TextEncodingPolyfill.TextDecoder,
 });
 
+const imageList = [
+  { name: "BASIC", image: require("../assets/img/character/BASIC.png") },
+  { name: "GLASSES", image: require("../assets/img/character/GLASSES.png") },
+  { name: "GIRL", image: require("../assets/img/character/GIRL.png") },
+  { name: "BAND_AID", image: require("../assets/img/character/BAND_AID.png") },
+  { name: "RABBIT", image: require("../assets/img/character/RABBIT.png") },
+  { name: "HEADBAND", image: require("../assets/img/character/HEADBAND.png") },
+  { name: "TOMATO", image: require("../assets/img/character/TOMATO.png") },
+  {
+    name: "CHRISTMAS_TREE",
+    image: require("../assets/img/character/CHRISTMAS_TREE.png"),
+  },
+  { name: "SANTA", image: require("../assets/img/character/SANTA.png") },
+  { name: "PIRATE", image: require("../assets/img/character/PIRATE.png") },
+];
+
 const ChatRoom = () => {
   const [stompClient, setStompClient] = useState(null);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [myname, setMyname] = useState(null);
   const [roomNumber, setroomNumber] = useState(null);
+  const [familyInfo, setFamilyInfo] = useState([]);
   const scrollViewRef = useRef(); // ScrollView 참조 생성
 
   const myIP = "43.202.241.133";
-  // const myIP = '13.209.81.119';
+  const ICONONON = imageList.find((item) => item.name === "SANTA");
 
   useEffect(() => {
     const getData = async () => {
       try {
         const token = await AsyncStorage.getItem("UserServerAccessToken");
         const chatroomId = await AsyncStorage.getItem("chatroomId");
-
+        setFamilyInfo(await AsyncStorage.getItem("myDB"));
         const response = await fetch(
           "http://" + `${myIP}` + ":1998/chat/list?id=" + chatroomId,
           {
@@ -136,12 +153,15 @@ const ChatRoom = () => {
         // ... 기존 로직
         stompClient.subscribe("/sub/chat/room/" + roomNumber, (message) => {
           const receivedMessage = JSON.parse(message.body);
+          console.log("받은 메세지", receivedMessage);
           setMessages((prevMessages) => [...prevMessages, receivedMessage]);
           scrollViewRef.current?.scrollToEnd({ animated: true }); // 여기에 스크롤 로직 추가
         });
       };
     }
   }, [stompClient]);
+
+  let randomNum = Math.floor(Math.random() * 10) + 1;
 
   return (
     <View style={{ flex: 1, padding: 20 }}>
@@ -156,10 +176,7 @@ const ChatRoom = () => {
               }}
             >
               {msg.sender !== myname && (
-                <Image
-                  source={require("../assets/img/profile.jpg")}
-                  style={styles.profilePic}
-                />
+                <Image source={ICONONON.image} style={styles.profilePic} />
               )}
               <View style={{ flex: 1 }}>
                 {msg.sender !== myname && (

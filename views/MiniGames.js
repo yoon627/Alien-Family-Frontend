@@ -7,9 +7,9 @@ import {
   Dimensions,
   Image,
   ImageBackground,
+  PanResponder,
   StyleSheet,
   TouchableOpacity,
-  PanResponder,
   View,
   Text
 } from "react-native";
@@ -24,7 +24,7 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 const SCREEN_HEIGHT = Dimensions.get("window").height+45;
 
 export default function MiniGames({ navigation }) {
-  const [alienType, setAlienType] = useState("BASIC");
+  const [coordinates, setCoordinates] = useState({ x: 0, y: 0 });
   const alienImagePath = {
     BASIC: require(`../assets/img/character/BASIC.png`),
     GLASSES: require(`../assets/img/character/GLASSES.png`),
@@ -61,15 +61,31 @@ export default function MiniGames({ navigation }) {
     door: false,
   });
 
+  const maxDistance = 30;
+  const sensitivity = 1; // 조이스틱 민감도 조절 (낮을수록 더 민감)
+
   const SOME_THRESHOLD = 100;
   const joystickPosition = useRef(new Animated.ValueXY()).current;
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
-      onPanResponderMove: Animated.event(
-        [null, { dx: joystickPosition.x, dy: joystickPosition.y }],
-        { useNativeDriver: false }
-      ),
+      onPanResponderMove: (evt, gestureState) => {
+        // 조이스틱이 최대 거리를 넘지 않도록 제한
+        const distance = Math.sqrt(
+          Math.pow(gestureState.dx, 2) + Math.pow(gestureState.dy, 2),
+        );
+        const angle = Math.atan2(gestureState.dy, gestureState.dx);
+        const x =
+          distance > maxDistance
+            ? maxDistance * Math.cos(angle)
+            : gestureState.dx;
+        const y =
+          distance > maxDistance
+            ? maxDistance * Math.sin(angle)
+            : gestureState.dy;
+
+        joystickPosition.setValue({ x, y });
+      },
       onPanResponderRelease: () => {
         Animated.spring(joystickPosition, {
           toValue: { x: 0, y: 0 },
@@ -77,10 +93,11 @@ export default function MiniGames({ navigation }) {
           useNativeDriver: false,
         }).start();
       },
-    })
+    }),
   ).current;
 
   useEffect(() => {
+
     const listener = joystickPosition.addListener((position) => {
       // 이동 감도 조절
       const sensitivity = 0.3; // 조절 가능한 값
@@ -117,7 +134,7 @@ export default function MiniGames({ navigation }) {
   // 게임 이미지 & 캐릭터 사이 거리 계산
   const calculateDistance = (pos1, pos2) => {
     return Math.sqrt(
-      Math.pow(pos1.x - pos2.x, 2) + Math.pow(pos1.y - pos2.y, 2)
+      Math.pow(pos1.x - pos2.x, 2) + Math.pow(pos1.y - pos2.y, 2),
     );
   };
 
@@ -134,7 +151,7 @@ export default function MiniGames({ navigation }) {
     Object.keys(gameImgPosition).forEach((button) => {
       const distance = calculateDistance(
         characterPosition,
-        gameImgPosition[button]
+        gameImgPosition[button],
       );
       updatedShowButton[button] = distance < SOME_THRESHOLD;
     });
@@ -144,6 +161,7 @@ export default function MiniGames({ navigation }) {
 
   return (
     <View style={styles.container}>
+
       <ImageBackground
           source={require("../assets/img/gameMap.png")}                
           imageStyle={{resizeMode: 'cover', height:  SCREEN_HEIGHT , width: SCREEN_WIDTH}}
@@ -236,6 +254,7 @@ export default function MiniGames({ navigation }) {
             top: characterPosition.y,
           }}
         >
+
           <Image style={styles.image} source={alienImagePath[alienType]} />
         </View>
         

@@ -44,14 +44,14 @@ const RouletteGame = ({ cnt }) => {
   const [name, setName] = useState(
     Array(cnt)
       .fill(null)
-      .map((_, i) => `${randName[i]}`)
+      .map((_, i) => `${randName[i]}`),
   );
   useEffect(() => {
     // cnt 값이 변경될 때 name 배열 업데이트
     setName(
       Array(cnt)
         .fill(null)
-        .map((_, i) => name[i] || `${randName[i]}`)
+        .map((_, i) => name[i] || `${randName[i]}`),
     );
   }, [cnt]);
 
@@ -101,7 +101,7 @@ const RouletteGame = ({ cnt }) => {
           angle > 180 ? 1 : 0
         } 1 ${x2} ${y2} Z`}
         fill={colors[i % colors.length]}
-      />
+      />,
     );
 
     labels.push(
@@ -115,7 +115,7 @@ const RouletteGame = ({ cnt }) => {
         alignmentBaseline="middle"
       >
         {`${name[i]}`}
-      </SvgText>
+      </SvgText>,
     );
   }
 
@@ -152,7 +152,7 @@ const RouletteGame = ({ cnt }) => {
           </G>
         </Svg>
       </Animated.View>
-      <Button title="Spin" onPress={spinWheel} />
+      <Button color="#cd0beb" title="Spin" onPress={spinWheel} />
       <Text
         style={{ marginTop: 20 }}
       >{`ㅋㅋㅋㅋㅋㅋ ${name[selectedIndex]}`}</Text>
@@ -192,7 +192,7 @@ const RouletteGame = ({ cnt }) => {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: "#78bd23", // 버튼 색상
+    backgroundColor: "#cd0beb", // 버튼 색상
     paddingVertical: 10, // 세로 패딩
     paddingHorizontal: 10, // 가로 패딩
     borderRadius: 5, // 테두리 둥글게
