@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import {
-  Alert,
   Dimensions,
   Image,
   KeyboardAvoidingView,
@@ -14,6 +13,7 @@ import {
   View,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import LottieView from "lottie-react-native";
 
 const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
 
@@ -21,6 +21,7 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
   const [photoTags, setPhotoTags] = useState([]);
   const [description, setDescription] = useState("");
   const [tagList, setTagList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   // 가족 태그
   useEffect(() => {
@@ -59,6 +60,7 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
   // 1단계: signed url을 요청해서 받는다.
   // 2단계: 받아온 url에 put으로 요청해서 업로드한다.
   const uploadToServer = async () => {
+    setIsLoading(true);
     const familyId = await AsyncStorage.getItem("familyId");
     const UserServerAccessToken = await AsyncStorage.getItem(
       "UserServerAccessToken"
@@ -114,13 +116,14 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
           },
         });
         console.log("👌🏻 이미지 업로드 성공");
-        Alert.alert("사진 올리기 성공!");
         onUploadComplete();
       } else {
         console.error("❌ 이미지 업로드 실패");
       }
     } catch (err) {
       console.log("서버 업로드 에러..", err);
+    } finally {
+      setIsLoading(false);  // 업로드 완료 시 로딩 상태 false로 설정
     }
   };
   return (
@@ -131,10 +134,10 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
       <ScrollView contentContainerStyle={styles.container}>
         <Image
           style={styles.uploadImage}
-          source={{ uri: uri }}
+          source={{uri: uri}}
           resizeMode="contain"
         />
-        <View style={{ height: 20 }} />
+        <View style={{height: 20}}/>
         <View style={styles.tagButtonsContainer}>
           {tagList.map((tag, index) => (
             <Pressable
@@ -166,20 +169,31 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
           placeholder="문구를 입력하세요..."
           multiline
         />
-        <View style={{ flexDirection: "row", marginVertical: 10 }}>
+        <View style={{flexDirection: "row", marginVertical: 10}}>
           <TouchableOpacity
             style={[styles.button, styles.buttonWrite]}
             onPress={uploadToServer}
           >
-            <Text style={{ ...styles.textStyle, color: "#fff" }}>공유</Text>
+            <Text style={{...styles.textStyle, color: "#fff"}}>공유</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.button, styles.buttonClose]}
             onPress={onUploadComplete}
           >
-            <Text style={{ ...styles.textStyle, color: "#727272" }}>취소</Text>
+            <Text style={{...styles.textStyle, color: "#727272"}}>취소</Text>
           </TouchableOpacity>
         </View>
+        {isLoading &&
+          <View style={styles.loadingOverlay}>
+            <LottieView
+              style={styles.loading}
+              source={require('../assets/json/upload.json')}
+              autoPlay
+              loop
+            />
+            <Text style={styles.loadingText}>Uploading...</Text>
+          </View>
+        }
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -217,7 +231,7 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   buttonWrite: {
-    backgroundColor: "#C336CF",
+    backgroundColor: "#603D9B",
     marginHorizontal: 10,
   },
   buttonClose: {
@@ -247,5 +261,22 @@ const styles = StyleSheet.create({
   },
   tagButtonText: {
     color: "#000",
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 불투명한 검은 배경
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#fff', // 텍스트 색상을 흰색으로 설정
+  },
+  loading: {
+    position: "absolute",
+    width: SCREEN_WIDTH,
+    height: SCREEN_HEIGHT * 0.9,
+    resizeMode: "contain",
   },
 });

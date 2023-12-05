@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, {useEffect, useRef, useState, useCallback} from "react";
 import {
   Alert,
   Animated,
@@ -19,8 +19,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import MarqueeText from "react-native-marquee";
 import axios from "axios";
 import * as Notifications from "expo-notifications";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { useFocusEffect } from "@react-navigation/native";
+import {TouchableOpacity} from "react-native-gesture-handler";
+import {useFocusEffect} from "@react-navigation/native";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -30,7 +30,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
 const fontRatio = SCREEN_HEIGHT / 800;
 
 const Container = styled.View`
@@ -39,7 +39,7 @@ const Container = styled.View`
   align-items: center;
 `;
 
-export default function Home({ navigation, fonts }) {
+export default function Home({navigation, fonts}) {
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
@@ -96,7 +96,7 @@ export default function Home({ navigation, fonts }) {
       outputRange: [-1, 1],
     });
     return (
-      <Animated.View style={{ transform: [{ translateX: interpolated }] }}>
+      <Animated.View style={{transform: [{translateX: interpolated}]}}>
         <TouchableOpacity onPress={() => navigation.navigate("Mini Games")}>
           {alienType === "BASIC" ? (
             <Image
@@ -218,6 +218,7 @@ export default function Home({ navigation, fonts }) {
       })
       .catch((e) => console.log(e));
   }
+
   useEffect(() => {
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
@@ -381,7 +382,7 @@ export default function Home({ navigation, fonts }) {
             </TouchableOpacity>
           </View>
           <View
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            style={{flex: 1, justifyContent: "center", alignItems: "center"}}
           ></View>
           <View style={styles.alien}>{movingObject()}</View>
           <View style={styles.bottomContainer}>
@@ -423,14 +424,14 @@ export default function Home({ navigation, fonts }) {
           >
             <View style={styles.centeredView}>
               <Modal
-                animationType="slide"
+                animationType="fade"
                 transparent={true}
                 visible={modalVisible}
                 onRequestClose={() => {
                   setModalVisible(!modalVisible);
                 }}
               >
-                <View style={styles.centeredView}>
+                <View style={styles.modalOverlay}>
                   <View style={styles.modalView}>
                     <TextInput
                       value={TMI}
@@ -449,7 +450,7 @@ export default function Home({ navigation, fonts }) {
                         textAlign: "center",
                       }}
                     />
-                    <View style={{ flexDirection: "row", marginVertical: 10 }}>
+                    <View style={{flexDirection: "row", marginVertical: 10}}>
                       <Pressable
                         style={[styles.button, styles.buttonWrite]}
                         onPress={async () => {
@@ -484,7 +485,7 @@ export default function Home({ navigation, fonts }) {
                           }
                         }}
                       >
-                        <Text style={{ ...styles.textStyle, color: "#fff" }}>
+                        <Text style={{...styles.textStyle, color: "#fff"}}>
                           작성
                         </Text>
                       </Pressable>
@@ -492,7 +493,7 @@ export default function Home({ navigation, fonts }) {
                         style={[styles.button, styles.buttonClose]}
                         onPress={() => setModalVisible(!modalVisible)}
                       >
-                        <Text style={{ ...styles.textStyle, color: "#727272" }}>
+                        <Text style={{...styles.textStyle, color: "#727272"}}>
                           취소
                         </Text>
                       </Pressable>
@@ -595,6 +596,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: 22,
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalView: {
     margin: 5,
@@ -701,5 +704,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontFamily: "dnf",
     color: "#727272",
+  },
+  modalOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)', // 불투명한 검은 배경
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

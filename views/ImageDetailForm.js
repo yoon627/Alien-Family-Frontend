@@ -119,7 +119,7 @@ export default function ImageDetailForm({ route, navigation }) {
                 style={{alignItems: "flex-start", paddingHorizontal: "3%"}}
                 onPress={() => navigation.pop()}
               >
-                <Ionicons name="chevron-back" size={28} color="#C336CF"/>
+                <Ionicons name="chevron-back" size={28} color="#603D9B"/>
               </TouchableOpacity>
 
               <View style={styles.slide}>
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   buttonWrite: {
-    backgroundColor: "#C336CF",
+    backgroundColor: "#603D9B",
     marginHorizontal: 10,
   },
   buttonClose: {
@@ -292,6 +292,6 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     borderRadius: 35 / 2, // 원형으로 만들기
     backgroundColor: "#FFEEC3",
-    marginRight: 5,
+    marginRight: 10,
   },
 });
