@@ -29,20 +29,13 @@ export default function Attendance({ navigation }) {
   const bbbbtoday = new Date(ktc.setDate(ktc.getDate() - 1));
   const bbbbbtoday = new Date(ktc.setDate(ktc.getDate() - 1));
   const bbbbbbtoday = new Date(ktc.setDate(ktc.getDate() - 1));
-  const str_today =
-    JSON.stringify(today).toString().slice(1, 11);
-  const str_btoday =
-    JSON.stringify(btoday).toString().slice(1, 11);
-  const str_bbtoday =
-    JSON.stringify(bbtoday).toString().slice(1, 11);
-  const str_bbbtoday =
-    JSON.stringify(bbbtoday).toString().slice(1, 11);
-  const str_bbbbtoday =
-    JSON.stringify(bbbbtoday).toString().slice(1, 11);
-  const str_bbbbbtoday =
-    JSON.stringify(bbbbbtoday).toString().slice(1, 11);
-  const str_bbbbbbtoday =
-    JSON.stringify(bbbbbbtoday).toString().slice(1, 11);
+  const str_today = JSON.stringify(today).toString().slice(1, 11);
+  const str_btoday = JSON.stringify(btoday).toString().slice(1, 11);
+  const str_bbtoday = JSON.stringify(bbtoday).toString().slice(1, 11);
+  const str_bbbtoday = JSON.stringify(bbbtoday).toString().slice(1, 11);
+  const str_bbbbtoday = JSON.stringify(bbbbtoday).toString().slice(1, 11);
+  const str_bbbbbtoday = JSON.stringify(bbbbbtoday).toString().slice(1, 11);
+  const str_bbbbbbtoday = JSON.stringify(bbbbbbtoday).toString().slice(1, 11);
   const week = [
     str_today,
     str_btoday,
@@ -90,7 +83,7 @@ export default function Attendance({ navigation }) {
       },
     })
       .then((resp) => {
-        console.log(resp.data.data)
+        console.log(resp.data.data);
         const tmpJson = {};
         const tmptmis = resp.data.data;
         for (let i = 0; i < week.length; i++) {
@@ -103,7 +96,7 @@ export default function Attendance({ navigation }) {
           }
           tmpJson[week[i]] = arr;
         }
-        console.log(tmpJson)
+        console.log(tmpJson);
         setTmiJson(tmpJson);
       })
       .catch((e) => console.log(e));
@@ -164,8 +157,8 @@ export default function Attendance({ navigation }) {
                 <Text key={index} style={styles.tmi_txt}>
                   - {tmi}
                 </Text>
-              )))
-             : (
+              ))
+            ) : (
               <Text>TMI 없어요...</Text>
             )}
             <View style={styles.image_container}>
@@ -177,10 +170,9 @@ export default function Attendance({ navigation }) {
                       style={{ width: 50, height: 50, marginLeft: 5 }}
                       source={require("../assets/img/attendance.png")}
                     />
-                  )),
+                  ))
                 )
               ) : (
-
                 <Text>출석한 사람이 없어요...</Text>
               )}
             </View>
@@ -198,7 +190,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#DED1DF",
   },
-
 
   attendence_container: {
     width: SCREEN_WIDTH * 0.8,

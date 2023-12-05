@@ -126,7 +126,7 @@ export default function App() {
           await axios({
             method: "GET",
             url: SERVER_ADDRESS + "/api/family",
-            headers: {Authorization: "Bearer " + UserServerAccessToken},
+            headers: { Authorization: "Bearer " + UserServerAccessToken },
           })
             .then((resp) => console.log(resp.data.data.members))
             .catch((e) => console.log(e));

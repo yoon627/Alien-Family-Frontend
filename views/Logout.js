@@ -6,7 +6,7 @@ import axios from "axios";
 export default function Logout({ navigation }) {
   return (
     <View>
-      <Text>Logout</Text>
+      <Text>탈퇴하기</Text>
       <Button
         title="탈퇴하기"
         onPress={() => {

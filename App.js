@@ -1,4 +1,4 @@
-import React, { useCallback,useRef,useState,useEffect } from "react";
+import React, { useCallback, useRef, useState, useEffect } from "react";
 import { StyleSheet, Linking } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import Login from "./views/Login";
@@ -60,7 +60,6 @@ export default function App() {
   //     await SplashScreen.hideAsync();
   //   }
   // }, [fontsLoaded]);
-
 
   if (!fontsLoaded) {
     return null;

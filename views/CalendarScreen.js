@@ -152,7 +152,6 @@ export default function CalendarScreen({ navigation }) {
     try {
       const response = await fetch(
         "http://43.202.241.133:1998/calendarEvent/day/" +
-
           `${currentYear}/${currentMonth}`,
         {
           method: "GET",
@@ -160,7 +159,7 @@ export default function CalendarScreen({ navigation }) {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`, // 필요한 경우 인증 헤더 추가
           },
-        },
+        }
       );
 
       if (response.ok) {
@@ -181,7 +180,7 @@ export default function CalendarScreen({ navigation }) {
 
             const datesInRange = getDatesInRange(
               new Date(eventData.startDate),
-              new Date(eventData.endDate),
+              new Date(eventData.endDate)
             );
 
             datesInRange.forEach((date) => {
@@ -192,7 +191,7 @@ export default function CalendarScreen({ navigation }) {
           setEvents(newEvents);
           await AsyncStorage.setItem(
             "calendarEvents",
-            JSON.stringify(newEvents),
+            JSON.stringify(newEvents)
           );
         }
       } else {
@@ -286,8 +285,7 @@ export default function CalendarScreen({ navigation }) {
             text: "확인",
           },
         ],
-        { cancelable: true },
-
+        { cancelable: true }
       );
       return;
     }
@@ -301,7 +299,7 @@ export default function CalendarScreen({ navigation }) {
             text: "확인",
           },
         ],
-        { cancelable: true },
+        { cancelable: true }
       );
       return;
     }
@@ -369,8 +367,7 @@ export default function CalendarScreen({ navigation }) {
             text: "확인",
           },
         ],
-        { cancelable: true },
-
+        { cancelable: true }
       );
       return;
     }
@@ -383,8 +380,7 @@ export default function CalendarScreen({ navigation }) {
             text: "확인",
           },
         ],
-        { cancelable: true },
-
+        { cancelable: true }
       );
       return;
     }
@@ -395,11 +391,11 @@ export default function CalendarScreen({ navigation }) {
     if (editingEvent) {
       const oldDates = getDatesInRange(
         new Date(editingEvent.startDate),
-        new Date(editingEvent.endDate),
+        new Date(editingEvent.endDate)
       );
       oldDates.forEach((date) => {
         updatedEvents[date] = updatedEvents[date].filter(
-          (event) => event.id !== editingEvent.id,
+          (event) => event.id !== editingEvent.id
         );
       });
     }
@@ -439,7 +435,7 @@ export default function CalendarScreen({ navigation }) {
           Authorization: `Bearer ${token}`, // 필요한 경우 인증 헤더 추가
         },
         body: JSON.stringify(editPayload),
-      },
+      }
     );
 
     const data = await response.json();
@@ -483,7 +479,7 @@ export default function CalendarScreen({ navigation }) {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
 
       if (!response.ok) {
@@ -495,7 +491,7 @@ export default function CalendarScreen({ navigation }) {
         const updatedEvents = { ...prevEvents };
         Object.keys(updatedEvents).forEach((date) => {
           updatedEvents[date] = updatedEvents[date].filter(
-            (event) => event.id !== eventId,
+            (event) => event.id !== eventId
           );
         });
         return updatedEvents;
@@ -939,7 +935,7 @@ export default function CalendarScreen({ navigation }) {
       </Modal>
     </View>
   );
-          }
+}
 const styles = StyleSheet.create({
   container: {},
   separator: {
@@ -1017,5 +1013,5 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     flexDirection: "row",
     alignItems: "center",
-  }
+  },
 });

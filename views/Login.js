@@ -1,4 +1,4 @@
-import React,{ useCallback,useRef,useState,useEffect } from "react";
+import React, { useCallback, useRef, useState, useEffect } from "react";
 import {
   ImageBackground,
   StyleSheet,
@@ -45,9 +45,9 @@ const Login = ({ navigation }) => {
       // Handle the notification payload here
       console.log(notification);
       const screenName = notification.notification.request.content.title;
-      
+
       if (screenName) {
-        if (screenName==="Family"){
+        if (screenName === "Family") {
           navigation.navigate("FamilyInfo", {
             screen: "MainDrawer",
             params: { showFamilyInfo: true },
@@ -59,9 +59,10 @@ const Login = ({ navigation }) => {
     };
 
     // Subscribe to the background notification handler
-    const backgroundNotificationSubscription = Notifications.addNotificationResponseReceivedListener(
-      backgroundNotificationHandler
-    );
+    const backgroundNotificationSubscription =
+      Notifications.addNotificationResponseReceivedListener(
+        backgroundNotificationHandler
+      );
 
     // Clean up subscriptions when the component unmounts
     return () => {

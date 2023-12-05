@@ -234,16 +234,16 @@ const FirstRegister = ({ route, navigation }) => {
                       );
                       if (cameFrom == "FirstStart") {
                         var characterJson = {
-                          "BASIC":true,
-                          "GLASSES":true,
-                          "GIRL":true,
-                          "BAND_AID":true,
-                          "RABBIT":true,
-                          "HEADBAND":true,
-                          "TOMATO":true,
-                          "CHRISTMAS_TREE":true,
-                          "SANTA":true,
-                          "PIRATE":true,
+                          BASIC: true,
+                          GLASSES: true,
+                          GIRL: true,
+                          BAND_AID: true,
+                          RABBIT: true,
+                          HEADBAND: true,
+                          TOMATO: true,
+                          CHRISTMAS_TREE: true,
+                          SANTA: true,
+                          PIRATE: true,
                         };
                         navigation.navigate("ChooseCharacter", {
                           characterJson: characterJson,
@@ -259,7 +259,8 @@ const FirstRegister = ({ route, navigation }) => {
                             var characterJson = {};
                             for (let i = 0; i < roles.length; i++) {
                               if (roles[i]["enabled"]) {
-                                characterJson[roles[i]["type"]]=roles[i]["enabled"];
+                                characterJson[roles[i]["type"]] =
+                                  roles[i]["enabled"];
                               }
                             }
                             console.log(characterJson);

@@ -1,4 +1,10 @@
-import React, { Fragment, useEffect, useState, useCallback, useRef } from "react";
+import React, {
+  Fragment,
+  useEffect,
+  useState,
+  useCallback,
+  useRef,
+} from "react";
 import {
   ActionSheetIOS,
   Dimensions,
@@ -49,7 +55,7 @@ Notifications.setNotificationHandler({
     shouldSetBadge: true,
   }),
 });
-export default function AlbumScreen({navigation}) {
+export default function AlbumScreen({ navigation }) {
   // 카메라 권한 요청을 위한 훅
   const [cameraStatus, cameraRequestPermission] =
     ImagePicker.useCameraPermissions();
@@ -75,7 +81,7 @@ export default function AlbumScreen({navigation}) {
     // 서버에서 s3 이미지 url 받아옴
     const fetchData = async () => {
       const UserServerAccessToken = await AsyncStorage.getItem(
-        "UserServerAccessToken",
+        "UserServerAccessToken"
       );
       try {
         const response = await fetch(`http://43.202.241.133:1998/photo`, {
@@ -102,7 +108,7 @@ export default function AlbumScreen({navigation}) {
   const imagePickerOption = {
     mediaTypes: ImagePicker.MediaTypeOptions.All,
     allowsEditing: false,
-    quality: 1,
+    quality: 0,
     aspect: [1, 1],
     includeBase64: Platform.OS === "android",
   };
@@ -122,7 +128,7 @@ export default function AlbumScreen({navigation}) {
           } else if (buttonIndex === 1) {
             onLaunchImageLibrary();
           }
-        },
+        }
       );
     }
   };
@@ -144,7 +150,8 @@ export default function AlbumScreen({navigation}) {
         }
         // 이미지 업로드 결과 및 이미지 경로 업데이트
         if (result.assets && result.assets.length > 0) {
-          const chosenImage = result.assets[0];          setChosenImage(chosenImage);
+          const chosenImage = result.assets[0];
+          setChosenImage(chosenImage);
           // console.log("🌄 저장한 이미지 -> ", chosenImage);
           setShowUploadForm(true);
         } else {
@@ -166,8 +173,9 @@ export default function AlbumScreen({navigation}) {
         }
       } else {
         // 이미지 선택 (화면용, 실제로 s3에 업로드 한 이미지 아님)
-        const result =
-          await ImagePicker.launchImageLibraryAsync(imagePickerOption);
+        const result = await ImagePicker.launchImageLibraryAsync(
+          imagePickerOption
+        );
         // 이미지 업로드 취소한 경우
         if (result.canceled) {
           return null;
@@ -205,7 +213,7 @@ export default function AlbumScreen({navigation}) {
     }
     const filteredImages = albumList.filter((item) => {
       const hasMatchingTag = item.photoTags.some((tag) =>
-        selectedTags.includes(tag),
+        selectedTags.includes(tag)
       );
       // console.log(`Item ${item.photoId} - hasMatchingTag: ${hasMatchingTag}`);
       return hasMatchingTag;
@@ -326,7 +334,7 @@ export default function AlbumScreen({navigation}) {
                 style={[
                   styles.tagItem,
                   selectedTags.includes(tag.id) && styles.selectedTagItem,
-                  index !== TAG_OPTION.length - 1 && {marginRight: 7},
+                  index !== TAG_OPTION.length - 1 && { marginRight: 7 },
                 ]}
                 onPress={() => toggleTagSelection(tag.id)}
               >
@@ -347,7 +355,7 @@ export default function AlbumScreen({navigation}) {
             numColumns={4}
             data={filterImages()}
             keyExtractor={(item) => item.photoId.toString()}
-            renderItem={({item}) => (
+            renderItem={({ item }) => (
               <View style={styles.imageContainer}>
                 <TouchableOpacity
                   onPress={() =>
@@ -360,7 +368,7 @@ export default function AlbumScreen({navigation}) {
                         description: item.description,
                         writer: item.writer,
                       },
-                      albumList: albumList
+                      albumList: albumList,
                     })
                   }
                 >
@@ -377,7 +385,8 @@ export default function AlbumScreen({navigation}) {
           />
           <TouchableOpacity
             style={styles.imagePlusContainer}
-            onPress={modalOpen}>
+            onPress={modalOpen}
+          >
             <Image
               source={require("../assets/img/plus.png")}
               style={{
@@ -408,7 +417,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     backgroundColor: "#fff",
-    position: "relative"
+    position: "relative",
   },
   image: {
     width: SCREEN_WIDTH / 4 - 7, // 이미지의 가로 크기 (한 행에 4개씩 배치하고 간격 조절)
@@ -444,7 +453,7 @@ const styles = StyleSheet.create({
   flatListContentContainer: {
     paddingLeft: 5,
     paddingRight: 5,
-    justifyContent: 'flex-start', // 세로 정렬을 상단으로 설정
-    alignItems: 'flex-start', // 가로 정렬을 좌측으로 설정
+    justifyContent: "flex-start", // 세로 정렬을 상단으로 설정
+    alignItems: "flex-start", // 가로 정렬을 좌측으로 설정
   },
 });

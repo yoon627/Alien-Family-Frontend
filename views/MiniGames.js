@@ -69,7 +69,7 @@ export default function MiniGames({ navigation }) {
       onPanResponderMove: (evt, gestureState) => {
         // 조이스틱이 최대 거리를 넘지 않도록 제한
         const distance = Math.sqrt(
-          Math.pow(gestureState.dx, 2) + Math.pow(gestureState.dy, 2),
+          Math.pow(gestureState.dx, 2) + Math.pow(gestureState.dy, 2)
         );
         const angle = Math.atan2(gestureState.dy, gestureState.dx);
         const x =
@@ -90,7 +90,7 @@ export default function MiniGames({ navigation }) {
           useNativeDriver: false,
         }).start();
       },
-    }),
+    })
   ).current;
 
   useEffect(() => {
@@ -113,15 +113,15 @@ export default function MiniGames({ navigation }) {
             0,
             Math.min(
               prevPosition.x + adjustedPosition.x,
-              SCREEN_WIDTH - SCREEN_WIDTH * 0.12,
-            ),
+              SCREEN_WIDTH - SCREEN_WIDTH * 0.12
+            )
           ),
           y: Math.max(
             0,
             Math.min(
               prevPosition.y - adjustedPosition.y,
-              SCREEN_HEIGHT - SCREEN_HEIGHT * 0.1,
-            ),
+              SCREEN_HEIGHT - SCREEN_HEIGHT * 0.1
+            )
           ),
         }));
       }
@@ -136,7 +136,7 @@ export default function MiniGames({ navigation }) {
   // 게임 이미지 & 캐릭터 사이 거리 계산
   const calculateDistance = (pos1, pos2) => {
     return Math.sqrt(
-      Math.pow(pos1.x - pos2.x, 2) + Math.pow(pos1.y - pos2.y, 2),
+      Math.pow(pos1.x - pos2.x, 2) + Math.pow(pos1.y - pos2.y, 2)
     );
   };
 
@@ -153,7 +153,7 @@ export default function MiniGames({ navigation }) {
     Object.keys(gameImgPosition).forEach((button) => {
       const distance = calculateDistance(
         characterPosition,
-        gameImgPosition[button],
+        gameImgPosition[button]
       );
       updatedShowButton[button] = distance < SOME_THRESHOLD;
     });

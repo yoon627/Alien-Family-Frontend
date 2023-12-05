@@ -154,15 +154,17 @@ const InvitationScreen = ({ navigation }) => {
                                 })
                                   .then((resp) => {
                                     // console.log(resp.data.data.roles);
-                                    const roles = resp.data.data.roles
+                                    const roles = resp.data.data.roles;
                                     var roleArr = [];
-                                    for (let i=0; i<roles.length; i++){
-                                      if (roles[i]["enabled"]){
+                                    for (let i = 0; i < roles.length; i++) {
+                                      if (roles[i]["enabled"]) {
                                         roleArr.push(roles[i]["role"]);
-                                      };
+                                      }
                                     }
                                     console.log(roleArr);
-                                    navigation.navigate("FirstRegister",{roleArr:roleArr});
+                                    navigation.navigate("FirstRegister", {
+                                      roleArr: roleArr,
+                                    });
                                   })
                                   .catch((e) => console.log(e));
                               })
