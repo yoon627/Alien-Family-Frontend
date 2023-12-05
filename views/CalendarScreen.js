@@ -107,7 +107,6 @@ export default function CalendarScreen({ navigation }) {
   const [localeSet, setLocaleSet] = useState(false);
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
-
   useEffect(() => {
     dayjs.locale("ko");
     setLocaleSet(true);
@@ -149,18 +148,19 @@ export default function CalendarScreen({ navigation }) {
     const name = await AsyncStorage.getItem("MyName");
     const id = await AsyncStorage.getItem("familyId");
     const token = await AsyncStorage.getItem("UserServerAccessToken"); // 적절한 토큰 키 사용
-    const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
+
     try {
       const response = await fetch(
         "http://43.202.241.133:1998/calendarEvent/day/" +
-        `${currentYear}/${currentMonth}`,
+
+          `${currentYear}/${currentMonth}`,
         {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`, // 필요한 경우 인증 헤더 추가
           },
-        }
+        },
       );
 
       if (response.ok) {
@@ -181,7 +181,7 @@ export default function CalendarScreen({ navigation }) {
 
             const datesInRange = getDatesInRange(
               new Date(eventData.startDate),
-              new Date(eventData.endDate)
+              new Date(eventData.endDate),
             );
 
             datesInRange.forEach((date) => {
@@ -192,7 +192,7 @@ export default function CalendarScreen({ navigation }) {
           setEvents(newEvents);
           await AsyncStorage.setItem(
             "calendarEvents",
-            JSON.stringify(newEvents)
+            JSON.stringify(newEvents),
           );
         }
       } else {
@@ -286,7 +286,8 @@ export default function CalendarScreen({ navigation }) {
             text: "확인",
           },
         ],
-        {cancelable: true},
+        { cancelable: true },
+
       );
       return;
     }
@@ -300,13 +301,13 @@ export default function CalendarScreen({ navigation }) {
             text: "확인",
           },
         ],
-        {cancelable: true},
+        { cancelable: true },
       );
       return;
     }
+
     // payload.startDate.setHours(payload.startDate.getHours() + 9);
     // payload.endDate.setHours(payload.endDate.getHours() + 9);
-
     try {
       const token = await AsyncStorage.getItem("UserServerAccessToken"); // 적절한 토큰 키 사용
 
@@ -358,7 +359,6 @@ export default function CalendarScreen({ navigation }) {
   };
 
   const handleEditEvent = async () => {
-    const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
     if (startAt > endAt) {
       // 경고 창 바로 표시
       Alert.alert(
@@ -369,7 +369,8 @@ export default function CalendarScreen({ navigation }) {
             text: "확인",
           },
         ],
-        {cancelable: true},
+        { cancelable: true },
+
       );
       return;
     }
@@ -382,7 +383,8 @@ export default function CalendarScreen({ navigation }) {
             text: "확인",
           },
         ],
-        {cancelable: true},
+        { cancelable: true },
+
       );
       return;
     }
@@ -393,11 +395,11 @@ export default function CalendarScreen({ navigation }) {
     if (editingEvent) {
       const oldDates = getDatesInRange(
         new Date(editingEvent.startDate),
-        new Date(editingEvent.endDate)
+        new Date(editingEvent.endDate),
       );
       oldDates.forEach((date) => {
         updatedEvents[date] = updatedEvents[date].filter(
-          (event) => event.id !== editingEvent.id
+          (event) => event.id !== editingEvent.id,
         );
       });
     }
@@ -437,7 +439,7 @@ export default function CalendarScreen({ navigation }) {
           Authorization: `Bearer ${token}`, // 필요한 경우 인증 헤더 추가
         },
         body: JSON.stringify(editPayload),
-      }
+      },
     );
 
     const data = await response.json();
@@ -471,7 +473,6 @@ export default function CalendarScreen({ navigation }) {
   };
 
   const deleteEvent = async (eventId) => {
-    const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
     try {
       const token = await AsyncStorage.getItem("UserServerAccessToken");
       const response = await fetch(
@@ -482,7 +483,7 @@ export default function CalendarScreen({ navigation }) {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -494,7 +495,7 @@ export default function CalendarScreen({ navigation }) {
         const updatedEvents = { ...prevEvents };
         Object.keys(updatedEvents).forEach((date) => {
           updatedEvents[date] = updatedEvents[date].filter(
-            (event) => event.id !== eventId
+            (event) => event.id !== eventId,
           );
         });
         return updatedEvents;
@@ -572,7 +573,6 @@ export default function CalendarScreen({ navigation }) {
       </View>
     );
   };
-
   useEffect(() => {
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
@@ -939,8 +939,7 @@ export default function CalendarScreen({ navigation }) {
       </Modal>
     </View>
   );
-}
-
+          }
 const styles = StyleSheet.create({
   container: {},
   separator: {
@@ -1018,5 +1017,5 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     flexDirection: "row",
     alignItems: "center",
-  },
+  }
 });

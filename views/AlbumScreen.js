@@ -18,7 +18,6 @@ import ImageUploadForm from "./ImageUploadForm";
 import ExpoFastImage from "expo-fast-image";
 import * as Notifications from "expo-notifications";
 import { useFocusEffect } from "@react-navigation/native";
-
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 const TAG_OPTION = [
@@ -43,7 +42,6 @@ const TAG_OPTION = [
     id: "EXTRA",
   },
 ];
-
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -51,8 +49,7 @@ Notifications.setNotificationHandler({
     shouldSetBadge: true,
   }),
 });
-
-export default function AlbumScreen({ navigation }) {
+export default function AlbumScreen({navigation}) {
   // 카메라 권한 요청을 위한 훅
   const [cameraStatus, cameraRequestPermission] =
     ImagePicker.useCameraPermissions();
@@ -74,28 +71,24 @@ export default function AlbumScreen({ navigation }) {
   const handleUploadComplete = () => {
     setShowUploadForm(false);
   };
-
   useEffect(() => {
     // 서버에서 s3 이미지 url 받아옴
     const fetchData = async () => {
-      const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
       const UserServerAccessToken = await AsyncStorage.getItem(
-        "UserServerAccessToken"
+        "UserServerAccessToken",
       );
       try {
-        console.log(SERVER_ADDRESS);
-        const response = await fetch(SERVER_ADDRESS + `/photo`, {
+        const response = await fetch(`http://43.202.241.133:1998/photo`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
             Authorization: "Bearer " + UserServerAccessToken,
           },
         });
-
         const data = await response.json();
         // 받아온 이미지 데이터 상태에 저장
         setAlbumList(data.data);
-        // console.log("받은 데이터!!!!!!!!!", data.data)
+        // console.log("받은 데이터!!!!!!!!!", data.data);
         // console.log("👉🏻앨범 이미지 리스트: ", data.data.map(item => item.photoKey));
       } catch (error) {
         console.error("이미지 url을 가져오는 중에 오류가 발생했습니다.", error);
@@ -106,7 +99,6 @@ export default function AlbumScreen({ navigation }) {
       fetchData();
     }
   }, [showUploadForm]);
-
   const imagePickerOption = {
     mediaTypes: ImagePicker.MediaTypeOptions.All,
     allowsEditing: false,
@@ -114,7 +106,6 @@ export default function AlbumScreen({ navigation }) {
     aspect: [1, 1],
     includeBase64: Platform.OS === "android",
   };
-
   // 선택 모달 오픈
   const modalOpen = () => {
     if (Platform.OS === "android") {
@@ -131,11 +122,10 @@ export default function AlbumScreen({ navigation }) {
           } else if (buttonIndex === 1) {
             onLaunchImageLibrary();
           }
-        }
+        },
       );
     }
   };
-
   // 카메라 촬영
   const onLaunchCamera = async () => {
     try {
@@ -154,8 +144,7 @@ export default function AlbumScreen({ navigation }) {
         }
         // 이미지 업로드 결과 및 이미지 경로 업데이트
         if (result.assets && result.assets.length > 0) {
-          const chosenImage = result.assets[0];
-          setChosenImage(chosenImage);
+          const chosenImage = result.assets[0];          setChosenImage(chosenImage);
           // console.log("🌄 저장한 이미지 -> ", chosenImage);
           setShowUploadForm(true);
         } else {
@@ -166,7 +155,6 @@ export default function AlbumScreen({ navigation }) {
       console.error("카메라 Error!!!!! : ", error);
     }
   };
-
   // 갤러리에서 사진 선택
   const onLaunchImageLibrary = async () => {
     try {
@@ -178,9 +166,8 @@ export default function AlbumScreen({ navigation }) {
         }
       } else {
         // 이미지 선택 (화면용, 실제로 s3에 업로드 한 이미지 아님)
-        const result = await ImagePicker.launchImageLibraryAsync(
-          imagePickerOption
-        );
+        const result =
+          await ImagePicker.launchImageLibraryAsync(imagePickerOption);
         // 이미지 업로드 취소한 경우
         if (result.canceled) {
           return null;
@@ -188,8 +175,8 @@ export default function AlbumScreen({ navigation }) {
         // 이미지 업로드 결과 및 이미지 경로 업데이트
         if (result.assets && result.assets.length > 0) {
           const chosenImage = result.assets[0];
+          console.log("🌄 저장한 이미지 -> ", chosenImage);
           setChosenImage(chosenImage);
-          // console.log("🌄 저장한 이미지 -> ", chosenImage);
           setShowUploadForm(true);
         } else {
           console.log("No assets found!");
@@ -199,7 +186,6 @@ export default function AlbumScreen({ navigation }) {
       console.error("갤러리 Error!!!!! : ", error);
     }
   };
-
   const toggleTagSelection = (tagId) => {
     setSelectedTags((prevTags) => {
       const isSelected = prevTags.includes(tagId);
@@ -211,29 +197,24 @@ export default function AlbumScreen({ navigation }) {
     });
     // console.log("선택한 태그:", selectedTags);
   };
-
   const filterImages = () => {
     // console.log("선택한 태그:", selectedTags);
     if (selectedTags.length === 0) {
       // console.log("@@@@@@@ 정렬된 데이따", albumList.sort((a, b) => b.photoId - a.photoId));
       return albumList.sort((a, b) => b.photoId - a.photoId);
     }
-
     const filteredImages = albumList.filter((item) => {
       const hasMatchingTag = item.photoTags.some((tag) =>
-        selectedTags.includes(tag)
+        selectedTags.includes(tag),
       );
       // console.log(`Item ${item.photoId} - hasMatchingTag: ${hasMatchingTag}`);
       return hasMatchingTag;
     });
-
     // 내림차순 정렬
     const sortedImages = filteredImages.sort((a, b) => b.photoId - a.photoId);
     // console.log("@@@@@@@ 정렬된 데이따", sortedImages);
-
     return sortedImages;
   };
-
   useEffect(() => {
     // console.log("선택한 태그 (useEffect):", selectedTags);
   }, [selectedTags]);
@@ -345,7 +326,7 @@ export default function AlbumScreen({ navigation }) {
                 style={[
                   styles.tagItem,
                   selectedTags.includes(tag.id) && styles.selectedTagItem,
-                  index !== TAG_OPTION.length - 1 && { marginRight: 7 },
+                  index !== TAG_OPTION.length - 1 && {marginRight: 7},
                 ]}
                 onPress={() => toggleTagSelection(tag.id)}
               >
@@ -362,12 +343,11 @@ export default function AlbumScreen({ navigation }) {
               </TouchableOpacity>
             ))}
           </View>
-
           <FlatList
             numColumns={4}
             data={filterImages()}
             keyExtractor={(item) => item.photoId.toString()}
-            renderItem={({ item }) => (
+            renderItem={({item}) => (
               <View style={styles.imageContainer}>
                 <TouchableOpacity
                   onPress={() =>
@@ -380,7 +360,7 @@ export default function AlbumScreen({ navigation }) {
                         description: item.description,
                         writer: item.writer,
                       },
-                      albumList: albumList,
+                      albumList: albumList
                     })
                   }
                 >
@@ -395,7 +375,9 @@ export default function AlbumScreen({ navigation }) {
             )}
             contentContainerStyle={styles.flatListContentContainer}
           />
-          <Pressable style={styles.imagePlusContainer} onPress={modalOpen}>
+          <TouchableOpacity
+            style={styles.imagePlusContainer}
+            onPress={modalOpen}>
             <Image
               source={require("../assets/img/plus.png")}
               style={{
@@ -404,7 +386,7 @@ export default function AlbumScreen({ navigation }) {
                 resizeMode: "contain",
               }}
             />
-          </Pressable>
+          </TouchableOpacity>
         </Fragment>
       ) : (
         <ImageUploadForm
@@ -421,7 +403,6 @@ export default function AlbumScreen({ navigation }) {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -463,8 +444,7 @@ const styles = StyleSheet.create({
   flatListContentContainer: {
     paddingLeft: 5,
     paddingRight: 5,
-    justifyContent: "flex-start", // 세로 정렬을 상단으로 설정
-    alignItems: "flex-start", // 가로 정렬을 좌측으로 설정
+    justifyContent: 'flex-start', // 세로 정렬을 상단으로 설정
+    alignItems: 'flex-start', // 가로 정렬을 좌측으로 설정
   },
-  album: {}
 });

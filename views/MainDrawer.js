@@ -1,5 +1,5 @@
 import React from "react";
-import { Dimensions } from "react-native";
+import {Dimensions, Platform} from "react-native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import MainScreen from "./MainScreen";
 import Logout from "./Logout";
@@ -33,8 +33,7 @@ export default function MainDrawer({ navigation,route }) {
             color: "#fff",
           },
           headerStyle: {
-
-            height: SCREEN_HEIGHT * 0.1,
+            height: Platform.OS === 'ios' ? SCREEN_HEIGHT * 0.1 : SCREEN_HEIGHT * 0.08,
             backgroundColor: "#fff"
           }
         }}
@@ -47,7 +46,7 @@ export default function MainDrawer({ navigation,route }) {
         <Drawer.Screen
           name="FamilyInfo"
           component={FamilyInfo}
-          options={{ title: "우리 가족" }}
+          options={{ title: "우리 가족", headerShown: false }}
         />
         <Drawer.Screen
           name="Settings"
