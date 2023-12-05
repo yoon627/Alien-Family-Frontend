@@ -1,10 +1,9 @@
 import React, {useState} from "react";
 import {
   Image,
-  Pressable,
   StyleSheet,
   Text,
-  TextInput,
+  TextInput, TouchableOpacity,
   View,
 } from "react-native";
 import Swiper from "react-native-web-swiper";
@@ -70,7 +69,7 @@ export default function ImageDetailForm({route, navigation}) {
 
   return (
     <View style={styles.container}>
-      <Swiper controlsEnabled={true} from={index}>
+      <Swiper controlsEnabled={false} from={index}>
         {albumList.map((item, index) => {
           const nowYear = new Date().getFullYear();
           const createDate = new Date(item.createAt);
@@ -121,25 +120,25 @@ export default function ImageDetailForm({route, navigation}) {
                   onChangeText={setComment}
                   placeholder="댓글..."
                 />
-                <Pressable onPress={sendToComment}>
+                <TouchableOpacity onPress={sendToComment}>
                   <Text style={{paddingLeft: 10, top: 10}}>작성</Text>
-                </Pressable>
+                </TouchableOpacity>
               </View>
 
               <View style={{flexDirection: "row", marginVertical: 10}}>
-                <Pressable style={[styles.button, styles.buttonWrite]}>
+                <TouchableOpacity style={[styles.button, styles.buttonWrite]}>
                   <Text style={{...styles.textStyle, color: "#fff"}}>
                     수정
                   </Text>
-                </Pressable>
-                <Pressable style={[styles.button, styles.buttonClose]}>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.button, styles.buttonClose]}>
                   <Text style={{...styles.textStyle, color: "#727272"}}>
                     삭제
                   </Text>
-                </Pressable>
-                <Pressable onPress={() => navigation.navigate("Home")}>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.pop()}>
                   <Text>앨범으로</Text>
-                </Pressable>
+                </TouchableOpacity>
               </View>
             </View>
           );

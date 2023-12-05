@@ -9,7 +9,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
+  TextInput, TouchableOpacity,
   View,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -176,18 +176,18 @@ export default function ImageUploadForm({ uri, onUploadComplete }) {
         />
 
         <View style={{ flexDirection: "row", marginVertical: 10 }}>
-          <Pressable
+          <TouchableOpacity
             style={[styles.button, styles.buttonWrite]}
             onPress={uploadToServer}
           >
             <Text style={{ ...styles.textStyle, color: "#fff" }}>공유</Text>
-          </Pressable>
-          <Pressable
+          </TouchableOpacity>
+          <TouchableOpacity
             style={[styles.button, styles.buttonClose]}
             onPress={onUploadComplete}
           >
             <Text style={{ ...styles.textStyle, color: "#727272" }}>취소</Text>
-          </Pressable>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
