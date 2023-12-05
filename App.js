@@ -53,6 +53,7 @@ export default function App() {
   const [fontsLoaded] = useFonts({
     dnf: require("./assets/font/DNFBitBitv2.ttf"),
     sammul: require("./assets/font/DOSSaemmul.ttf"),
+    DungGeunMo: require("./assets/font/DungGeunMo.ttf"),
   });
 
   // const onLayoutRootView = useCallback(async () => {
