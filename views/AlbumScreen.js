@@ -53,7 +53,7 @@ export default function AlbumScreen({navigation}) {
         });
 
         const data = await response.json();
-        console.log("하이!!!!!! 가족쿠 리스트", data.data);
+        // console.log("하이!!!!!! 가족쿠 리스트", data.data);
         setTagList(data.data);
       } catch (error) {
         console.error("가족 태그를 불러오지 못했습니다.", error);
@@ -197,7 +197,7 @@ export default function AlbumScreen({navigation}) {
         return [...prevTags, tag];
       }
     });
-    console.log("선택한 태그:", selectedTags);
+    // console.log("선택한 태그:", selectedTags);
   };
 
   const filterImages = () => {
@@ -223,7 +223,7 @@ export default function AlbumScreen({navigation}) {
   };
 
   useEffect(() => {
-    console.log("선택한 태그 (useEffect):", selectedTags);
+    // console.log("선택한 태그 (useEffect):", selectedTags);
   }, [selectedTags]);
 
   return (

@@ -37,7 +37,7 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
         });
 
         const data = await response.json();
-        console.log("하이!!!!!! 가족쿠 리스트", data.data);
+        // console.log("하이!!!!!! 가족쿠 리스트", data.data);
         setTagList(data.data);
       } catch (error) {
         console.error("가족 태그를 불러오지 못했습니다.", error);
