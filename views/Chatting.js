@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Image,
   ScrollView,
@@ -8,9 +8,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import {Client} from "@stomp/stompjs";
+import { Client } from "@stomp/stompjs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {Ionicons} from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
 const TextEncodingPolyfill = require("text-encoding");
 
@@ -20,19 +20,19 @@ Object.assign("global", {
 });
 
 const imageList = [
-  {name: "BASIC", image: require("../assets/img/character/BASIC.png")},
-  {name: "GLASSES", image: require("../assets/img/character/GLASSES.png")},
-  {name: "GIRL", image: require("../assets/img/character/GIRL.png")},
-  {name: "BAND_AID", image: require("../assets/img/character/BAND_AID.png")},
-  {name: "RABBIT", image: require("../assets/img/character/RABBIT.png")},
-  {name: "HEADBAND", image: require("../assets/img/character/HEADBAND.png")},
-  {name: "TOMATO", image: require("../assets/img/character/TOMATO.png")},
+  { name: "BASIC", image: require("../assets/img/character/BASIC.png") },
+  { name: "GLASSES", image: require("../assets/img/character/GLASSES.png") },
+  { name: "GIRL", image: require("../assets/img/character/GIRL.png") },
+  { name: "BAND_AID", image: require("../assets/img/character/BAND_AID.png") },
+  { name: "RABBIT", image: require("../assets/img/character/RABBIT.png") },
+  { name: "HEADBAND", image: require("../assets/img/character/HEADBAND.png") },
+  { name: "TOMATO", image: require("../assets/img/character/TOMATO.png") },
   {
     name: "CHRISTMAS_TREE",
     image: require("../assets/img/character/CHRISTMAS_TREE.png"),
   },
-  {name: "SANTA", image: require("../assets/img/character/SANTA.png")},
-  {name: "PIRATE", image: require("../assets/img/character/PIRATE.png")},
+  { name: "SANTA", image: require("../assets/img/character/SANTA.png") },
+  { name: "PIRATE", image: require("../assets/img/character/PIRATE.png") },
 ];
 
 const ChatRoom = () => {
@@ -60,13 +60,15 @@ const ChatRoom = () => {
             headers: {
               Authorization: "Bearer " + token,
             },
-          }
+          },
         );
         if (!response.ok) {
           throw new Error("Response not ok");
         }
         const data = await response.json();
         setMessages(data);
+        console.log("챗룸 아디", chatroomId);
+        console.log("가져온 채팅내역", data);
       } catch (error) {
         console.error("Error getMsg:", error);
       }
@@ -117,9 +119,8 @@ const ChatRoom = () => {
             console.log("Connected to the WebSocket server");
             client.subscribe("/sub/chat/room/" + chatroomId, (message) => {
               const receivedMessage = JSON.parse(message.body);
-              console.log("리시브 메시지", receivedMessage);
               setMessages((prevMessages) => [...prevMessages, receivedMessage]);
-              scrollViewRef.current?.scrollToEnd({animated: true}); // 여기에 스크롤 로직 추가
+              scrollViewRef.current?.scrollToEnd({ animated: true }); // 여기에 스크롤 로직 추가
             });
           },
           onStompError: (frame) => {
@@ -150,13 +151,16 @@ const ChatRoom = () => {
   }, []);
 
   const sendMessage = () => {
+    const now = new Date();
+    now.setHours(now.getHours() + 9); // 현재 시간에 9시간을 더함
+
     if (stompClient && message) {
       const messageData = {
         type: "TALK",
         roomId: roomNumber,
         sender: myname, // 적절한 멤버 ID 설정
         content: message,
-        time: new Date().toISOString(),
+        time: now.toISOString(),
       };
       const headerData = {
         // Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNTIiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZmFtaWx5IjoiMzU2IiwiZXhwIjoxNzAwOTgzOTE4fQ.EHLgXe4iFJrjr2veJlkZiHafd8tomybIyxty66xmU38'
@@ -176,9 +180,8 @@ const ChatRoom = () => {
         // ... 기존 로직
         stompClient.subscribe("/sub/chat/room/" + roomNumber, (message) => {
           const receivedMessage = JSON.parse(message.body);
-          console.log("받은 메세지", receivedMessage);
           setMessages((prevMessages) => [...prevMessages, receivedMessage]);
-          scrollViewRef.current?.scrollToEnd({animated: true}); // 여기에 스크롤 로직 추가
+          scrollViewRef.current?.scrollToEnd({ animated: true }); // 여기에 스크롤 로직 추가
         });
       };
     }
@@ -191,6 +194,7 @@ const ChatRoom = () => {
       // 날짜가 유효하지 않은 경우 현재 시각으로 설정
       if (isNaN(date.getTime())) {
         date = new Date();
+        date.setHours(date.getHours() + 9);
       }
 
       return (
@@ -202,6 +206,7 @@ const ChatRoom = () => {
       console.error("Date parsing error:", error);
       // 에러 발생시 현재 시각을 반환
       const now = new Date();
+      now.setHours(now.getHours() + 9);
       return (
         now.getHours().toString().padStart(2, "0") +
         ":" +
@@ -211,8 +216,8 @@ const ChatRoom = () => {
   }
 
   return (
-    <View style={{flex: 1, padding: 20}}>
-      <ScrollView style={{flex: 1, marginLeft: 10}} ref={scrollViewRef}>
+    <View style={{ flex: 1, padding: 20 }}>
+      <ScrollView style={{ flex: 1, marginLeft: 10 }} ref={scrollViewRef}>
         {messages.map((msg, index) => (
           <View key={index}>
             <View
@@ -228,7 +233,7 @@ const ChatRoom = () => {
                   style={styles.profilePic}
                 />
               )}
-              <View style={{flex: 1}}>
+              <View style={{ flex: 1 }}>
                 {msg.sender !== myname && (
                   <Text style={styles.senderName}>{msg.sender}</Text>
                 )}
@@ -266,7 +271,7 @@ const ChatRoom = () => {
           placeholder="Type a message"
         />
         <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
-          <Ionicons name="send" size={24} color="white"/>
+          <Ionicons name="send" size={24} color="white" />
         </TouchableOpacity>
       </View>
     </View>

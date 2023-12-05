@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Button, Modal, ScrollView, Text, View } from "react-native";
+import {
+  Button,
+  Modal,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import * as Calendar from "expo-calendar";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { Checkbox } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function ChoseCalendar() {
+export default function ChoseCalendar({ closeModal, closeAddModal }) {
   const [events, setEvents] = useState([]);
   const [calendars, setCalendars] = useState([]);
   const [selectedCalendars, setSelectedCalendars] = useState([]);
@@ -25,10 +31,10 @@ export default function ChoseCalendar() {
       const { status } = await Calendar.requestCalendarPermissionsAsync();
       if (status === "granted") {
         const calendars = await Calendar.getCalendarsAsync(
-          Calendar.EntityTypes.EVENT
+          Calendar.EntityTypes.EVENT,
         );
         setCalendars(
-          calendars.map((calendar) => ({ ...calendar, selected: false }))
+          calendars.map((calendar) => ({ ...calendar, selected: false })),
         );
       }
     })();
@@ -56,7 +62,7 @@ export default function ChoseCalendar() {
 
   const handleImportEvents = async () => {
     if (selectedEvents.length > 0) {
-      selectedEvents.forEach(async (i) => {
+      for (const i of selectedEvents) {
         const payload = {
           eventName: i.title,
           startDate: new Date(i.startDate),
@@ -77,23 +83,23 @@ export default function ChoseCalendar() {
                 Authorization: `Bearer ${token}`,
               },
               body: JSON.stringify(payload),
-            }
+            },
           );
 
           if (!response.ok) {
             throw new Error("HTTP error! status: " + response.status);
+          } else if (response.ok) {
+            console.log("성공!!");
+            closeModal(false);
+            closeAddModal(false);
+            alert("업로드 완료!");
           }
         } catch (error) {
           console.error("There was an error creating the event:", error);
         }
-
-        console.log("가져올 이벤트 ㅋ", payload);
-      });
+      }
     }
   };
-
-  useEffect(() => {}, [selectedEvents]);
-
   const toggleEventSelection = (id) => {
     const updatedEvents = events.map((event) => {
       if (event.id === id) {
@@ -117,7 +123,7 @@ export default function ChoseCalendar() {
     const calendarEvents = await Calendar.getEventsAsync(
       [calendarId],
       startDate,
-      endDate
+      endDate,
     );
 
     setEvents(calendarEvents);
