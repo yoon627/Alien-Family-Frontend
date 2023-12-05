@@ -117,6 +117,8 @@ export default function CalendarScreen({ navigation }) {
     let month = date.month;
     setCurrentYear(year);
     setCurrentMonth(month);
+    let firstDate = date.dateString.substring(0, 8) + "01";
+    setSelected(firstDate);
   };
 
   const toggleAddOrEditModal = () => {
