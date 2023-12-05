@@ -154,13 +154,14 @@ export default function ImageDetailForm({route, navigation}) {
 
                 {item.photoTags.length !== 0 && (
                   <View style={styles.tagButtonsContainer}>
-                    <View style={styles.tagButton}>
-                      {item.photoTags.map((tag, index) => (
-                        <Text key={tag} style={{fontWeight: "bold"}}>
+                    {item.photoTags.map((tag, index) => (
+                      <View key={tag} style={[styles.tagButton, index !== item.photoTags.length - 1 && {marginRight: 10,}]}>
+                        <Text
+                          style={{fontWeight: "bold"}}>
                           {tag}
                         </Text>
-                      ))}
-                    </View>
+                      </View>
+                    ))}
                   </View>
                 )}
 
@@ -276,7 +277,6 @@ const styles = StyleSheet.create({
   tagButtonsContainer: {
     marginBottom: 10,
     flexDirection: "row",
-    justifyContent: "space-between",
     paddingHorizontal: "5%",
   },
   tagButton: {
