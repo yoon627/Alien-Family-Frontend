@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import Swiper from "react-native-web-swiper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {Ionicons} from '@expo/vector-icons';
 
 const TAG_OPTION = [
   {
@@ -79,69 +80,76 @@ export default function ImageDetailForm({route, navigation}) {
           const hours = createDate.getHours();
           const minutes = createDate.getMinutes();
 
-          const formattedDate = `${month}월 ${day}일 ${hours}:${minutes}`;
+          const formattedDate = `${month}월 ${day}일 ${hours}시 ${minutes}분`;
 
           return (
-            <View key={index} style={styles.slide}>
-              <View style={{alignItems: "flex-start", width: "90%"}}>
-                <Text style={styles.writer}>{item.writer}</Text>
-                <Image
-                  style={styles.uploadImage}
-                  source={{uri: item.photoKey}}
-                  resizeMode="contain"
-                />
-                <Text style={styles.date}>
-                  {nowYear === year ? formattedDate : year + formattedDate}
-                </Text>
-              </View>
+            <View key={index} style={{top: "7%"}}>
+              <TouchableOpacity
+                style={{alignItems: "flex-start", paddingHorizontal: "3%"}}
+                onPress={() => navigation.pop()}>
+                <Ionicons name="chevron-back" size={28} color="#C336CF"/>
+              </TouchableOpacity>
 
-              <View style={styles.tagButtonsContainer}>
-                <View style={styles.tagButton}>
-                  {item.photoTags.map((tag, index) => (
-                    <Text key={index} style={{fontWeight: "bold"}}>
-                      {tag}
+              <View style={styles.slide}>
+                <View style={{alignItems: "flex-start", width: "100%"}}>
+                  <Text style={styles.writer}>{item.writer}</Text>
+                  <Image
+                    style={styles.uploadImage}
+                    source={{uri: item.photoKey}}
+                    resizeMode="contain"
+                  />
+                  <Text style={styles.date}>
+                    {nowYear === year ? formattedDate : year + formattedDate}
+                  </Text>
+                </View>
+
+                {item.photoTags.length !== 0 &&
+                  <View style={styles.tagButtonsContainer}>
+                    <View style={styles.tagButton}>
+                      {item.photoTags.map((tag, index) => (
+                        <Text key={tag} style={{fontWeight: "bold"}}>
+                          {tag}
+                        </Text>
+                      ))}
+                    </View>
+                  </View>}
+
+                <Text style={styles.description}>{item.description}</Text>
+
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <TextInput
+                    value={comment}
+                    style={styles.comment}
+                    onChangeText={setComment}
+                    placeholder="댓글..."
+                  />
+                  <TouchableOpacity onPress={sendToComment}>
+                    <Text style={{paddingLeft: 10, top: 10}}>작성</Text>
+                  </TouchableOpacity>
+                </View>
+
+                <View style={{flexDirection: "row", justifyContent: "center",marginVertical: 10}}>
+                  <TouchableOpacity style={[styles.button, styles.buttonWrite]}>
+                    <Text style={{...styles.textStyle, color: "#fff"}}>
+                      수정
                     </Text>
-                  ))}
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[styles.button, styles.buttonClose]}>
+                    <Text style={{...styles.textStyle, color: "#727272"}}>
+                      삭제
+                    </Text>
+                  </TouchableOpacity>
                 </View>
               </View>
-
-              <Text style={styles.description}>{item.description}</Text>
-
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <TextInput
-                  value={comment}
-                  style={styles.comment}
-                  onChangeText={setComment}
-                  placeholder="댓글..."
-                />
-                <TouchableOpacity onPress={sendToComment}>
-                  <Text style={{paddingLeft: 10, top: 10}}>작성</Text>
-                </TouchableOpacity>
-              </View>
-
-              <View style={{flexDirection: "row", marginVertical: 10}}>
-                <TouchableOpacity style={[styles.button, styles.buttonWrite]}>
-                  <Text style={{...styles.textStyle, color: "#fff"}}>
-                    수정
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.button, styles.buttonClose]}>
-                  <Text style={{...styles.textStyle, color: "#727272"}}>
-                    삭제
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.pop()}>
-                  <Text>앨범으로</Text>
-                </TouchableOpacity>
-              </View>
             </View>
-          );
+          )
+            ;
         })}
       </Swiper>
     </View>
@@ -153,22 +161,20 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   slide: {
-    flex: 1,
+    top: "3%",
     justifyContent: "center",
-    alignItems: "center",
-    // padding: 10,
   },
   uploadImage: {
     width: "100%",
     aspectRatio: 1,
-    marginBottom: 20,
+    marginBottom: 10,
   },
   tag: {
     fontSize: 16,
-    marginBottom: 10,
   },
   description: {
     fontSize: 20,
+    paddingHorizontal: "5%",
   },
   comment: {
     fontSize: 15,
@@ -184,12 +190,14 @@ const styles = StyleSheet.create({
   writer: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginBottom: 5,
+    paddingHorizontal: "5%",
   },
   date: {
     fontSize: 18,
     color: "gray",
-    marginBottom: 20,
+    marginBottom: 5,
+    paddingHorizontal: "5%",
   },
   button: {
     width: 65,
@@ -213,9 +221,11 @@ const styles = StyleSheet.create({
   tagButtonsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
+    paddingHorizontal: "5%",
+    marginBottom: 10,
   },
   tagButton: {
-    marginTop: 20,
+    marginTop: 10,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 13,
