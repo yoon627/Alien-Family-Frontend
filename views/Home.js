@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState, useCallback} from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import {
   Alert,
   Animated,
@@ -19,8 +19,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import MarqueeText from "react-native-marquee";
 import axios from "axios";
 import * as Notifications from "expo-notifications";
-import {TouchableOpacity} from "react-native-gesture-handler";
-import {useFocusEffect} from "@react-navigation/native";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { useFocusEffect } from "@react-navigation/native";
+import * as Permissions from "expo-permissions";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -30,7 +31,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const fontRatio = SCREEN_HEIGHT / 800;
 
 const Container = styled.View`
@@ -39,18 +40,19 @@ const Container = styled.View`
   align-items: center;
 `;
 
-export default function Home({navigation, fonts}) {
+export default function Home({ navigation, fonts }) {
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
   const [TMI, setTMI] = useState("");
   const onChangeTMI = (payload) => setTMI(payload);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [firstCome, setFirstCome] = useState(true);
+  const [modalVisible, setModalVisible] = useState(true);
   const [todayTMI, setTodayTMI] = useState("");
   const [plant, setPlant] = useState(null);
   const [plantLevel, setPlantLevel] = useState(null);
   const [plantName, setPlantName] = useState(null);
-  const [plantPoint, setPlantPoint] = useState(null);
+  const [plantPoint, setPlantPoint] = useState(0);
   const [plantModal, setPlantModal] = useState(false);
   const openModal = () => {
     setTMI(""); // 모달 열릴 때 tmi 초기화
@@ -96,7 +98,7 @@ export default function Home({navigation, fonts}) {
       outputRange: [-1, 1],
     });
     return (
-      <Animated.View style={{transform: [{translateX: interpolated}]}}>
+      <Animated.View style={{ transform: [{ translateX: interpolated }] }}>
         <TouchableOpacity onPress={() => navigation.navigate("Mini Games")}>
           {alienType === "BASIC" ? (
             <Image
@@ -239,10 +241,38 @@ export default function Home({navigation, fonts}) {
           console.log("update Chatting");
         }
       });
+    const foregroundNotificationHandler = async (notification) => {
+      // Handle the notification payload here
+      console.log(notification);
+      const screenName = notification.notification.request.content.title;
+
+      if (screenName) {
+        if (screenName === "Calendar") {
+          navigation.navigate("Calendar");
+        }else if(screenName === "TMI"){
+          navigation.navigate("Attendance");
+        }else if(screenName === "Photo"){
+          navigation.navigate("AlbumScreen");
+        }else if(screenName === "Plant"){
+          navigation.navigate("Home");
+        }else if(screenName === "Family"){
+          navigation.navigate("FamilyInfo");
+        }else{
+          navigation.navigate("Chatting");
+        }
+        // If the notification contains a screen name, navigate to that screen
+        // navigationRef.current?.navigate(screenName);
+      }
+    };
+    const foregroundNotificationSubscription =
+      Notifications.addNotificationResponseReceivedListener(
+        foregroundNotificationHandler
+      );
     return () => {
       Notifications.removeNotificationSubscription(
         notificationListener.current
       );
+      foregroundNotificationSubscription.remove();
     };
   }, [notification]);
 
@@ -271,7 +301,7 @@ export default function Home({navigation, fonts}) {
 
   const renderFlower = () => {
     // 레벨에 따라 다른 이미지 렌더링
-    switch (plantLevel) {
+    switch (plantPoint) {
       case 0:
         return (
           <Image
@@ -283,7 +313,7 @@ export default function Home({navigation, fonts}) {
       case 1:
         return (
           <Image
-            source={require("../assets/img/level_1.png")}
+            source={require("../assets/img/level_2.png")}
             style={styles.plant}
           />
         );
@@ -291,32 +321,32 @@ export default function Home({navigation, fonts}) {
       case 2:
         return (
           <Image
-            source={require("../assets/img/level_2.png")}
-            style={styles.plant}
-          />
-        );
-
-      case 3:
-        return (
-          <Image
-            source={require("../assets/img/level_3.png")}
-            style={styles.plant}
-          />
-        );
-
-      case 4:
-        return (
-          <Image
             source={require("../assets/img/level_4.png")}
             style={styles.plant}
           />
         );
 
+      // case 3:
+      //   return (
+      //     <Image
+      //       source={require("../assets/img/level_3.png")}
+      //       style={styles.plant}
+      //     />
+      //   );
+
+      // case 4:
+      //   return (
+      //     <Image
+      //       source={require("../assets/img/level_4.png")}
+      //       style={styles.plant}
+      //     />
+      //   );
+
       // 추가 레벨에 따른 이미지 케이스
       default:
         return (
           <Image
-            source={require("../assets/img/level_0.png")}
+            source={require("../assets/img/level_4.png")}
             style={styles.plant}
           />
         );
@@ -332,7 +362,33 @@ export default function Home({navigation, fonts}) {
       };
     }, []) // 두 번째 매개변수로 빈 배열을 전달하여 컴포넌트가 처음 마운트될 때만 실행되도록 합니다.
   );
+  useEffect(() => {
+    // Set up a custom handler for background notifications
+    const backgroundNotificationHandler = async (notification) => {
+      // Handle the notification payload here
+      console.log(notification);
+      const screenName = notification.notification.request.content.title;
 
+      if (screenName) {
+        if (screenName === "Calendar") {
+          navigation.navigate("Calendar");
+        }
+        // If the notification contains a screen name, navigate to that screen
+        // navigationRef.current?.navigate(screenName);
+      }
+    };
+
+    // Subscribe to the background notification handler
+    const backgroundNotificationSubscription =
+      Notifications.addNotificationResponseReceivedListener(
+        backgroundNotificationHandler
+      );
+
+    // Clean up subscriptions when the component unmounts
+    return () => {
+      backgroundNotificationSubscription.remove();
+    };
+  }, []);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -382,7 +438,7 @@ export default function Home({navigation, fonts}) {
             </TouchableOpacity>
           </View>
           <View
-            style={{flex: 1, justifyContent: "center", alignItems: "center"}}
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
           ></View>
           <View style={styles.alien}>{movingObject()}</View>
           <View style={styles.bottomContainer}>
@@ -400,12 +456,34 @@ export default function Home({navigation, fonts}) {
               <View style={styles.modalOverlay}>
                 <View style={styles.modalView}>
                   {/* Modal content */}
-                  <Text style={{...styles.modalText, fontFamily: "dnf", fontSize: 20,}}>{plantName}</Text>
-                  <Text style={{...styles.modalText, fontWeight: "bold", fontSize: 16}}>level 🏆 {plantLevel}</Text>
-                  <Text style={{...styles.modalText, fontWeight: "bold"}}>{plantPoint} p</Text>
+                  <Text
+                    style={{
+                      ...styles.modalText,
+                      fontFamily: "dnf",
+                      fontSize: 20,
+                    }}
+                  >
+                    {plantName}
+                  </Text>
+                  <Text
+                    style={{
+                      ...styles.modalText,
+                      fontWeight: "bold",
+                      fontSize: 16,
+                    }}
+                  >
+                    level 🏆 {plantLevel}
+                  </Text>
+                  <Text style={{ ...styles.modalText, fontWeight: "bold" }}>
+                    {plantPoint} p
+                  </Text>
                   {/* Close button */}
                   <Pressable
-                    style={[styles.button, styles.buttonClose, {backgroundColor: "#CBCFC9"}]}
+                    style={[
+                      styles.button,
+                      styles.buttonClose,
+                      { backgroundColor: "#CBCFC9" },
+                    ]}
                     onPress={() => setPlantModal(false)}
                   >
                     <Text style={styles.textStyle}>닫기</Text>
@@ -450,7 +528,7 @@ export default function Home({navigation, fonts}) {
                         textAlign: "center",
                       }}
                     />
-                    <View style={{flexDirection: "row", marginVertical: 10}}>
+                    <View style={{ flexDirection: "row", marginVertical: 10 }}>
                       <Pressable
                         style={[styles.button, styles.buttonWrite]}
                         onPress={async () => {
@@ -477,6 +555,10 @@ export default function Home({navigation, fonts}) {
                             })
                               .then(async (resp) => {
                                 fetchData();
+                                if (firstCome) {
+                                  setFirstCome(false);
+                                  navigation.navigate("Attendance");
+                                }
                               })
                               .catch(function (error) {
                                 console.log("server error", error);
@@ -485,15 +567,18 @@ export default function Home({navigation, fonts}) {
                           }
                         }}
                       >
-                        <Text style={{...styles.textStyle, color: "#fff"}}>
+                        <Text style={{ ...styles.textStyle, color: "#fff" }}>
                           작성
                         </Text>
                       </Pressable>
                       <Pressable
                         style={[styles.button, styles.buttonClose]}
-                        onPress={() => setModalVisible(!modalVisible)}
+                        onPress={() => {
+                          setFirstCome(false);
+                          setModalVisible(!modalVisible);
+                        }}
                       >
-                        <Text style={{...styles.textStyle, color: "#727272"}}>
+                        <Text style={{ ...styles.textStyle, color: "#727272" }}>
                           취소
                         </Text>
                       </Pressable>
@@ -706,8 +791,8 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)', // 불투명한 검은 배경
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0, 0, 0, 0.8)", // 불투명한 검은 배경
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

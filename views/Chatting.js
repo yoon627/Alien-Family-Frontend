@@ -155,8 +155,14 @@ const ChatRoom = () => {
 
   const sendMessage = () => {
     const now = new Date();
-    now.setHours(now.getHours() + 9); // 현재 시간에 9시간을 더함
-
+    now.setHours(now.getHours()+9); // 현재 시간에 9시간을 더함
+    console.log(now);
+    // const tmp = new Date();
+    // const test =tmp.toISOString();
+    // console.log(typeof(tmp));
+    // console.log(tmp);
+    // console.log(typeof(test));
+    // console.log(test);
     if (stompClient && message) {
       const messageData = {
         type: "TALK",
@@ -197,7 +203,7 @@ const ChatRoom = () => {
       // 날짜가 유효하지 않은 경우 현재 시각으로 설정
       if (isNaN(date.getTime())) {
         date = new Date();
-        date.setHours(date.getHours() + 9);
+        date.setHours(date.getHours());
       }
 
       return (
