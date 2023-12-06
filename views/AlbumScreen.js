@@ -97,6 +97,7 @@ Notifications.setNotificationHandler({
             Authorization: "Bearer " + UserServerAccessToken,
           },
         });
+
         const data = await response.json();
         // 받아온 이미지 데이터 상태에 저장
         setAlbumList(data.data);
@@ -114,7 +115,7 @@ Notifications.setNotificationHandler({
   const imagePickerOption = {
     mediaTypes: ImagePicker.MediaTypeOptions.All,
     allowsEditing: false,
-    quality: 0,
+    quality: 0.5,
     aspect: [1, 1],
     includeBase64: Platform.OS === "android",
   };
