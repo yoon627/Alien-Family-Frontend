@@ -45,12 +45,13 @@ export default function Home({navigation, fonts}) {
   const responseListener = useRef();
   const [TMI, setTMI] = useState("");
   const onChangeTMI = (payload) => setTMI(payload);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [firstCome,setFirstCome] = useState(true);
+  const [modalVisible, setModalVisible] = useState(true);
   const [todayTMI, setTodayTMI] = useState("");
   const [plant, setPlant] = useState(null);
   const [plantLevel, setPlantLevel] = useState(null);
   const [plantName, setPlantName] = useState(null);
-  const [plantPoint, setPlantPoint] = useState(null);
+  const [plantPoint, setPlantPoint] = useState(0);
   const [plantModal, setPlantModal] = useState(false);
   const openModal = () => {
     setTMI(""); // 모달 열릴 때 tmi 초기화
@@ -271,7 +272,7 @@ export default function Home({navigation, fonts}) {
 
   const renderFlower = () => {
     // 레벨에 따라 다른 이미지 렌더링
-    switch (plantLevel) {
+    switch (plantPoint) {
       case 0:
         return (
           <Image
@@ -291,32 +292,32 @@ export default function Home({navigation, fonts}) {
       case 2:
         return (
           <Image
-            source={require("../assets/img/level_2.png")}
-            style={styles.plant}
-          />
-        );
-
-      case 3:
-        return (
-          <Image
-            source={require("../assets/img/level_3.png")}
-            style={styles.plant}
-          />
-        );
-
-      case 4:
-        return (
-          <Image
             source={require("../assets/img/level_4.png")}
             style={styles.plant}
           />
         );
 
+      // case 3:
+      //   return (
+      //     <Image
+      //       source={require("../assets/img/level_3.png")}
+      //       style={styles.plant}
+      //     />
+      //   );
+
+      // case 4:
+      //   return (
+      //     <Image
+      //       source={require("../assets/img/level_4.png")}
+      //       style={styles.plant}
+      //     />
+      //   );
+
       // 추가 레벨에 따른 이미지 케이스
       default:
         return (
           <Image
-            source={require("../assets/img/level_0.png")}
+            source={require("../assets/img/level_4.png")}
             style={styles.plant}
           />
         );
@@ -477,6 +478,10 @@ export default function Home({navigation, fonts}) {
                             })
                               .then(async (resp) => {
                                 fetchData();
+                                if (firstCome){
+                                  setFirstCome(false);
+                                  navigation.navigate("Attendance");
+                                }
                               })
                               .catch(function (error) {
                                 console.log("server error", error);
@@ -491,7 +496,7 @@ export default function Home({navigation, fonts}) {
                       </Pressable>
                       <Pressable
                         style={[styles.button, styles.buttonClose]}
-                        onPress={() => setModalVisible(!modalVisible)}
+                        onPress={() => {setFirstCome(false);setModalVisible(!modalVisible)}}
                       >
                         <Text style={{...styles.textStyle, color: "#727272"}}>
                           취소

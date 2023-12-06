@@ -24,7 +24,7 @@ Notifications.setNotificationHandler({
 });
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
-const SCREEN_HEIGHT = Dimensions.get("window").height * 0.7;
+const SCREEN_HEIGHT = Dimensions.get("window").height * 0.3;
 const ALIEN_SIZE = 80;
 const DIFF_WIDTH = SCREEN_WIDTH - ALIEN_SIZE;
 const DIFF_HEIGHT = SCREEN_HEIGHT - ALIEN_SIZE;
