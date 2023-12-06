@@ -5,6 +5,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Modal,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -12,6 +13,7 @@ import * as Notifications from "expo-notifications";
 import FamilyInfo from "./FamilyInfo";
 import MainDrawer from "./MainDrawer";
 import MainScreen from "./MainScreen";
+import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 
 const saveServer = async () => {
   try {
@@ -38,38 +40,40 @@ getData();
 const Login = ({ navigation }) => {
   const [isButtonPressed, setButtonPressed] = useState(false);
   const [notification, setNotification] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
   const notificationListener = useRef();
+  const onHandlerStateChange = useCallback(
+    (event) => {
+      if (event.nativeEvent.state === State.ACTIVE) {
+        // Long press가 활성화된 경우
+        console.log("Hello");
+        onLongPress();
+      }
+    },
+    [onLongPress]
+  );
+  const onLongPress = () => {
+    console.log("Long press activated!");
+    // 10초 동안 눌렸을 때 실행되는 함수
+    setModalVisible(true);
+  };
   saveServer();
-  // useEffect(() => {
-  //   // Set up a custom handler for background notifications
-  //   const backgroundNotificationHandler = async (notification) => {
-  //     // Handle the notification payload here
-  //     console.log(notification);
-  //     const screenName = notification.notification.request.content.title;
+  const [holdButtonPressed, setHoldButtonPressed] = useState(false);
+  let pressTimeout;
 
-  //     if (screenName) {
-  //       if (screenName === "Family") {
-  //         navigation.navigate("FamilyInfo", {
-  //           screen: "MainDrawer",
-  //           params: { showFamilyInfo: true },
-  //         });
-  //       }
-  //       // If the notification contains a screen name, navigate to that screen
-  //       // navigationRef.current?.navigate(screenName);
-  //     }
-  //   };
+  const handlePressIn = () => {
+    pressTimeout = setTimeout(() => {
+      // 버튼을 누르고 있을 때의 동작을 여기에 추가
+      console.log("Button Pressed and Held!");
+    }, 10000); // 10초 동안 버튼을 누르고 있어야 동작
 
-  //   // Subscribe to the background notification handler
-  //   const backgroundNotificationSubscription =
-  //     Notifications.addNotificationResponseReceivedListener(
-  //       backgroundNotificationHandler
-  //     );
+    setHoldButtonPressed(true);
+  };
 
-  //   // Clean up subscriptions when the component unmounts
-  //   return () => {
-  //     backgroundNotificationSubscription.remove();
-  //   };
-  // }, []);
+  const handlePressOut = () => {
+    clearTimeout(pressTimeout);
+    setHoldButtonPressed(false);
+  };
   return (
     <ImageBackground
       source={require("../assets/img/loginScreen.png")}
@@ -77,6 +81,29 @@ const Login = ({ navigation }) => {
     >
       <View style={{ flex: 1 }}>
         <View style={{ flex: 7 }} />
+        <TouchableOpacity
+          onPressIn={handlePressIn}
+          onPressOut={handlePressOut}
+          style={[styles.button, styles.transparentButton]}
+        >
+        </TouchableOpacity>
+        <Modal
+          animationType="none" // 모달이 나타날 때의 애니메이션 유형
+          transparent={true} // 배경 투명하게
+          visible={modalVisible} // 모달의 표시 여부
+          onRequestClose={() => {
+            setModalVisible(false);
+          }}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text>Hello</Text>
+              <TouchableOpacity onPress={() => setModalVisible(false)}>
+                <Text>Close Modal</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
         <View
           style={{ flex: 1.5, justifyContent: "center", alignItems: "center" }}
         >
@@ -213,6 +240,32 @@ const styles = StyleSheet.create({
   },
   pressedButton: {
     backgroundColor: "purple", // 눌렸을 때의 색상
+  },
+  transparentButton: {
+    position: "absolute",
+    top: 50, // 상단 위치 조절
+    alignSelf: "center", // 가운데 정렬
+    padding: 10,
+    width: 100,
+    height: 100,
+    // backgroundColor: "rgba(255, 255, 255, 0.3)", // 투명한 배경 색상
+  },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // 반투명한 배경
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
   },
 });
 
