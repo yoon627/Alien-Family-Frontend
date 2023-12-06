@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   View,
   Modal,
+  TextInput,
+  Alert,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -38,6 +40,8 @@ const getData = async () => {
 getData();
 
 const Login = ({ navigation }) => {
+  const [admin, setAdmin] = useState("");
+  const onChangeAdmin = (payload) => setAdmin(payload);
   const [isButtonPressed, setButtonPressed] = useState(false);
   const [notification, setNotification] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -58,21 +62,19 @@ const Login = ({ navigation }) => {
     setModalVisible(true);
   };
   saveServer();
-  const [holdButtonPressed, setHoldButtonPressed] = useState(false);
   let pressTimeout;
 
   const handlePressIn = () => {
     pressTimeout = setTimeout(() => {
       // 버튼을 누르고 있을 때의 동작을 여기에 추가
       console.log("Button Pressed and Held!");
-    }, 10000); // 10초 동안 버튼을 누르고 있어야 동작
-
-    setHoldButtonPressed(true);
+    }, 1000); // 10초 동안 버튼을 누르고 있어야 동작
+    setModalVisible(true);
   };
 
   const handlePressOut = () => {
     clearTimeout(pressTimeout);
-    setHoldButtonPressed(false);
+    // setModalVisible(false);
   };
   return (
     <ImageBackground
@@ -85,8 +87,7 @@ const Login = ({ navigation }) => {
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
           style={[styles.button, styles.transparentButton]}
-        >
-        </TouchableOpacity>
+        ></TouchableOpacity>
         <Modal
           animationType="none" // 모달이 나타날 때의 애니메이션 유형
           transparent={true} // 배경 투명하게
@@ -97,9 +98,84 @@ const Login = ({ navigation }) => {
         >
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <Text>Hello</Text>
+              <TextInput
+                value={admin}
+                placeholder="Code?"
+                onChangeText={onChangeAdmin}
+              />
+              <TouchableOpacity
+                onPress={async () => {
+                  await axios({
+                    method: "GET",
+                    url: "http://43.202.241.133:1998/api/1/master/" + admin,
+                  })
+                    .then(async (resp) => {
+
+                      if (resp.data.code===12345) {
+                        Alert.alert("Wrong Code");
+                      } else {
+                        const t = resp.data.data.tokenInfo.accessToken;
+                        await axios({
+                          method: "GET",
+                          url: "http://43.202.241.133:1998/api/login/token",
+                          headers: {
+                            Authorization: "Bearer " + t,
+                          },
+                        })
+                          .then(async (resp) => {
+                            const members =
+                              resp.data.data.familyResponseDto.members;
+                            const familyId =
+                              resp.data.data.familyResponseDto.familyId;
+                            const chatroomId =
+                              resp.data.data.familyResponseDto.chatroomId;
+                            const plant =
+                              resp.data.data.familyResponseDto.plant;
+                            var myDB = {};
+                            for (let i = 0; i < members.length; i++) {
+                              const newkey = members[i].memberId;
+                              myDB[newkey] = members[i];
+                            }
+                            await AsyncStorage.setItem(
+                              "myDB",
+                              JSON.stringify(myDB)
+                            );
+                            await AsyncStorage.setItem(
+                              "familyId",
+                              JSON.stringify(familyId)
+                            );
+                            await AsyncStorage.setItem(
+                              "chatroomId",
+                              JSON.stringify(chatroomId)
+                            );
+                            await AsyncStorage.setItem(
+                              "plantInfo",
+                              JSON.stringify(plant)
+                            );
+                            await AsyncStorage.setItem(
+                              "UserServerAccessToken",
+                              resp.data.data.tokenInfo.accessToken
+                            );
+                            console.log(members);
+                            console.log(chatroomId);
+                            console.log(familyId);
+                            console.log(plant);
+                            console.log(myDB);
+                          })
+                          .then(() => {
+                            setModalVisible(false);
+                            navigation.navigate("MainDrawer");
+                          })
+                          .catch((e) => navigation.navigate("KaKaoLogin"));
+                      }
+                    })
+                    .catch((e) => console.log(e));
+                }}
+              >
+                <Text>Submit</Text>
+              </TouchableOpacity>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
-                <Text>Close Modal</Text>
+                <Text>Close</Text>
               </TouchableOpacity>
             </View>
           </View>
