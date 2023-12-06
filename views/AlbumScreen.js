@@ -114,7 +114,7 @@ Notifications.setNotificationHandler({
   const imagePickerOption = {
     mediaTypes: ImagePicker.MediaTypeOptions.All,
     allowsEditing: false,
-    quality: 0,
+    quality: 0.5,
     aspect: [1, 1],
     includeBase64: Platform.OS === "android",
   };
