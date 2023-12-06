@@ -40,36 +40,36 @@ const Login = ({ navigation }) => {
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   saveServer();
-  useEffect(() => {
-    // Set up a custom handler for background notifications
-    const backgroundNotificationHandler = async (notification) => {
-      // Handle the notification payload here
-      console.log(notification);
-      const screenName = notification.notification.request.content.title;
+  // useEffect(() => {
+  //   // Set up a custom handler for background notifications
+  //   const backgroundNotificationHandler = async (notification) => {
+  //     // Handle the notification payload here
+  //     console.log(notification);
+  //     const screenName = notification.notification.request.content.title;
 
-      if (screenName) {
-        if (screenName === "Family") {
-          navigation.navigate("FamilyInfo", {
-            screen: "MainDrawer",
-            params: { showFamilyInfo: true },
-          });
-        }
-        // If the notification contains a screen name, navigate to that screen
-        // navigationRef.current?.navigate(screenName);
-      }
-    };
+  //     if (screenName) {
+  //       if (screenName === "Family") {
+  //         navigation.navigate("FamilyInfo", {
+  //           screen: "MainDrawer",
+  //           params: { showFamilyInfo: true },
+  //         });
+  //       }
+  //       // If the notification contains a screen name, navigate to that screen
+  //       // navigationRef.current?.navigate(screenName);
+  //     }
+  //   };
 
-    // Subscribe to the background notification handler
-    const backgroundNotificationSubscription =
-      Notifications.addNotificationResponseReceivedListener(
-        backgroundNotificationHandler
-      );
+  //   // Subscribe to the background notification handler
+  //   const backgroundNotificationSubscription =
+  //     Notifications.addNotificationResponseReceivedListener(
+  //       backgroundNotificationHandler
+  //     );
 
-    // Clean up subscriptions when the component unmounts
-    return () => {
-      backgroundNotificationSubscription.remove();
-    };
-  }, []);
+  //   // Clean up subscriptions when the component unmounts
+  //   return () => {
+  //     backgroundNotificationSubscription.remove();
+  //   };
+  // }, []);
   return (
     <ImageBackground
       source={require("../assets/img/loginScreen.png")}
