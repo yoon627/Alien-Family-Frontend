@@ -56,16 +56,16 @@ async function registerForPushNotificationsAsync() {
 const ChooseCharacter = ({ navigation, route }) => {
   const [showImage, setShowImage] = useState(false); // 사진 표시 상태 관리
 
-  const handleNextPage = () => {
-    setShowImage(true); // 사진을 표시합니다.
-    setTimeout(() => {
-      setShowImage(false); // 사진 표시를 중단합니다.
-      navigation.navigate("MainDrawer"); // 다음 페이지로 넘어갑니다.
-    }, 5000); // 3000 밀리초(3초) 동안 사진을 표시합니다.
-  };
+  // const handleNextPage = () => {
+  //   setShowImage(true); // 사진을 표시합니다.
+  //   setTimeout(() => {
+  //     setShowImage(false); // 사진 표시를 중단합니다.
+  //     navigation.navigate("MainDrawer"); // 다음 페이지로 넘어갑니다.
+  //   }, 5000); // 3000 밀리초(3초) 동안 사진을 표시합니다.
+  // };
 
   const [characterJson, setCharacterJson] = useState(
-    route.params.characterJson,
+    route.params.characterJson
   );
   const [alienType, setAlienType] = useState("BASIC");
   const [selectedToggle, setSelectedToggle] = useState(0);
@@ -275,18 +275,22 @@ const ChooseCharacter = ({ navigation, route }) => {
                 <ImageBackground source={require("../assets/img/pinkBtn.png")}>
                   <TouchableOpacity
                     onPress={async () => {
-                      await handleNextPage();
+                      // await handleNextPage();
                       await AsyncStorage.setItem("alienType", alienType);
-                      const SERVER_ADDRESS =
-                        await AsyncStorage.getItem("ServerAddress");
+                      const SERVER_ADDRESS = await AsyncStorage.getItem(
+                        "ServerAddress"
+                      );
                       const nickname = await AsyncStorage.getItem("nickname");
                       const birthday = await AsyncStorage.getItem("birthday");
-                      const familyRole =
-                        await AsyncStorage.getItem("familyRole");
-                      const familyCode =
-                        await AsyncStorage.getItem("familyCode");
-                      const kakaoEmail =
-                        await AsyncStorage.getItem("kakaoEmail");
+                      const familyRole = await AsyncStorage.getItem(
+                        "familyRole"
+                      );
+                      const familyCode = await AsyncStorage.getItem(
+                        "familyCode"
+                      );
+                      const kakaoEmail = await AsyncStorage.getItem(
+                        "kakaoEmail"
+                      );
                       const plantName = await AsyncStorage.getItem("plantName");
                       const ufoName = await AsyncStorage.getItem("ufoName");
 
@@ -319,7 +323,7 @@ const ChooseCharacter = ({ navigation, route }) => {
                           .then(async (resp) => {
                             await AsyncStorage.setItem(
                               "UserServerAccessToken",
-                              resp.data.data.tokenInfo.accessToken,
+                              resp.data.data.tokenInfo.accessToken
                             );
                             const members =
                               resp.data.data.familyResponseDto.members;
@@ -337,20 +341,21 @@ const ChooseCharacter = ({ navigation, route }) => {
                             }
                             await AsyncStorage.setItem(
                               "myDB",
-                              JSON.stringify(myDB),
+                              JSON.stringify(myDB)
                             );
                             await AsyncStorage.setItem(
                               "familyId",
-                              JSON.stringify(familyId),
+                              JSON.stringify(familyId)
                             );
                             await AsyncStorage.setItem(
                               "chatroomId",
-                              JSON.stringify(chatroomId),
+                              JSON.stringify(chatroomId)
                             );
                             await AsyncStorage.setItem(
                               "plantInfo",
-                              JSON.stringify(plant),
+                              JSON.stringify(plant)
                             );
+                            navigation.navigate("MainDrawer");
                           })
                           .catch((e) => console.log(e));
                       } else {
@@ -387,7 +392,7 @@ const ChooseCharacter = ({ navigation, route }) => {
                                 .then(async (resp) => {
                                   await AsyncStorage.setItem(
                                     "UserServerAccessToken",
-                                    resp.data.data.tokenInfo.accessToken,
+                                    resp.data.data.tokenInfo.accessToken
                                   );
                                   const members =
                                     resp.data.data.familyResponseDto.members;
@@ -404,20 +409,21 @@ const ChooseCharacter = ({ navigation, route }) => {
                                   }
                                   await AsyncStorage.setItem(
                                     "myDB",
-                                    JSON.stringify(myDB),
+                                    JSON.stringify(myDB)
                                   );
                                   await AsyncStorage.setItem(
                                     "familyId",
-                                    JSON.stringify(familyId),
+                                    JSON.stringify(familyId)
                                   );
                                   await AsyncStorage.setItem(
                                     "chatroomId",
-                                    JSON.stringify(chatroomId),
+                                    JSON.stringify(chatroomId)
                                   );
                                   await AsyncStorage.setItem(
                                     "plantInfo",
-                                    JSON.stringify(plant),
+                                    JSON.stringify(plant)
                                   );
+                                  navigation.navigate("MainDrawer");
                                 })
                                 .catch((e) => console.log(e));
                             } else {

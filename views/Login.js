@@ -5,6 +5,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Modal,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -12,6 +13,7 @@ import * as Notifications from "expo-notifications";
 import FamilyInfo from "./FamilyInfo";
 import MainDrawer from "./MainDrawer";
 import MainScreen from "./MainScreen";
+import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 
 const saveServer = async () => {
   try {
@@ -36,39 +38,42 @@ const getData = async () => {
 getData();
 
 const Login = ({ navigation }) => {
+  const [isButtonPressed, setButtonPressed] = useState(false);
   const [notification, setNotification] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
   const notificationListener = useRef();
-  saveServer();
-  useEffect(() => {
-    // Set up a custom handler for background notifications
-    const backgroundNotificationHandler = async (notification) => {
-      // Handle the notification payload here
-      console.log(notification);
-      const screenName = notification.notification.request.content.title;
-
-      if (screenName) {
-        if (screenName === "Family") {
-          navigation.navigate("FamilyInfo", {
-            screen: "MainDrawer",
-            params: { showFamilyInfo: true },
-          });
-        }
-        // If the notification contains a screen name, navigate to that screen
-        // navigationRef.current?.navigate(screenName);
+  const onHandlerStateChange = useCallback(
+    (event) => {
+      if (event.nativeEvent.state === State.ACTIVE) {
+        // Long press가 활성화된 경우
+        console.log("Hello");
+        onLongPress();
       }
-    };
+    },
+    [onLongPress]
+  );
+  const onLongPress = () => {
+    console.log("Long press activated!");
+    // 10초 동안 눌렸을 때 실행되는 함수
+    setModalVisible(true);
+  };
+  saveServer();
+  const [holdButtonPressed, setHoldButtonPressed] = useState(false);
+  let pressTimeout;
 
-    // Subscribe to the background notification handler
-    const backgroundNotificationSubscription =
-      Notifications.addNotificationResponseReceivedListener(
-        backgroundNotificationHandler
-      );
+  const handlePressIn = () => {
+    pressTimeout = setTimeout(() => {
+      // 버튼을 누르고 있을 때의 동작을 여기에 추가
+      console.log("Button Pressed and Held!");
+    }, 10000); // 10초 동안 버튼을 누르고 있어야 동작
 
-    // Clean up subscriptions when the component unmounts
-    return () => {
-      backgroundNotificationSubscription.remove();
-    };
-  }, []);
+    setHoldButtonPressed(true);
+  };
+
+  const handlePressOut = () => {
+    clearTimeout(pressTimeout);
+    setHoldButtonPressed(false);
+  };
   return (
     <ImageBackground
       source={require("../assets/img/loginScreen.png")}
@@ -76,15 +81,38 @@ const Login = ({ navigation }) => {
     >
       <View style={{ flex: 1 }}>
         <View style={{ flex: 7 }} />
+        <TouchableOpacity
+          onPressIn={handlePressIn}
+          onPressOut={handlePressOut}
+          style={[styles.button, styles.transparentButton]}
+        >
+        </TouchableOpacity>
+        <Modal
+          animationType="none" // 모달이 나타날 때의 애니메이션 유형
+          transparent={true} // 배경 투명하게
+          visible={modalVisible} // 모달의 표시 여부
+          onRequestClose={() => {
+            setModalVisible(false);
+          }}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text>Hello</Text>
+              <TouchableOpacity onPress={() => setModalVisible(false)}>
+                <Text>Close Modal</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
         <View
           style={{ flex: 1.5, justifyContent: "center", alignItems: "center" }}
         >
           <Text
             style={{
               color: "white",
-              fontSize: 40,
-              lineHeight: 60,
-              marginTop: 30,
+              fontSize: 35,
+              lineHeight: 45,
+              marginTop: 40,
               fontFamily: "dnf",
             }}
           >
@@ -93,8 +121,8 @@ const Login = ({ navigation }) => {
           <Text
             style={{
               color: "white",
-              fontSize: 40,
-              lineHeight: 60,
+              fontSize: 35,
+              lineHeight: 45,
               fontFamily: "dnf",
             }}
           >
@@ -115,6 +143,8 @@ const Login = ({ navigation }) => {
           <View style={{ overflow: "hidden", borderRadius: 15, width: 175 }}>
             <ImageBackground source={require("../assets/img/pinkBtn.png")}>
               <TouchableOpacity
+                onPressIn={() => setButtonPressed(true)}
+                onPressOut={() => setButtonPressed(false)}
                 onPress={async () => {
                   const SERVER_ADDRESS = await AsyncStorage.getItem(
                     "ServerAddress"
@@ -172,11 +202,14 @@ const Login = ({ navigation }) => {
                     navigation.navigate("KaKaoLogin");
                   }
                 }}
-                style={{
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "black",
-                }}
+                style={[
+                  {
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "black",
+                  },
+                  isButtonPressed && styles.pressedButton,
+                ]}
               >
                 <Text
                   style={{
@@ -194,29 +227,6 @@ const Login = ({ navigation }) => {
               </TouchableOpacity>
             </ImageBackground>
           </View>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate("Greet");
-            }}
-            style={{
-              borderRadius: 50,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Text
-              style={{
-                color: "white",
-                marginHorizontal: 30,
-                marginVertical: 15,
-                alignItems: "center",
-                justifyContent: "center",
-                textDecorationLine: "underline",
-              }}
-            >
-              로그인 테스트용 버튼
-            </Text>
-          </TouchableOpacity>
         </View>
       </View>
     </ImageBackground>
@@ -227,6 +237,35 @@ const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
     resizeMode: "cover", // 또는 'contain' 등 이미지 사이즈 조정
+  },
+  pressedButton: {
+    backgroundColor: "purple", // 눌렸을 때의 색상
+  },
+  transparentButton: {
+    position: "absolute",
+    top: 50, // 상단 위치 조절
+    alignSelf: "center", // 가운데 정렬
+    padding: 10,
+    width: 100,
+    height: 100,
+    // backgroundColor: "rgba(255, 255, 255, 0.3)", // 투명한 배경 색상
+  },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // 반투명한 배경
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
   },
 });
 

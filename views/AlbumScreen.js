@@ -11,7 +11,6 @@ import {
   FlatList,
   Image,
   Platform,
-  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
