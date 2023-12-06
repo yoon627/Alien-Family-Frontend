@@ -82,9 +82,9 @@ const Login = ({ navigation }) => {
           <Text
             style={{
               color: "white",
-              fontSize: 40,
-              lineHeight: 60,
-              marginTop: 30,
+              fontSize: 35,
+              lineHeight: 45,
+              marginTop: 40,
               fontFamily: "dnf",
             }}
           >
@@ -93,8 +93,8 @@ const Login = ({ navigation }) => {
           <Text
             style={{
               color: "white",
-              fontSize: 40,
-              lineHeight: 60,
+              fontSize: 35,
+              lineHeight: 45,
               fontFamily: "dnf",
             }}
           >
@@ -194,29 +194,6 @@ const Login = ({ navigation }) => {
               </TouchableOpacity>
             </ImageBackground>
           </View>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate("Greet");
-            }}
-            style={{
-              borderRadius: 50,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Text
-              style={{
-                color: "white",
-                marginHorizontal: 30,
-                marginVertical: 15,
-                alignItems: "center",
-                justifyContent: "center",
-                textDecorationLine: "underline",
-              }}
-            >
-              로그인 테스트용 버튼
-            </Text>
-          </TouchableOpacity>
         </View>
       </View>
     </ImageBackground>
