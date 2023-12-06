@@ -1,8 +1,11 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { StyleSheet, Text, View, Dimensions, Image } from "react-native";
+import { Dimensions, Image, StyleSheet, Text, View, ImageBackground } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { ScrollView } from "react-native-gesture-handler";
+// import LinearGradient from 'react-native-linear-gradient';
+import {LinearGradient} from 'expo-linear-gradient';
+
 import { Bold } from "lucide-react-native";
 import * as Notifications from "expo-notifications";
 import { useFocusEffect } from "@react-navigation/native";
@@ -15,10 +18,29 @@ Notifications.setNotificationHandler({
 });
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
+const SCREEN_HEIGHT = Dimensions.get("window").height;
 
 export default function Attendance({ navigation }) {
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
+  const [Family, setFamily] = useState({});
+  const [isLoading, setIsLoading] = useState(true); 
+
+  const [familyInfo, setFamilyInfo] = useState([]);
+  const alienImagePath = {
+    BASIC: require(`../assets/img/character/BASIC.png`),
+    GLASSES: require(`../assets/img/character/GLASSES.png`),
+    GIRL: require(`../assets/img/character/GIRL.png`),
+    BAND_AID: require(`../assets/img/character/BAND_AID.png`),
+    RABBIT: require(`../assets/img/character/RABBIT.png`),
+    HEADBAND: require(`../assets/img/character/HEADBAND.png`),
+    TOMATO: require(`../assets/img/character/TOMATO.png`),
+    CHRISTMAS_TREE: require(`../assets/img/character/CHRISTMAS_TREE.png`),
+    SANTA: require(`../assets/img/character/SANTA.png`),
+    PIRATE: require(`../assets/img/character/PIRATE.png`),
+  };
+
+
   const ktc = new Date();
   ktc.setHours(ktc.getHours() + 9);
   const today = new Date();
@@ -98,13 +120,62 @@ export default function Attendance({ navigation }) {
         }
         console.log(tmpJson);
         setTmiJson(tmpJson);
+        
       })
       .catch((e) => console.log(e));
   }
+  // if (isLoading) {
+  //   return <Text>Loading...</Text>; // 로딩 중일 때 표시할 UI
+  // }
 
   useEffect(() => {
     fetchData();
   }, []);
+
+  // 가족정보
+  useEffect(() => {
+    const viewFamily = async () => {
+      try {
+        const resp = await AsyncStorage.getItem("myDB");
+        setFamily(JSON.parse(resp) || {});
+        setIsLoading(false);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    viewFamily();
+  }, []);
+
+  useEffect(() => {
+    findImageByName();
+  }, [Family]);
+  
+
+  const findImageByName = async (writer) => {
+    console.log("writer:", writer);
+    for (const key in familyInfo) {
+      console.log("Nickname : ", familyInfo[key].nickname, writer)
+      if (familyInfo[key].nickname === writer) {
+        console.log("!!");
+        return familyInfo[key].alien.type;
+      } 
+    return alienImagePath["BASIC"];
+    }
+  };
+
+  
+const renderImages = async () => {
+  // 비동기 함수로 이미지 렌더링
+  const imageSource = findImageByName(tmi.split(":")[0]);
+  
+  // 이미지 렌더링
+  return (
+    <Image
+      style={styles.profilePic}
+      source={imageSource}
+    />
+  );
+};
 
   useFocusEffect(
     useCallback(() => {
@@ -143,42 +214,82 @@ export default function Attendance({ navigation }) {
   }, [notification]);
   return (
     <View style={styles.container}>
-      <View style={{ alignItems: "center", justifyContent: "center" }}>
-        <Text style={styles.main_title}>Attendance</Text>
-      </View>
+      <ImageBackground
+          source={require("../assets/img/attendance_bg.jpg")}
+          imageStyle={{resizeMode: 'cover', height:  SCREEN_HEIGHT , width: SCREEN_WIDTH}}
+        >
+       <Text style={styles.month}>12月</Text>
       <ScrollView>
-        {week.map((day) => (
-          <View key={day} style={styles.attendence_container}>
-            <Text style={styles.sub_title}>
-              # {JSON.stringify(day).slice(1, 11)}
-            </Text>
+        {week.map((day, index) => (          
+          <View key={day} style={[styles.attendance_container, { marginLeft: index % 2 === 1 ? 30 : 10}]}>
+            {/* 별 배경 일자 */}
+            <View style={styles.star_container}>
+              {/* 출석도장 */}
+              <View style={styles.small_star}>
+                {attendanceJson[day] && attendanceJson[day].map((attendant, index) =>
+                    Array.from({ length: attendant }).map((_, subIndex) => (
+                      <Image
+                        key={subIndex}
+                        style={{ width: 25, height: 25}}
+                        source={require("../assets/img/small_star.png")}
+                        imageStyle={{resizeMode: 'contain'}}
+                      />
+                    )),
+                  )}
+              </View>
+              <ImageBackground
+                source={require("../assets/img/star.png")}                
+                imageStyle={{resizeMode: 'contain'}}
+                style={styles.big_star}
+              >
+                <Text style={styles.day_txt}>
+                  {JSON.stringify(day).slice(9, 11)}
+                </Text>
+              </ImageBackground>
+            </View>
+          
+            {/* TMI */}
+            <View key={day} style={styles.tmi_container}>
             {tmiJson[day] && tmiJson[day].length > 0 ? (
               tmiJson[day].map((tmi, index) => (
-                <Text key={index} style={styles.tmi_txt}>
-                  - {tmi}
-                </Text>
+                <View key={index}>
+                  {/* 그라데이션 */}
+                  <LinearGradient
+                    colors={['rgba(255, 255, 255, 0.4)', 'rgba(255, 255, 255, 0)']}
+                    style={styles.tmi_gradient}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                  >
+                    {/* TMI */}
+                    <Text key={index} style={styles.tmi_txt}>
+                      {/* {tmi} */}
+                      {/* <Image
+                        style={styles.profilePic}
+                        source={await findImageByName(tmi.split(":")[0])}
+                      /> */}
+                       {/* await renderImages({tmi}) */}
+                      <Text style={styles.nickName}>{tmi.split(":")[0]}</Text>
+                      <Text>{tmi.split(":")[1]}</Text>
+                      
+                    </Text>
+                  </LinearGradient>
+                </View>
               ))
             ) : (
-              <Text>TMI 없어요...</Text>
+              <LinearGradient
+                colors={['rgba(255, 255, 255, 0.4)', 'rgba(255, 255, 255, 0)']}
+                style={styles.tmi_gradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+              >
+                <Text style={styles.tmi_txt}></Text>
+              </LinearGradient>
             )}
-            <View style={styles.image_container}>
-              {attendanceJson[day] && attendanceJson[day].length > 0 ? (
-                attendanceJson[day].map((attendant, index) =>
-                  Array.from({ length: attendant }).map((_, subIndex) => (
-                    <Image
-                      key={subIndex}
-                      style={{ width: 50, height: 50, marginLeft: 5 }}
-                      source={require("../assets/img/attendance.png")}
-                    />
-                  ))
-                )
-              ) : (
-                <Text>출석한 사람이 없어요...</Text>
-              )}
             </View>
           </View>
         ))}
       </ScrollView>
+      </ImageBackground>
     </View>
   );
 }
@@ -186,75 +297,93 @@ export default function Attendance({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#DED1DF",
+    width: SCREEN_WIDTH,
+    height: SCREEN_HEIGHT,
+    
+  },
+  month:{
+    color: '#FFF',
+    fontSize: 50,
+    paddingVertical: 20,
+    paddingLeft: 20
+
+
   },
 
-  attendence_container: {
-    width: SCREEN_WIDTH * 0.8,
-    backgroundColor: "#FFFFFF70",
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 30,
-    borderColor: "gray",
+  attendance_container : {
+    alignContent: 'center',
+    flexDirection: 'row',
+    paddingTop: 40,
+    alignItems: 'center',
+    
   },
 
-  main_title: {
-    marginBottom: 20,
-    fontSize: 60,
-    padding: 10,
-    // backgroundColor: 'white',
-    width: "100%",
-    textAlign: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 9,
-    },
-    shadowOpacity: 0.35,
-    // shadowRadius: 20.84,
-    elevation: 6,
+
+  star_container:{
+    justifyContent: 'center',
+    alignContent: 'center',
+    flexDirection: 'column',
+    
+  },
+  big_star:{
+    justifyContent: 'center',
+    alignContent: 'center',
+    width: SCREEN_WIDTH*0.3,
+    height: SCREEN_WIDTH*0.3,
   },
 
-  sub_title: {
-    color: "#353535",
-    fontSize: 25,
-    fontWeight: "700",
-    marginBottom: 12,
-    borderBottomWidth: 1,
-    borderColor: "#DED1DF",
-  },
-  tmi_txt: {
-    fontSize: 17,
-    borderBottomWidth: 1,
-    borderColor: "#DED1DF",
-    paddingBottom: 2,
-    marginBottom: 18,
-  },
-
-  image_container: {
-    // backgroundColor: 'gray',
+  small_star: {
     flexDirection: "row",
-    flexWrap: "wrap",
-    width: "100%",
-    justifyContent: "flex-end",
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignSelf: 'center',
+    height: 25,
+    position: 'absolute',
+    top: 0,
+    left: 0
+
+    
+  },
+  
+  day_txt:{
+    color: '#56186B',
+    paddingLeft: 25,
+    fontSize: 22,
+    fontWeight: '900'
+    
+  },
+  tmi_container:{
+    borderColor: '#FFF',
+    width: SCREEN_WIDTH*0.7,
+    borderColor: "rgba(255, 255, 255, 0.7)",
+    borderLeftWidth: 2,
+    paddingLeft: 5,
+    // borderCurve: 3,
+    
+  },
+  tmi_gradient:{
+    width: SCREEN_WIDTH*0.6,
+    marginBottom: 10,
+
+  },
+  
+  tmi_txt: {
+    fontSize: 20,
+    // marginBottom: 20,
+    color: '#FFF',
+    alignContent: 'center',
+    paddingVertical: 15,
+    paddingLeft: 20,
+    justifyContent: 'center',
+  }, 
+  profilePic: {
+    width: 35, // 이미지 크기 조절
+    height: 35, // 이미지 크기 조절
+    resizeMode: "cover",
+    borderRadius: 35 / 2, // 원형으로 만들기
+    backgroundColor: "#FFEEC3",
+    marginRight: 5,
   },
 
-  attendant: {
-    fontSize: 15,
-    padding: 9,
-    margin: 3,
-    alignItems: "flex-end",
-    borderColor: "#D63CE3",
-    border: "solid",
-    borderWidth: 1,
-    borderRadius: 13,
-    border: 3,
-  },
 
-  // log_container:{
-  //   backgroundColor: '#fff'
-
-  // }
 });
