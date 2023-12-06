@@ -60,21 +60,21 @@ const AlienModal = ({ visible, onClose, alienInfo }) => {
                 <Image style={styles.image} source={alienImagePath[alienInfo.alien.type]} />
               </View>
               <View style={styles.txtBox}>
-                <View style={styles.subtitleContainer}>
-                  <Text style={styles.subtitle}>Name : </Text>
-                  <Text style={styles.subtitleContent}>{alienInfo.name}</Text>
+                <View style={{...styles.subtitleContainer, }}>
+                  {/*<Text style={styles.subtitle}>이름 : </Text>*/}
+                  <Text style={{...styles.subtitleContent, marginBottom: 10, fontFamily: "dnf", }}>{alienInfo.name} ({alienInfo.nickname})</Text>
                 </View>
+                {/*<View style={styles.subtitleContainer}>*/}
+                {/*  <Text style={styles.subtitle}>별명 : </Text>*/}
+                {/*  <Text style={styles.subtitleContent}>{alienInfo.nickname}</Text>*/}
+                {/*</View>*/}
                 <View style={styles.subtitleContainer}>
-                  <Text style={styles.subtitle}>Nickname : </Text>
-                  <Text style={styles.subtitleContent}>{alienInfo.nickname}</Text>
-                </View>
-                <View style={styles.subtitleContainer}>
-                  <Text style={styles.subtitle}>Email : </Text>
-                  <Text style={styles.subtitleContent}>{alienInfo.email}</Text>
-                </View>
-                <View style={styles.subtitleContainer}>
-                  <Text style={styles.subtitle}>FamilyRole : </Text>
+                  {/*<Text style={styles.subtitle}>역할: </Text>*/}
                   <Text style={styles.subtitleContent}>{alienInfo.familyRole}</Text>
+                </View>
+                <View style={styles.subtitleContainer}>
+                  {/*<Text style={styles.subtitle}>이메일: </Text>*/}
+                  <Text style={styles.subtitleContent}>{alienInfo.email}</Text>
                 </View>
               </View>
               </>
@@ -115,19 +115,20 @@ const styles = StyleSheet.create({
   image: {
     width: 100,
     height: 100,
-    borderWidth: 10,
+    resizeMode: "contain",
+    borderWidth: 5,
     borderRadius: 100,
     borderColor: '#FFF',
-
   },
   txtBox:{
     marginTop: 20,
     borderRadius: 10,
-    paddingLeft: 30,
+    // paddingLeft: 30,
     width: '100%'
-
   },
   subtitleContainer:{
+    justifyContent: "center",
+    // paddingHorizontal: 10,
     flexDirection: 'row',
     marginBottom: 4,
   },
@@ -135,10 +136,8 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 19,
   },
-
   subtitleContent:{
     fontSize: 18,
-    
   },
   closeBtn:{
     position: 'absolute',

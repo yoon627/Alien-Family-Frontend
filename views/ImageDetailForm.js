@@ -11,6 +11,7 @@ import {
 import Swiper from "react-native-web-swiper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {Ionicons} from "@expo/vector-icons";
+import LottieView from "lottie-react-native";
 
 const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
 
@@ -54,7 +55,17 @@ export default function ImageDetailForm({route, navigation}) {
   }, []);
 
   if (isLoading) {
-    return <Text>Loading...</Text>; // 로딩 중일 때 표시할 UI
+    return (
+      <View style={styles.loadingOverlay}>
+        <LottieView
+          style={styles.loading}
+          source={require('../assets/json/load.json')}
+          autoPlay
+          loop
+        />
+        <Text style={styles.loadingText}>Loading...</Text>
+      </View>
+    )
   }
 
   function getAlienTypeByNickname(familyInfo, writer) {
@@ -298,5 +309,22 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     backgroundColor: "#FFEEC3",
     marginRight: 10,
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 불투명한 검은 배경
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#fff', // 텍스트 색상을 흰색으로 설정
+  },
+  loading: {
+    position: "absolute",
+    width: SCREEN_WIDTH,
+    height: SCREEN_HEIGHT * 0.9,
+    resizeMode: "contain",
   },
 });
