@@ -44,6 +44,7 @@
     "expo-file-system": "~15.4.5",
     "expo-font": "~11.4.0",
     "expo-image-picker": "~14.3.2",
+    "expo-linear-gradient": "~12.3.0",
     "expo-media-library": "~15.4.1",
     "expo-notifications": "~0.20.1",
     "expo-status-bar": "~1.6.0",
