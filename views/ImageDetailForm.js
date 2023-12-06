@@ -165,7 +165,9 @@ export default function ImageDetailForm({route, navigation}) {
                   </View>
                 )}
 
-                <Text style={styles.description}>{item.description}</Text>
+                <View style={{paddingHorizontal: "5%",}}>
+                  <Text style={styles.description}>{item.description}</Text>
+                </View>
 
                 <View
                   style={{
@@ -248,7 +250,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   date: {
-    paddingHorizontal: "5%",
+    paddingRight: "10%",
     justifyContent: "flex-end",
     width: "80%",
     fontSize: 14,
