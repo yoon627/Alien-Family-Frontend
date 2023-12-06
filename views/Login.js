@@ -36,6 +36,7 @@ const getData = async () => {
 getData();
 
 const Login = ({ navigation }) => {
+  const [isButtonPressed, setButtonPressed] = useState(false);
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   saveServer();
@@ -115,6 +116,8 @@ const Login = ({ navigation }) => {
           <View style={{ overflow: "hidden", borderRadius: 15, width: 175 }}>
             <ImageBackground source={require("../assets/img/pinkBtn.png")}>
               <TouchableOpacity
+                onPressIn={() => setButtonPressed(true)}
+                onPressOut={() => setButtonPressed(false)}
                 onPress={async () => {
                   const SERVER_ADDRESS = await AsyncStorage.getItem(
                     "ServerAddress"
@@ -172,11 +175,14 @@ const Login = ({ navigation }) => {
                     navigation.navigate("KaKaoLogin");
                   }
                 }}
-                style={{
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "black",
-                }}
+                style={[
+                  {
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "black",
+                  },
+                  isButtonPressed && styles.pressedButton,
+                ]}
               >
                 <Text
                   style={{
@@ -204,6 +210,9 @@ const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
     resizeMode: "cover", // 또는 'contain' 등 이미지 사이즈 조정
+  },
+  pressedButton: {
+    backgroundColor: "purple", // 눌렸을 때의 색상
   },
 });
 
