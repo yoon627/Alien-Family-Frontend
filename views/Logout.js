@@ -27,7 +27,9 @@ export default function Logout({ navigation }) {
                     Authorization: "Bearer: " + UserServerAccessToken,
                   },
                 })
-                  .then(() => {
+                  .then(async() => {
+                    await AsyncStorage.setItem("test","test");
+                    await AsyncStorage.clear();
                     navigation.navigate("Login");
                   })
                   .catch((e) => {

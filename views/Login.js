@@ -110,8 +110,7 @@ const Login = ({ navigation }) => {
                     url: "http://43.202.241.133:1998/api/1/master/" + admin,
                   })
                     .then(async (resp) => {
-
-                      if (resp.data.code===12345) {
+                      if (resp.data.code === 12345) {
                         Alert.alert("Wrong Code");
                       } else {
                         const t = resp.data.data.tokenInfo.accessToken;
@@ -123,6 +122,8 @@ const Login = ({ navigation }) => {
                           },
                         })
                           .then(async (resp) => {
+                            const test = await AsyncStorage.getItem("test");
+                            console.log(test);
                             const members =
                               resp.data.data.familyResponseDto.members;
                             const familyId =
