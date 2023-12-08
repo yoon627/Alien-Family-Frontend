@@ -1,9 +1,10 @@
 import React from "react";
-import { Alert, Button, Text, View } from "react-native";
+import {Alert, Button, Text, View} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import CacheManager from "../components/CacheManager";
 
-export default function Logout({ navigation }) {
+export default function Logout({navigation}) {
   return (
     <View>
       <Text>탈퇴하기</Text>
@@ -14,6 +15,7 @@ export default function Logout({ navigation }) {
             {
               text: "네!",
               onPress: async () => {
+                await CacheManager.clearAllCache();   // 탈퇴 시 캐시 삭제
                 const SERVER_ADDRESS = await AsyncStorage.getItem(
                   "ServerAddress"
                 );
@@ -39,7 +41,7 @@ export default function Logout({ navigation }) {
                 // await AsyncStorage.clear();
               },
             },
-            { text: "아니오" },
+            {text: "아니오"},
           ]);
         }}
       />
