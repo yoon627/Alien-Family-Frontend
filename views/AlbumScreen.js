@@ -22,18 +22,18 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import ImageUploadForm from "./ImageUploadForm";
 import ExpoFastImage from "expo-fast-image";
 import * as Notifications from "expo-notifications";
-import { useFocusEffect } from "@react-navigation/native";
+import {useFocusEffect} from "@react-navigation/native";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export default function AlbumScreen({navigation}) {
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-  }),
-});
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+    }),
+  });
   // 카메라 권한 요청을 위한 훅
   const [cameraStatus, cameraRequestPermission] =
     ImagePicker.useCameraPermissions();
@@ -100,7 +100,7 @@ Notifications.setNotificationHandler({
         const data = await response.json();
         // 받아온 이미지 데이터 상태에 저장
         setAlbumList(data.data);
-        console.log("받은 데이터!!!!!!!!!", data.data);
+        // console.log("받은 데이터!!!!!!!!!", data.data);
         // console.log("👉🏻앨범 이미지 리스트: ", data.data.map(item => item.photoKey));
       } catch (error) {
         console.error("이미지 url을 가져오는 중에 오류가 발생했습니다.", error);
@@ -111,6 +111,7 @@ Notifications.setNotificationHandler({
       fetchData();
     }
   }, [showUploadForm]);
+
   const imagePickerOption = {
     mediaTypes: ImagePicker.MediaTypeOptions.All,
     allowsEditing: false,
@@ -337,7 +338,6 @@ Notifications.setNotificationHandler({
     <View style={styles.container}>
       {!showUploadForm ? (
         <Fragment>
-
           <View style={styles.tagContainer}>
             {tagList.map((tag, index) => (
               <TouchableOpacity
@@ -366,7 +366,7 @@ Notifications.setNotificationHandler({
             numColumns={4}
             data={filterImages()}
             keyExtractor={(item) => item.photoId.toString()}
-            renderItem={({ item }) => (
+            renderItem={({item}) => (
               <View style={styles.imageContainer}>
                 <TouchableOpacity
                   onPress={() =>

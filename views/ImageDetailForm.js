@@ -12,6 +12,7 @@ import Swiper from "react-native-web-swiper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {Ionicons} from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
+import ExpoFastImage from "expo-fast-image";
 
 const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
 
@@ -50,7 +51,6 @@ export default function ImageDetailForm({route, navigation}) {
         setIsLoading(false); // 데이터 로딩이 완료되면 로딩 상태를 false로 설정
       }
     };
-
     viewFamily();
   }, []);
 
@@ -128,9 +128,9 @@ export default function ImageDetailForm({route, navigation}) {
           const formattedDate = `${month}월 ${day}일 ${hours}시 ${minutes}분`;
 
           return (
-            <View key={index} style={{top: "7%"}}>
+            <View key={index} style={{top: "2%"}}>
               <TouchableOpacity
-                style={{alignItems: "flex-start", paddingHorizontal: "3%"}}
+                style={{alignItems: "flex-start", paddingHorizontal: "4%", marginBottom: 10,}}
                 onPress={() => navigation.pop()}
               >
                 <Ionicons name="chevron-back" size={28} color="#603D9B"/>
@@ -156,9 +156,10 @@ export default function ImageDetailForm({route, navigation}) {
                 </View>
 
                 <View style={{borderTopWidth: 1, borderTopColor: '#DEDDDD'}}>
-                  <Image
+                  <ExpoFastImage
+                    uri={item.photoKey}
+                    cacheKey={item.photoId.toString()}
                     style={styles.uploadImage}
-                    source={{uri: item.photoKey}}
                     resizeMode="contain"
                   />
                 </View>
@@ -166,7 +167,8 @@ export default function ImageDetailForm({route, navigation}) {
                 {item.photoTags.length !== 0 && (
                   <View style={styles.tagButtonsContainer}>
                     {item.photoTags.map((tag, index) => (
-                      <View key={tag} style={[styles.tagButton, index !== item.photoTags.length - 1 && {marginRight: 10,}]}>
+                      <View key={tag}
+                            style={[styles.tagButton, index !== item.photoTags.length - 1 && {marginRight: 10,}]}>
                         <Text
                           style={{fontWeight: "bold"}}>
                           {tag}
@@ -228,6 +230,7 @@ export default function ImageDetailForm({route, navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "white",
   },
   slide: {
     top: "3%",

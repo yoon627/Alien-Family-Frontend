@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState, useEffect } from "react";
+import React, {useCallback, useRef, useState, useEffect} from "react";
 import {
   ImageBackground,
   StyleSheet,
@@ -13,7 +13,7 @@ import * as Notifications from "expo-notifications";
 import FamilyInfo from "./FamilyInfo";
 import MainDrawer from "./MainDrawer";
 import MainScreen from "./MainScreen";
-import { LongPressGestureHandler, State } from "react-native-gesture-handler";
+import {LongPressGestureHandler, State} from "react-native-gesture-handler";
 
 const saveServer = async () => {
   try {
@@ -37,7 +37,7 @@ const getData = async () => {
 
 getData();
 
-const Login = ({ navigation }) => {
+const Login = ({navigation}) => {
   const [isButtonPressed, setButtonPressed] = useState(false);
   const [notification, setNotification] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -79,8 +79,8 @@ const Login = ({ navigation }) => {
       source={require("../assets/img/loginScreen.png")}
       style={styles.backgroundImage}
     >
-      <View style={{ flex: 1 }}>
-        <View style={{ flex: 7 }} />
+      <View style={{flex: 1}}>
+        <View style={{flex: 7}}/>
         <TouchableOpacity
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
@@ -105,7 +105,7 @@ const Login = ({ navigation }) => {
           </View>
         </Modal>
         <View
-          style={{ flex: 1.5, justifyContent: "center", alignItems: "center" }}
+          style={{flex: 1.5, justifyContent: "center", alignItems: "center"}}
         >
           <Text
             style={{
@@ -128,7 +128,7 @@ const Login = ({ navigation }) => {
           >
             FAMILY
           </Text>
-          <Text style={{ color: "white", marginVertical: 10 }}>
+          <Text style={{color: "white", marginVertical: 10}}>
             당신의 가족을 찾아보세요!
           </Text>
         </View>
@@ -140,7 +140,7 @@ const Login = ({ navigation }) => {
             marginVertical: 3,
           }}
         >
-          <View style={{ overflow: "hidden", borderRadius: 15, width: 175 }}>
+          <View style={{overflow: "hidden", borderRadius: 15, width: 175}}>
             <ImageBackground source={require("../assets/img/pinkBtn.png")}>
               <TouchableOpacity
                 onPressIn={() => setButtonPressed(true)}
