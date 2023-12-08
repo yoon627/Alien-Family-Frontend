@@ -166,6 +166,6 @@ const styles = StyleSheet.create({
   },
   tabBar: {
     backgroundColor: "#8FB7D2", // 탭 바 색
-    height: Platform.OS === "ios" ? SCREEN_HEIGHT * 0.11 : SCREEN_HEIGHT * 0.09,
+    height: Platform.OS === "ios" ? SCREEN_HEIGHT * 0.09 : SCREEN_HEIGHT * 0.09,
   },
 });

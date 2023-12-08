@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
   Button,
   Modal,
@@ -6,12 +6,13 @@ import {
   Text,
   TouchableOpacity,
   View,
+  StyleSheet,
 } from "react-native";
 import * as Calendar from "expo-calendar";
-import { Checkbox } from "react-native-paper";
+import {Checkbox} from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function ChoseCalendar({ closeModal, closeAddModal }) {
+export default function ChoseCalendar({closeModal, closeAddModal}) {
   const [events, setEvents] = useState([]);
   const [calendars, setCalendars] = useState([]);
   const [selectedCalendars, setSelectedCalendars] = useState([]);
@@ -28,13 +29,13 @@ export default function ChoseCalendar({ closeModal, closeAddModal }) {
 
   useEffect(() => {
     (async () => {
-      const { status } = await Calendar.requestCalendarPermissionsAsync();
+      const {status} = await Calendar.requestCalendarPermissionsAsync();
       if (status === "granted") {
         const calendars = await Calendar.getCalendarsAsync(
           Calendar.EntityTypes.EVENT,
         );
         setCalendars(
-          calendars.map((calendar) => ({ ...calendar, selected: false })),
+          calendars.map((calendar) => ({...calendar, selected: false})),
         );
       }
     })();
@@ -103,7 +104,7 @@ export default function ChoseCalendar({ closeModal, closeAddModal }) {
   const toggleEventSelection = (id) => {
     const updatedEvents = events.map((event) => {
       if (event.id === id) {
-        return { ...event, selected: !event.selected };
+        return {...event, selected: !event.selected};
       }
       return event;
     });
@@ -132,8 +133,11 @@ export default function ChoseCalendar({ closeModal, closeAddModal }) {
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Button title="달력 선택" onPress={setCalendarsModal} />
+    <View
+      style={{flex: 1, justifyContent: "center", alignItems: "center"}}
+    >
+      <Button
+        title="달력 선택" onPress={setCalendarsModal}/>
 
       <Modal
         visible={isModalVisible}
@@ -152,12 +156,12 @@ export default function ChoseCalendar({ closeModal, closeAddModal }) {
             <TouchableOpacity
               key={calendar.id}
               onPress={() => fetchCalendarEvents(calendar.id)}
-              style={{ flexDirection: "row", alignItems: "center", margin: 10 }}
+              style={{flexDirection: "row", alignItems: "center", margin: 10}}
             >
               <Text>{calendar.title}</Text>
             </TouchableOpacity>
           ))}
-          <Button title="닫기" onPress={setCalendarsModal} />
+          <Button title="닫기" onPress={setCalendarsModal}/>
         </View>
       </Modal>
 
@@ -191,8 +195,8 @@ export default function ChoseCalendar({ closeModal, closeAddModal }) {
                 <Text>{event.title}</Text>
               </View>
             ))}
-            <Button title="확인" onPress={handleConfirmSelection} />
-            <Button title="닫기" onPress={setEventsModal} />
+            <Button title="확인" onPress={handleConfirmSelection}/>
+            <Button title="닫기" onPress={setEventsModal}/>
           </View>
         </ScrollView>
       </Modal>
@@ -200,8 +204,18 @@ export default function ChoseCalendar({ closeModal, closeAddModal }) {
       <Text>선택된 이벤트:</Text>
       {selectedEvents.map((event) => (
         <Text key={event.id}>{event.title}</Text>
-      ))}
-      <Button title="이벤트 가져오기" onPress={handleImportEvents} />
+      ))}y
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleImportEvents}
+      >
+        <Text>이벤트 등록</Text>
+      </TouchableOpacity>
     </View>
+
   );
 }
+
+const styles = StyleSheet.create({
+  button: {}
+})
