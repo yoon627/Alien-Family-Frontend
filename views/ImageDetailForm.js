@@ -1,18 +1,42 @@
-import React from "react";
-import {Dimensions, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import React, {useState} from "react";
+import {Dimensions, Modal, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import Swiper from "react-native-web-swiper";
-import {Ionicons} from "@expo/vector-icons";
 import ExpoFastImage from "expo-fast-image";
 import CommentForm from "../components/CommentForm";
 import AlienType from "../components/AlienType";
+import * as FileSystem from 'expo-file-system';
+import * as MediaLibrary from 'expo-media-library';
+import {Ionicons} from "@expo/vector-icons";
+import {MaterialIcons} from '@expo/vector-icons';
 
 const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
 
 export default function ImageDetailForm({route, navigation}) {
-  const {photoInfo, albumList} = route.params;
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
+  const {photoInfo, albumList, nickname} = route.params;
   const index = albumList.findIndex(
     (item) => item.photoKey === photoInfo.photoKey
   );
+
+  const downloadAndSaveImage = async (remoteUrl) => {
+    try {
+      const {uri} = await FileSystem.downloadAsync(
+        remoteUrl,
+        FileSystem.documentDirectory + `${photoInfo.photoId}.jpg`
+      );
+
+      const asset = await MediaLibrary.createAssetAsync(uri);
+      await MediaLibrary.saveToLibraryAsync(asset);
+      console.log("이미지 다운로드, 저장 성공!!!");
+    } catch (error) {
+      console.log("이미지 다운 에러!!!!", error);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -26,19 +50,15 @@ export default function ImageDetailForm({route, navigation}) {
           const hours = createDate.getHours();
           const minutes = createDate.getMinutes();
 
-          const formattedDate = `${month}월 ${day}일 ${hours}시 ${minutes}분`;
+          const formattedDate = `${month}월 ${day}일 ${hours}:${minutes}`;
 
           return (
-            <View key={index} style={{top: "2%"}}>
-              {/*<KeyboardAvoidingView*/}
-              {/*  behavior={Platform.OS === "ios" ? "height" : undefined}*/}
-              {/*  style={styles.container}*/}
-              {/*>*/}
+            <View key={index}>
               <TouchableOpacity
                 style={{
                   alignItems: "flex-start",
                   paddingHorizontal: "4%",
-                  marginBottom: 10,
+                  marginTop: "3%",
                 }}
                 onPress={() => navigation.pop()}
               >
@@ -48,7 +68,6 @@ export default function ImageDetailForm({route, navigation}) {
               <View style={styles.slide}>
                 <View
                   style={{
-                    alignItems: 'flex-start',
                     width: '100%',
                     marginBottom: 10,
                   }}
@@ -57,15 +76,76 @@ export default function ImageDetailForm({route, navigation}) {
                     style={{
                       flexDirection: 'row',
                       justifyContent: 'space-between',
+                      alignItems: 'center',
                       paddingHorizontal: '5%',
-                      alignItems: 'center'
                     }}
                   >
-                    <AlienType writer={item.writer}/>
-                    <Text style={styles.writer}>{item.writer}</Text>
-                    <Text style={styles.date}>
-                      {nowYear === year ? formattedDate : year + formattedDate}
-                    </Text>
+                    <View style={{
+                      flexDirection: 'row',
+                      justifyContent: 'flex-start',
+                      alignItems: "center",
+                    }}>
+                      <AlienType writer={item.writer}/>
+                      <Text style={styles.writer}>{item.writer}</Text>
+                    </View>
+                    {item.writer === nickname ? (
+                      <View style={{flexDirection: "row", alignItems: "center",}}>
+                        <TouchableOpacity
+                          onPress={() => downloadAndSaveImage(item.photoKey)}
+                        >
+                          <Ionicons
+                            style={{
+                              textAlign: 'right',
+                              paddingRight: 5,
+                            }}
+                            name="ios-arrow-down-circle-outline"
+                            size={26}
+                            color="#605D5D"
+                          />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={toggleModal}>
+                          <MaterialIcons
+                            name="more-horiz"
+                            size={25}
+                            color="#605D5D"
+                          />
+                        </TouchableOpacity></View>
+                    ) : (
+                      <TouchableOpacity
+                        onPress={() => downloadAndSaveImage(item.photoKey)}
+                      >
+                        <Ionicons
+                          name="ios-arrow-down-circle-outline"
+                          size={26}
+                          color="#605D5D"
+                        />
+                      </TouchableOpacity>
+                    )}
+
+                    <Modal
+                      presentationStyle="formSheet"
+                      animationType="slide"
+                      visible={isModalVisible}
+                      onRequestClose={toggleModal}
+                    >
+                      <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                          <TouchableOpacity style={[styles.button, styles.buttonWrite]}>
+                            <Text style={{...styles.textStyle, color: "#fff"}}>
+                              수정
+                            </Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity style={[styles.button, styles.buttonClose]}>
+                            <Text style={{...styles.textStyle, color: "#727272"}}>
+                              삭제
+                            </Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity onPress={toggleModal}>
+                            <Ionicons name="close" size={24} color="black"/>
+                          </TouchableOpacity>
+                        </View>
+                      </View>
+                    </Modal>
                   </View>
                 </View>
 
@@ -93,7 +173,8 @@ export default function ImageDetailForm({route, navigation}) {
                 )}
 
                 {item.description ? (
-                  <View style={{paddingHorizontal: "5%", flexDirection: "row", alignItems: "center", paddingTop: "5%",}}>
+                  <View
+                    style={{paddingHorizontal: "7%", flexDirection: "row", paddingTop: 5,}}>
                     <Text style={{...styles.writer, fontSize: 16,}}>{item.writer}</Text>
                     <Text style={styles.description}>
                       {item.description}
@@ -102,30 +183,17 @@ export default function ImageDetailForm({route, navigation}) {
                 ) : null
                 }
 
+                <View style={{paddingHorizontal: "7%",}}>
+                  <Text style={styles.date}>
+                    {nowYear === year ? formattedDate : year + formattedDate}
+                  </Text>
+                </View>
+
                 <CommentForm
                   photoId={item.photoId}
+                  nickname={nickname}
                 />
-
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    marginVertical: 10,
-                  }}
-                >
-                  <TouchableOpacity style={[styles.button, styles.buttonWrite]}>
-                    <Text style={{...styles.textStyle, color: "#fff"}}>
-                      수정
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={[styles.button, styles.buttonClose]}>
-                    <Text style={{...styles.textStyle, color: "#727272"}}>
-                      삭제
-                    </Text>
-                  </TouchableOpacity>
-                </View>
               </View>
-              {/*</KeyboardAvoidingView>*/}
             </View>
           );
         })}
@@ -158,12 +226,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   date: {
-    paddingRight: "10%",
-    justifyContent: "flex-end",
+    paddingTop: 3,
     width: "80%",
     fontSize: 14,
     color: "gray",
-    textAlign: 'right',
+    marginBottom: 8,
   },
   button: {
     width: 65,
@@ -185,15 +252,15 @@ const styles = StyleSheet.create({
     fontFamily: "dnf",
   },
   tagButtonsContainer: {
-    marginBottom: 10,
+    marginBottom: 5,
     flexDirection: "row",
-    paddingHorizontal: "5%",
+    paddingHorizontal: "6%",
   },
   tagButton: {
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 13,
-    paddingVertical: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
     borderWidth: 1,
     borderRadius: 30,
     borderColor: "#E0EBF2",
@@ -215,5 +282,11 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT * 0.9,
     resizeMode: "contain",
+  },
+  buttonDownload: {
+    backgroundColor: "#fff",
+    marginHorizontal: 10,
+    borderColor: "#603D9B",
+    borderWidth: 1,
   },
 });

@@ -43,7 +43,8 @@ export default function AlienType({writer}) {
   }
 
   function findImageByName(writer) {
-    const alienName = getAlienTypeByNickname(familyInfo, writer.trim());
+    const alienWriter = writer ? writer.trim() : '';
+    const alienName = getAlienTypeByNickname(familyInfo, alienWriter);
     if (alienName === null) {
       return alienImagePath["BASIC"];
     }

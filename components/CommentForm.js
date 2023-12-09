@@ -7,14 +7,15 @@ import {
   StyleSheet,
   FlatList,
   Modal,
+  ActivityIndicator, Platform,
   Pressable,
-  ActivityIndicator,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AlienType from "./AlienType";
+import {Ionicons} from "@expo/vector-icons";
 
-export default function CommentForm({ photoId }) {
-  const [comment, setComment] = useState("");
+export default function CommentForm({photoId, nickname}) {
+  const [comment, setComment] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [comments, setComments] = useState([]);
   const [uploadingComment, setUploadingComment] = useState(false);
@@ -24,13 +25,18 @@ export default function CommentForm({ photoId }) {
     const currentDate = new Date();
 
     const timeDiff = currentDate - createDate;
+    const secondsDiff = Math.floor(timeDiff / 1000);
+    const minutesDiff = Math.floor(timeDiff / (1000 * 60));
+    const hoursDiff = Math.floor(timeDiff / (1000 * 60 * 60));
     const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
 
     if (daysDiff === 0) {
-      const hoursDiff = Math.floor(timeDiff / (1000 * 60 * 60));
       if (hoursDiff === 0) {
-        const minutesDiff = Math.floor(timeDiff / (1000 * 60));
-        return `${minutesDiff}분`;
+        if (minutesDiff === 0) {
+          return `${secondsDiff}초`;
+        } else {
+          return `${minutesDiff}분`;
+        }
       } else {
         return `${hoursDiff}시간`;
       }
@@ -38,6 +44,7 @@ export default function CommentForm({ photoId }) {
       return `${daysDiff}일`;
     }
   };
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -181,42 +188,58 @@ export default function CommentForm({ photoId }) {
 
   return (
     <View>
-      {comments.length !== 0 ? (
+      {comments.length > 1 ? (
         <TouchableOpacity
-          style={{ paddingHorizontal: "5%", paddingVertical: "3%" }}
+          style={{paddingHorizontal: '7%', paddingTop: "3%",}}
           onPress={() => setModalVisible(true)}
         >
-          <Text style={{ color: "gray" }}>
+          <Text style={{color: "gray", fontSize: 16,}}>
             댓글 {comments.length}개 모두 보기
           </Text>
         </TouchableOpacity>
       ) : (
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-            marginHorizontal: "10%",
-          }}
-        >
-          <TextInput
-            value={comment}
-            style={styles.comment}
-            onChangeText={setComment}
-            placeholder="댓글..."
+        <View>
+          <FlatList
+            data={comments}
+            keyExtractor={(item) => item.commentId.toString()}
+            renderItem={({item}) => (
+              <View
+                key={item.commentId}
+                style={{
+                  paddingHorizontal: '7%',
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginVertical: 2,
+                }}
+              >
+                <Text style={{fontWeight: "bold", paddingRight: 5,}}>{item.writer}</Text>
+                <Text>{item.content}</Text>
+                <Text style={{color: "gray",}}>{`   ${calculateDaysAgo(item.createAt)}`}</Text>
+              </View>
+            )}
           />
-          <TouchableOpacity onPress={sendToComment}>
-            <Text style={{ paddingLeft: 10, top: 10 }}>작성</Text>
-          </TouchableOpacity>
-          {uploadingComment && (
-            <ActivityIndicator
-              style={{ paddingLeft: 10, top: 10 }}
-              size="small"
-              color="gray"
-            />
-          )}
         </View>
       )}
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+          marginHorizontal: "10%",
+        }}
+      >
+        <AlienType writer={nickname}/>
+        <TextInput
+          value={comment}
+          style={styles.comment}
+          onChangeText={setComment}
+          placeholder="댓글..."
+        />
+        <TouchableOpacity onPress={sendToComment}>
+          <Text style={{paddingLeft: 10}}>작성</Text>
+        </TouchableOpacity>
+        {uploadingComment && <ActivityIndicator style={{paddingLeft: 10, top: 10}} size="small" color="gray"/>}
+      </View>
 
       <Modal
         presentationStyle="formSheet"
@@ -227,17 +250,29 @@ export default function CommentForm({ photoId }) {
         }}
       >
         <View style={styles.modalContainer}>
-          <View style={{ alignItems: "center" }}>
-            <View style={styles.separator} />
-          </View>
+          {Platform.OS === "ios" ? (
+            <View style={{alignItems: "center"}}>
+              <View style={styles.separator}/>
+            </View>
+          ) : (
+            <View style={{alignItems: "flex-end", marginTop: 20,}}>
+              <TouchableOpacity
+                onPress={() => setModalVisible(!modalVisible)}>
+                <Ionicons name="close" size={24} color="black"/>
+              </TouchableOpacity>
+            </View>
+          )}
 
           <View style={styles.modalContent}>
             <FlatList
               data={comments}
               keyExtractor={(item) => item.commentId.toString()}
-              renderItem={({ item }) => (
-                <View key={item.commentId} style={styles.commentForm}>
-                  <AlienType writer={item.writer} />
+              renderItem={({item}) => (
+                <View
+                  key={item.commentId}
+                  style={styles.commentForm}
+                >
+                  <AlienType writer={item.writer}/>
                   <View>
                     <Text
                       style={{
@@ -262,25 +297,20 @@ export default function CommentForm({ photoId }) {
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "center",
-                marginHorizontal: 15,
+                marginHorizontal: 10,
               }}
             >
+              <AlienType writer={nickname}/>
               <TextInput
                 value={comment}
                 style={styles.comment}
                 onChangeText={setComment}
-                placeholder="댓글..."
+                placeholder="댓글 달기..."
               />
               <TouchableOpacity onPress={sendToComment}>
-                <Text style={{ paddingLeft: 10, top: 10 }}>작성</Text>
+                <Text style={{paddingLeft: 10}}>작성</Text>
               </TouchableOpacity>
-              {uploadingComment && (
-                <ActivityIndicator
-                  style={{ paddingLeft: 10, top: 10 }}
-                  size="small"
-                  color="gray"
-                />
-              )}
+              {uploadingComment && <ActivityIndicator style={{paddingLeft: 10}} size="small" color="gray"/>}
             </View>
           </View>
         </View>
@@ -313,17 +343,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginVertical: 10,
-    paddingVertical: 1,
   },
   comment: {
-    fontSize: 16,
-    marginTop: 40,
-    width: "100%",
+    fontSize: 15,
+    marginTop: 20,
+    width: "80%",
     borderColor: "#C1BABD",
     borderWidth: 1,
     borderRadius: 10,
     marginBottom: 20,
     paddingLeft: 15,
+    paddingVertical: 10,
     height: "45%",
   },
 });
