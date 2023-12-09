@@ -10,12 +10,18 @@ import {
   View,
   StatusBar,
 } from "react-native";
+import axios from "axios";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 export default function PlantInfo() {
+  const [plantLevel, setPlantLevel] = useState(null);
+  const [plantName, setPlantName] = useState(null);
+  const [plantPoint, setPlantPoint] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [todayMission, setTodayMission] = useState("");
+  const [todayMissionClear, setTodayMissionClear] = useState(false);
+  const [dailyMissionClear, setDailyMissionClear] = useState(false);
 
   useEffect(() => {
     // 타이머를 사용하여 5초마다 말풍선을 표시
@@ -30,7 +36,6 @@ export default function PlantInfo() {
     // 컴포넌트 언마운트 시에 타이머 클리어
     return () => clearInterval(interval);
   }, []);
-  const [plantPoint, setPlantPoint] = useState(4);
 
   const renderFlower = () => {
     switch (plantPoint) {
@@ -78,7 +83,21 @@ export default function PlantInfo() {
         );
     }
   };
-
+  const renderFamilyScore = async () => {
+    const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
+    const UserServerAccessToken = await AsyncStorage.getItem(
+      "UserServerAccessToken"
+    );
+    await axios({
+      method: "GET",
+      url: SERVER_ADDRESS + "/family/points",
+      headers: {
+        Authorization: "Bearer: " + UserServerAccessToken,
+      },
+    })
+      .then((resp) => console.log(resp))
+      .catch((e) => console.log(e));
+  };
   const renderChat = () => {
     const chatContainerStyles = [
       styles.plantSay0,
@@ -94,6 +113,9 @@ export default function PlantInfo() {
       "물 좀 주세요~",
       "안녕하세요! 뭐 좀 얘기해주세요.",
       "새싹쿠키가 여러분을 응원합니다!",
+      "이 세상에 태어나 우리가 경험하는 가장 멋진 일은 가족의 사랑을 배우는 것이다.",
+      "자녀에게 회초리를 들지 않으면 자녀가 부모에게 회초리를 든다.",
+      "피는 물보다 진하다",
     ];
 
     const randomMessage = () => {
@@ -119,70 +141,70 @@ export default function PlantInfo() {
     );
   };
 
-  const renderBonusMission = () => {
-    const bonusMissions = [
-      "보너스 미션 : 가족과 함께 저녁 식사하기",
-      "보너스 미션 : 친구에게 전화 걸기",
-      "보너스 미션 : 새로운 취미 시작해보기",
-      "보너스 미션 : 근처 공원 산책 가기",
-      "보너스 미션 : 독서 시간 갖기",
-    ];
-
-    const randomBonusMission = () => {
-      // const ktc = new Date();
-      // ktc.setHours(ktc.getHours() + 9);
-      // const str_today = JSON.stringify(ktc).toString().slice(1, 11);
-      const randomIndex = Math.floor(Math.random() * bonusMissions.length);
-      return bonusMissions[randomIndex];
-    };
-
-    return (
-      <View style={styles.bonusMissionContainer}>
-        <Text style={{ ...styles.bonusMissionText, ...styles.missionText }}>
-          {randomBonusMission()}
-        </Text>
-      </View>
-    );
-  };
   useEffect(() => {
     const getMission = async () => {
+      try {
+        const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
+        const UserServerAccessToken = await AsyncStorage.getItem(
+          "UserServerAccessToken"
+        );
+        await axios({
+          method: "GET",
+          url: SERVER_ADDRESS + "/plant",
+          headers: {
+            Authorization: "Bearer: " + UserServerAccessToken,
+          },
+        }).then((resp) => {
+          const tmpPlant = resp.data.data;
+          setPlantLevel(tmpPlant.level);
+          setPlantName(tmpPlant.name);
+          setPlantPoint(tmpPlant.point);
+        });
+      } catch (error) {
+        console.error("Error getMsg:", error);
+      }
       const ktc = new Date();
       ktc.setHours(ktc.getHours() + 9);
       const str_today = JSON.stringify(ktc).toString().slice(1, 11);
       const test = JSON.parse(await AsyncStorage.getItem("todayMission"));
+      const todayMissions = [
+        "사진 찍어 올리기",
+        "내 갤러리 사진 등록하기",
+        "사진에 댓글달기",
+        "가족들과 채팅으로 인사하기",
+        "캘린더에 자기 일정 추가하기",
+      ];
       if (test) {
-        console.log(test);
-        if (test && typeof test === 'object' && str_today in test) {
+        // console.log(test);
+        if (test && typeof test === "object" && str_today in test) {
           setTodayMission(test[str_today]);
+          const tmp_TMC = await AsyncStorage.getItem("todayMissionClear");
+          if (tmp_TMC === "true") {
+            setTodayMissionClear(true);
+          }
+          const tmp_DMC = await AsyncStorage.getItem("dailyMissionClear");
+          if (tmp_DMC === "true") {
+            setDailyMissionClear(true);
+          }
         } else {
-          const bonusMissions = [
-            "보너스 미션 : 사진 찍어 올리기",
-            "보너스 미션 : 내 갤러리 사진 등록하기",
-            "보너스 미션 : 사진에 댓글달기",
-            "보너스 미션 : 가족들과 채팅으로 인사하기",
-            "보너스 미션 : 캘린더에 자기 일정 추가하기",
-          ];
-          const randomIndex = Math.floor(Math.random() * bonusMissions.length);
-          setTodayMission(bonusMissions[randomIndex]);
+          const randomIndex = Math.floor(Math.random() * todayMissions.length);
+          setTodayMission(todayMissions[randomIndex]);
           await AsyncStorage.setItem(
             "todayMission",
-            JSON.stringify({ [str_today]: bonusMissions[randomIndex] })
+            JSON.stringify({ [str_today]: todayMissions[randomIndex] })
           );
+          await AsyncStorage.setItem("todayMissionClear", "false");
+          await AsyncStorage.setItem("dailyMissionClear", "false");
         }
       } else {
-        const bonusMissions = [
-          "보너스 미션 : 사진 찍어 올리기",
-          "보너스 미션 : 내 갤러리 사진 등록하기",
-          "보너스 미션 : 사진에 댓글달기",
-          "보너스 미션 : 가족들과 채팅으로 인사하기",
-          "보너스 미션 : 캘린더에 자기 일정 추가하기",
-        ];
-        const randomIndex = Math.floor(Math.random() * bonusMissions.length);
-        setTodayMission(bonusMissions[randomIndex]);
+        const randomIndex = Math.floor(Math.random() * todayMissions.length);
+        setTodayMission(todayMissions[randomIndex]);
         await AsyncStorage.setItem(
           "todayMission",
-          JSON.stringify({ [str_today]: bonusMissions[randomIndex] })
+          JSON.stringify({ [str_today]: todayMissions[randomIndex] })
         );
+        await AsyncStorage.setItem("todayMissionClear", "false");
+        await AsyncStorage.setItem("dailyMissionClear", "false");
       }
     };
     getMission();
@@ -192,8 +214,28 @@ export default function PlantInfo() {
       <StatusBar barStyle="light-content" backgroundColor="#000000" />
       <View style={{ flex: 1, backgroundColor: "red" }}>
         <View style={styles.missionContainer}>
-          <Text style={styles.missionText}>일일 미션: TMI 작성하기</Text>
-          <Text style={styles.missionText}>{todayMission}</Text>
+          <View style={{ flexDirection: "row" }}>
+            <Text style={styles.missionText}>일일 미션:</Text>
+            <Text
+              style={[
+                styles.missionText,
+                dailyMissionClear ? styles.crossedText : null,
+              ]}
+            >
+              TMI 작성하기
+            </Text>
+          </View>
+          <View style={{ flexDirection: "row" }}>
+            <Text style={styles.missionText}>오늘의 미션:</Text>
+            <Text
+              style={[
+                styles.missionText,
+                todayMissionClear ? styles.crossedText : null,
+              ]}
+            >
+              {todayMission}
+            </Text>
+          </View>
         </View>
         <View style={styles.familyContainer}>
           <Text style={styles.familyText}>아빠: 1점</Text>
@@ -277,5 +319,9 @@ const styles = StyleSheet.create({
   bonusMissionText: {
     fontSize: 20,
     // color: 'white',
+  },
+  crossedText: {
+    textDecorationLine: "line-through",
+    textDecorationStyle: "solid",
   },
 });

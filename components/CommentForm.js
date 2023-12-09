@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Text,
   TextInput,
@@ -8,13 +8,13 @@ import {
   FlatList,
   Modal,
   Pressable,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AlienType from "./AlienType";
 
-export default function CommentForm({photoId}) {
-  const [comment, setComment] = useState('');
+export default function CommentForm({ photoId }) {
+  const [comment, setComment] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [comments, setComments] = useState([]);
   const [uploadingComment, setUploadingComment] = useState(false);
@@ -37,7 +37,7 @@ export default function CommentForm({photoId}) {
     } else {
       return `${daysDiff}일`;
     }
-  }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,13 +45,16 @@ export default function CommentForm({photoId}) {
         "UserServerAccessToken"
       );
       try {
-        const response = await fetch(`http://43.202.241.133:1998/photo/${photoId}/comments`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + UserServerAccessToken,
-          },
-        });
+        const response = await fetch(
+          `http://43.202.241.133:1998/photo/${photoId}/comments`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + UserServerAccessToken,
+            },
+          }
+        );
 
         const data = await response.json();
         setComments(data.data);
@@ -59,7 +62,7 @@ export default function CommentForm({photoId}) {
       } catch (error) {
         console.error("댓글을 가져오는 중에 오류가 발생했습니다.", error);
       }
-    }
+    };
     fetchData();
   }, []);
 
@@ -86,9 +89,86 @@ export default function CommentForm({photoId}) {
       if (response.ok) {
         console.log("👂🏻 댓글 서버로 보내짐~~~~");
 
-        const newComment = {commentId: comments.length + 1, writer: writer, content: comment};
+        const newComment = {
+          commentId: comments.length + 1,
+          writer: writer,
+          content: comment,
+        };
         setComments([...comments, newComment]);
         setComment(""); // 댓글 입력창 초기화
+        const ktc = new Date();
+        ktc.setHours(ktc.getHours() + 9);
+        const str_today = JSON.stringify(ktc).toString().slice(1, 11);
+        const test = JSON.parse(await AsyncStorage.getItem("todayMission"));
+        const todayMissions = [
+          "사진 찍어 올리기",
+          "내 갤러리 사진 등록하기",
+          "사진에 댓글달기",
+          "가족들과 채팅으로 인사하기",
+          "캘린더에 자기 일정 추가하기",
+        ];
+        if (test) {
+          if (test && typeof test === "object" && str_today in test) {
+            if (test[str_today] === "사진에 댓글달기") {
+              await AsyncStorage.setItem("todayMissionClear", "true");
+              await axios({
+                method: "GET",
+                url: "http://43.202.241.133:1998/mission",
+                headers: {
+                  Authorization: "Bearer " + UserServerAccessToken,
+                },
+              })
+                .then((resp) => console.log(resp))
+                .catch((e) => console.log(e));
+            }
+          } else {
+            const randomIndex = Math.floor(
+              Math.random() * todayMissions.length
+            );
+            await AsyncStorage.setItem(
+              "todayMission",
+              JSON.stringify({ [str_today]: todayMissions[randomIndex] })
+            );
+            if (test[str_today] === "사진에 댓글달기") {
+              await AsyncStorage.setItem("todayMissionClear", "true");
+              await AsyncStorage.setItem("dailyMissionClear", "false");
+              await axios({
+                method: "GET",
+                url: "http://43.202.241.133:1998/mission",
+                headers: {
+                  Authorization: "Bearer " + UserServerAccessToken,
+                },
+              })
+                .then((resp) => console.log(resp))
+                .catch((e) => console.log(e));
+            } else {
+              await AsyncStorage.setItem("todayMissionClear", "false");
+              await AsyncStorage.setItem("dailyMissionClear", "false");
+            }
+          }
+        } else {
+          const randomIndex = Math.floor(Math.random() * todayMissions.length);
+          await AsyncStorage.setItem(
+            "todayMission",
+            JSON.stringify({ [str_today]: todayMissions[randomIndex] })
+          );
+          if (test[str_today] === "사진에 댓글달기") {
+            await AsyncStorage.setItem("todayMissionClear", "true");
+            await AsyncStorage.setItem("dailyMissionClear", "false");
+            await axios({
+              method: "GET",
+              url: "http://43.202.241.133:1998/mission",
+              headers: {
+                Authorization: "Bearer " + UserServerAccessToken,
+              },
+            })
+              .then((resp) => console.log(resp))
+              .catch((e) => console.log(e));
+          } else {
+            await AsyncStorage.setItem("todayMissionClear", "false");
+            await AsyncStorage.setItem("dailyMissionClear", "false");
+          }
+        }
       } else {
         console.error("❌ 서버 응답 오류:", response.status);
       }
@@ -103,13 +183,14 @@ export default function CommentForm({photoId}) {
     <View>
       {comments.length !== 0 ? (
         <TouchableOpacity
-          style={{paddingHorizontal: '5%', paddingVertical: "3%",}}
+          style={{ paddingHorizontal: "5%", paddingVertical: "3%" }}
           onPress={() => setModalVisible(true)}
         >
-          <Text style={{color: "gray",}}>
+          <Text style={{ color: "gray" }}>
             댓글 {comments.length}개 모두 보기
           </Text>
-        </TouchableOpacity>) : (
+        </TouchableOpacity>
+      ) : (
         <View
           style={{
             flexDirection: "row",
@@ -125,12 +206,17 @@ export default function CommentForm({photoId}) {
             placeholder="댓글..."
           />
           <TouchableOpacity onPress={sendToComment}>
-            <Text style={{paddingLeft: 10, top: 10}}>작성</Text>
+            <Text style={{ paddingLeft: 10, top: 10 }}>작성</Text>
           </TouchableOpacity>
-          {uploadingComment && <ActivityIndicator style={{paddingLeft: 10, top: 10}} size="small" color="gray"/>}
+          {uploadingComment && (
+            <ActivityIndicator
+              style={{ paddingLeft: 10, top: 10 }}
+              size="small"
+              color="gray"
+            />
+          )}
         </View>
-      )
-      }
+      )}
 
       <Modal
         presentationStyle="formSheet"
@@ -141,25 +227,29 @@ export default function CommentForm({photoId}) {
         }}
       >
         <View style={styles.modalContainer}>
-          <View style={{alignItems: "center"}}>
-            <View style={styles.separator}/>
+          <View style={{ alignItems: "center" }}>
+            <View style={styles.separator} />
           </View>
 
           <View style={styles.modalContent}>
             <FlatList
               data={comments}
               keyExtractor={(item) => item.commentId.toString()}
-              renderItem={({item}) => (
-
-                <View
-                  key={item.commentId}
-                  style={styles.commentForm}
-                >
-                  <AlienType writer={item.writer}/>
+              renderItem={({ item }) => (
+                <View key={item.commentId} style={styles.commentForm}>
+                  <AlienType writer={item.writer} />
                   <View>
-                    <Text style={{flexDirection: "row", alignItems: "center", fontSize: 14,}}>
-                      <Text style={{fontWeight: "bold",}}>{item.writer}</Text>
-                      <Text style={{color: "gray",}}>{`  ${calculateDaysAgo(item.createAt)}`}</Text>
+                    <Text
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        fontSize: 14,
+                      }}
+                    >
+                      <Text style={{ fontWeight: "bold" }}>{item.writer}</Text>
+                      <Text style={{ color: "gray" }}>{`  ${calculateDaysAgo(
+                        item.createAt
+                      )}`}</Text>
                     </Text>
                     <Text>{item.content}</Text>
                   </View>
@@ -182,15 +272,21 @@ export default function CommentForm({photoId}) {
                 placeholder="댓글..."
               />
               <TouchableOpacity onPress={sendToComment}>
-                <Text style={{paddingLeft: 10, top: 10}}>작성</Text>
+                <Text style={{ paddingLeft: 10, top: 10 }}>작성</Text>
               </TouchableOpacity>
-              {uploadingComment && <ActivityIndicator style={{paddingLeft: 10, top: 10}} size="small" color="gray"/>}
+              {uploadingComment && (
+                <ActivityIndicator
+                  style={{ paddingLeft: 10, top: 10 }}
+                  size="small"
+                  color="gray"
+                />
+              )}
             </View>
           </View>
         </View>
       </Modal>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({

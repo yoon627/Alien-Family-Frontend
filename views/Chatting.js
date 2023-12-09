@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Dimensions,
   ScrollView,
@@ -8,9 +8,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import {Client} from "@stomp/stompjs";
+import { Client } from "@stomp/stompjs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {Ionicons} from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import AlienType from "../components/AlienType";
 
 const TextEncodingPolyfill = require("text-encoding");
@@ -20,7 +20,7 @@ Object.assign("global", {
   TextDecoder: TextEncodingPolyfill.TextDecoder,
 });
 
-const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const ChatRoom = () => {
   const [stompClient, setStompClient] = useState(null);
@@ -45,7 +45,7 @@ const ChatRoom = () => {
             headers: {
               Authorization: "Bearer " + token,
             },
-          },
+          }
         );
         if (!response.ok) {
           throw new Error("Response not ok");
@@ -84,7 +84,7 @@ const ChatRoom = () => {
             client.subscribe("/sub/chat/room/" + chatroomId, (message) => {
               const receivedMessage = JSON.parse(message.body);
               setMessages((prevMessages) => [...prevMessages, receivedMessage]);
-              scrollViewRef.current?.scrollToEnd({animated: true}); // 여기에 스크롤 로직 추가
+              scrollViewRef.current?.scrollToEnd({ animated: true }); // 여기에 스크롤 로직 추가
             });
           },
           onStompError: (frame) => {
@@ -142,6 +142,83 @@ const ChatRoom = () => {
       });
       setMessage("");
     }
+    const mission = async () => {
+      const UserServerAccessToken = await AsyncStorage.getItem(
+        "UserServerAccessToken"
+      );
+      const ktc = new Date();
+      ktc.setHours(ktc.getHours() + 9);
+      const str_today = JSON.stringify(ktc).toString().slice(1, 11);
+      const test = JSON.parse(await AsyncStorage.getItem("todayMission"));
+      const todayMissions = [
+        "사진 찍어 올리기",
+        "내 갤러리 사진 등록하기",
+        "사진에 댓글달기",
+        "가족들과 채팅으로 인사하기",
+        "캘린더에 자기 일정 추가하기",
+      ];
+      if (test) {
+        if (test && typeof test === "object" && str_today in test) {
+          if (test[str_today] === "가족들과 채팅으로 인사하기") {
+            await AsyncStorage.setItem("todayMissionClear", "true");
+            await axios({
+              method: "GET",
+              url: "http://43.202.241.133:1998/mission",
+              headers: {
+                Authorization: "Bearer " + UserServerAccessToken,
+              },
+            })
+              .then((resp) => console.log(resp))
+              .catch((e) => console.log(e));
+          }
+        } else {
+          const randomIndex = Math.floor(Math.random() * todayMissions.length);
+          await AsyncStorage.setItem(
+            "todayMission",
+            JSON.stringify({ [str_today]: todayMissions[randomIndex] })
+          );
+          if (test[str_today] === "가족들과 채팅으로 인사하기") {
+            await AsyncStorage.setItem("todayMissionClear", "true");
+            await AsyncStorage.setItem("dailyMissionClear", "false");
+            await axios({
+              method: "GET",
+              url: "http://43.202.241.133:1998/mission",
+              headers: {
+                Authorization: "Bearer " + UserServerAccessToken,
+              },
+            })
+              .then((resp) => console.log(resp))
+              .catch((e) => console.log(e));
+          } else {
+            await AsyncStorage.setItem("todayMissionClear", "false");
+            await AsyncStorage.setItem("dailyMissionClear", "false");
+          }
+        }
+      } else {
+        const randomIndex = Math.floor(Math.random() * todayMissions.length);
+        await AsyncStorage.setItem(
+          "todayMission",
+          JSON.stringify({ [str_today]: todayMissions[randomIndex] })
+        );
+        if (test[str_today] === "가족들과 채팅으로 인사하기") {
+          await AsyncStorage.setItem("todayMissionClear", "true");
+          await AsyncStorage.setItem("dailyMissionClear", "false");
+          await axios({
+            method: "GET",
+            url: "http://43.202.241.133:1998/mission",
+            headers: {
+              Authorization: "Bearer " + UserServerAccessToken,
+            },
+          })
+            .then((resp) => console.log(resp))
+            .catch((e) => console.log(e));
+        } else {
+          await AsyncStorage.setItem("todayMissionClear", "false");
+          await AsyncStorage.setItem("dailyMissionClear", "false");
+        }
+      }
+    };
+    mission();
   };
 
   useEffect(() => {
@@ -151,7 +228,7 @@ const ChatRoom = () => {
         stompClient.subscribe("/sub/chat/room/" + roomNumber, (message) => {
           const receivedMessage = JSON.parse(message.body);
           setMessages((prevMessages) => [...prevMessages, receivedMessage]);
-          scrollViewRef.current?.scrollToEnd({animated: true}); // 여기에 스크롤 로직 추가
+          scrollViewRef.current?.scrollToEnd({ animated: true }); // 여기에 스크롤 로직 추가
         });
       };
     }
@@ -186,8 +263,8 @@ const ChatRoom = () => {
   }
 
   return (
-    <View style={{flex: 1, padding: 10, backgroundColor: "#fff"}}>
-      <ScrollView style={{flex: 1, marginHorizontal: 5}} ref={scrollViewRef}>
+    <View style={{ flex: 1, padding: 10, backgroundColor: "#fff" }}>
+      <ScrollView style={{ flex: 1, marginHorizontal: 5 }} ref={scrollViewRef}>
         {messages.map((msg, index) => (
           <View key={index}>
             <View
@@ -200,10 +277,10 @@ const ChatRoom = () => {
               {msg.sender !== myName && (
                 <View>
                   <Text style={styles.senderName}>{msg.sender}</Text>
-                  <AlienType writer={msg.sender}/>
+                  <AlienType writer={msg.sender} />
                 </View>
               )}
-              <View style={{flex: 1}}>
+              <View style={{ flex: 1 }}>
                 <View
                   style={[
                     styles.messageBubble,
@@ -238,7 +315,7 @@ const ChatRoom = () => {
           placeholder="Type a message"
         />
         <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
-          <Ionicons name="send" size={24} color="white"/>
+          <Ionicons name="send" size={24} color="white" />
         </TouchableOpacity>
       </View>
     </View>
@@ -304,7 +381,7 @@ const styles = StyleSheet.create({
   profilePic: {
     width: SCREEN_WIDTH * 0.1,
     height: SCREEN_WIDTH * 0.1, // 이미지 크기 조절
-    borderRadius: SCREEN_WIDTH * 0.1 / 2, // 원형으로 만들기
+    borderRadius: (SCREEN_WIDTH * 0.1) / 2, // 원형으로 만들기
     marginRight: 10, // 메시지 버블과의 간격,
     resizeMode: "contain",
     backgroundColor: "#FFEEC3",
