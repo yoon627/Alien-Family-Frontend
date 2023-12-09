@@ -28,6 +28,8 @@ const SCREEN_HEIGHT = Dimensions.get("window").height;
 
 export default function Attendance({ navigation }) {
   const [notification, setNotification] = useState(false);
+  const [tmiJson, setTmiJson] = useState({});
+  const [attendanceJson, setAttendanceJson] = useState({});
   const notificationListener = useRef();
 
   const ktc = new Date();
@@ -56,8 +58,6 @@ export default function Attendance({ navigation }) {
     str_bbbbbtoday,
     str_bbbbbbtoday,
   ];
-  const [tmiJson, setTmiJson] = useState({});
-  const [attendanceJson, setAttendanceJson] = useState({});
 
   async function fetchData() {
     const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
