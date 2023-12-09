@@ -92,9 +92,15 @@ export default function ImageDetailForm({route, navigation}) {
                   </View>
                 )}
 
-                <View style={{paddingHorizontal: "5%",}}>
-                  <Text style={styles.description}>{item.description}</Text>
-                </View>
+                {item.description ? (
+                  <View style={{paddingHorizontal: "5%", flexDirection: "row", alignItems: "center", paddingTop: "5%",}}>
+                    <Text style={{...styles.writer, fontSize: 16,}}>{item.writer}</Text>
+                    <Text style={styles.description}>
+                      {item.description}
+                    </Text>
+                  </View>
+                ) : null
+                }
 
                 <CommentForm
                   photoId={item.photoId}
@@ -145,7 +151,7 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 16,
-    paddingHorizontal: "7%",
+    marginLeft: 5,
   },
   writer: {
     fontSize: 18,
