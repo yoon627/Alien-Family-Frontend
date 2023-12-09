@@ -442,7 +442,7 @@ export default function Home({navigation, fonts}) {
           ></View>
           <View style={styles.alien}>{movingObject()}</View>
           <View style={styles.bottomContainer}>
-            <TouchableOpacity onPress={() => setPlantModal(true)}>
+            <TouchableOpacity onPress={() => navigation.navigate("PlantInfo")}>
               {renderFlower()}
             </TouchableOpacity>
             <Modal
