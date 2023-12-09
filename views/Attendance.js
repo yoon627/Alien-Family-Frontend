@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from "react";
+import React, {useEffect, useState, useRef, useCallback} from "react";
 import {Dimensions, Image, StyleSheet, Text, View, ImageBackground} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -6,6 +6,7 @@ import {ScrollView} from "react-native-gesture-handler";
 import {LinearGradient} from 'expo-linear-gradient';
 import * as Notifications from "expo-notifications";
 import AlienType from "../components/AlienType";
+import {useFocusEffect} from "@react-navigation/native";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -20,6 +21,8 @@ const SCREEN_HEIGHT = Dimensions.get("window").height;
 
 export default function Attendance({navigation}) {
   const [notification, setNotification] = useState(false);
+  const [tmiJson, setTmiJson] = useState({});
+  const [attendanceJson, setAttendanceJson] = useState({});
   const notificationListener = useRef();
 
   const ktc = new Date();
@@ -48,8 +51,6 @@ export default function Attendance({navigation}) {
     str_bbbbbtoday,
     str_bbbbbbtoday,
   ];
-  const [tmiJson, setTmiJson] = useState({});
-  const [attendanceJson, setAttendanceJson] = useState({});
 
   async function fetchData() {
     const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
@@ -108,12 +109,18 @@ export default function Attendance({navigation}) {
   }
 
   useEffect(() => {
-    const fetchDataAsync = async () => {
-      await fetchData();
-    };
+    fetchData();
+  }, []);
 
-    fetchDataAsync();
-  }, [tmiJson]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+      // 여기에 다른 포커스를 받았을 때 실행하고 싶은 작업들을 추가할 수 있습니다.
+      return () => {
+        // 스크린이 포커스를 잃을 때 정리 작업을 수행할 수 있습니다.
+      };
+    }, []) // 두 번째 매개변수로 빈 배열을 전달하여 컴포넌트가 처음 마운트될 때만 실행되도록 합니다.
+  );
 
   useEffect(() => {
     notificationListener.current =
