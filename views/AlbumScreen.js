@@ -53,6 +53,16 @@ export default function AlbumScreen({navigation}) {
   const [tagList, setTagList] = useState([]);
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
+  const [nickname, setNickname] = useState('');
+
+  useEffect(() => {
+    async function fetchNickname() {
+      const nick = await AsyncStorage.getItem("nickname");
+      setNickname(nick);
+    }
+
+    fetchNickname();
+  }, [nickname]);
 
   // 가족 태그
   useEffect(() => {
@@ -382,6 +392,7 @@ export default function AlbumScreen({navigation}) {
                         comments: item.comments,
                       },
                       albumList: albumList,
+                      nickname: nickname,
                     })
                   }
                 >
