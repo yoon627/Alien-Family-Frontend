@@ -427,8 +427,8 @@ const ChooseCharacter = ({ navigation, route }) => {
                                 })
                                 .catch((e) => console.log(e));
                             } else {
-                              console.log(alienType);
-                              console.log(tmpCharacterJson[alienType]);
+                              // console.log(alienType);
+                              // console.log(tmpCharacterJson[alienType]);
                               setCharacterJson(tmpCharacterJson);
                               Alert.alert("이미 선택된 외계인이에요!");
                             }

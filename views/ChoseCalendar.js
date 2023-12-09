@@ -90,7 +90,7 @@ export default function ChoseCalendar({closeModal, closeAddModal}) {
           if (!response.ok) {
             throw new Error("HTTP error! status: " + response.status);
           } else if (response.ok) {
-            console.log("성공!!");
+            // console.log("성공!!");
             closeModal(false);
             closeAddModal(false);
             alert("업로드 완료!");

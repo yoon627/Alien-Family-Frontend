@@ -50,14 +50,14 @@ const Login = ({ navigation }) => {
     (event) => {
       if (event.nativeEvent.state === State.ACTIVE) {
         // Long press가 활성화된 경우
-        console.log("Hello");
+        // console.log("Hello");
         onLongPress();
       }
     },
     [onLongPress]
   );
   const onLongPress = () => {
-    console.log("Long press activated!");
+    // console.log("Long press activated!");
     // 10초 동안 눌렸을 때 실행되는 함수
     setModalVisible(true);
   };
@@ -67,7 +67,7 @@ const Login = ({ navigation }) => {
   const handlePressIn = () => {
     pressTimeout = setTimeout(() => {
       // 버튼을 누르고 있을 때의 동작을 여기에 추가
-      console.log("Button Pressed and Held!");
+      // console.log("Button Pressed and Held!");
     }, 1000); // 10초 동안 버튼을 누르고 있어야 동작
     setModalVisible(true);
   };
@@ -123,7 +123,7 @@ const Login = ({ navigation }) => {
                         })
                           .then(async (resp) => {
                             const test = await AsyncStorage.getItem("test");
-                            console.log(test);
+                            // console.log(test);
                             const members =
                               resp.data.data.familyResponseDto.members;
                             const familyId =
@@ -157,11 +157,11 @@ const Login = ({ navigation }) => {
                               "UserServerAccessToken",
                               resp.data.data.tokenInfo.accessToken
                             );
-                            console.log(members);
-                            console.log(chatroomId);
-                            console.log(familyId);
-                            console.log(plant);
-                            console.log(myDB);
+                            // console.log(members);
+                            // console.log(chatroomId);
+                            // console.log(familyId);
+                            // console.log(plant);
+                            // console.log(myDB);
                           })
                           .then(() => {
                             setModalVisible(false);

@@ -68,7 +68,7 @@ async function registerForPushNotificationsAsync() {
     token = await Notifications.getExpoPushTokenAsync({
       projectId: Constants.expoConfig.extra.eas.projectId,
     });
-    console.log(token.data);
+    // console.log(token.data);
   } else {
     alert("Must use physical device for Push Notifications");
   }
@@ -90,15 +90,15 @@ export default function Lab() {
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
         setNotification(notification);
-        console.log(notification);
-        console.log(notification.request);
-        console.log(notification.request.content);
-        console.log(notification.request.content.data);
+        // console.log(notification);
+        // console.log(notification.request);
+        // console.log(notification.request.content);
+        // console.log(notification.request.content.data);
       });
 
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log("responseListener: " + response);
+        // console.log("responseListener: " + response);
       });
 
     return () => {

@@ -255,7 +255,7 @@ const FirstRegister = ({ route, navigation }) => {
                         })
                           .then((resp) => {
                             const roles = resp.data.data.types;
-                            console.log(roles);
+                            // console.log(roles);
                             var characterJson = {};
                             for (let i = 0; i < roles.length; i++) {
                               if (roles[i]["enabled"]) {
@@ -263,7 +263,7 @@ const FirstRegister = ({ route, navigation }) => {
                                   roles[i]["enabled"];
                               }
                             }
-                            console.log(characterJson);
+                            // console.log(characterJson);
                             navigation.navigate("ChooseCharacter", {
                               characterJson: characterJson,
                             });

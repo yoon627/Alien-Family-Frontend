@@ -575,18 +575,18 @@ export default function CalendarScreen({navigation}) {
       Notifications.addNotificationReceivedListener((notification) => {
         setNotification(notification);
         if (notification.request.content.title == "Family") {
-          console.log("update Family");
+          // console.log("update Family");
         } else if (notification.request.content.title == "TMI") {
-          console.log("update TMI");
+          // console.log("update TMI");
         } else if (notification.request.content.title == "Calendar") {
-          console.log("update Calendar");
+          // console.log("update Calendar");
           getData();
         } else if (notification.request.content.title == "Photo") {
-          console.log("update Photo");
+          // console.log("update Photo");
         } else if (notification.request.content.title == "Plant") {
-          console.log("update Plant");
+          // console.log("update Plant");
         } else {
-          console.log("update Chatting");
+          // console.log("update Chatting");
         }
       });
     return () => {

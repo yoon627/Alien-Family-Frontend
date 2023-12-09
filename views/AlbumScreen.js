@@ -244,20 +244,20 @@ export default function AlbumScreen({navigation}) {
       Notifications.addNotificationReceivedListener((notification) => {
         setNotification(notification);
         if (notification.request.content.title == "Family") {
-          console.log("update Family");
+          // console.log("update Family");
         } else if (notification.request.content.title == "TMI") {
-          console.log("update TMI");
+          // console.log("update TMI");
         } else if (notification.request.content.title == "Calendar") {
-          console.log("update Calendar");
+          // console.log("update Calendar");
         } else if (notification.request.content.title == "Photo") {
-          console.log("update Photo");
+          // console.log("update Photo");
           const fetchData = async () => {
             const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
             const UserServerAccessToken = await AsyncStorage.getItem(
               "UserServerAccessToken"
             );
             try {
-              console.log(SERVER_ADDRESS);
+              // console.log(SERVER_ADDRESS);
               const response = await fetch(SERVER_ADDRESS + `/photo`, {
                 method: "GET",
                 headers: {
@@ -283,9 +283,9 @@ export default function AlbumScreen({navigation}) {
             fetchData();
           }
         } else if (notification.request.content.title == "Plant") {
-          console.log("update Plant");
+          // console.log("update Plant");
         } else {
-          console.log("update Chatting");
+          // console.log("update Chatting");
         }
       });
     return () => {
@@ -303,7 +303,7 @@ export default function AlbumScreen({navigation}) {
           "UserServerAccessToken"
         );
         try {
-          console.log(SERVER_ADDRESS);
+          // console.log(SERVER_ADDRESS);
           const response = await fetch(SERVER_ADDRESS + `/photo`, {
             method: "GET",
             headers: {

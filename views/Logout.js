@@ -30,7 +30,6 @@ export default function Logout({navigation}) {
                   },
                 })
                   .then(async() => {
-                    await AsyncStorage.setItem("test","test");
                     await AsyncStorage.clear();
                     navigation.navigate("Login");
                   })
