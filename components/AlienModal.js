@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { ImageBackground } from 'react-native';
-import { Modal, View, Text, Image, TouchableOpacity, Dimensions, Animated, StyleSheet } from 'react-native';
-const SCREEN_WIDTH = Dimensions.get('window').width ;
+import React, {useState, useEffect} from 'react';
+import {ImageBackground} from 'react-native';
+import {Modal, View, Text, Image, TouchableOpacity, Dimensions, Animated, StyleSheet} from 'react-native';
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
-const AlienModal = ({ visible, onClose, alienInfo }) => {
+const AlienModal = ({visible, onClose, alienInfo}) => {
 
   const slideAnim = new Animated.Value(SCREEN_WIDTH);
   const alienImagePath = {
@@ -15,7 +16,7 @@ const AlienModal = ({ visible, onClose, alienInfo }) => {
     HEADBAND: require(`../assets/img/character/HEADBAND.png`),
     TOMATO: require(`../assets/img/character/TOMATO.png`),
     CHRISTMAS_TREE: require(`../assets/img/character/CHRISTMAS_TREE.png`),
-    SANTA : require(`../assets/img/character/SANTA.png`),
+    SANTA: require(`../assets/img/character/SANTA.png`),
     PIRATE: require(`../assets/img/character/PIRATE.png`),
   }
 
@@ -42,69 +43,99 @@ const AlienModal = ({ visible, onClose, alienInfo }) => {
     }
   }, [visible]);
 
+  const koFamilyRole = (originalRole) => {
+    switch (originalRole) {
+      case "DAD":
+        return "아빠"
+      case "MOM":
+        return "엄마"
+      case "FIRST":
+        return "첫째"
+      case "SECOND":
+        return "둘째"
+      case "THIRD":
+        return "셋째"
+      case "FOURTH":
+        return "넷째"
+      case "FIFTH":
+        return "다섯째"
+      case "SIXTH":
+        return "여섯째"
+      case "GRANDMOTHER":
+        return "할머니"
+      case "GRANDFATHER":
+        return "할아버지"
+      case "UNCLE":
+        return "삼촌"
+      case "EXTRA":
+        return "기타"
+      default:
+        return originalRole;
+    }
+  };
+
   return (
-    
-    
     <Modal transparent={true} animationType="none" visible={visible} onRequestClose={onClose}>
       <View style={styles.container}>
         <Animated.View
-          style={{ ...styles.subContainer, transform: [{ translateX: slideAnim }] }}>
+          style={{...styles.subContainer, transform: [{translateX: slideAnim}]}}>
 
-          <ImageBackground source={require("../assets/img/alienCard.png")} style={styles.alienCard} >
+          <ImageBackground source={require("../assets/img/alienCard.png")} style={styles.alienCard}>
             {alienInfo && (
               <>
-              <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-                <Text style={{fontSize: 20, padding: 5, paddingHorizontal: 10}}>X</Text>
-              </TouchableOpacity>
-              <View style={styles.imageBox}>
-                <Image style={styles.image} source={alienImagePath[alienInfo.alien.type]} />
-              </View>
-              <View style={styles.txtBox}>
-                <View style={{...styles.subtitleContainer, }}>
-                  {/*<Text style={styles.subtitle}>이름 : </Text>*/}
-                  <Text style={{...styles.subtitleContent, marginBottom: 10, fontFamily: "dnf", }}>{alienInfo.name} ({alienInfo.nickname})</Text>
+                <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
+                  <Text style={{fontSize: 20, padding: 5, paddingHorizontal: 10, fontFamily: "doss",}}>X</Text>
+                </TouchableOpacity>
+                <View style={styles.imageBox}>
+                  <Image style={styles.image} source={alienImagePath[alienInfo.alien.type]}/>
                 </View>
-                {/*<View style={styles.subtitleContainer}>*/}
-                {/*  <Text style={styles.subtitle}>별명 : </Text>*/}
-                {/*  <Text style={styles.subtitleContent}>{alienInfo.nickname}</Text>*/}
-                {/*</View>*/}
-                <View style={styles.subtitleContainer}>
-                  {/*<Text style={styles.subtitle}>역할: </Text>*/}
-                  <Text style={styles.subtitleContent}>{alienInfo.familyRole}</Text>
+                <View style={styles.txtBox}>
+                  <View style={{...styles.subtitleContainer,}}>
+                    <Text
+                      style={{...styles.subtitleContent, marginBottom: 10, fontSize: 25,}}
+                    >
+                      {alienInfo.name}({alienInfo.nickname})
+                    </Text>
+                  </View>
+                  <View style={styles.subtitleContainer}>
+                    <Text style={styles.subtitleContent}>{koFamilyRole(alienInfo.familyRole)}</Text>
+                  </View>
+                  <View style={styles.subtitleContainer}>
+                    <Text style={{
+                      ...styles.subtitleContent,
+                      textDecorationLine: 'underline',
+                      textDecorationStyle: 'solid',
+                    }}>{alienInfo.email}</Text>
+                  </View>
                 </View>
-                <View style={styles.subtitleContainer}>
-                  {/*<Text style={styles.subtitle}>이메일: </Text>*/}
-                  <Text style={styles.subtitleContent}>{alienInfo.email}</Text>
-                </View>
-              </View>
               </>
             )}
           </ImageBackground>
         </Animated.View>
-        </View>
+      </View>
     </Modal>
   );
 };
 const styles = StyleSheet.create({
-  container:{
-    flex:1,
-    flexDirection:'row',
+  container: {
+    flex: 1,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    
+
   },
-  subContainer:{
-    height: SCREEN_HEIGHT/2.29,
-    width: SCREEN_WIDTH/1.5,
+  subContainer: {
+    height: SCREEN_HEIGHT / 2.29,
+    width: SCREEN_WIDTH / 1.5,
   },
-  alienCard:{
+  alienCard: {
     alignItems: 'center',
     resizeMode: "contain",
     width: '100%',
     height: '100%',
     paddingTop: 30
   },
-  imageBox:{
+  imageBox: {
     borderRadius: 100,
     alignItems: 'center',
     borderColor: '#FFF',
@@ -120,29 +151,33 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     borderColor: '#FFF',
   },
-  txtBox:{
+  txtBox: {
     marginTop: 20,
     borderRadius: 10,
     // paddingLeft: 30,
     width: '100%'
   },
-  subtitleContainer:{
+  subtitleContainer: {
     justifyContent: "center",
     // paddingHorizontal: 10,
     flexDirection: 'row',
     marginBottom: 4,
   },
-  subtitle:{
+  subtitle: {
     fontWeight: '700',
     fontSize: 19,
   },
-  subtitleContent:{
+  subtitleContent: {
     fontSize: 18,
+    fontFamily: "doss",
+    textShadowColor: 'white',
+    textShadowOffset: {width: 1, height: 1},
+    textShadowRadius: 3,
   },
-  closeBtn:{
+  closeBtn: {
     position: 'absolute',
-    top: '4%',
-    right: '5.5%',
+    top: '5%',
+    right: '5%',
     backgroundColor: '#FFF',
     // margin: 16,
     // marginRight: 18,

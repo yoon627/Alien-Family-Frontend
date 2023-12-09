@@ -209,7 +209,7 @@ export default function AlbumScreen({navigation}) {
     setSelectedTags((prevTags) => {
       const isSelected = prevTags.includes(tag);
       if (isSelected) {
-        return prevTags.filter((tag) => tag !== tag);
+        return prevTags.filter((selectedTag) => selectedTag !== tag);
       } else {
         return [...prevTags, tag];
       }
@@ -223,8 +223,8 @@ export default function AlbumScreen({navigation}) {
       return albumList.sort((a, b) => b.photoId - a.photoId);
     }
     const filteredImages = albumList.filter((item) => {
-      const hasMatchingTag = item.photoTags.some((tag) =>
-        selectedTags.includes(tag)
+      const hasMatchingTag = selectedTags.every((tag) =>
+        item.photoTags.includes(tag)
       );
       // console.log(`Item ${item.photoId} - hasMatchingTag: ${hasMatchingTag}`);
       return hasMatchingTag;

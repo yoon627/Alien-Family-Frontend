@@ -1,7 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import {
   Dimensions,
-  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -12,6 +11,7 @@ import {
 import {Client} from "@stomp/stompjs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {Ionicons} from "@expo/vector-icons";
+import AlienType from "../components/AlienType";
 
 const TextEncodingPolyfill = require("text-encoding");
 
@@ -20,31 +20,14 @@ Object.assign("global", {
   TextDecoder: TextEncodingPolyfill.TextDecoder,
 });
 
-const imageList = [
-  {name: "BASIC", image: require("../assets/img/character/BASIC.png")},
-  {name: "GLASSES", image: require("../assets/img/character/GLASSES.png")},
-  {name: "GIRL", image: require("../assets/img/character/GIRL.png")},
-  {name: "BAND_AID", image: require("../assets/img/character/BAND_AID.png")},
-  {name: "RABBIT", image: require("../assets/img/character/RABBIT.png")},
-  {name: "HEADBAND", image: require("../assets/img/character/HEADBAND.png")},
-  {name: "TOMATO", image: require("../assets/img/character/TOMATO.png")},
-  {
-    name: "CHRISTMAS_TREE",
-    image: require("../assets/img/character/CHRISTMAS_TREE.png"),
-  },
-  {name: "SANTA", image: require("../assets/img/character/SANTA.png")},
-  {name: "PIRATE", image: require("../assets/img/character/PIRATE.png")},
-];
-
 const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
 
 const ChatRoom = () => {
   const [stompClient, setStompClient] = useState(null);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const [myname, setMyname] = useState(null);
-  const [roomNumber, setroomNumber] = useState(null);
-  const [familyInfo, setFamilyInfo] = useState([]);
+  const [myName, setMyName] = useState(null);
+  const [roomNumber, setRoomNumber] = useState(null);
   const scrollViewRef = useRef(); // ScrollView 참조 생성
 
   const myIP = "43.202.241.133";
@@ -55,7 +38,6 @@ const ChatRoom = () => {
         const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
         const token = await AsyncStorage.getItem("UserServerAccessToken");
         const chatroomId = await AsyncStorage.getItem("chatroomId");
-        setFamilyInfo(await AsyncStorage.getItem("myDB"));
         const response = await fetch(
           SERVER_ADDRESS + "/chat/list?id=" + chatroomId,
           {
@@ -80,27 +62,6 @@ const ChatRoom = () => {
     getData();
   }, []);
 
-  function getAlienTypeByNickname(data, nickname) {
-    for (const key in data) {
-      if (data[key].nickname === nickname) {
-        return data[key].alien.type;
-      }
-    }
-    return null;
-  }
-
-  function findImageByName(sender) {
-    let parseInfo = {};
-    if (familyInfo) {
-      parseInfo = JSON.parse(familyInfo);
-    }
-    const alienName = getAlienTypeByNickname(parseInfo, sender);
-    if (alienName === null) {
-      return imageList[0].image;
-    }
-    return imageList.find((item) => item.name === alienName).image;
-  }
-
   useEffect(() => {
     const connection = async () => {
       try {
@@ -110,8 +71,8 @@ const ChatRoom = () => {
         const familyId = await AsyncStorage.getItem("familyId");
         const chatroomId = await AsyncStorage.getItem("chatroomId");
 
-        setMyname(name);
-        setroomNumber(chatroomId);
+        setMyName(name);
+        setRoomNumber(chatroomId);
         console.log(SERVER_ADDRESS.slice(7));
         const client = new Client({
           brokerURL: "ws://" + SERVER_ADDRESS.slice(7) + "/ws",
@@ -155,7 +116,7 @@ const ChatRoom = () => {
 
   const sendMessage = () => {
     const now = new Date();
-    now.setHours(now.getHours()+9); // 현재 시간에 9시간을 더함
+    now.setHours(now.getHours() + 9); // 현재 시간에 9시간을 더함
     console.log(now);
     // const tmp = new Date();
     // const test =tmp.toISOString();
@@ -167,7 +128,7 @@ const ChatRoom = () => {
       const messageData = {
         type: "TALK",
         roomId: roomNumber,
-        sender: myname, // 적절한 멤버 ID 설정
+        sender: myName, // 적절한 멤버 ID 설정
         content: message,
         time: now.toISOString(),
       };
@@ -236,20 +197,17 @@ const ChatRoom = () => {
                 marginBottom: 4,
               }}
             >
-              {msg.sender !== myname && (
+              {msg.sender !== myName && (
                 <View>
                   <Text style={styles.senderName}>{msg.sender}</Text>
-                  <Image
-                    source={findImageByName(msg.sender)}
-                    style={styles.profilePic}
-                  />
+                  <AlienType writer={msg.sender}/>
                 </View>
               )}
               <View style={{flex: 1}}>
                 <View
                   style={[
                     styles.messageBubble,
-                    msg.sender === myname
+                    msg.sender === myName
                       ? styles.myMessage
                       : styles.otherMessage,
                   ]}
@@ -257,12 +215,12 @@ const ChatRoom = () => {
                   <Text style={styles.messageText}>{msg.content}</Text>
                 </View>
 
-                {msg.sender === myname && (
+                {msg.sender === myName && (
                   <Text style={styles.timeTextRight}>
                     {formatTime(msg.createAt)}
                   </Text>
                 )}
-                {msg.sender !== myname && (
+                {msg.sender !== myName && (
                   <Text style={styles.timeTextLeft}>
                     {formatTime(msg.createAt)}
                   </Text>
