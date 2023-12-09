@@ -101,14 +101,36 @@ export default function CommentForm({photoId}) {
 
   return (
     <View>
-      <TouchableOpacity
-        style={{paddingHorizontal: '5%', paddingVertical: "3%",}}
-        onPress={() => setModalVisible(true)}
-      >
-        <Text style={{color: "gray",}}>
-          댓글 {comments.length}개 모두 보기
-        </Text>
-      </TouchableOpacity>
+      {comments.length !== 0 ? (
+        <TouchableOpacity
+          style={{paddingHorizontal: '5%', paddingVertical: "3%",}}
+          onPress={() => setModalVisible(true)}
+        >
+          <Text style={{color: "gray",}}>
+            댓글 {comments.length}개 모두 보기
+          </Text>
+        </TouchableOpacity>) : (
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            marginHorizontal: "10%",
+          }}
+        >
+          <TextInput
+            value={comment}
+            style={styles.comment}
+            onChangeText={setComment}
+            placeholder="댓글..."
+          />
+          <TouchableOpacity onPress={sendToComment}>
+            <Text style={{paddingLeft: 10, top: 10}}>작성</Text>
+          </TouchableOpacity>
+          {uploadingComment && <ActivityIndicator style={{paddingLeft: 10, top: 10}} size="small" color="gray"/>}
+        </View>
+      )
+      }
 
       <Modal
         presentationStyle="formSheet"
