@@ -10,7 +10,7 @@ import LadderScreen from "./LadderScreen";
 import RouletteScreen from "./RouletteScreen";
 import NewGame from "./NewGame";
 import ChatRoom from "./Chatting";
-
+import PlantInfo from "./PlantInfo";
 const Tab = createBottomTabNavigator();
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -137,6 +137,16 @@ export default function MainScreen({ navigation, route }) {
       <Tab.Screen
         name="Mole"
         component={NewGame}
+        options={{
+          headerShown: false,
+          tabBarShowLabel: false,
+          tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,
+          tabBarVisible: false,
+        }}
+      />
+      <Tab.Screen
+        name="PlantInfo"
+        component={PlantInfo}
         options={{
           headerShown: false,
           tabBarShowLabel: false,

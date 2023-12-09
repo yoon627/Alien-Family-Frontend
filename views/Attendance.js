@@ -1,11 +1,19 @@
-import React, {useEffect, useState, useRef} from "react";
-import {Dimensions, Image, StyleSheet, Text, View, ImageBackground} from "react-native";
+import React, { useEffect, useState, useRef, useCallback } from "react";
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  ImageBackground,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import {ScrollView} from "react-native-gesture-handler";
-import {LinearGradient} from 'expo-linear-gradient';
+import { ScrollView } from "react-native-gesture-handler";
+import { LinearGradient } from "expo-linear-gradient";
 import * as Notifications from "expo-notifications";
 import AlienType from "../components/AlienType";
+import {useFocusEffect} from "@react-navigation/native";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -18,7 +26,7 @@ Notifications.setNotificationHandler({
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 
-export default function Attendance({navigation}) {
+export default function Attendance({ navigation }) {
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
 
@@ -102,7 +110,6 @@ export default function Attendance({navigation}) {
         }
         // console.log(tmpJson);
         setTmiJson(tmpJson);
-
       })
       .catch((e) => console.log(e));
   }
@@ -111,10 +118,20 @@ export default function Attendance({navigation}) {
     const fetchDataAsync = async () => {
       await fetchData();
     };
-
     fetchDataAsync();
-  }, [tmiJson]);
-
+  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const fetchDataAsync = async () => {
+        await fetchData();
+      };
+      fetchDataAsync();
+      // 여기에 다른 포커스를 받았을 때 실행하고 싶은 작업들을 추가할 수 있습니다.
+      return () => {
+        // 스크린이 포커스를 잃을 때 정리 작업을 수행할 수 있습니다.
+      };
+    }, []) // 두 번째 매개변수로 빈 배열을 전달하여 컴포넌트가 처음 마운트될 때만 실행되도록 합니다.
+  );
   useEffect(() => {
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
@@ -144,36 +161,42 @@ export default function Attendance({navigation}) {
     <View style={styles.container}>
       <ImageBackground
         source={require("../assets/img/attendance_bg.jpg")}
-        imageStyle={{resizeMode: 'cover', height: SCREEN_HEIGHT, width: SCREEN_WIDTH}}
+        imageStyle={{
+          resizeMode: "cover",
+          height: SCREEN_HEIGHT,
+          width: SCREEN_WIDTH,
+        }}
       >
-        <Text style={styles.month}>
-          {new Date().getMonth() + 1}月
-        </Text>
+        <Text style={styles.month}>{new Date().getMonth() + 1}月</Text>
         <ScrollView>
           {week.map((day, index) => (
             <View
               key={day}
-              style={[styles.attendance_container, {marginLeft: index % 2 === 1 ? 30 : 10}]}
+              style={[
+                styles.attendance_container,
+                { marginLeft: index % 2 === 1 ? 30 : 10 },
+              ]}
             >
               {/* 별 배경 일자 */}
               {tmiJson[day] && tmiJson[day].length > 0 ? (
                 <View style={styles.star_container}>
                   {/* 출석도장 */}
                   <View style={styles.small_star}>
-                    {attendanceJson[day] && attendanceJson[day].map((attendant, index) =>
-                      Array.from({length: attendant}).map((_, subIndex) => (
-                        <Image
-                          key={subIndex}
-                          style={{width: 25, height: 25}}
-                          source={require("../assets/img/small_star.png")}
-                          imageStyle={{resizeMode: 'contain'}}
-                        />
-                      )),
-                    )}
+                    {attendanceJson[day] &&
+                      attendanceJson[day].map((attendant, index) =>
+                        Array.from({ length: attendant }).map((_, subIndex) => (
+                          <Image
+                            key={subIndex}
+                            style={{ width: 25, height: 25 }}
+                            source={require("../assets/img/small_star.png")}
+                            imageStyle={{ resizeMode: "contain" }}
+                          />
+                        ))
+                      )}
                   </View>
                   <ImageBackground
                     source={require("../assets/img/star.png")}
-                    imageStyle={{resizeMode: 'contain'}}
+                    imageStyle={{ resizeMode: "contain" }}
                     style={styles.big_star}
                   >
                     <Text style={styles.day_txt}>
@@ -181,8 +204,7 @@ export default function Attendance({navigation}) {
                     </Text>
                   </ImageBackground>
                 </View>
-              ) : null
-              }
+              ) : null}
 
               {/* TMI */}
               <View key={day} style={styles.tmi_container}>
@@ -191,27 +213,33 @@ export default function Attendance({navigation}) {
                     <View key={index}>
                       {/* 그라데이션 */}
                       <LinearGradient
-                        colors={['rgba(255, 255, 255, 0.4)', 'rgba(255, 255, 255, 0)']}
+                        colors={[
+                          "rgba(255, 255, 255, 0.4)",
+                          "rgba(255, 255, 255, 0)",
+                        ]}
                         style={styles.tmi_gradient}
-                        start={{x: 0, y: 0}}
-                        end={{x: 1, y: 0}}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
                       >
-                        <AlienType
-                          writer={tmi.split(":")[0]}
-                        />
+                        <AlienType writer={tmi.split(":")[0]} />
                         {/* TMI */}
                         <Text key={index} style={styles.tmi_txt}>
-                          <Text>{tmi.split(":")[0]}: {tmi.split(":")[1]}</Text>
+                          <Text>
+                            {tmi.split(":")[0]}: {tmi.split(":")[1]}
+                          </Text>
                         </Text>
                       </LinearGradient>
                     </View>
                   ))
                 ) : (
                   <LinearGradient
-                    colors={['rgba(255, 255, 255, 0.4)', 'rgba(255, 255, 255, 0)']}
+                    colors={[
+                      "rgba(255, 255, 255, 0.4)",
+                      "rgba(255, 255, 255, 0)",
+                    ]}
                     style={styles.tmi_gradient}
-                    start={{x: 0, y: 0}}
-                    end={{x: 1, y: 0}}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
                   >
                     <Text style={styles.tmi_txt}></Text>
                   </LinearGradient>
@@ -232,44 +260,43 @@ const styles = StyleSheet.create({
     height: SCREEN_HEIGHT,
   },
   month: {
-    color: '#FFF',
+    color: "#FFF",
     fontSize: 50,
     paddingVertical: 20,
     paddingLeft: 20,
   },
   attendance_container: {
-    alignContent: 'center',
-    flexDirection: 'row',
+    alignContent: "center",
+    flexDirection: "row",
     paddingTop: 20,
-    alignItems: 'center',
-
+    alignItems: "center",
   },
   star_container: {
-    justifyContent: 'center',
-    alignContent: 'center',
-    flexDirection: 'column',
+    justifyContent: "center",
+    alignContent: "center",
+    flexDirection: "column",
   },
   big_star: {
-    justifyContent: 'center',
-    alignContent: 'center',
+    justifyContent: "center",
+    alignContent: "center",
     width: SCREEN_WIDTH * 0.3,
     height: SCREEN_WIDTH * 0.3,
   },
   small_star: {
     flexDirection: "row",
-    justifyContent: 'center',
-    alignContent: 'center',
-    alignSelf: 'center',
+    justifyContent: "center",
+    alignContent: "center",
+    alignSelf: "center",
     height: 25,
-    position: 'absolute',
+    position: "absolute",
     top: 0,
-    left: 0
+    left: 0,
   },
   day_txt: {
-    color: '#56186B',
+    color: "#56186B",
     paddingLeft: 25,
     fontSize: 22,
-    fontWeight: '900'
+    fontWeight: "900",
   },
   tmi_container: {
     width: SCREEN_WIDTH * 0.7,
@@ -286,9 +313,9 @@ const styles = StyleSheet.create({
   },
   tmi_txt: {
     fontSize: 20,
-    color: '#FFF',
-    alignContent: 'center',
+    color: "#FFF",
+    alignContent: "center",
     paddingVertical: 15,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
 });

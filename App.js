@@ -29,6 +29,7 @@ import {useFonts} from "expo-font";
 import {createStackNavigator} from "@react-navigation/stack";
 import ImageUploadForm from "./views/ImageUploadForm";
 import Greet from "./views/Greet";
+import PlantInfo from "./views/PlantInfo";
 // import { AppLoading } from 'expo';
 import {
   MD3LightTheme as DefaultTheme,
@@ -142,6 +143,7 @@ export default function App() {
               <Stack.Screen name="Attendance" component={Attendance}/>
               <Stack.Screen name="Feed" component={Feed}/>
               <Stack.Screen name="FamilyInfo" component={FamilyInfo}/>
+              <Stack.Screen name="PlantInfo" component={PlantInfo}/>
             </Stack.Navigator>
           </NavigationContainer>
         </PaperProvider>
