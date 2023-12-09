@@ -82,6 +82,7 @@ export default function AlbumScreen({navigation}) {
   const handleUploadComplete = () => {
     setShowUploadForm(false);
   };
+
   useEffect(() => {
     // 서버에서 s3 이미지 url 받아옴
     const fetchData = async () => {
@@ -378,6 +379,7 @@ export default function AlbumScreen({navigation}) {
                         photoTags: item.photoTags,
                         description: item.description,
                         writer: item.writer,
+                        comments: item.comments,
                       },
                       albumList: albumList,
                     })
