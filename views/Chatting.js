@@ -52,8 +52,8 @@ const ChatRoom = () => {
         }
         const data = await response.json();
         setMessages(data);
-        console.log("챗룸 아디", chatroomId);
-        console.log("가져온 채팅내역", data);
+        // console.log("챗룸 아디", chatroomId);
+        // console.log("가져온 채팅내역", data);
       } catch (error) {
         console.error("Error getMsg:", error);
       }
@@ -73,14 +73,14 @@ const ChatRoom = () => {
 
         setMyName(name);
         setRoomNumber(chatroomId);
-        console.log(SERVER_ADDRESS.slice(7));
+        // console.log(SERVER_ADDRESS.slice(7));
         const client = new Client({
           brokerURL: "ws://" + SERVER_ADDRESS.slice(7) + "/ws",
           connectHeaders: {
             Authorization: token,
           },
           onConnect: () => {
-            console.log("Connected to the WebSocket server");
+            // console.log("Connected to the WebSocket server");
             client.subscribe("/sub/chat/room/" + chatroomId, (message) => {
               const receivedMessage = JSON.parse(message.body);
               setMessages((prevMessages) => [...prevMessages, receivedMessage]);
@@ -117,7 +117,7 @@ const ChatRoom = () => {
   const sendMessage = () => {
     const now = new Date();
     now.setHours(now.getHours() + 9); // 현재 시간에 9시간을 더함
-    console.log(now);
+    // console.log(now);
     // const tmp = new Date();
     // const test =tmp.toISOString();
     // console.log(typeof(tmp));

@@ -82,7 +82,7 @@ export default function FamilyInfo({ navigation }) {
       headers: { Authorization: "Bearer " + UserServerAccessToken },
     })
       .then(async (resp) => {
-        console.log(resp.data.data.members[0]);
+        // console.log(resp.data.data.members[0]);
         const members = resp.data.data.members;
         var myDB = {};
         for (let i = 0; i < members.length; i++) {
@@ -101,19 +101,19 @@ export default function FamilyInfo({ navigation }) {
       Notifications.addNotificationReceivedListener((notification) => {
         setNotification(notification);
         if (notification.request.content.title == "Family") {
-          console.log("update Family");
+          // console.log("update Family");
           getFamilyInfo();
           getFamilyInfo();
         } else if (notification.request.content.title == "TMI") {
-          console.log("update TMI");
+          // console.log("update TMI");
         } else if (notification.request.content.title == "Calendar") {
-          console.log("update Calendar");
+          // console.log("update Calendar");
         } else if (notification.request.content.title == "Photo") {
-          console.log("update Photo");
+          // console.log("update Photo");
         } else if (notification.request.content.title == "Plant") {
-          console.log("update Plant");
+          // console.log("update Plant");
         } else {
-          console.log("update Chatting");
+          // console.log("update Chatting");
         }
       });
     return () => {
@@ -156,20 +156,20 @@ export default function FamilyInfo({ navigation }) {
 
   const updateFamilyData = async () => {
     FAMILY_MEMBER_CNT.current = Object.keys(Family).length;
-    console.log("Family Length:", FAMILY_MEMBER_CNT.current);
+    // console.log("Family Length:", FAMILY_MEMBER_CNT.current);
     const newAnimations = Array.from(
       { length: FAMILY_MEMBER_CNT.current },
       createAnimation
     );
-    console.log(newAnimations);
+    // console.log(newAnimations);
     animations.current = newAnimations;
-    console.log(Family);
+    // console.log(Family);
     startAnimations();
   };
 
   // alien 애니메이션
   const createAnimation = () => {
-    console.log("createAnimation");
+    // console.log("createAnimation");
     return {
       translateX: new Animated.Value(RANDOM_WIDTH),
       translateY: new Animated.Value(RANDOM_HEIGHT),
@@ -177,7 +177,7 @@ export default function FamilyInfo({ navigation }) {
   };
 
   const startAnimations = () => {
-    console.log("startAnimations");
+    // console.log("startAnimations");
     animations.current.forEach((animation) => moveTarget(animation));
   };
 

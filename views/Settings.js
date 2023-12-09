@@ -16,7 +16,7 @@ export default function Settings({ navigation }) {
               const familyCode = await AsyncStorage.getItem("familyCode");
               try {
                 if (familyCode) {
-                  console.log(familyCode);
+                  // console.log(familyCode);
                   Clipboard.setString(familyCode);
                   alert("초대코드가 클립보드에 복사되었습니다.");
                 } else {

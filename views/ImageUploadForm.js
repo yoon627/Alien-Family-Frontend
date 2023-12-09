@@ -55,7 +55,7 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
         return [...prevTags, tag];
       }
     });
-    console.log("선택한 태그!!!!", photoTags);
+    // console.log("선택한 태그!!!!", photoTags);
   };
 
   // 클라에서 바로 presigned url로 업로드
@@ -120,7 +120,7 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
             Authorization: "Bearer " + UserServerAccessToken,
           },
         });
-        console.log("👌🏻 이미지 업로드 성공");
+        // console.log("👌🏻 이미지 업로드 성공");
         onUploadComplete();
       } else {
         console.error("❌ 이미지 업로드 실패");

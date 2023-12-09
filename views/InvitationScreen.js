@@ -161,7 +161,7 @@ const InvitationScreen = ({ navigation }) => {
                                         roleArr.push(roles[i]["role"]);
                                       }
                                     }
-                                    console.log(roleArr);
+                                    // console.log(roleArr);
                                     navigation.navigate("FirstRegister", {
                                       roleArr: roleArr,
                                     });
