@@ -309,12 +309,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   nickname: {
-    fontSize: 15,
+    fontSize: 16,
     color: "white",
     textAlign: "center",
     marginBottom: 8,
-
-    fontWeight: "700",
+    fontFamily: "doss",
+    textShadowColor: 'white',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 5,
   },
   image: {
     width: ALIEN_SIZE,

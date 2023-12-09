@@ -530,6 +530,7 @@ export default function CalendarScreen({navigation}) {
     textMonthFontWeight: "bold",
     textDayHeaderFontWeight: "300",
     textDayFontSize: 16,
+    textDayFontFamily: "jamsil2",
     textMonthFontSize: 16,
     textDayHeaderFontSize: 16,
     // "stylesheet.day.basic": {
@@ -560,8 +561,8 @@ export default function CalendarScreen({navigation}) {
         >
           <Text
             style={{
-              fontFamily: "dnf",
-              fontSize: 30,
+              fontFamily: "jamsil3",
+              fontSize: 32,
               alignItems: "center",
             }}
           >{`${currentMonth}`}</Text>

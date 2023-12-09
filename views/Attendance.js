@@ -5,6 +5,7 @@ import axios from "axios";
 import {ScrollView} from "react-native-gesture-handler";
 import {LinearGradient} from 'expo-linear-gradient';
 import * as Notifications from "expo-notifications";
+import AlienType from "../components/AlienType";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -20,21 +21,6 @@ const SCREEN_HEIGHT = Dimensions.get("window").height;
 export default function Attendance({navigation}) {
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
-  const [isLoading, setIsLoading] = useState(true);
-
-  const [familyInfo, setFamilyInfo] = useState([]);
-  const alienImagePath = {
-    BASIC: require(`../assets/img/character/BASIC.png`),
-    GLASSES: require(`../assets/img/character/GLASSES.png`),
-    GIRL: require(`../assets/img/character/GIRL.png`),
-    BAND_AID: require(`../assets/img/character/BAND_AID.png`),
-    RABBIT: require(`../assets/img/character/RABBIT.png`),
-    HEADBAND: require(`../assets/img/character/HEADBAND.png`),
-    TOMATO: require(`../assets/img/character/TOMATO.png`),
-    CHRISTMAS_TREE: require(`../assets/img/character/CHRISTMAS_TREE.png`),
-    SANTA: require(`../assets/img/character/SANTA.png`),
-    PIRATE: require(`../assets/img/character/PIRATE.png`),
-  };
 
   const ktc = new Date();
   ktc.setHours(ktc.getHours() + 9);
@@ -70,16 +56,6 @@ export default function Attendance({navigation}) {
     const UserServerAccessToken = await AsyncStorage.getItem(
       "UserServerAccessToken"
     );
-
-    try {
-      const resp = await AsyncStorage.getItem("myDB");
-      const familyData = JSON.parse(resp);
-      setFamilyInfo(familyData); // 데이터 로드 후에 setFamilyInfo 호출
-    } catch (e) {
-      console.log(e)
-    } finally {
-      setIsLoading(false); // 데이터 로딩이 완료되면 로딩 상태를 false로 설정
-    }
 
     await axios({
       method: "GET",
@@ -138,24 +114,6 @@ export default function Attendance({navigation}) {
 
     fetchDataAsync();
   }, [tmiJson]);
-
-
-  function getAlienTypeByNickname(writer) {
-    for (const key in familyInfo) {
-      if (familyInfo[key].nickname === writer) {
-        return familyInfo[key].alien.type;
-      }
-    }
-    return null;
-  }
-
-  function findImageByName(writer) {
-    const alienName = getAlienTypeByNickname(writer);
-    if (alienName === null) {
-      return alienImagePath["BASIC"];
-    }
-    return alienImagePath[alienName];
-  }
 
   useEffect(() => {
     notificationListener.current =
@@ -238,14 +196,12 @@ export default function Attendance({navigation}) {
                         start={{x: 0, y: 0}}
                         end={{x: 1, y: 0}}
                       >
-                        <Image
-                          style={styles.profilePic}
-                          source={findImageByName(tmi.split(":")[0])}
+                        <AlienType
+                          writer={tmi.split(":")[0]}
                         />
                         {/* TMI */}
                         <Text key={index} style={styles.tmi_txt}>
-                          <Text style={{fontFamily: "dnf"}}>{tmi.split(":")[0]}: </Text>
-                          <Text>{tmi.split(":")[1]}</Text>
+                          <Text>{tmi.split(":")[0]}: {tmi.split(":")[1]}</Text>
                         </Text>
                       </LinearGradient>
                     </View>
@@ -324,21 +280,15 @@ const styles = StyleSheet.create({
   tmi_gradient: {
     width: SCREEN_WIDTH * 0.6,
     marginBottom: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 10,
   },
   tmi_txt: {
     fontSize: 20,
     color: '#FFF',
     alignContent: 'center',
     paddingVertical: 15,
-    paddingLeft: 20,
     justifyContent: 'center',
-  },
-  profilePic: {
-    width: 35, // 이미지 크기 조절
-    height: 35, // 이미지 크기 조절
-    resizeMode: "cover",
-    borderRadius: 35 / 2, // 원형으로 만들기
-    backgroundColor: "#FFEEC3",
-    marginRight: 5,
   },
 });

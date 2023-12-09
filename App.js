@@ -1,12 +1,11 @@
-import React, { useCallback, useRef, useState, useEffect } from "react";
+import React from "react";
 import {
   StyleSheet,
-  Linking,
   SafeAreaView,
   StatusBar,
   useColorScheme,
 } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
+import {NavigationContainer} from "@react-navigation/native";
 import Login from "./views/Login";
 import FirstRegister from "./views/FirstRegister";
 import ChooseCharacter from "./views/ChooseCharacter";
@@ -20,22 +19,21 @@ import LadderScreen from "./views/LadderScreen";
 import RouletteScreen from "./views/RouletteScreen";
 import NewGame from "./views/NewGame";
 import MainScreen from "./views/MainScreen";
-import { Provider as StoreProvider } from "react-redux";
+import {Provider as StoreProvider} from "react-redux";
 import ChatRoom from "./views/Chatting";
 import ImageDetailForm from "./views/ImageDetailForm";
 import store from "./redux/store";
 import Attendance from "./views/Attendance";
 import AlbumScreen from "./views/AlbumScreen";
-import { useFonts } from "expo-font";
-import { createStackNavigator } from "@react-navigation/stack";
+import {useFonts} from "expo-font";
+import {createStackNavigator} from "@react-navigation/stack";
 import ImageUploadForm from "./views/ImageUploadForm";
 import Greet from "./views/Greet";
-import Lab from "./views/Lab";
+// import { AppLoading } from 'expo';
 import {
   MD3LightTheme as DefaultTheme,
   PaperProvider,
 } from "react-native-paper";
-// import * as SplashScreen from "expo-splash-screen";
 import Feed from "./views/Feed";
 import * as Notifications from "expo-notifications";
 import FamilyInfo from "./views/FamilyInfo";
@@ -52,15 +50,24 @@ const theme = {
 };
 
 const fontConfig = {
-  android: { regular: { fontFamily: "" } },
+  android: {regular: {fontFamily: ""}},
 };
 // SplashScreen.preventAutoHideAsync();
 export default function App() {
   const [fontsLoaded] = useFonts({
     dnf: require("./assets/font/DNFBitBitv2.ttf"),
-    sammul: require("./assets/font/DOSSaemmul.ttf"),
+    doss: require("./assets/font/DOSSaemmul.ttf"),
     DungGeunMo: require("./assets/font/DungGeunMo.ttf"),
+    tae: require("./assets/font/TAEBAEKmilkyway.otf"),
+    wooju: require("./assets/font/HakgyoansimWoojuR.otf"),
+    jamsil1: require("./assets/font/TheJamsilOTF1Thin.otf"),
+    jamsil2: require("./assets/font/TheJamsilOTF2Light.otf"),
+    jamsil3: require("./assets/font/TheJamsilOTF3Regular.otf"),
   });
+
+  // if (!fontsLoaded) {
+  //   return <AppLoading />;
+  // }
 
   // const onLayoutRootView = useCallback(async () => {
   //   if (fontsLoaded) {
@@ -68,73 +75,73 @@ export default function App() {
   //   }
   // }, [fontsLoaded]);
   const colorScheme = useColorScheme(); // 'light' or 'dark'
-  console.log(colorScheme);
+  // console.log(colorScheme);
   if (!fontsLoaded) {
     return null;
   }
   // console.log("로딩댐?", fontsLoaded);
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+    <SafeAreaView style={{flex: 1, backgroundColor: "white"}}>
       <StatusBar
         barStyle={colorScheme === "dark" ? "light-content" : "dark-content"}
         backgroundColor={colorScheme === "dark" ? "black" : "white"}
       />
       <StoreProvider store={store}>
-        <PaperProvider theme={{ ...theme }}>
+        <PaperProvider theme={{...theme}}>
           <NavigationContainer>
             <Stack.Navigator
               initialRouteName="Login"
-              screenOptions={{ headerShown: false, animationEnabled: false }}
+              screenOptions={{headerShown: false, animationEnabled: false}}
             >
-              <Stack.Screen name="Login" component={Login} />
-              <Stack.Screen name="KaKaoLogin" component={KaKaoLogin} />
-              <Stack.Screen name="Greet" component={Greet} />
-              <Stack.Screen name="FirstRegister" component={FirstRegister} />
+              <Stack.Screen name="Login" component={Login}/>
+              <Stack.Screen name="KaKaoLogin" component={KaKaoLogin}/>
+              <Stack.Screen name="Greet" component={Greet}/>
+              <Stack.Screen name="FirstRegister" component={FirstRegister}/>
               <Stack.Screen
                 name="ChooseCharacter"
                 component={ChooseCharacter}
               />
-              <Stack.Screen name="Invitation" component={InvitationScreen} />
-              <Stack.Screen name="ClickBox" component={ClickBox} />
-              <Stack.Screen name="Ladder" component={LadderScreen} />
-              <Stack.Screen name="Roulette" component={RouletteScreen} />
-              <Stack.Screen name="Mole" component={NewGame} />
-              <Stack.Screen name="Chat" component={ChatRoom} />
+              <Stack.Screen name="Invitation" component={InvitationScreen}/>
+              <Stack.Screen name="ClickBox" component={ClickBox}/>
+              <Stack.Screen name="Ladder" component={LadderScreen}/>
+              <Stack.Screen name="Roulette" component={RouletteScreen}/>
+              <Stack.Screen name="Mole" component={NewGame}/>
+              <Stack.Screen name="Chat" component={ChatRoom}/>
               <Stack.Screen
                 name="AlbumScreen"
                 component={AlbumScreen}
-                options={{ headerShown: false }}
+                options={{headerShown: false}}
               />
               <Stack.Screen
                 name="ImageUploadForm"
                 component={ImageUploadForm}
-                options={{ headerShown: false }}
+                options={{headerShown: false}}
               />
               <Stack.Screen
                 name="ImageDetailForm"
                 component={ImageDetailForm}
-                options={{ headerShown: false }}
+                options={{headerShown: false}}
               />
               <Stack.Screen
                 name="MainDrawer"
                 component={MainDrawer}
-                options={{ headerShown: false }}
+                options={{headerShown: false}}
               />
-              <Stack.Screen name="FirstStart" component={FirstStart} />
+              <Stack.Screen name="FirstStart" component={FirstStart}/>
               <Stack.Screen
                 name="Mini Games"
                 component={MiniGames}
-                options={{ headerShown: false }}
+                options={{headerShown: false}}
               />
               <Stack.Screen
                 name="Home"
                 component={MainDrawer}
-                options={{ headerShown: false }}
+                options={{headerShown: false}}
               />
-              <Stack.Screen name="MainScreen" component={MainScreen} />
-              <Stack.Screen name="Attendance" component={Attendance} />
-              <Stack.Screen name="Feed" component={Feed} />
-              <Stack.Screen name="FamilyInfo" component={FamilyInfo} />
+              <Stack.Screen name="MainScreen" component={MainScreen}/>
+              <Stack.Screen name="Attendance" component={Attendance}/>
+              <Stack.Screen name="Feed" component={Feed}/>
+              <Stack.Screen name="FamilyInfo" component={FamilyInfo}/>
             </Stack.Navigator>
           </NavigationContainer>
         </PaperProvider>
