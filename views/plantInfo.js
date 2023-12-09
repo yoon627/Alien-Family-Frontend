@@ -97,6 +97,7 @@ export default function PlantInfo() {
     })
       .then((resp) => console.log(resp))
       .catch((e) => console.log(e));
+    return <View></View>;
   };
   const renderChat = () => {
     const chatContainerStyles = [

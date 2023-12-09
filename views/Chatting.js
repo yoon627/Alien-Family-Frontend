@@ -12,6 +12,7 @@ import { Client } from "@stomp/stompjs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
 import AlienType from "../components/AlienType";
+import axios from "axios";
 
 const TextEncodingPolyfill = require("text-encoding");
 
