@@ -55,6 +55,7 @@
     "lottie-ios": "^4.3.3",
     "lottie-react-native": "5.1.6",
     "lucide-react-native": "^0.293.0",
+    "native-base": "^3.4.28",
     "react": "18.2.0",
     "react-native": "0.72.5",
     "react-native-animatable": "^1.4.0",

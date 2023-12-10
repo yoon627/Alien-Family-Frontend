@@ -8,11 +8,14 @@ import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
 import {Ionicons} from "@expo/vector-icons";
 import {MaterialIcons} from '@expo/vector-icons';
+import {Alert} from "native-base";
+
 
 const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
 
 export default function ImageDetailForm({route, navigation}) {
   const [isModalVisible, setModalVisible] = useState(false);
+  const [downStatus, setDownStatus] = useState(false);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -33,6 +36,11 @@ export default function ImageDetailForm({route, navigation}) {
       const asset = await MediaLibrary.createAssetAsync(uri);
       await MediaLibrary.saveToLibraryAsync(asset);
       console.log("이미지 다운로드, 저장 성공!!!");
+      setDownStatus(true);
+
+      setTimeout(() => {
+        setDownStatus(false);
+      }, 3000);   // 3초 후에 false로 변경
     } catch (error) {
       console.log("이미지 다운 에러!!!!", error);
     }
@@ -93,6 +101,13 @@ export default function ImageDetailForm({route, navigation}) {
                         <TouchableOpacity
                           onPress={() => downloadAndSaveImage(item.photoKey)}
                         >
+                          {downStatus &&
+                            <Alert w="100%" status="success" colorScheme="secondary" variant="outline-light">
+                              <Text fontSize="md" fontWeight="medium" color="coolGray.800">
+                                이미지 다운로드 성공!
+                              </Text>
+                            </Alert>
+                          }
                           <Ionicons
                             style={{
                               textAlign: 'right',
@@ -100,14 +115,14 @@ export default function ImageDetailForm({route, navigation}) {
                             }}
                             name="ios-arrow-down-circle-outline"
                             size={26}
-                            color="#605D5D"
+                            color="black"
                           />
                         </TouchableOpacity>
                         <TouchableOpacity onPress={toggleModal}>
                           <MaterialIcons
                             name="more-horiz"
                             size={25}
-                            color="#605D5D"
+                            color="black"
                           />
                         </TouchableOpacity></View>
                     ) : (
@@ -117,7 +132,7 @@ export default function ImageDetailForm({route, navigation}) {
                         <Ionicons
                           name="ios-arrow-down-circle-outline"
                           size={26}
-                          color="#605D5D"
+                          color="black"
                         />
                       </TouchableOpacity>
                     )}
