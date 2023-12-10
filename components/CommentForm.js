@@ -24,7 +24,12 @@ export default function CommentForm({photoId, nickname}) {
     const createDate = new Date(createAt);
     const currentDate = new Date();
 
+    if (isNaN(createDate.getTime())) {
+      console.log("날짜 형식 잘못됨", createDate);
+    }
+
     const timeDiff = currentDate - createDate;
+
     const secondsDiff = Math.floor(timeDiff / 1000);
     const minutesDiff = Math.floor(timeDiff / (1000 * 60));
     const hoursDiff = Math.floor(timeDiff / (1000 * 60 * 60));
@@ -45,7 +50,6 @@ export default function CommentForm({photoId, nickname}) {
     }
   };
 
-
   useEffect(() => {
     const fetchData = async () => {
       const UserServerAccessToken = await AsyncStorage.getItem(
@@ -65,7 +69,7 @@ export default function CommentForm({photoId, nickname}) {
 
         const data = await response.json();
         setComments(data.data);
-        // console.log(data.data);
+        console.log(data.data);
       } catch (error) {
         console.error("댓글을 가져오는 중에 오류가 발생했습니다.", error);
       }
@@ -96,11 +100,7 @@ export default function CommentForm({photoId, nickname}) {
       if (response.ok) {
         console.log("👂🏻 댓글 서버로 보내짐~~~~");
 
-        const newComment = {
-          commentId: comments.length + 1,
-          writer: writer,
-          content: comment,
-        };
+        const newComment = {commentId: comments.length + 1, writer: writer, content: comment, createAt: Date.now()};
         setComments([...comments, newComment]);
         setComment(""); // 댓글 입력창 초기화
         const ktc = new Date();
