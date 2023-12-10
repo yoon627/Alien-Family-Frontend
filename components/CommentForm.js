@@ -108,15 +108,15 @@ export default function CommentForm({photoId, nickname}) {
         const str_today = JSON.stringify(ktc).toString().slice(1, 11);
         const test = JSON.parse(await AsyncStorage.getItem("todayMission"));
         const todayMissions = [
-          "사진 찍어 올리기",
+          "사진 찍어서 올리기",
           "내 갤러리 사진 등록하기",
-          "사진에 댓글달기",
+          "사진에 댓글 달기",
           "가족들과 채팅으로 인사하기",
-          "캘린더에 자기 일정 추가하기",
+          "캘린더에 일정 등록하기",
         ];
         if (test) {
           if (test && typeof test === "object" && str_today in test) {
-            if (test[str_today] === "사진에 댓글달기") {
+            if (test[str_today] === "사진에 댓글 달기") {
               await AsyncStorage.setItem("todayMissionClear", "true");
               await axios({
                 method: "GET",
@@ -136,7 +136,7 @@ export default function CommentForm({photoId, nickname}) {
               "todayMission",
               JSON.stringify({ [str_today]: todayMissions[randomIndex] })
             );
-            if (test[str_today] === "사진에 댓글달기") {
+            if (test[str_today] === "사진에 댓글 달기") {
               await AsyncStorage.setItem("todayMissionClear", "true");
               await AsyncStorage.setItem("dailyMissionClear", "false");
               await axios({
@@ -159,7 +159,7 @@ export default function CommentForm({photoId, nickname}) {
             "todayMission",
             JSON.stringify({ [str_today]: todayMissions[randomIndex] })
           );
-          if (test[str_today] === "사진에 댓글달기") {
+          if (test[str_today] === "사진에 댓글 달기") {
             await AsyncStorage.setItem("todayMissionClear", "true");
             await AsyncStorage.setItem("dailyMissionClear", "false");
             await axios({

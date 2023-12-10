@@ -144,16 +144,16 @@ export default function MainScreen({ navigation, route }) {
           tabBarVisible: false,
         }}
       />
-      <Tab.Screen
-        name="PlantInfo"
-        component={PlantInfo}
-        options={{
-          headerShown: false,
-          tabBarShowLabel: false,
-          tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,
-          tabBarVisible: false,
-        }}
-      />
+      {/*<Tab.Screen*/}
+      {/*  name="PlantInfo"*/}
+      {/*  component={PlantInfo}*/}
+      {/*  options={{*/}
+      {/*    headerShown: false,*/}
+      {/*    tabBarShowLabel: false,*/}
+      {/*    tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,*/}
+      {/*    tabBarVisible: false,*/}
+      {/*  }}*/}
+      {/*/>*/}
     </Tab.Navigator>
   );
 }
