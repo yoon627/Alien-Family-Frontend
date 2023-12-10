@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   TouchableOpacity,
   Text,
@@ -9,12 +9,15 @@ import {
   Dimensions,
   View,
   StatusBar,
+  Button,
 } from "react-native";
 import axios from "axios";
+import { useFocusEffect } from "@react-navigation/native";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 export default function PlantInfo() {
+  const [familyPoint, setFamilyPoint] = useState([]);
   const [plantLevel, setPlantLevel] = useState(null);
   const [plantName, setPlantName] = useState(null);
   const [plantPoint, setPlantPoint] = useState(0);
@@ -38,7 +41,7 @@ export default function PlantInfo() {
   }, []);
 
   const renderFlower = () => {
-    switch (plantPoint) {
+    switch (plantLevel) {
       case 0:
         return (
           <Image
@@ -83,21 +86,28 @@ export default function PlantInfo() {
         );
     }
   };
-  const renderFamilyScore = async () => {
+  const getFamilyScore = async () => {
+    var tmpList = [];
     const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
     const UserServerAccessToken = await AsyncStorage.getItem(
       "UserServerAccessToken"
     );
     await axios({
       method: "GET",
-      url: SERVER_ADDRESS + "/family/points",
+      url: SERVER_ADDRESS + "/api/family/points",
       headers: {
         Authorization: "Bearer: " + UserServerAccessToken,
       },
     })
-      .then((resp) => console.log(resp))
+      .then((resp) => {
+        const tmp = resp.data.data;
+        for (let i = 0; i < tmp.length; i++) {
+          tmpList.push(tmp[i].nickname + ":" + tmp[i].point + "점");
+        }
+        console.log(tmpList);
+        setFamilyPoint(tmpList);
+      })
       .catch((e) => console.log(e));
-    return <View></View>;
   };
   const renderChat = () => {
     const chatContainerStyles = [
@@ -124,7 +134,7 @@ export default function PlantInfo() {
       return chatMessages[randomIndex];
     };
     return (
-      <View style={chatContainerStyles[plantPoint]}>
+      <View style={chatContainerStyles[plantLevel]}>
         {isVisible && (
           <View
             style={{
@@ -143,6 +153,7 @@ export default function PlantInfo() {
   };
 
   useEffect(() => {
+    getFamilyScore();
     const getMission = async () => {
       try {
         const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
@@ -210,6 +221,83 @@ export default function PlantInfo() {
     };
     getMission();
   }, []);
+  useFocusEffect(
+    useCallback(() => {
+      // 여기에 다른 포커스를 받았을 때 실행하고 싶은 작업들을 추가할 수 있습니다.
+      getFamilyScore();
+      const getMission = async () => {
+        try {
+          const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
+          const UserServerAccessToken = await AsyncStorage.getItem(
+            "UserServerAccessToken"
+          );
+          await axios({
+            method: "GET",
+            url: SERVER_ADDRESS + "/plant",
+            headers: {
+              Authorization: "Bearer: " + UserServerAccessToken,
+            },
+          }).then((resp) => {
+            const tmpPlant = resp.data.data;
+            setPlantLevel(tmpPlant.level);
+            setPlantName(tmpPlant.name);
+            setPlantPoint(tmpPlant.point);
+          });
+        } catch (error) {
+          console.error("Error getMsg:", error);
+        }
+        const ktc = new Date();
+        ktc.setHours(ktc.getHours() + 9);
+        const str_today = JSON.stringify(ktc).toString().slice(1, 11);
+        const test = JSON.parse(await AsyncStorage.getItem("todayMission"));
+        const todayMissions = [
+          "사진 찍어 올리기",
+          "내 갤러리 사진 등록하기",
+          "사진에 댓글달기",
+          "가족들과 채팅으로 인사하기",
+          "캘린더에 자기 일정 추가하기",
+        ];
+        if (test) {
+          // console.log(test);
+          if (test && typeof test === "object" && str_today in test) {
+            setTodayMission(test[str_today]);
+            const tmp_TMC = await AsyncStorage.getItem("todayMissionClear");
+            if (tmp_TMC === "true") {
+              setTodayMissionClear(true);
+            }
+            const tmp_DMC = await AsyncStorage.getItem("dailyMissionClear");
+            if (tmp_DMC === "true") {
+              setDailyMissionClear(true);
+            }
+          } else {
+            const randomIndex = Math.floor(
+              Math.random() * todayMissions.length
+            );
+            setTodayMission(todayMissions[randomIndex]);
+            await AsyncStorage.setItem(
+              "todayMission",
+              JSON.stringify({ [str_today]: todayMissions[randomIndex] })
+            );
+            await AsyncStorage.setItem("todayMissionClear", "false");
+            await AsyncStorage.setItem("dailyMissionClear", "false");
+          }
+        } else {
+          const randomIndex = Math.floor(Math.random() * todayMissions.length);
+          setTodayMission(todayMissions[randomIndex]);
+          await AsyncStorage.setItem(
+            "todayMission",
+            JSON.stringify({ [str_today]: todayMissions[randomIndex] })
+          );
+          await AsyncStorage.setItem("todayMissionClear", "false");
+          await AsyncStorage.setItem("dailyMissionClear", "false");
+        }
+      };
+      getMission();
+      return () => {
+        // 스크린이 포커스를 잃을 때 정리 작업을 수행할 수 있습니다.
+      };
+    }, []) // 두 번째 매개변수로 빈 배열을 전달하여 컴포넌트가 처음 마운트될 때만 실행되도록 합니다.
+  );
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#000000" />
@@ -239,17 +327,18 @@ export default function PlantInfo() {
           </View>
         </View>
         <View style={styles.familyContainer}>
-          <Text style={styles.familyText}>아빠: 1점</Text>
-          <Text style={styles.familyText}>엄마: 2점</Text>
-          <Text style={styles.familyText}>첫째: 3점</Text>
-          <Text style={styles.familyText}>둘째: 4점</Text>
+          {familyPoint.map((family,index) => (
+            <Text key={index}>{family}</Text>
+          ))}
         </View>
       </View>
       <View style={{ flex: 2, backgroundColor: "orange" }}>
         <View>{renderChat()}</View>
         <View style={styles.plantContainer}>{renderFlower()}</View>
         <View style={{ alignItems: "center" }}>
-          <Text style={{ fontSize: 30 }}>LV.1 새싹쿠키</Text>
+          <Text style={{ fontSize: 30 }}>
+            LV.{plantLevel} {plantName}
+          </Text>
         </View>
       </View>
     </SafeAreaView>

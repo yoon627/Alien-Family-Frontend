@@ -334,7 +334,7 @@ export default function Home({ navigation, fonts }) {
 
   const renderFlower = () => {
     // 레벨에 따라 다른 이미지 렌더링
-    switch (plantPoint) {
+    switch (plantLevel) {
       case 0:
         return (
           <Image
@@ -346,7 +346,7 @@ export default function Home({ navigation, fonts }) {
       case 1:
         return (
           <Image
-            source={require("../assets/img/level_2.png")}
+            source={require("../assets/img/level_1.png")}
             style={styles.plant}
           />
         );
@@ -354,27 +354,26 @@ export default function Home({ navigation, fonts }) {
       case 2:
         return (
           <Image
-            source={require("../assets/img/level_4.png")}
+            source={require("../assets/img/level_2.png")}
             style={styles.plant}
           />
         );
 
-      // case 3:
-      //   return (
-      //     <Image
-      //       source={require("../assets/img/level_3.png")}
-      //       style={styles.plant}
-      //     />
-      //   );
+      case 3:
+        return (
+          <Image
+            source={require("../assets/img/level_3.png")}
+            style={styles.plant}
+          />
+        );
 
-      // case 4:
-      //   return (
-      //     <Image
-      //       source={require("../assets/img/level_4.png")}
-      //       style={styles.plant}
-      //     />
-      //   );
-
+      case 4:
+        return (
+          <Image
+            source={require("../assets/img/level_4.png")}
+            style={styles.plant}
+          />
+        );
       // 추가 레벨에 따른 이미지 케이스
       default:
         return (
