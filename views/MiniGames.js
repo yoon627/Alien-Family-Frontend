@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, {useEffect, useLayoutEffect, useRef, useState} from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   Alert,
@@ -12,7 +12,7 @@ import {
   View,
 } from "react-native";
 
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 
 const Tab = createBottomTabNavigator();
 const ALIEN_SIZE = 120;
@@ -20,8 +20,8 @@ const ALIEN_SIZE = 120;
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SCREEN_HEIGHT = Dimensions.get("window").height + 45;
 
-export default function MiniGames({ navigation }) {
-  const [coordinates, setCoordinates] = useState({ x: 0, y: 0 });
+export default function MiniGames({navigation}) {
+  const [coordinates, setCoordinates] = useState({x: 0, y: 0});
   const [alienType, setAlienType] = useState("BASIC");
   const alienImagePath = {
     BASIC: require(`../assets/img/character/BASIC.png`),
@@ -81,11 +81,11 @@ export default function MiniGames({ navigation }) {
             ? maxDistance * Math.sin(angle)
             : gestureState.dy;
 
-        joystickPosition.setValue({ x, y });
+        joystickPosition.setValue({x, y});
       },
       onPanResponderRelease: () => {
         Animated.spring(joystickPosition, {
-          toValue: { x: 0, y: 0 },
+          toValue: {x: 0, y: 0},
           friction: 5,
           useNativeDriver: false,
         }).start();
@@ -142,10 +142,10 @@ export default function MiniGames({ navigation }) {
 
   useLayoutEffect(() => {
     const gameImgPosition = {
-      ladder: { x: SCREEN_WIDTH * 0.007, y: SCREEN_HEIGHT * 0.35 },
-      mole: { x: SCREEN_WIDTH * 0.9, y: SCREEN_HEIGHT * 0.44 },
-      roulette: { x: SCREEN_WIDTH * 0.01, y: SCREEN_HEIGHT * 0.05 },
-      door: { x: SCREEN_WIDTH * 0.7, y: SCREEN_HEIGHT * 0.1 },
+      ladder: {x: SCREEN_WIDTH * 0.007, y: SCREEN_HEIGHT * 0.35},
+      mole: {x: SCREEN_WIDTH * 0.9, y: SCREEN_HEIGHT * 0.44},
+      roulette: {x: SCREEN_WIDTH * 0.01, y: SCREEN_HEIGHT * 0.05},
+      door: {x: SCREEN_WIDTH * 0.7, y: SCREEN_HEIGHT * 0.1},
     };
 
     const updatedShowButton = {};
@@ -162,15 +162,16 @@ export default function MiniGames({ navigation }) {
   }, [characterPosition]);
 
   return (
-    <View style={styles.container}>
-      <ImageBackground
-        source={require("../assets/img/gameMap.png")}
-        imageStyle={{
-          resizeMode: "cover",
-          height: SCREEN_HEIGHT,
-          width: SCREEN_WIDTH,
-        }}
-      >
+    <ImageBackground
+      source={require("../assets/img/gameMap.png")}
+      imageStyle={{
+        flex: 1,
+        resizeMode: "cover",
+        height: SCREEN_HEIGHT,
+        width: SCREEN_WIDTH,
+      }}
+    >
+      <View>
         {/* 조이스틱 */}
         <View style={styles.joystickArea}>
           <Animated.View
@@ -261,40 +262,34 @@ export default function MiniGames({ navigation }) {
             top: characterPosition.y,
           }}
         >
-          <Image style={styles.image} source={alienImagePath[alienType]} />
+          <Image style={styles.image} source={alienImagePath[alienType]}/>
         </View>
-      </ImageBackground>
-    </View>
+      </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    width: SCREEN_WIDTH,
-    height: SCREEN_HEIGHT,
-  },
-
   clickImage: {
     position: "absolute",
     right: SCREEN_WIDTH * 0.05,
-    top: SCREEN_HEIGHT * 0.83,
+    top: SCREEN_HEIGHT * 0.7,
     width: SCREEN_WIDTH * 0.2,
     height: SCREEN_HEIGHT * 0.15,
     resizeMode: "contain",
   },
-
   joystickArea: {
     position: "absolute",
     left: SCREEN_WIDTH * 0.1,
-    top: SCREEN_HEIGHT * 0.8,
+    justifyContent: "center",
+    alignItems: "center",
+    top: SCREEN_HEIGHT * 0.7,
     backgroundColor: "gray",
     borderColor: "gray",
     borderWidth: 13,
     width: SCREEN_WIDTH * 0.3,
     height: SCREEN_WIDTH * 0.3,
     borderRadius: (SCREEN_WIDTH * 0.3) / 2,
-    justifyContent: "center",
-    alignItems: "center",
   },
   joystick: {
     width: SCREEN_WIDTH * 0.13,

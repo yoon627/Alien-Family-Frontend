@@ -30,6 +30,7 @@ import {createStackNavigator} from "@react-navigation/stack";
 import ImageUploadForm from "./views/ImageUploadForm";
 import Greet from "./views/Greet";
 import PlantInfo from "./views/PlantInfo";
+import CalendarScreen from "./views/CalendarScreen";
 // import { AppLoading } from 'expo';
 import {
   MD3LightTheme as DefaultTheme,
@@ -38,6 +39,7 @@ import {
 import Feed from "./views/Feed";
 import * as Notifications from "expo-notifications";
 import FamilyInfo from "./views/FamilyInfo";
+import {Calendar} from "react-native-calendars";
 
 const Stack = createStackNavigator();
 
@@ -108,6 +110,7 @@ export default function App() {
               <Stack.Screen name="Roulette" component={RouletteScreen}/>
               <Stack.Screen name="Mole" component={NewGame}/>
               <Stack.Screen name="Chat" component={ChatRoom}/>
+              <Stack.Screen name="Calendar" component={CalendarScreen}/>
               <Stack.Screen
                 name="AlbumScreen"
                 component={AlbumScreen}

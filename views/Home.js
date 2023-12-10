@@ -198,11 +198,11 @@ export default function Home({ navigation, fonts }) {
 
   async function fetchData() {
     const todayMissions = [
-      "사진 찍어 올리기",
+      "사진 찍어서 올리기",
       "내 갤러리 사진 등록하기",
-      "사진에 댓글달기",
+      "사진에 댓글 달기",
       "가족들과 채팅으로 인사하기",
-      "캘린더에 자기 일정 추가하기",
+      "캘린더에 일정 등록하기",
     ];
     const ktc = new Date();
     ktc.setHours(ktc.getHours() + 9);
@@ -667,7 +667,7 @@ export default function Home({ navigation, fonts }) {
                 }}
               >
                 <Image
-                  source={require("../assets/img/wateringCan.png")}
+                  source={require("../assets/img/wateringCan3.png")}
                   style={styles.wateringCan}
                 />
               </TouchableOpacity>
@@ -768,7 +768,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   wateringCan: {
-    width: SCREEN_WIDTH * 0.17,
+    width: SCREEN_WIDTH * 0.18,
     height: SCREEN_HEIGHT * 0.1,
     resizeMode: "contain",
   },
