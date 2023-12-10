@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState, useCallback} from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import {
   Alert,
   Animated,
@@ -19,8 +19,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import MarqueeText from "react-native-marquee";
 import axios from "axios";
 import * as Notifications from "expo-notifications";
-import {TouchableOpacity} from "react-native-gesture-handler";
-import {useFocusEffect} from "@react-navigation/native";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { useFocusEffect } from "@react-navigation/native";
 import * as Permissions from "expo-permissions";
 
 Notifications.setNotificationHandler({
@@ -31,7 +31,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const fontRatio = SCREEN_HEIGHT / 800;
 
 const Container = styled.View`
@@ -40,14 +40,14 @@ const Container = styled.View`
   align-items: center;
 `;
 
-export default function Home({navigation, fonts}) {
+export default function Home({ navigation, fonts }) {
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
   const [TMI, setTMI] = useState("");
   const onChangeTMI = (payload) => setTMI(payload);
   const [firstCome, setFirstCome] = useState(true);
-  const [modalVisible, setModalVisible] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
   const [todayTMI, setTodayTMI] = useState("");
   const [plant, setPlant] = useState(null);
   const [plantLevel, setPlantLevel] = useState(null);
@@ -98,7 +98,7 @@ export default function Home({navigation, fonts}) {
       outputRange: [-1, 1],
     });
     return (
-      <Animated.View style={{transform: [{translateX: interpolated}]}}>
+      <Animated.View style={{ transform: [{ translateX: interpolated }] }}>
         <TouchableOpacity onPress={() => navigation.navigate("Mini Games")}>
           {alienType === "BASIC" ? (
             <Image
@@ -197,6 +197,39 @@ export default function Home({navigation, fonts}) {
   };
 
   async function fetchData() {
+    const todayMissions = [
+      "사진 찍어 올리기",
+      "내 갤러리 사진 등록하기",
+      "사진에 댓글달기",
+      "가족들과 채팅으로 인사하기",
+      "캘린더에 자기 일정 추가하기",
+    ];
+    const ktc = new Date();
+    ktc.setHours(ktc.getHours() + 9);
+    const str_today = JSON.stringify(ktc).toString().slice(1, 11);
+    const test = JSON.parse(await AsyncStorage.getItem("todayMission"));
+    if (test) {
+      if (test && typeof test === "object" && str_today in test) {
+        const tmp_TMC = await AsyncStorage.getItem("todayMissionClear");
+        const tmp_DMC = await AsyncStorage.getItem("dailyMissionClear");
+      } else {
+        const randomIndex = Math.floor(Math.random() * todayMissions.length);
+        await AsyncStorage.setItem(
+          "todayMission",
+          JSON.stringify({ [str_today]: todayMissions[randomIndex] })
+        );
+        await AsyncStorage.setItem("todayMissionClear", "false");
+        await AsyncStorage.setItem("dailyMissionClear", "false");
+      }
+    } else {
+      const randomIndex = Math.floor(Math.random() * todayMissions.length);
+      await AsyncStorage.setItem(
+        "todayMission",
+        JSON.stringify({ [str_today]: todayMissions[randomIndex] })
+      );
+      await AsyncStorage.setItem("todayMissionClear", "false");
+      await AsyncStorage.setItem("dailyMissionClear", "false");
+    }
     const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
     const UserServerAccessToken = await AsyncStorage.getItem(
       "UserServerAccessToken"
@@ -301,7 +334,7 @@ export default function Home({navigation, fonts}) {
 
   const renderFlower = () => {
     // 레벨에 따라 다른 이미지 렌더링
-    switch (plantPoint) {
+    switch (plantLevel) {
       case 0:
         return (
           <Image
@@ -313,7 +346,7 @@ export default function Home({navigation, fonts}) {
       case 1:
         return (
           <Image
-            source={require("../assets/img/level_2.png")}
+            source={require("../assets/img/level_1.png")}
             style={styles.plant}
           />
         );
@@ -321,27 +354,26 @@ export default function Home({navigation, fonts}) {
       case 2:
         return (
           <Image
-            source={require("../assets/img/level_4.png")}
+            source={require("../assets/img/level_2.png")}
             style={styles.plant}
           />
         );
 
-      // case 3:
-      //   return (
-      //     <Image
-      //       source={require("../assets/img/level_3.png")}
-      //       style={styles.plant}
-      //     />
-      //   );
+      case 3:
+        return (
+          <Image
+            source={require("../assets/img/level_3.png")}
+            style={styles.plant}
+          />
+        );
 
-      // case 4:
-      //   return (
-      //     <Image
-      //       source={require("../assets/img/level_4.png")}
-      //       style={styles.plant}
-      //     />
-      //   );
-
+      case 4:
+        return (
+          <Image
+            source={require("../assets/img/level_4.png")}
+            style={styles.plant}
+          />
+        );
       // 추가 레벨에 따른 이미지 케이스
       default:
         return (
@@ -438,7 +470,7 @@ export default function Home({navigation, fonts}) {
             </TouchableOpacity>
           </View>
           <View
-            style={{flex: 1, justifyContent: "center", alignItems: "center"}}
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
           ></View>
           <View style={styles.alien}>{movingObject()}</View>
           <View style={styles.bottomContainer}>
@@ -474,7 +506,7 @@ export default function Home({navigation, fonts}) {
                   >
                     level 🏆 {plantLevel}
                   </Text>
-                  <Text style={{...styles.modalText, fontWeight: "bold"}}>
+                  <Text style={{ ...styles.modalText, fontWeight: "bold" }}>
                     {plantPoint} p
                   </Text>
                   {/* Close button */}
@@ -482,7 +514,7 @@ export default function Home({navigation, fonts}) {
                     style={[
                       styles.button,
                       styles.buttonClose,
-                      {backgroundColor: "#CBCFC9"},
+                      { backgroundColor: "#CBCFC9" },
                     ]}
                     onPress={() => setPlantModal(false)}
                   >
@@ -528,7 +560,7 @@ export default function Home({navigation, fonts}) {
                         textAlign: "center",
                       }}
                     />
-                    <View style={{flexDirection: "row", marginVertical: 10}}>
+                    <View style={{ flexDirection: "row", marginVertical: 10 }}>
                       <Pressable
                         style={[styles.button, styles.buttonWrite]}
                         onPress={async () => {
@@ -555,10 +587,14 @@ export default function Home({navigation, fonts}) {
                             })
                               .then(async (resp) => {
                                 fetchData();
-                                if (firstCome) {
-                                  setFirstCome(false);
-                                  navigation.navigate("Attendance");
-                                }
+                                await AsyncStorage.setItem(
+                                  "dailyMissionClear",
+                                  "true"
+                                );
+                                // if (firstCome) {
+                                //   setFirstCome(false);
+                                //   navigation.navigate("Attendance");
+                                // }
                               })
                               .catch(function (error) {
                                 console.log("server error", error);
@@ -567,7 +603,7 @@ export default function Home({navigation, fonts}) {
                           }
                         }}
                       >
-                        <Text style={{...styles.textStyle, color: "#fff"}}>
+                        <Text style={{ ...styles.textStyle, color: "#fff" }}>
                           작성
                         </Text>
                       </Pressable>
@@ -578,7 +614,7 @@ export default function Home({navigation, fonts}) {
                           setModalVisible(!modalVisible);
                         }}
                       >
-                        <Text style={{...styles.textStyle, color: "#727272"}}>
+                        <Text style={{ ...styles.textStyle, color: "#727272" }}>
                           취소
                         </Text>
                       </Pressable>

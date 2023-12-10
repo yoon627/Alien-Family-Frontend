@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dimensions,
   Image,
@@ -14,10 +14,11 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LottieView from "lottie-react-native";
+import axios from "axios";
 
-const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-export default function ImageUploadForm({uri, onUploadComplete}) {
+export default function ImageUploadForm({ uri, onUploadComplete }) {
   const [photoTags, setPhotoTags] = useState([]);
   const [description, setDescription] = useState("");
   const [tagList, setTagList] = useState([]);
@@ -27,23 +28,26 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
   useEffect(() => {
     const fetchTagList = async () => {
       const UserServerAccessToken = await AsyncStorage.getItem(
-        "UserServerAccessToken",
+        "UserServerAccessToken"
       );
       try {
-        const response = await fetch(`http://43.202.241.133:1998/api/family/koreanVer`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + UserServerAccessToken
+        const response = await fetch(
+          `http://43.202.241.133:1998/api/family/koreanVer`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + UserServerAccessToken,
+            },
           }
-        });
+        );
 
         const data = await response.json();
         setTagList(data.data);
       } catch (error) {
         console.error("가족 태그를 불러오지 못했습니다.", error);
       }
-    }
+    };
     fetchTagList();
   }, []);
 
@@ -121,6 +125,88 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
           },
         });
         // console.log("👌🏻 이미지 업로드 성공");
+        const ktc = new Date();
+        ktc.setHours(ktc.getHours() + 9);
+        const str_today = JSON.stringify(ktc).toString().slice(1, 11);
+        const test = JSON.parse(await AsyncStorage.getItem("todayMission"));
+        const todayMissions = [
+          "사진 찍어 올리기",
+          "내 갤러리 사진 등록하기",
+          "사진에 댓글달기",
+          "가족들과 채팅으로 인사하기",
+          "캘린더에 자기 일정 추가하기",
+        ];
+        if (test) {
+          if (test && typeof test === "object" && str_today in test) {
+            if (
+              test[str_today] === "사진 찍어 올리기" ||
+              test[str_today] === "내 갤러리 사진 등록하기"
+            ) {
+              await AsyncStorage.setItem("todayMissionClear", "true");
+              await axios({
+                method: "GET",
+                url: "http://43.202.241.133:1998/mission",
+                headers: {
+                  Authorization: "Bearer " + UserServerAccessToken,
+                },
+              })
+                .then((resp) => console.log(resp))
+                .catch((e) => console.log(e));
+            }
+          } else {
+            const randomIndex = Math.floor(
+              Math.random() * todayMissions.length
+            );
+            await AsyncStorage.setItem(
+              "todayMission",
+              JSON.stringify({ [str_today]: todayMissions[randomIndex] })
+            );
+            if (
+              test[str_today] === "사진 찍어 올리기" ||
+              test[str_today] === "내 갤러리 사진 등록하기"
+            ) {
+              await AsyncStorage.setItem("todayMissionClear", "true");
+              await AsyncStorage.setItem("dailyMissionClear", "false");
+              await axios({
+                method: "GET",
+                url: "http://43.202.241.133:1998/mission",
+                headers: {
+                  Authorization: "Bearer " + UserServerAccessToken,
+                },
+              })
+                .then((resp) => console.log(resp))
+                .catch((e) => console.log(e));
+            } else {
+              await AsyncStorage.setItem("todayMissionClear", "false");
+              await AsyncStorage.setItem("dailyMissionClear", "false");
+            }
+          }
+        } else {
+          const randomIndex = Math.floor(Math.random() * todayMissions.length);
+          await AsyncStorage.setItem(
+            "todayMission",
+            JSON.stringify({ [str_today]: todayMissions[randomIndex] })
+          );
+          if (
+            test[str_today] === "사진 찍어 올리기" ||
+            test[str_today] === "내 갤러리 사진 등록하기"
+          ) {
+            await AsyncStorage.setItem("todayMissionClear", "true");
+            await AsyncStorage.setItem("dailyMissionClear", "false");
+            await axios({
+              method: "GET",
+              url: "http://43.202.241.133:1998/mission",
+              headers: {
+                Authorization: "Bearer " + UserServerAccessToken,
+              },
+            })
+              .then((resp) => console.log(resp))
+              .catch((e) => console.log(e));
+          } else {
+            await AsyncStorage.setItem("todayMissionClear", "false");
+            await AsyncStorage.setItem("dailyMissionClear", "false");
+          }
+        }
         onUploadComplete();
       } else {
         console.error("❌ 이미지 업로드 실패");
@@ -128,7 +214,7 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
     } catch (err) {
       console.log("서버 업로드 에러..", err);
     } finally {
-      setIsLoading(false);  // 업로드 완료 시 로딩 상태 false로 설정
+      setIsLoading(false); // 업로드 완료 시 로딩 상태 false로 설정
     }
   };
   return (
@@ -139,10 +225,10 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
       <ScrollView contentContainerStyle={styles.container}>
         <Image
           style={styles.uploadImage}
-          source={{uri: uri}}
+          source={{ uri: uri }}
           resizeMode="contain"
         />
-        <View style={{height: 20}}/>
+        <View style={{ height: 20 }} />
         <View style={styles.tagButtonsContainer}>
           {tagList.map((tag, index) => (
             <Pressable
@@ -150,16 +236,14 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
               style={[
                 styles.tagButton,
                 photoTags.includes(tag) && styles.tagButtonSelected,
-                index !== tagList.length - 1 && {marginRight: 10},
+                index !== tagList.length - 1 && { marginRight: 10 },
               ]}
               onPress={() => toggleTag(tag)}
             >
               <Text
                 style={{
                   ...styles.tagButtonText,
-                  fontWeight: photoTags.includes(tag)
-                    ? "bold"
-                    : "normal",
+                  fontWeight: photoTags.includes(tag) ? "bold" : "normal",
                 }}
               >
                 {tag}
@@ -174,31 +258,31 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
           placeholder="문구를 입력하세요..."
           multiline
         />
-        <View style={{flexDirection: "row", marginVertical: 10}}>
+        <View style={{ flexDirection: "row", marginVertical: 10 }}>
           <TouchableOpacity
             style={[styles.button, styles.buttonWrite]}
             onPress={uploadToServer}
           >
-            <Text style={{...styles.textStyle, color: "#fff"}}>공유</Text>
+            <Text style={{ ...styles.textStyle, color: "#fff" }}>공유</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.button, styles.buttonClose]}
             onPress={onUploadComplete}
           >
-            <Text style={{...styles.textStyle, color: "#727272"}}>취소</Text>
+            <Text style={{ ...styles.textStyle, color: "#727272" }}>취소</Text>
           </TouchableOpacity>
         </View>
-        {isLoading &&
+        {isLoading && (
           <View style={styles.loadingOverlay}>
             <LottieView
               style={styles.loading}
-              source={require('../assets/json/upload.json')}
+              source={require("../assets/json/upload.json")}
               autoPlay
               loop
             />
             <Text style={styles.loadingText}>Uploading...</Text>
           </View>
-        }
+        )}
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -267,14 +351,14 @@ const styles = StyleSheet.create({
   },
   loadingOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 불투명한 검은 배경
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // 불투명한 검은 배경
+    justifyContent: "center",
+    alignItems: "center",
   },
   loadingText: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#fff', // 텍스트 색상을 흰색으로 설정
+    fontWeight: "bold",
+    color: "#fff", // 텍스트 색상을 흰색으로 설정
   },
   loading: {
     position: "absolute",

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Text,
   TextInput,
@@ -7,7 +7,8 @@ import {
   StyleSheet,
   FlatList,
   Modal,
-  ActivityIndicator, Platform
+  ActivityIndicator, Platform,
+  Pressable,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AlienType from "./AlienType";
@@ -55,13 +56,16 @@ export default function CommentForm({photoId, nickname}) {
         "UserServerAccessToken"
       );
       try {
-        const response = await fetch(`http://43.202.241.133:1998/photo/${photoId}/comments`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + UserServerAccessToken,
-          },
-        });
+        const response = await fetch(
+          `http://43.202.241.133:1998/photo/${photoId}/comments`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + UserServerAccessToken,
+            },
+          }
+        );
 
         const data = await response.json();
         setComments(data.data);
@@ -69,7 +73,7 @@ export default function CommentForm({photoId, nickname}) {
       } catch (error) {
         console.error("댓글을 가져오는 중에 오류가 발생했습니다.", error);
       }
-    }
+    };
     fetchData();
   }, []);
 
@@ -99,6 +103,79 @@ export default function CommentForm({photoId, nickname}) {
         const newComment = {commentId: comments.length + 1, writer: writer, content: comment, createAt: Date.now()};
         setComments([...comments, newComment]);
         setComment(""); // 댓글 입력창 초기화
+        const ktc = new Date();
+        ktc.setHours(ktc.getHours() + 9);
+        const str_today = JSON.stringify(ktc).toString().slice(1, 11);
+        const test = JSON.parse(await AsyncStorage.getItem("todayMission"));
+        const todayMissions = [
+          "사진 찍어 올리기",
+          "내 갤러리 사진 등록하기",
+          "사진에 댓글달기",
+          "가족들과 채팅으로 인사하기",
+          "캘린더에 자기 일정 추가하기",
+        ];
+        if (test) {
+          if (test && typeof test === "object" && str_today in test) {
+            if (test[str_today] === "사진에 댓글달기") {
+              await AsyncStorage.setItem("todayMissionClear", "true");
+              await axios({
+                method: "GET",
+                url: "http://43.202.241.133:1998/mission",
+                headers: {
+                  Authorization: "Bearer " + UserServerAccessToken,
+                },
+              })
+                .then((resp) => console.log(resp))
+                .catch((e) => console.log(e));
+            }
+          } else {
+            const randomIndex = Math.floor(
+              Math.random() * todayMissions.length
+            );
+            await AsyncStorage.setItem(
+              "todayMission",
+              JSON.stringify({ [str_today]: todayMissions[randomIndex] })
+            );
+            if (test[str_today] === "사진에 댓글달기") {
+              await AsyncStorage.setItem("todayMissionClear", "true");
+              await AsyncStorage.setItem("dailyMissionClear", "false");
+              await axios({
+                method: "GET",
+                url: "http://43.202.241.133:1998/mission",
+                headers: {
+                  Authorization: "Bearer " + UserServerAccessToken,
+                },
+              })
+                .then((resp) => console.log(resp))
+                .catch((e) => console.log(e));
+            } else {
+              await AsyncStorage.setItem("todayMissionClear", "false");
+              await AsyncStorage.setItem("dailyMissionClear", "false");
+            }
+          }
+        } else {
+          const randomIndex = Math.floor(Math.random() * todayMissions.length);
+          await AsyncStorage.setItem(
+            "todayMission",
+            JSON.stringify({ [str_today]: todayMissions[randomIndex] })
+          );
+          if (test[str_today] === "사진에 댓글달기") {
+            await AsyncStorage.setItem("todayMissionClear", "true");
+            await AsyncStorage.setItem("dailyMissionClear", "false");
+            await axios({
+              method: "GET",
+              url: "http://43.202.241.133:1998/mission",
+              headers: {
+                Authorization: "Bearer " + UserServerAccessToken,
+              },
+            })
+              .then((resp) => console.log(resp))
+              .catch((e) => console.log(e));
+          } else {
+            await AsyncStorage.setItem("todayMissionClear", "false");
+            await AsyncStorage.setItem("dailyMissionClear", "false");
+          }
+        }
       } else {
         console.error("❌ 서버 응답 오류:", response.status);
       }
@@ -197,9 +274,17 @@ export default function CommentForm({photoId, nickname}) {
                 >
                   <AlienType writer={item.writer}/>
                   <View>
-                    <Text style={{flexDirection: "row", alignItems: "center", fontSize: 14,}}>
-                      <Text style={{fontWeight: "bold",}}>{item.writer}</Text>
-                      <Text style={{color: "gray",}}>{`  ${calculateDaysAgo(item.createAt)}`}</Text>
+                    <Text
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        fontSize: 14,
+                      }}
+                    >
+                      <Text style={{ fontWeight: "bold" }}>{item.writer}</Text>
+                      <Text style={{ color: "gray" }}>{`  ${calculateDaysAgo(
+                        item.createAt
+                      )}`}</Text>
                     </Text>
                     <Text>{item.content}</Text>
                   </View>
@@ -231,7 +316,7 @@ export default function CommentForm({photoId, nickname}) {
         </View>
       </Modal>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
