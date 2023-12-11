@@ -88,21 +88,21 @@ export default function MainScreen({ navigation, route }) {
           // tabBarActiveBackgroundColor: "gray",
         }}
       />
-      <Tab.Screen
-        name="Attendance"
-        component={Attendance}
-        options={{
-          headerShown: false,
-          tabBarIcon: () => (
-            <Image
-              source={require("../assets/img/navbarIcon/alarm3.png")}
-              style={styles.icon}
-            />
-          ),
-          tabBarShowLabel: false,
-          // tabBarActiveBackgroundColor: "gray",
-        }}
-      />
+      {/*<Tab.Screen*/}
+      {/*  name="Attendance"*/}
+      {/*  component={Attendance}*/}
+      {/*  options={{*/}
+      {/*    headerShown: false,*/}
+      {/*    tabBarIcon: () => (*/}
+      {/*      <Image*/}
+      {/*        source={require("../assets/img/navbarIcon/alarm3.png")}*/}
+      {/*        style={styles.icon}*/}
+      {/*      />*/}
+      {/*    ),*/}
+      {/*    tabBarShowLabel: false,*/}
+      {/*    // tabBarActiveBackgroundColor: "gray",*/}
+      {/*  }}*/}
+      {/*/>*/}
       {/* <Tab.Screen
         name="Attendance"
         component={Attendance}
