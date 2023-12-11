@@ -133,6 +133,7 @@ const ChatRoom = () => {
         content: message,
         time: now.toISOString(),
       };
+      // console.log(typeof(formatTime(now.toISOString())));
       const headerData = {
         // Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNTIiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZmFtaWx5IjoiMzU2IiwiZXhwIjoxNzAwOTgzOTE4fQ.EHLgXe4iFJrjr2veJlkZiHafd8tomybIyxty66xmU38'
       };
