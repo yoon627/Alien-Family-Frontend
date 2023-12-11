@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     height: SCREEN_WIDTH * 0.1,
     borderRadius: SCREEN_WIDTH * 0.1 / 2,
     resizeMode: "contain",
-    backgroundColor: "#FFEEC3",
+    backgroundColor: "#FFEBCD",
     marginRight: 10,
   },
 })
