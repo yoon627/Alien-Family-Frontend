@@ -124,6 +124,43 @@ export default function PlantInfo({ navigation }) {
     }
   };
 
+  const TingleFamily = async (nickname) => {
+    try{
+      const myDB = await AsyncStorage.getItem("myDB");
+      console.log("마이디비~~", myDB);
+      const data = JSON.parse(myDB);
+
+      const memberId = Object.values(data)
+        .filter((user) => user.nickname === nickname)
+        .map((user) => user.memberId)[0];
+
+      console.log("memberId:", memberId);
+
+      if (memberId) {
+        const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
+        const UserServerAccessToken = await AsyncStorage.getItem(
+          "UserServerAccessToken"
+        );
+
+        await axios({
+          method: "GET",
+          url: SERVER_ADDRESS + `/tingle/${memberId}`,
+          headers: {
+            Authorization: "Bearer " + UserServerAccessToken,
+          },
+        })
+          .then((resp) => {
+            const tmp = resp.data;
+            console.log(tmp);
+          });
+      } else {
+        console.log("해당 닉네임을 가진 사용자를 찾을 수 없습니다.");
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const getFamilyScore = async () => {
     var tmpList = [];
     const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
@@ -175,7 +212,7 @@ export default function PlantInfo({ navigation }) {
           <View
             style={{
               left: SCREEN_WIDTH * 0.1,
-              bottom: SCREEN_HEIGHT * 0.15,
+              bottom: Platform.OS === 'ios' ? SCREEN_HEIGHT * 0.15 : SCREEN_HEIGHT * 0.2,
               zIndex: 1,
             }}
           >
@@ -455,43 +492,38 @@ export default function PlantInfo({ navigation }) {
           >
             {familyPoint.map((family, index) => (
               <View key={index}>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    paddingVertical: 10,
-                    alignItems: "center",
-                  }}
-                >
-                  {/*<Text style={styles.rankText}>*/}
-                  {/*{index === 0 ? ('🥇') : (index === 1 ? ('🥈') : (index === 2 ? ('🥉') : (index + 1)))*/}
-                  {/*}*/}
-                  {/*</Text>*/}
-                  <Text style={styles.rankText}>{index + 1}.</Text>
+                <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
+                  <View style={{flexDirection: "row", paddingVertical: 10, alignItems: "center",}}>
+                    <Text style={styles.rankText}>
+                      {index + 1}.
+                    </Text>
 
-                  <AlienType writer={family.split(":")[0]} />
+                  <AlienType writer={family.split(':')[0]}/>
 
-                  <View>
-                    <Text style={styles.rankName}>{family.split(":")[0]}</Text>
-
-                    <View
-                      style={{ flexDirection: "row", alignItems: "center" }}
-                    >
-                      <Image
-                        style={{ width: 20, height: 20, resizeMode: "contain" }}
-                        source={require("../assets/img/missionIcon/coin.png")}
-                      />
-                      <Text
-                        style={{
-                          fontFamily: "doss",
-                          color: "#FF9D3A",
-                          paddingLeft: 5,
-                          fontSize: 18,
-                        }}
-                      >
-                        {family.split(":")[1]}
+                    <View style={{marginLeft: -7,}}>
+                      <Text style={styles.ranker}>
+                        {family.split(':')[0]}
                       </Text>
+
+                      <View style={{flexDirection: "row", alignItems: "center",}}>
+                        <Image
+                          style={{width: 20, height: 20, resizeMode: "contain"}}
+                          source={require('../assets/img/missionIcon/coin.png')}
+                        />
+                        <Text style={{fontFamily: "doss", color: "#FF9D3A", paddingLeft: 5, fontSize: 18,}}>
+                          {family.split(':')[1]}
+                        </Text>
+                      </View>
                     </View>
                   </View>
+                  <TouchableOpacity
+                    onPress={() => TingleFamily(family.split(':')[0])}
+                  >
+                    <Image
+                      style={{width: 25, height: 25, resizeMode: "contain"}}
+                      source={require('../assets/img/tingle2.png')}
+                    />
+                  </TouchableOpacity>
                 </View>
                 <View style={styles.line} />
               </View>
@@ -500,17 +532,15 @@ export default function PlantInfo({ navigation }) {
         </View>
 
         <View style={styles.box}>
-          <Text
-            style={{
-              ...styles.missionText,
-              fontFamily: "doss",
-              paddingTop: 10,
-              textShadowColor: "#B1B0B0",
-              textShadowOffset: { width: 1, height: 1 },
-              textShadowRadius: 5,
-            }}
-          >
-            오늘의{"\n"}랜덤 미션
+          <Text style={{
+            ...styles.missionText,
+            fontFamily: "doss",
+            paddingTop: 5,
+            textShadowColor: '#B1B0B0',
+            textShadowOffset: {width: 1, height: 1},
+            textShadowRadius: 5,
+          }}>
+            오늘의{'\n'}랜덤 미션
           </Text>
           <View style={styles.missionImageContainer}>
             <Image
@@ -709,8 +739,7 @@ const styles = StyleSheet.create({
     fontFamily: "doss",
     fontSize: 18,
     color: "#1B1A1A",
-    marginRight: 3,
-    paddingLeft: 3,
+    marginRight: 1,
   },
   rankName: {
     fontSize: Platform.OS === "ios" ? 16 : 18,
@@ -759,7 +788,7 @@ const styles = StyleSheet.create({
   },
   text: {
     position: "absolute",
-    top: 35,
+    top: 30,
     paddingHorizontal: 10,
     paddingVertical: Platform.OS === "android" ? 5 : null,
     lineHeight: 22,

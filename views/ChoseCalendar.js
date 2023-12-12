@@ -136,41 +136,29 @@ export default function ChoseCalendar({closeModal, closeAddModal}) {
     <View
       style={{flex: 1, justifyContent: "center", alignItems: "center"}}
     >
-      <Button
-        title="달력 선택" onPress={setCalendarsModal}/>
-
-      <Modal
-        visible={isModalVisible}
-        onRequestClose={setCalendarsModal}
-        transparent={true}
-        animationType="slide"
+      <TouchableOpacity
+        onPress={setCalendarsModal}>
+        <Text>캘린더 선택</Text>
+      </TouchableOpacity>
+      {isModalVisible &&
+      <View
+        style={{
+          marginTop: "30%",
+          marginHorizontal: 20,
+          backgroundColor: "white",
+        }}
       >
-        <View
-          style={{
-            marginTop: "30%",
-            marginHorizontal: 20,
-            backgroundColor: "white",
-          }}
-        >
-          {calendars.map((calendar) => (
-            <TouchableOpacity
-              key={calendar.id}
-              onPress={() => fetchCalendarEvents(calendar.id)}
-              style={{flexDirection: "row", alignItems: "center", margin: 10}}
-            >
-              <Text>{calendar.title}</Text>
-            </TouchableOpacity>
-          ))}
-          <Button title="닫기" onPress={setCalendarsModal}/>
-        </View>
-      </Modal>
-
-      <Modal
-        visible={isEventsModalVisible}
-        onRequestClose={isEventsModalVisible}
-        transparent={true}
-        animationType="slide"
-      >
+        {calendars.map((calendar) => (
+          <TouchableOpacity
+            key={calendar.id}
+            onPress={() => fetchCalendarEvents(calendar.id)}
+            style={{flexDirection: "row", alignItems: "center", margin: 10}}
+          >
+            <Text>{calendar.title}</Text>
+          </TouchableOpacity>
+        ))}
+      </View> }
+      {isEventsModalVisible &&
         <ScrollView>
           <View
             style={{
@@ -199,12 +187,74 @@ export default function ChoseCalendar({closeModal, closeAddModal}) {
             <Button title="닫기" onPress={setEventsModal}/>
           </View>
         </ScrollView>
-      </Modal>
+      }
+
+      {/*<Modal*/}
+      {/*  visible={isModalVisible}*/}
+      {/*  onRequestClose={setCalendarsModal}*/}
+      {/*  transparent={true}*/}
+      {/*  animationType="slide"*/}
+      {/*>*/}
+      {/*  <View*/}
+      {/*    style={{*/}
+      {/*      marginTop: "30%",*/}
+      {/*      marginHorizontal: 20,*/}
+      {/*      backgroundColor: "white",*/}
+      {/*    }}*/}
+      {/*  >*/}
+      {/*    {calendars.map((calendar) => (*/}
+      {/*      <TouchableOpacity*/}
+      {/*        key={calendar.id}*/}
+      {/*        onPress={() => fetchCalendarEvents(calendar.id)}*/}
+      {/*        style={{flexDirection: "row", alignItems: "center", margin: 10}}*/}
+      {/*      >*/}
+      {/*        <Text>{calendar.title}</Text>*/}
+      {/*      </TouchableOpacity>*/}
+      {/*    ))}*/}
+      {/*    <Button title="닫기" onPress={setCalendarsModal}/>*/}
+      {/*  </View>*/}
+      {/*</Modal>*/}
+
+      {/*<Modal*/}
+      {/*  visible={isEventsModalVisible}*/}
+      {/*  onRequestClose={isEventsModalVisible}*/}
+      {/*  transparent={true}*/}
+      {/*  animationType="slide"*/}
+      {/*>*/}
+      {/*  <ScrollView>*/}
+      {/*    <View*/}
+      {/*      style={{*/}
+      {/*        marginTop: "30%",*/}
+      {/*        marginHorizontal: 20,*/}
+      {/*        backgroundColor: "white",*/}
+      {/*      }}*/}
+      {/*    >*/}
+      {/*      {events.map((event, index) => (*/}
+      {/*        <View*/}
+      {/*          key={`${event.id}-${index}`}*/}
+      {/*          style={{*/}
+      {/*            flexDirection: "row",*/}
+      {/*            alignItems: "center",*/}
+      {/*            margin: 10,*/}
+      {/*          }}*/}
+      {/*        >*/}
+      {/*          <Checkbox*/}
+      {/*            status={event.selected ? "checked" : "unchecked"}*/}
+      {/*            onPress={() => toggleEventSelection(event.id)}*/}
+      {/*          />*/}
+      {/*          <Text>{event.title}</Text>*/}
+      {/*        </View>*/}
+      {/*      ))}*/}
+      {/*      <Button title="확인" onPress={handleConfirmSelection}/>*/}
+      {/*      <Button title="닫기" onPress={setEventsModal}/>*/}
+      {/*    </View>*/}
+      {/*  </ScrollView>*/}
+      {/*</Modal>*/}
 
       <Text>선택된 이벤트:</Text>
       {selectedEvents.map((event) => (
         <Text key={event.id}>{event.title}</Text>
-      ))}y
+      ))}
       <TouchableOpacity
         style={styles.button}
         onPress={handleImportEvents}

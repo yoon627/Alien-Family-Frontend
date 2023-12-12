@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
   Animated,
   Button,
@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import Svg, { G, Path, Polygon, Text as SvgText } from "react-native-svg";
+import Svg, {G, Path, Polygon, Text as SvgText} from "react-native-svg";
 
 const windowWidth = Dimensions.get("window").width;
 const randName = [
@@ -25,10 +25,10 @@ const randName = [
   "유나",
   "민지",
 ];
-const RouletteGame = ({ cnt }) => {
+const RouletteGame = ({cnt}) => {
   if (cnt < 2) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
         <Text>섹터의 개수가 최소 2개 이상이어야 합니다.</Text>
       </View>
     );
@@ -110,7 +110,7 @@ const RouletteGame = ({ cnt }) => {
         x={(radius / 2) * Math.cos((a + angle / 2 - 90) * (Math.PI / 180))}
         y={(radius / 2) * Math.sin((a + angle / 2 - 90) * (Math.PI / 180))}
         fill="black"
-        fontSize="15"
+        fontSize="20"
         textAnchor="middle"
         alignmentBaseline="middle"
       >
@@ -127,10 +127,10 @@ const RouletteGame = ({ cnt }) => {
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <View style={{ position: "absolute", top: 20 }}>
+    <View style={styles.container}>
+      <View style={{position: "absolute", top: 20}}>
         <Svg height="30" width="30" viewBox="-15 -15 30 30">
-          <Polygon points="0,10 -10,-10 10,-10" fill="black" />
+          <Polygon points="0,10 -10,-10 10,-10" fill="red"/>
         </Svg>
       </View>
       <Animated.View
@@ -152,17 +152,24 @@ const RouletteGame = ({ cnt }) => {
           </G>
         </Svg>
       </Animated.View>
-      <Button color="#cd0beb" title="Spin" onPress={spinWheel} />
+      <View style={styles.button}>
+        <TouchableOpacity
+          onPress={spinWheel}
+        >
+          <Text style={styles.btnText}>룰렛 돌리기</Text>
+        </TouchableOpacity>
+      </View>
+
       <Text
         style={{ marginTop: 20 }}
       >{`${name[selectedIndex]} 당첨!`}</Text>
 
       {/* 섹터 이름 편집 부분 */}
-      <View style={{ flexDirection: "row" }}>
+      <View style={{flexDirection: "row"}}>
         {name.map((n, index) => (
-          <View key={index} style={{ flex: 1, alignItems: "center" }}>
+          <View key={index} style={{flex: 1, alignItems: "center"}}>
             <TouchableOpacity
-              style={[styles.button, { width: (windowWidth - 50) / cnt }]}
+              style={[styles.button, {width: (windowWidth - 50) / cnt}]}
               onPress={() => {
                 setEditIndex(index);
                 setEditText(n);
@@ -179,7 +186,7 @@ const RouletteGame = ({ cnt }) => {
           <TextInput
             value={editText}
             onChangeText={setEditText}
-            style={{ borderWidth: 1, borderColor: "gray", padding: 10 }}
+            style={{borderWidth: 1, borderColor: "gray", padding: 10}}
           />
           <TouchableOpacity style={[styles.button]} onPress={handleUpdateName}>
             <Text style={styles.text}>UPDATE</Text>
@@ -191,11 +198,17 @@ const RouletteGame = ({ cnt }) => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "white",
+  },
   button: {
-    backgroundColor: "#cd0beb", // 버튼 색상
+    backgroundColor: "white", // 버튼 색상
     paddingVertical: 10, // 세로 패딩
-    paddingHorizontal: 10, // 가로 패딩
-    borderRadius: 5, // 테두리 둥글게
+    paddingHorizontal: 20, // 가로 패딩
+    borderRadius: 50, // 테두리 둥글게
     alignItems: "center",
     marginVertical: 5, // 버튼 간의 수직 마진
     justifyContent: "space-between",
@@ -203,7 +216,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     // width: (windowWidth - 50) / 5,
   },
-
+  btnText: {
+    fontFamily: "dnf",
+    fontSize: 22,
+    color: "black",
+  },
   bottomView: {
     position: "absolute", // 절대 위치 사용
     bottom: 100, // 화면의 바닥에 위치
