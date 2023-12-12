@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, {useEffect, useState, useRef, useCallback} from "react";
 import {
   Dimensions,
   Image,
@@ -6,11 +6,13 @@ import {
   Text,
   View,
   ImageBackground,
+  Platform,
+  TouchableOpacity,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { ScrollView } from "react-native-gesture-handler";
-import { LinearGradient } from "expo-linear-gradient";
+import {ScrollView} from "react-native-gesture-handler";
+import {LinearGradient} from "expo-linear-gradient";
 import * as Notifications from "expo-notifications";
 import AlienType from "../components/AlienType";
 import {useFocusEffect} from "@react-navigation/native";
@@ -26,7 +28,7 @@ Notifications.setNotificationHandler({
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 
-export default function Attendance({ navigation }) {
+export default function Attendance({navigation}) {
   const [notification, setNotification] = useState(false);
   const [tmiJson, setTmiJson] = useState({});
   const [attendanceJson, setAttendanceJson] = useState({});
@@ -158,23 +160,26 @@ export default function Attendance({ navigation }) {
     };
   }, [notification]);
   return (
-    <View style={styles.container}>
-      <ImageBackground
-        source={require("../assets/img/attendance_bg.jpg")}
-        imageStyle={{
-          resizeMode: "cover",
-          height: SCREEN_HEIGHT,
-          width: SCREEN_WIDTH,
-        }}
-      >
-        <Text style={styles.month}>{new Date().getMonth() + 1}月</Text>
-        <ScrollView>
+
+    <ImageBackground
+      source={require("../assets/img/historyBg.png")}
+      imageStyle={{
+        flex: 1,
+        resizeMode: "cover",
+        height: SCREEN_HEIGHT,
+        width: SCREEN_WIDTH,
+      }}
+    >
+      <View>
+        <Text style={{...styles.month, paddingTop: 30, paddingBottom: 0, fontSize: 40,}}>TMI 히스토리</Text>
+        <Text style={styles.month}>{new Date().getMonth() + 1}월</Text>
+        <ScrollView style={{marginBottom: 100,}}>
           {week.map((day, index) => (
             <View
               key={day}
               style={[
                 styles.attendance_container,
-                { marginLeft: index % 2 === 1 ? 30 : 10 },
+                {marginLeft: index % 2 === 1 ? 30 : 10},
               ]}
             >
               {/* 별 배경 일자 */}
@@ -184,19 +189,19 @@ export default function Attendance({ navigation }) {
                   <View style={styles.small_star}>
                     {attendanceJson[day] &&
                       attendanceJson[day].map((attendant, index) =>
-                        Array.from({ length: attendant }).map((_, subIndex) => (
+                        Array.from({length: attendant}).map((_, subIndex) => (
                           <Image
                             key={subIndex}
-                            style={{ width: 25, height: 25 }}
+                            style={{width: 20, height: 20}}
                             source={require("../assets/img/small_star.png")}
-                            imageStyle={{ resizeMode: "contain" }}
+                            imageStyle={{resizeMode: "contain"}}
                           />
                         ))
                       )}
                   </View>
                   <ImageBackground
-                    source={require("../assets/img/star.png")}
-                    imageStyle={{ resizeMode: "contain" }}
+                    source={require("../assets/img/img.png")}
+                    imageStyle={{resizeMode: "contain"}}
                     style={styles.big_star}
                   >
                     <Text style={styles.day_txt}>
@@ -214,20 +219,24 @@ export default function Attendance({ navigation }) {
                       {/* 그라데이션 */}
                       <LinearGradient
                         colors={[
-                          "rgba(255, 255, 255, 0.4)",
+                          "rgba(217, 217, 217, 0)",
                           "rgba(255, 255, 255, 0)",
                         ]}
+
                         style={styles.tmi_gradient}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 0 }}
+                        start={{x: 0, y: 0}}
+                        end={{x: 1, y: 0}}
                       >
-                        <AlienType writer={tmi.split(":")[0]} />
+                        <AlienType writer={tmi.split(":")[0]}/>
                         {/* TMI */}
-                        <Text key={index} style={styles.tmi_txt}>
-                          <Text>
-                            {tmi.split(":")[0]}: {tmi.split(":")[1]}
+                        <View key={index} style={{flexDirection: "row",}}>
+                          <Text style={{...styles.tmi_txt, fontFamily: "jamsil2", fontSize: 19,}}>
+                            {tmi.split(":")[0]}
                           </Text>
-                        </Text>
+                          <Text style={styles.tmi_txt}>
+                            : {tmi.split(":")[1]}
+                          </Text>
+                        </View>
                       </LinearGradient>
                     </View>
                   ))
@@ -238,8 +247,8 @@ export default function Attendance({ navigation }) {
                       "rgba(255, 255, 255, 0)",
                     ]}
                     style={styles.tmi_gradient}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
+                    start={{x: 0, y: 0}}
+                    end={{x: 1, y: 0}}
                   >
                     <Text style={styles.tmi_txt}></Text>
                   </LinearGradient>
@@ -247,23 +256,33 @@ export default function Attendance({ navigation }) {
               </View>
             </View>
           ))}
+
         </ScrollView>
-      </ImageBackground>
-    </View>
+        <View style={{ position: "absolute", top: 30, left: 25}}>
+          <TouchableOpacity
+            onPress={() => navigation.pop()}>
+            <Image
+              style={styles.exit}
+              source={require('../assets/img/out.png')}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: SCREEN_WIDTH,
-    height: SCREEN_HEIGHT,
-  },
   month: {
-    color: "#FFF",
-    fontSize: 50,
-    paddingVertical: 20,
-    paddingLeft: 20,
+    color: "#fff",
+    fontSize: 30,
+    fontFamily: "doss",
+    textAlign: "center",
+    paddingTop: 7,
+    paddingBottom: 10,
+    textShadowColor: '#FFFBEF',
+    textShadowOffset: {width: 1, height: 1},
+    textShadowRadius: 5,
   },
   attendance_container: {
     alignContent: "center",
@@ -279,8 +298,10 @@ const styles = StyleSheet.create({
   big_star: {
     justifyContent: "center",
     alignContent: "center",
-    width: SCREEN_WIDTH * 0.3,
-    height: SCREEN_WIDTH * 0.3,
+    textAlign: "center",
+    width: SCREEN_WIDTH * 0.25,
+    height: SCREEN_WIDTH * 0.2,
+    marginLeft: 15,
   },
   small_star: {
     flexDirection: "row",
@@ -290,32 +311,40 @@ const styles = StyleSheet.create({
     height: 25,
     position: "absolute",
     top: 0,
-    left: 0,
+    left: 15,
   },
   day_txt: {
-    color: "#56186B",
-    paddingLeft: 25,
-    fontSize: 22,
-    fontWeight: "900",
+    color: "#FF6B00",
+    fontSize: Platform.OS === 'ios' ? 20 : 24,
+    fontFamily: "doss",
+    paddingHorizontal: Platform.OS === 'ios' ? 23 : 30,
+    textShadowColor: '#fff',
+    textShadowOffset: {width: 1, height: 1},
+    textShadowRadius: 5,
   },
   tmi_container: {
     width: SCREEN_WIDTH * 0.7,
-    borderColor: "rgba(255, 255, 255, 0.7)",
-    borderLeftWidth: 2,
-    paddingLeft: 5,
+    marginTop: 15,
   },
   tmi_gradient: {
-    width: SCREEN_WIDTH * 0.6,
+    width: SCREEN_WIDTH,
     marginBottom: 10,
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 10,
+    borderTopLeftRadius: 50,
+    borderBottomLeftRadius: 50,
   },
   tmi_txt: {
     fontSize: 20,
-    color: "#FFF",
+    fontFamily: "wooju",
+    color: "#000",
     alignContent: "center",
     paddingVertical: 15,
     justifyContent: "center",
+  },
+  exit: {
+    width: SCREEN_WIDTH * 0.06,
+    height: SCREEN_WIDTH * 0.06,
+    resizeMode: "contain",
   },
 });

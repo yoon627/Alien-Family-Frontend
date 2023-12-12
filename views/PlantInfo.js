@@ -329,13 +329,14 @@ export default function PlantInfo({ navigation }) {
       <StatusBar barStyle="light-content" backgroundColor="#000000" />
       <View style={styles.topContainer}>
         <View style={styles.box}>
-          <Text
-            style={{
-              ...styles.missionText,
-              fontFamily: "doss",
-              paddingVertical: 8,
-            }}
-          >
+          <Text style={{
+            ...styles.missionText,
+            fontFamily: "doss",
+            paddingVertical: 8,
+            textShadowColor: '#B1B0B0',
+            textShadowOffset: {width: 1, height: 1},
+            textShadowRadius: 5,
+          }}>
             가족 랭킹
           </Text>
           <ScrollView
@@ -392,14 +393,14 @@ export default function PlantInfo({ navigation }) {
         </View>
 
         <View style={styles.box}>
-          <Text
-            style={{
-              ...styles.missionText,
-              fontFamily: "doss",
-              paddingTop: 10,
-            }}
-          >
-            오늘의{"\n"}랜덤 미션
+          <Text style={{...styles.missionText,
+            fontFamily: "doss",
+            paddingTop: 10,
+            textShadowColor: '#B1B0B0',
+            textShadowOffset: {width: 1, height: 1},
+            textShadowRadius: 5,
+          }}>
+            오늘의{'\n'}랜덤 미션
           </Text>
           <View style={styles.missionImageContainer}>
             <Image

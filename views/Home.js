@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, {useEffect, useRef, useState, useCallback} from "react";
 import {
   Alert,
   Animated,
@@ -19,8 +19,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import MarqueeText from "react-native-marquee";
 import axios from "axios";
 import * as Notifications from "expo-notifications";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { useFocusEffect } from "@react-navigation/native";
+import {TouchableOpacity} from "react-native-gesture-handler";
+import {useFocusEffect} from "@react-navigation/native";
 import * as Permissions from "expo-permissions";
 
 Notifications.setNotificationHandler({
@@ -31,7 +31,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
 const fontRatio = SCREEN_HEIGHT / 800;
 
 const Container = styled.View`
@@ -40,7 +40,7 @@ const Container = styled.View`
   align-items: center;
 `;
 
-export default function Home({ navigation, fonts }) {
+export default function Home({navigation, fonts}) {
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
@@ -98,7 +98,7 @@ export default function Home({ navigation, fonts }) {
       outputRange: [-1, 1],
     });
     return (
-      <Animated.View style={{ transform: [{ translateX: interpolated }] }}>
+      <Animated.View style={{transform: [{translateX: interpolated}]}}>
         <TouchableOpacity onPress={() => navigation.navigate("Mini Games")}>
           {alienType === "BASIC" ? (
             <Image
@@ -216,7 +216,7 @@ export default function Home({ navigation, fonts }) {
         const randomIndex = Math.floor(Math.random() * todayMissions.length);
         await AsyncStorage.setItem(
           "todayMission",
-          JSON.stringify({ [str_today]: todayMissions[randomIndex] })
+          JSON.stringify({[str_today]: todayMissions[randomIndex]})
         );
         await AsyncStorage.setItem("todayMissionClear", "false");
         await AsyncStorage.setItem("dailyMissionClear", "false");
@@ -225,7 +225,7 @@ export default function Home({ navigation, fonts }) {
       const randomIndex = Math.floor(Math.random() * todayMissions.length);
       await AsyncStorage.setItem(
         "todayMission",
-        JSON.stringify({ [str_today]: todayMissions[randomIndex] })
+        JSON.stringify({[str_today]: todayMissions[randomIndex]})
       );
       await AsyncStorage.setItem("todayMissionClear", "false");
       await AsyncStorage.setItem("dailyMissionClear", "false");
@@ -442,16 +442,18 @@ export default function Home({ navigation, fonts }) {
             />
             <View style={styles.tmiContainer}>
               <View style={styles.marqueeWrapper}>
-                <MarqueeText
-                  onPress={() => navigation.navigate("Attendance")}
-                  style={styles.marqueeText}
-                  speed={0.4}
-                  marqueeOnStart
-                  loop
-                  delay={1000}
-                >
-                  {todayTMI ? todayTMI : "첫 TMI를 작성해주세요!"}
-                </MarqueeText>
+                <TouchableOpacity>
+                  <MarqueeText
+                    onPress={() => navigation.navigate("Attendance")}
+                    style={styles.marqueeText}
+                    speed={0.4}
+                    marqueeOnStart
+                    loop
+                    delay={1000}
+                  >
+                    {todayTMI ? todayTMI : "첫 TMI를 작성해주세요!"}
+                  </MarqueeText>
+                </TouchableOpacity>
               </View>
             </View>
           </View>
@@ -470,7 +472,7 @@ export default function Home({ navigation, fonts }) {
             </TouchableOpacity>
           </View>
           <View
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            style={{flex: 1, justifyContent: "center", alignItems: "center"}}
           ></View>
           <View style={styles.alien}>{movingObject()}</View>
           <View style={styles.bottomContainer}>
@@ -506,7 +508,7 @@ export default function Home({ navigation, fonts }) {
                   >
                     level 🏆 {plantLevel}
                   </Text>
-                  <Text style={{ ...styles.modalText, fontWeight: "bold" }}>
+                  <Text style={{...styles.modalText, fontWeight: "bold"}}>
                     {plantPoint} p
                   </Text>
                   {/* Close button */}
@@ -514,7 +516,7 @@ export default function Home({ navigation, fonts }) {
                     style={[
                       styles.button,
                       styles.buttonClose,
-                      { backgroundColor: "#CBCFC9" },
+                      {backgroundColor: "#CBCFC9"},
                     ]}
                     onPress={() => setPlantModal(false)}
                   >
@@ -560,7 +562,7 @@ export default function Home({ navigation, fonts }) {
                         textAlign: "center",
                       }}
                     />
-                    <View style={{ flexDirection: "row", marginVertical: 10 }}>
+                    <View style={{flexDirection: "row", marginVertical: 10}}>
                       <Pressable
                         style={[styles.button, styles.buttonWrite]}
                         onPress={async () => {
@@ -603,7 +605,7 @@ export default function Home({ navigation, fonts }) {
                           }
                         }}
                       >
-                        <Text style={{ ...styles.textStyle, color: "#fff" }}>
+                        <Text style={{...styles.textStyle, color: "#fff"}}>
                           작성
                         </Text>
                       </Pressable>
@@ -614,7 +616,7 @@ export default function Home({ navigation, fonts }) {
                           setModalVisible(!modalVisible);
                         }}
                       >
-                        <Text style={{ ...styles.textStyle, color: "#727272" }}>
+                        <Text style={{...styles.textStyle, color: "#727272"}}>
                           취소
                         </Text>
                       </Pressable>
