@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   ScrollView,
   TouchableOpacity,
@@ -17,6 +17,15 @@ import axios from "axios";
 import { useFocusEffect } from "@react-navigation/native";
 import AlienType from "../components/AlienType";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
+import * as Notifications from "expo-notifications";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -37,6 +46,8 @@ const missionNav = {
 };
 
 export default function PlantInfo({ navigation }) {
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
   const [familyPoint, setFamilyPoint] = useState([]);
   const [plantLevel, setPlantLevel] = useState(null);
   const [plantName, setPlantName] = useState(null);
@@ -45,8 +56,13 @@ export default function PlantInfo({ navigation }) {
   const [todayMission, setTodayMission] = useState("");
   const [todayMissionClear, setTodayMissionClear] = useState(false);
   const [dailyMissionClear, setDailyMissionClear] = useState(false);
-  const levelPoint = [20, 50, 100, 160, 250, 300, 400, 600, 900, 1500, 2000];
+  const levelPoint = [20, 30, 50, 60, 70, 80, 90, 100, 900, 1500, 2000];
   const [progressBar, setProgressBar] = useState(0);
+  const [prefill, setPrefill] = useState(0);
+  useEffect(() => {
+    setPrefill(progressBar - 5);
+  }, [progressBar]);
+
   useEffect(() => {
     // 타이머를 사용하여 5초마다 말풍선을 표시
     const interval = setInterval(() => {
@@ -107,6 +123,7 @@ export default function PlantInfo({ navigation }) {
         );
     }
   };
+
   const getFamilyScore = async () => {
     var tmpList = [];
     const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
@@ -130,6 +147,7 @@ export default function PlantInfo({ navigation }) {
       })
       .catch((e) => console.log(e));
   };
+
   const renderChat = () => {
     const chatContainerStyles = [
       styles.plantSay0,
@@ -171,6 +189,30 @@ export default function PlantInfo({ navigation }) {
         )}
       </View>
     );
+  };
+
+  const getplantInfo = async () => {
+    const tmpLevel = await AsyncStorage.getItem("")
+    try {
+      await axios({
+        method: "GET",
+        url: SERVER_ADDRESS + "/plant",
+        headers: {
+          Authorization: "Bearer: " + UserServerAccessToken,
+        },
+      }).then((resp) => {
+        const tmpPlant = resp.data.data;
+        if (plantLevel < tmpPlant.level) {
+          setProgressBar(100);
+        }
+        setPlantLevel(tmpPlant.level);
+        setPlantName(tmpPlant.name);
+        setPlantPoint(tmpPlant.point);
+        setProgressBar((tmpPlant.point / levelPoint[tmpPlant.level]) * 100);
+      });
+    } catch (error) {
+      console.error("Error getMsg:", error);
+    }
   };
 
   useEffect(() => {
@@ -244,6 +286,69 @@ export default function PlantInfo({ navigation }) {
     };
     getMission();
   }, []);
+
+  useEffect(() => {
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        setNotification(notification);
+        if (notification.request.content.title == "Family") {
+          // console.log("update Family");
+        } else if (notification.request.content.title == "TMI") {
+          // console.log("update TMI");
+          getFamilyScore();
+          getplantInfo();
+        } else if (notification.request.content.title == "Calendar") {
+          // console.log("update Calendar");
+          getFamilyScore();
+          getplantInfo();
+        } else if (notification.request.content.title == "Photo") {
+          // console.log("update Photo");
+          getFamilyScore();
+          getplantInfo();
+        } else if (notification.request.content.title == "Plant") {
+          // console.log("update Plant");
+          getFamilyScore();
+          getplantInfo();
+        } else {
+          // console.log("update Chatting");
+          getFamilyScore();
+          getplantInfo();
+        }
+      });
+    // Handle the notification payload here
+    // console.log(notification);
+    const foregroundNotificationHandler = async (notification) => {
+      const screenName = notification.notification.request.content.title;
+
+      if (screenName) {
+        if (screenName === "Calendar") {
+          navigation.navigate("Calendar");
+        } else if (screenName === "TMI") {
+          navigation.navigate("Attendance");
+        } else if (screenName === "Photo") {
+          navigation.navigate("AlbumScreen");
+        } else if (screenName === "Plant") {
+          navigation.navigate("Home");
+        } else if (screenName === "Family") {
+          navigation.navigate("FamilyInfo");
+        } else {
+          navigation.navigate("Chatting");
+        }
+        // If the notification contains a screen name, navigate to that screen
+        // navigationRef.current?.navigate(screenName);
+      }
+    };
+    const foregroundNotificationSubscription =
+      Notifications.addNotificationResponseReceivedListener(
+        foregroundNotificationHandler
+      );
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+      foregroundNotificationSubscription.remove();
+    };
+  }, [notification]);
 
   useFocusEffect(
     useCallback(() => {
@@ -329,14 +434,16 @@ export default function PlantInfo({ navigation }) {
       <StatusBar barStyle="light-content" backgroundColor="#000000" />
       <View style={styles.topContainer}>
         <View style={styles.box}>
-          <Text style={{
-            ...styles.missionText,
-            fontFamily: "doss",
-            paddingVertical: 8,
-            textShadowColor: '#B1B0B0',
-            textShadowOffset: {width: 1, height: 1},
-            textShadowRadius: 5,
-          }}>
+          <Text
+            style={{
+              ...styles.missionText,
+              fontFamily: "doss",
+              paddingVertical: 8,
+              textShadowColor: "#B1B0B0",
+              textShadowOffset: { width: 1, height: 1 },
+              textShadowRadius: 5,
+            }}
+          >
             가족 랭킹
           </Text>
           <ScrollView
@@ -393,14 +500,17 @@ export default function PlantInfo({ navigation }) {
         </View>
 
         <View style={styles.box}>
-          <Text style={{...styles.missionText,
-            fontFamily: "doss",
-            paddingTop: 10,
-            textShadowColor: '#B1B0B0',
-            textShadowOffset: {width: 1, height: 1},
-            textShadowRadius: 5,
-          }}>
-            오늘의{'\n'}랜덤 미션
+          <Text
+            style={{
+              ...styles.missionText,
+              fontFamily: "doss",
+              paddingTop: 10,
+              textShadowColor: "#B1B0B0",
+              textShadowOffset: { width: 1, height: 1 },
+              textShadowRadius: 5,
+            }}
+          >
+            오늘의{"\n"}랜덤 미션
           </Text>
           <View style={styles.missionImageContainer}>
             <Image
@@ -455,7 +565,12 @@ export default function PlantInfo({ navigation }) {
           rotation={180}
           lineCap="round"
           backgroundColor="#DBDBDB"
-          style={{backgroundColor:"#F5F2F2",borderRadius:390,width:390,height:390}}
+          style={{
+            backgroundColor: "#F5F2F2",
+            borderRadius: 390,
+            width: 390,
+            height: 390,
+          }}
         >
           {(fill) => (
             <View style={{}}>
@@ -510,39 +625,39 @@ export default function PlantInfo({ navigation }) {
               // setPlantPoint(tmpPlantPoint);
               // setProgressBar((tmpPlantPoint / levelPoint[plantLevel]) * 100);
               // console.log(progressBar);
-              // console.log((plantPoint/levelPoint[plantLevel])*100);
-              const SERVER_ADDRESS = await AsyncStorage.getItem(
-                "ServerAddress"
-              );
-              const UserServerAccessToken = await AsyncStorage.getItem(
-                "UserServerAccessToken"
-              );
-              await axios({
-                method: "GET",
-                url: SERVER_ADDRESS + "/tmi/check",
-                headers: {
-                  Authorization: "Bearer: " + UserServerAccessToken,
-                },
-              })
-                .then(async (resp) => {
-                  if (resp.data.message != "오늘의 tmi를 작성했습니다.") {
-                    Alert.alert("출석을 위해 TMI를 작성해주세요!");
-                  } else {
-                    await axios({
-                      method: "GET",
-                      url: SERVER_ADDRESS + "/attendance",
-                      headers: {
-                        Authorization: "Bearer: " + UserServerAccessToken,
-                      },
-                    })
-                      .then((resp) => {
-                        getplantInfo();
-                        Alert.alert(resp.data.message);
-                      })
-                      .catch((e) => console.log(e));
-                  }
+              // console.log((plantPoint / levelPoint[plantLevel]) * 100);
+                const SERVER_ADDRESS = await AsyncStorage.getItem(
+                  "ServerAddress"
+                );
+                const UserServerAccessToken = await AsyncStorage.getItem(
+                  "UserServerAccessToken"
+                );
+                await axios({
+                  method: "GET",
+                  url: SERVER_ADDRESS + "/tmi/check",
+                  headers: {
+                    Authorization: "Bearer: " + UserServerAccessToken,
+                  },
                 })
-                .catch((e) => console.log(e));
+                  .then(async (resp) => {
+                    if (resp.data.message != "오늘의 tmi를 작성했습니다.") {
+                      Alert.alert("출석을 위해 TMI를 작성해주세요!");
+                    } else {
+                      await axios({
+                        method: "GET",
+                        url: SERVER_ADDRESS + "/attendance",
+                        headers: {
+                          Authorization: "Bearer: " + UserServerAccessToken,
+                        },
+                      })
+                        .then((resp) => {
+                          getplantInfo();
+                          Alert.alert(resp.data.message);
+                        })
+                        .catch((e) => console.log(e));
+                    }
+                  })
+                  .catch((e) => console.log(e));
             }}
           >
             <Image
