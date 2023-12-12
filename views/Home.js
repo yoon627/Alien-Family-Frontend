@@ -451,7 +451,7 @@ export default function Home({navigation, fonts}) {
                     loop
                     delay={1000}
                   >
-                    {todayTMI ? todayTMI : "첫 TMI를 작성해주세요!"}
+                    {todayTMI ? todayTMI : "오늘의 첫 TMI를 작성해주세요!"}
                   </MarqueeText>
                 </TouchableOpacity>
               </View>
@@ -694,7 +694,7 @@ const styles = StyleSheet.create({
   },
   tmiTextContainer: {
     position: "absolute",
-    top: Platform.OS === "ios" ? "6%" : "5%",
+    top: Platform.OS === "ios" ? "7%" : "4%",
   },
   tmiContainer: {
     bottom: "39%",
@@ -706,9 +706,9 @@ const styles = StyleSheet.create({
     overflow: "hidden", // 영역을 벗어난 부분 숨기기
   },
   marqueeText: {
-    marginTop: 5,
+    marginTop: Platform.OS === 'ios' ? 5 : 9,
     fontSize: 20,
-    fontFamily: "DungGeunMo",
+    fontFamily: "wooju",
   },
   container: {
     flex: 1,

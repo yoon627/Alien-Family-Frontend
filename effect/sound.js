@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TouchableOpacity, Text, View } from 'react-native';
+import {TouchableOpacity, Text, View, Image} from 'react-native';
 import { Audio } from 'expo-av';
 
 const SoundPlayer = () => {
@@ -35,7 +35,8 @@ const SoundPlayer = () => {
     return (
         <View>
             <TouchableOpacity onPress={handlePress}>
-                <Text>{isPlaying ? 'Pause Sound' : 'Play Sound'}</Text>
+                {isPlaying ? 'Pause Sound' : (<Image source={require('../assets/img/soundUp.png')} />)}
+
             </TouchableOpacity>
         </View>
     );

@@ -53,6 +53,7 @@ const ChatRoom = () => {
         }
         const data = await response.json();
         setMessages(data);
+        scrollViewRef.current?.scrollToEnd({animated: true});
         // console.log("챗룸 아디", chatroomId);
         // console.log("가져온 채팅내역", data);
       } catch (error) {
@@ -265,7 +266,13 @@ const ChatRoom = () => {
 
   return (
     <View style={{ flex: 1, padding: 10, backgroundColor: "#fff" }}>
-      <ScrollView style={{ flex: 1, marginHorizontal: 5 }} ref={scrollViewRef}>
+      <ScrollView
+        style={{ flex: 1, marginHorizontal: 5 }}
+        ref={scrollViewRef}
+        onContentSizeChange={() => {
+          scrollViewRef.current?.scrollToEnd({ animated: true });
+        }}
+      >
         {messages.map((msg, index) => (
           <View key={index}>
             <View
