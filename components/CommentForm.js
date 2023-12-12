@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
   Text,
   TextInput,
@@ -7,8 +7,8 @@ import {
   StyleSheet,
   FlatList,
   Modal,
-  ActivityIndicator, Platform,
-  Pressable,
+  ActivityIndicator,
+  Platform,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AlienType from "./AlienType";
@@ -134,7 +134,7 @@ export default function CommentForm({photoId, nickname}) {
             );
             await AsyncStorage.setItem(
               "todayMission",
-              JSON.stringify({ [str_today]: todayMissions[randomIndex] })
+              JSON.stringify({[str_today]: todayMissions[randomIndex]})
             );
             if (test[str_today] === "사진에 댓글 달기") {
               await AsyncStorage.setItem("todayMissionClear", "true");
@@ -157,7 +157,7 @@ export default function CommentForm({photoId, nickname}) {
           const randomIndex = Math.floor(Math.random() * todayMissions.length);
           await AsyncStorage.setItem(
             "todayMission",
-            JSON.stringify({ [str_today]: todayMissions[randomIndex] })
+            JSON.stringify({[str_today]: todayMissions[randomIndex]})
           );
           if (test[str_today] === "사진에 댓글 달기") {
             await AsyncStorage.setItem("todayMissionClear", "true");
@@ -281,8 +281,8 @@ export default function CommentForm({photoId, nickname}) {
                         fontSize: 14,
                       }}
                     >
-                      <Text style={{ fontWeight: "bold" }}>{item.writer}</Text>
-                      <Text style={{ color: "gray" }}>{`  ${calculateDaysAgo(
+                      <Text style={{fontWeight: "bold"}}>{item.writer}</Text>
+                      <Text style={{color: "gray"}}>{`  ${calculateDaysAgo(
                         item.createAt
                       )}`}</Text>
                     </Text>

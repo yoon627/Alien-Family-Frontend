@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import {useState} from "react";
 import {
   Dimensions,
   StyleSheet,
@@ -19,31 +19,44 @@ function RouletteScreen() {
   const onPress2 = () => onChangeCnt((cur) => cur - 1);
 
   return (
-    <View style={{ flex: 1, alignItems: "center", top: 50 }}>
-      <SoundPlayer />
-      <Text>룰렛 게임 ㅋㅋ 사람수 ㅋㅋ {cnt + 2}</Text>
+    <View style={styles.container}>
+      <SoundPlayer/>
+      <Text
+        style={styles.title}>
+        참가 인원: {cnt + 2}명
+      </Text>
 
-      <View style={{ flexDirection: "row", justifyContent: "flex-start" }}>
+      <View style={{flexDirection: "row", justifyContent: "flex-start"}}>
         <TouchableOpacity style={styles.button} onPress={onPress2}>
-          <Text>--</Text>
+          <Text style={styles.btnText}>-</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.button} onPress={onPress}>
-          <Text>++</Text>
+          <Text style={styles.btnText}>+</Text>
         </TouchableOpacity>
       </View>
 
-      <RouletteGame cnt={cnt + 2} />
+      <RouletteGame cnt={cnt + 2}/>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    backgroundColor: "white",
+  },
+  title: {
+    marginTop: 30,
+    fontFamily: "dnf",
+    fontSize: 20,
+  },
   button: {
-    backgroundColor: "#cd0beb", // 버튼 색상
-    paddingVertical: 20, // 세로 패딩
-    paddingHorizontal: 20, // 가로 패딩
-    borderRadius: 5, // 테두리 둥글게
+    backgroundColor: "#B9AAD3", // 버튼 색상
+    // paddingVertical: 10, // 세로 패딩
+    // paddingHorizontal: 10, // 가로 패딩
+    borderRadius: 50, // 테두리 둥글게
     alignItems: "center",
     marginVertical: 5, // 버튼 간의 수직 마진
     justifyContent: "space-between",
@@ -51,7 +64,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     width: (windowWidth - 50) / 5,
   },
-
+  btnText: {
+    fontFamily: "dnf",
+    fontSize: 25,
+    color: "white",
+  },
   bottomView: {
     position: "absolute", // 절대 위치 사용
     bottom: 100, // 화면의 바닥에 위치

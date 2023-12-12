@@ -121,7 +121,7 @@ export default function PlantInfo({navigation}) {
         for (let i = 0; i < tmp.length; i++) {
           tmpList.push(tmp[i].nickname + ":" + tmp[i].point);
         }
-        console.log(tmpList);
+        // console.log(tmpList);
         setFamilyPoint(tmpList);
       })
       .catch((e) => console.log(e));
@@ -153,7 +153,7 @@ export default function PlantInfo({navigation}) {
           <View
             style={{
               left: SCREEN_WIDTH * 0.1,
-              bottom: SCREEN_HEIGHT * 0.15,
+              bottom: Platform.OS === 'ios' ? SCREEN_HEIGHT * 0.15 : SCREEN_HEIGHT * 0.2,
               zIndex: 1,
             }}
           >
@@ -375,7 +375,7 @@ export default function PlantInfo({navigation}) {
         <View style={styles.box}>
           <Text style={{...styles.missionText,
             fontFamily: "doss",
-            paddingTop: 10,
+            paddingTop: 5,
             textShadowColor: '#B1B0B0',
             textShadowOffset: {width: 1, height: 1},
             textShadowRadius: 5,
@@ -393,7 +393,7 @@ export default function PlantInfo({navigation}) {
               <Text
                 style={{
                   ...styles.missionText,
-                  fontSize: Platform.OS === 'ios' ? 19 : 23,
+                  fontSize: 19,
                   ...todayMissionClear ? styles.crossedText : null,
                 }}
               >
@@ -407,7 +407,7 @@ export default function PlantInfo({navigation}) {
               <Text
                 style={{
                   ...styles.missionText,
-                  fontSize: Platform.OS === 'ios' ? 19 : 23,
+                  fontSize: 19,
                   ...todayMissionClear ? styles.crossedText : null,
                 }}
               >
@@ -425,7 +425,7 @@ export default function PlantInfo({navigation}) {
         style={{
           position: "absolute",
           alignItems: "center",
-          bottom: Platform.OS === 'ios' ? SCREEN_HEIGHT * 0.11 : SCREEN_HEIGHT * 0.15,
+          bottom: Platform.OS === 'ios' ? SCREEN_HEIGHT * 0.1 : SCREEN_HEIGHT * 0.13,
           left: 0,
           right: 0,
         }}
@@ -517,12 +517,12 @@ const styles = StyleSheet.create({
   topContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: Platform.OS === 'ios' ? 30 : 50,
+    marginTop: 30,
     paddingHorizontal: Platform.OS === 'ios' ? 12 : 15,
   },
   box: {
     paddingVertical: 15,
-    paddingHorizontal: Platform.OS === 'ios' ? 10 : 20,
+    paddingHorizontal: 15,
     width: SCREEN_WIDTH * 0.45,
     height: SCREEN_HEIGHT * 0.3,
     borderColor: "#F5F2F2",
@@ -537,7 +537,7 @@ const styles = StyleSheet.create({
     paddingLeft: 3,
   },
   rankName: {
-    fontSize: Platform.OS === 'ios' ? 16 : 18,
+    fontSize: 16,
     fontFamily: "wooju",
     paddingBottom: 3,
     paddingLeft: 3,
@@ -556,8 +556,8 @@ const styles = StyleSheet.create({
   },
   missionImageContainer: {
     alignItems: "center",
-    marginVertical: 17,
-    marginBottom: Platform.OS === 'ios' ? 15 : 30,
+    marginVertical: 15,
+    marginBottom: 15,
   },
   missionImage: {
     width: 70,
@@ -583,12 +583,11 @@ const styles = StyleSheet.create({
   },
   text: {
     position: "absolute",
-    top: 35,
+    top: 30,
     paddingHorizontal: 10,
-    paddingVertical: Platform.OS === 'android' ? 5 : null,
     lineHeight: 22,
     fontFamily: "doss",
-    fontSize: Platform.OS === 'ios' ? 18 : 20,
+    fontSize: 18,
   },
   plantContainer: {
     justifyContent: "flex-end",

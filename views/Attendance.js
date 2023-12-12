@@ -215,50 +215,33 @@ export default function Attendance({navigation}) {
               <View key={day} style={styles.tmi_container}>
                 {tmiJson[day] ? (
                   tmiJson[day].map((tmi, index) => (
-                    <View key={index}>
-                      {/* 그라데이션 */}
-                      <LinearGradient
-                        colors={[
-                          "rgba(217, 217, 217, 0)",
-                          "rgba(255, 255, 255, 0)",
-                        ]}
+                    <View key={index} style={styles.tmi_gradient}>
+                      <AlienType writer={tmi.split(":")[0]}/>
+                      {/* TMI */}
 
-                        style={styles.tmi_gradient}
-                        start={{x: 0, y: 0}}
-                        end={{x: 1, y: 0}}
-                      >
-                        <AlienType writer={tmi.split(":")[0]}/>
-                        {/* TMI */}
-                        <View key={index} style={{flexDirection: "row",}}>
-                          <Text style={{...styles.tmi_txt, fontFamily: "jamsil2", fontSize: 19,}}>
-                            {tmi.split(":")[0]}
-                          </Text>
-                          <Text style={styles.tmi_txt}>
+                      <View key={index} style={{flexDirection: "row",}}>
+                        <Text style={{...styles.tmi_txt, fontFamily: "jamsil2", fontSize: 19, paddingRight: 0,}}>
+                          {tmi.split(":")[0]}
+                        </Text>
+                        <View>
+                          <Text style={styles.tmi_txt} numberOfLines={2}>
                             : {tmi.split(":")[1]}
                           </Text>
                         </View>
-                      </LinearGradient>
+                      </View>
                     </View>
                   ))
                 ) : (
-                  <LinearGradient
-                    colors={[
-                      "rgba(255, 255, 255, 0.4)",
-                      "rgba(255, 255, 255, 0)",
-                    ]}
-                    style={styles.tmi_gradient}
-                    start={{x: 0, y: 0}}
-                    end={{x: 1, y: 0}}
-                  >
+                  <View style={styles.tmi_gradient}>
                     <Text style={styles.tmi_txt}></Text>
-                  </LinearGradient>
+                  </View>
                 )}
               </View>
             </View>
           ))}
-
+          <View style={{marginBottom: 70,}}></View>
         </ScrollView>
-        <View style={{ position: "absolute", top: 30, left: 25}}>
+        <View style={{position: "absolute", top: 30, left: 25}}>
           <TouchableOpacity
             onPress={() => navigation.pop()}>
             <Image
@@ -301,7 +284,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     width: SCREEN_WIDTH * 0.25,
     height: SCREEN_WIDTH * 0.2,
-    marginLeft: 15,
+    marginLeft: 5,
   },
   small_star: {
     flexDirection: "row",
@@ -315,32 +298,32 @@ const styles = StyleSheet.create({
   },
   day_txt: {
     color: "#FF6B00",
-    fontSize: Platform.OS === 'ios' ? 20 : 24,
+    fontSize: 20,
     fontFamily: "doss",
-    paddingHorizontal: Platform.OS === 'ios' ? 23 : 30,
+    paddingHorizontal: 23,
     textShadowColor: '#fff',
     textShadowOffset: {width: 1, height: 1},
     textShadowRadius: 5,
   },
   tmi_container: {
     width: SCREEN_WIDTH * 0.7,
-    marginTop: 15,
+    marginTop: 10,
+    paddingBottom: 10,
   },
   tmi_gradient: {
-    width: SCREEN_WIDTH,
-    marginBottom: 10,
     flexDirection: "row",
     alignItems: "center",
-    borderTopLeftRadius: 50,
-    borderBottomLeftRadius: 50,
+    width: SCREEN_WIDTH,
+    marginBottom: 5,
+    overflow: "hidden",
   },
   tmi_txt: {
     fontSize: 20,
     fontFamily: "wooju",
     color: "#000",
-    alignContent: "center",
     paddingVertical: 15,
-    justifyContent: "center",
+    paddingRight: 20,
+    maxWidth: SCREEN_WIDTH * 0.45,
   },
   exit: {
     width: SCREEN_WIDTH * 0.06,
