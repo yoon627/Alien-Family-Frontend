@@ -465,6 +465,7 @@ export default function Home({navigation, fonts}) {
                   color: "white",
                   fontSize: 19 * fontRatio,
                   fontFamily: "dnf",
+                  paddingRight: 3,
                 }}
               >
                 오늘의 TMI

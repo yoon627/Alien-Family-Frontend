@@ -279,11 +279,11 @@ const ChatRoom = () => {
               style={{
                 flexDirection: "row",
                 alignItems: "flex-end",
-                marginBottom: 4,
+                marginBottom: 15,
               }}
             >
               {msg.sender !== myName && (
-                <View>
+                <View style={{justifyContent: "center",}}>
                   <Text style={styles.senderName}>{msg.sender}</Text>
                   <AlienType writer={msg.sender} />
                 </View>
@@ -358,11 +358,13 @@ const styles = StyleSheet.create({
   },
   senderName: {
     color: "#100f0f",
-    fontSize: 15,
-    marginLeft: 10,
+    fontSize: 14,
+    marginVertical: 5,
+    marginRight: 10,
+    textAlign: "center",
   },
   messageText: {
-    fontSize: 17,
+    fontSize: 18,
     color: "white",
   },
   inputRow: {
