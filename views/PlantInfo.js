@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, {useState, useEffect, useCallback} from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   ScrollView,
   TouchableOpacity,
@@ -9,31 +9,34 @@ import {
   Dimensions,
   View,
   StatusBar,
-  ImageBackground, Alert, Platform,
+  ImageBackground,
+  Alert,
+  Platform,
 } from "react-native";
 import axios from "axios";
-import {useFocusEffect} from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import AlienType from "../components/AlienType";
+import { AnimatedCircularProgress } from "react-native-circular-progress";
 
-const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const missionImages = {
-  "사진 찍어서 올리기": require('../assets/img/missionIcon/camera.png'),
-  "내 갤러리 사진 등록하기": require('../assets/img/missionIcon/gallery.png'),
-  "사진에 댓글 달기": require('../assets/img/missionIcon/comment.png'),
-  "가족들과 채팅으로 인사하기": require('../assets/img/missionIcon/chat.png'),
-  "캘린더에 일정 등록하기": require('../assets/img/missionIcon/calendar.png'),
+  "사진 찍어서 올리기": require("../assets/img/missionIcon/camera.png"),
+  "내 갤러리 사진 등록하기": require("../assets/img/missionIcon/gallery.png"),
+  "사진에 댓글 달기": require("../assets/img/missionIcon/comment.png"),
+  "가족들과 채팅으로 인사하기": require("../assets/img/missionIcon/chat.png"),
+  "캘린더에 일정 등록하기": require("../assets/img/missionIcon/calendar.png"),
 };
 
 const missionNav = {
-  "사진 찍어서 올리기": 'AlbumScreen',
-  "내 갤러리 사진 등록하기": 'AlbumScreen',
-  "사진에 댓글 달기": 'AlbumScreen',
-  "가족들과 채팅으로 인사하기": 'Chat',
-  "캘린더에 일정 등록하기": 'Calendar',
+  "사진 찍어서 올리기": "AlbumScreen",
+  "내 갤러리 사진 등록하기": "AlbumScreen",
+  "사진에 댓글 달기": "AlbumScreen",
+  "가족들과 채팅으로 인사하기": "Chat",
+  "캘린더에 일정 등록하기": "Calendar",
 };
 
-export default function PlantInfo({navigation}) {
+export default function PlantInfo({ navigation }) {
   const [familyPoint, setFamilyPoint] = useState([]);
   const [plantLevel, setPlantLevel] = useState(null);
   const [plantName, setPlantName] = useState(null);
@@ -42,7 +45,8 @@ export default function PlantInfo({navigation}) {
   const [todayMission, setTodayMission] = useState("");
   const [todayMissionClear, setTodayMissionClear] = useState(false);
   const [dailyMissionClear, setDailyMissionClear] = useState(false);
-
+  const levelPoint = [20, 50, 100, 160, 250, 300, 400, 600, 900, 1500, 2000];
+  const [progressBar, setProgressBar] = useState(0);
   useEffect(() => {
     // 타이머를 사용하여 5초마다 말풍선을 표시
     const interval = setInterval(() => {
@@ -121,7 +125,7 @@ export default function PlantInfo({navigation}) {
         for (let i = 0; i < tmp.length; i++) {
           tmpList.push(tmp[i].nickname + ":" + tmp[i].point);
         }
-        console.log(tmpList);
+        // console.log(tmpList);
         setFamilyPoint(tmpList);
       })
       .catch((e) => console.log(e));
@@ -158,12 +162,10 @@ export default function PlantInfo({navigation}) {
             }}
           >
             <ImageBackground
-              source={require('../assets/img/bubble.png')}
+              source={require("../assets/img/bubble.png")}
               style={styles.textBubble}
             >
-              <Text style={styles.text}>
-                {randomMessage()}
-              </Text>
+              <Text style={styles.text}>{randomMessage()}</Text>
             </ImageBackground>
           </View>
         )}
@@ -190,6 +192,7 @@ export default function PlantInfo({navigation}) {
           setPlantLevel(tmpPlant.level);
           setPlantName(tmpPlant.name);
           setPlantPoint(tmpPlant.point);
+          setProgressBar((tmpPlant.point / levelPoint[tmpPlant.level]) * 100);
         });
       } catch (error) {
         console.error("Error getMsg:", error);
@@ -223,7 +226,7 @@ export default function PlantInfo({navigation}) {
           setTodayMission(todayMissions[randomIndex]);
           await AsyncStorage.setItem(
             "todayMission",
-            JSON.stringify({[str_today]: todayMissions[randomIndex]})
+            JSON.stringify({ [str_today]: todayMissions[randomIndex] })
           );
           await AsyncStorage.setItem("todayMissionClear", "false");
           await AsyncStorage.setItem("dailyMissionClear", "false");
@@ -233,7 +236,7 @@ export default function PlantInfo({navigation}) {
         setTodayMission(todayMissions[randomIndex]);
         await AsyncStorage.setItem(
           "todayMission",
-          JSON.stringify({[str_today]: todayMissions[randomIndex]})
+          JSON.stringify({ [str_today]: todayMissions[randomIndex] })
         );
         await AsyncStorage.setItem("todayMissionClear", "false");
         await AsyncStorage.setItem("dailyMissionClear", "false");
@@ -298,7 +301,7 @@ export default function PlantInfo({navigation}) {
             setTodayMission(todayMissions[randomIndex]);
             await AsyncStorage.setItem(
               "todayMission",
-              JSON.stringify({[str_today]: todayMissions[randomIndex]})
+              JSON.stringify({ [str_today]: todayMissions[randomIndex] })
             );
             await AsyncStorage.setItem("todayMissionClear", "false");
             await AsyncStorage.setItem("dailyMissionClear", "false");
@@ -308,7 +311,7 @@ export default function PlantInfo({navigation}) {
           setTodayMission(todayMissions[randomIndex]);
           await AsyncStorage.setItem(
             "todayMission",
-            JSON.stringify({[str_today]: todayMissions[randomIndex]})
+            JSON.stringify({ [str_today]: todayMissions[randomIndex] })
           );
           await AsyncStorage.setItem("todayMissionClear", "false");
           await AsyncStorage.setItem("dailyMissionClear", "false");
@@ -322,52 +325,81 @@ export default function PlantInfo({navigation}) {
   );
 
   return (
-    <View style={{flex: 1, backgroundColor: "#fff"}}>
-      <StatusBar barStyle="light-content" backgroundColor="#000000"/>
+    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+      <StatusBar barStyle="light-content" backgroundColor="#000000" />
       <View style={styles.topContainer}>
         <View style={styles.box}>
-          <Text style={{...styles.missionText, fontFamily: "doss", paddingVertical: 8,}}>
+          <Text
+            style={{
+              ...styles.missionText,
+              fontFamily: "doss",
+              paddingVertical: 8,
+            }}
+          >
             가족 랭킹
           </Text>
-          <ScrollView style={{maxHeight: SCREEN_HEIGHT * 0.3}}>
+          <ScrollView
+            style={{
+              maxHeight: SCREEN_HEIGHT * 0.3,
+              borderTopWidth: 1,
+              borderTopColor: "#DBDBDB",
+            }}
+          >
             {familyPoint.map((family, index) => (
               <View key={index}>
-                <View style={{flexDirection: "row", paddingVertical: 10, alignItems: "center",}}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    paddingVertical: 10,
+                    alignItems: "center",
+                  }}
+                >
                   {/*<Text style={styles.rankText}>*/}
                   {/*{index === 0 ? ('🥇') : (index === 1 ? ('🥈') : (index === 2 ? ('🥉') : (index + 1)))*/}
                   {/*}*/}
                   {/*</Text>*/}
-                  <Text style={styles.rankText}>
-                    {index + 1}.
-                  </Text>
+                  <Text style={styles.rankText}>{index + 1}.</Text>
 
-                  <AlienType writer={family.split(':')[0]}/>
+                  <AlienType writer={family.split(":")[0]} />
 
                   <View>
-                    <Text style={styles.rankName}>
-                      {family.split(':')[0]}
-                    </Text>
+                    <Text style={styles.rankName}>{family.split(":")[0]}</Text>
 
-                    <View style={{flexDirection: "row", alignItems: "center",}}>
+                    <View
+                      style={{ flexDirection: "row", alignItems: "center" }}
+                    >
                       <Image
-                        style={{width: 20, height: 20, resizeMode: "contain"}}
-                        source={require('../assets/img/missionIcon/coin.png')}
+                        style={{ width: 20, height: 20, resizeMode: "contain" }}
+                        source={require("../assets/img/missionIcon/coin.png")}
                       />
-                      <Text style={{fontFamily: "doss", color: "#FF9D3A", paddingLeft: 5, fontSize: 18,}}>
-                        {family.split(':')[1]}
+                      <Text
+                        style={{
+                          fontFamily: "doss",
+                          color: "#FF9D3A",
+                          paddingLeft: 5,
+                          fontSize: 18,
+                        }}
+                      >
+                        {family.split(":")[1]}
                       </Text>
                     </View>
                   </View>
                 </View>
-                <View style={styles.line}/>
+                <View style={styles.line} />
               </View>
             ))}
           </ScrollView>
         </View>
 
         <View style={styles.box}>
-          <Text style={{...styles.missionText, fontFamily: "doss", paddingTop: 10,}}>
-            오늘의{'\n'}랜덤 미션
+          <Text
+            style={{
+              ...styles.missionText,
+              fontFamily: "doss",
+              paddingTop: 10,
+            }}
+          >
+            오늘의{"\n"}랜덤 미션
           </Text>
           <View style={styles.missionImageContainer}>
             <Image
@@ -380,8 +412,8 @@ export default function PlantInfo({navigation}) {
               <Text
                 style={{
                   ...styles.missionText,
-                  fontSize: Platform.OS === 'ios' ? 19 : 23,
-                  ...todayMissionClear ? styles.crossedText : null,
+                  fontSize: Platform.OS === "ios" ? 19 : 23,
+                  ...(todayMissionClear ? styles.crossedText : null),
                 }}
               >
                 {todayMission}
@@ -394,39 +426,67 @@ export default function PlantInfo({navigation}) {
               <Text
                 style={{
                   ...styles.missionText,
-                  fontSize: Platform.OS === 'ios' ? 19 : 23,
-                  ...todayMissionClear ? styles.crossedText : null,
+                  fontSize: Platform.OS === "ios" ? 19 : 23,
+                  ...(todayMissionClear ? styles.crossedText : null),
                 }}
               >
                 {todayMission}
               </Text>
             </TouchableOpacity>
           )}
-
         </View>
       </View>
-
-      <View style={styles.bottomCircle}/>
-
       <View
         style={{
-          position: "absolute",
+          justifyContent: "center",
           alignItems: "center",
-          bottom: Platform.OS === 'ios' ? SCREEN_HEIGHT * 0.11 : SCREEN_HEIGHT * 0.15,
-          left: 0,
-          right: 0,
+          marginTop: 20,
         }}
       >
-        <View>{renderChat()}</View>
-        <View style={styles.plantContainer}>{renderFlower()}</View>
+        <AnimatedCircularProgress
+          size={390}
+          width={10}
+          backgroundWidth={5}
+          fill={progressBar}
+          tintColor="#9ACD32"
+          // onAnimationComplete={() => console.log("onAnimationComplete")}
+          arcSweepAngle={360}
+          rotation={180}
+          lineCap="round"
+          backgroundColor="#DBDBDB"
+          style={{backgroundColor:"#F5F2F2",borderRadius:390,width:390,height:390}}
+        >
+          {(fill) => (
+            <View style={{}}>
+              <View style={{ top: 75 }}>
+                <View style={styles.bottomCircle} />
+                <View
+                  style={{
+                    position: "absolute",
+                    alignItems: "center",
+                    bottom:
+                      Platform.OS === "ios"
+                        ? SCREEN_HEIGHT * 0.11
+                        : SCREEN_HEIGHT * 0.15,
+                    left: 0,
+                    right: 0,
+                  }}
+                >
+                  <View>{renderChat()}</View>
+                  <View style={styles.plantContainer}>{renderFlower()}</View>
 
-        <View style={{alignItems: "center"}}>
-          <Text style={styles.plantText}>
-            {plantName}{'\n'}Lv.{plantLevel}
-          </Text>
-        </View>
+                  <View style={{ alignItems: "center" }}>
+                    <Text style={styles.plantText}>
+                      {plantName}
+                      {"\n"}Lv.{plantLevel}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+          )}
+        </AnimatedCircularProgress>
       </View>
-
       {/*    <View style={{flexDirection: "row"}}>*/}
       {/*      <Text style={styles.missionText}>일일 미션:</Text>*/}
       {/*      <Text*/}
@@ -439,11 +499,17 @@ export default function PlantInfo({navigation}) {
       {/*      </Text>*/}
       {/*    </View>*/}
 
-      <View style={{flexDirection: "row", justifyContent: "space-between"}}>
+      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <View
-          style={{alignItems: "flex-start", paddingLeft: 35, paddingTop: 35,}}>
+          style={{ alignItems: "flex-start", paddingLeft: 35, paddingTop: 5 }}
+        >
           <TouchableOpacity
             onPress={async () => {
+              // const tmpPlantPoint = plantPoint + 1;
+              // setPlantPoint(tmpPlantPoint);
+              // setProgressBar((tmpPlantPoint / levelPoint[plantLevel]) * 100);
+              // console.log(progressBar);
+              // console.log((plantPoint/levelPoint[plantLevel])*100);
               const SERVER_ADDRESS = await AsyncStorage.getItem(
                 "ServerAddress"
               );
@@ -480,36 +546,43 @@ export default function PlantInfo({navigation}) {
           >
             <Image
               source={require("../assets/img/wateringCan3.png")}
-              style={{width: SCREEN_WIDTH * 0.17, height: SCREEN_WIDTH * 0.17, resizeMode: "contain",}}
+              style={{
+                width: SCREEN_WIDTH * 0.17,
+                height: SCREEN_WIDTH * 0.17,
+                resizeMode: "contain",
+              }}
             />
           </TouchableOpacity>
         </View>
         <View
-          style={{alignItems: "flex-end", paddingRight: 30, paddingTop: 30,}}>
-          <TouchableOpacity
-            onPress={() => navigation.pop()}>
+          style={{ alignItems: "flex-end", paddingRight: 30, paddingTop: 0 }}
+        >
+          <TouchableOpacity onPress={() => navigation.pop()}>
             <Image
               source={require("../assets/img/missionIcon/exit.png")}
-              style={{width: SCREEN_WIDTH * 0.13, height: SCREEN_WIDTH * 0.15, resizeMode: "contain",}}
+              style={{
+                width: SCREEN_WIDTH * 0.13,
+                height: SCREEN_WIDTH * 0.15,
+                resizeMode: "contain",
+              }}
             />
           </TouchableOpacity>
         </View>
       </View>
     </View>
-  )
-    ;
+  );
 }
 
 const styles = StyleSheet.create({
   topContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: Platform.OS === 'ios' ? 30 : 50,
-    paddingHorizontal: Platform.OS === 'ios' ? 12 : 15,
+    marginTop: Platform.OS === "ios" ? 30 : 50,
+    paddingHorizontal: Platform.OS === "ios" ? 12 : 15,
   },
   box: {
     paddingVertical: 15,
-    paddingHorizontal: Platform.OS === 'ios' ? 10 : 20,
+    paddingHorizontal: Platform.OS === "ios" ? 10 : 20,
     width: SCREEN_WIDTH * 0.45,
     height: SCREEN_HEIGHT * 0.3,
     borderColor: "#F5F2F2",
@@ -524,7 +597,7 @@ const styles = StyleSheet.create({
     paddingLeft: 3,
   },
   rankName: {
-    fontSize: Platform.OS === 'ios' ? 16 : 18,
+    fontSize: Platform.OS === "ios" ? 16 : 18,
     fontFamily: "wooju",
     paddingBottom: 3,
     paddingLeft: 3,
@@ -543,8 +616,8 @@ const styles = StyleSheet.create({
   },
   missionImageContainer: {
     alignItems: "center",
-    marginVertical: 17,
-    marginBottom: Platform.OS === 'ios' ? 15 : 30,
+    // marginVertical: 17,
+    marginBottom: Platform.OS === "ios" ? 15 : 0,
   },
   missionImage: {
     width: 70,
@@ -557,25 +630,25 @@ const styles = StyleSheet.create({
     left: SCREEN_WIDTH * 0.05,
     right: SCREEN_WIDTH * 0.05,
     top: SCREEN_WIDTH * 0.05,
-    borderRadius: SCREEN_WIDTH / 2,
-    backgroundColor: "#F5F2F2",
+    // borderRadius: SCREEN_WIDTH / 2,
+    // backgroundColor: "#F5F2F2",
   },
   textBubble: {
     width: SCREEN_WIDTH * 0.4,
     height: SCREEN_HEIGHT * 0.2,
     resizeMode: "contain",
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative',
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
   },
   text: {
     position: "absolute",
     top: 35,
     paddingHorizontal: 10,
-    paddingVertical: Platform.OS === 'android' ? 5 : null,
+    paddingVertical: Platform.OS === "android" ? 5 : null,
     lineHeight: 22,
     fontFamily: "doss",
-    fontSize: Platform.OS === 'ios' ? 18 : 20,
+    fontSize: Platform.OS === "ios" ? 18 : 20,
   },
   plantContainer: {
     justifyContent: "flex-end",
@@ -589,7 +662,7 @@ const styles = StyleSheet.create({
     zIndex: 0,
   },
   plantText: {
-    paddingTop: Platform.OS === 'ios' ? null : 5,
+    paddingTop: Platform.OS === "ios" ? null : 5,
     fontSize: 22,
     fontFamily: "doss",
   },
@@ -619,6 +692,6 @@ const styles = StyleSheet.create({
   crossedText: {
     textDecorationLine: "line-through",
     textDecorationStyle: "solid",
-    color: 'gray',
+    color: "gray",
   },
 });

@@ -155,7 +155,7 @@ const RouletteGame = ({ cnt }) => {
       <Button color="#cd0beb" title="Spin" onPress={spinWheel} />
       <Text
         style={{ marginTop: 20 }}
-      >{`ㅋㅋㅋㅋㅋㅋ ${name[selectedIndex]}`}</Text>
+      >{`${name[selectedIndex]} 당첨!`}</Text>
 
       {/* 섹터 이름 편집 부분 */}
       <View style={{ flexDirection: "row" }}>

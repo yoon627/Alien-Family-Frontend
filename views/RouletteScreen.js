@@ -21,7 +21,7 @@ function RouletteScreen() {
   return (
     <View style={{ flex: 1, alignItems: "center", top: 50 }}>
       <SoundPlayer />
-      <Text>룰렛 게임 ㅋㅋ 사람수 ㅋㅋ {cnt + 2}</Text>
+      <Text>룰렛 게임 사람수 : {cnt + 2}</Text>
 
       <View style={{ flexDirection: "row", justifyContent: "flex-start" }}>
         <TouchableOpacity style={styles.button} onPress={onPress2}>
