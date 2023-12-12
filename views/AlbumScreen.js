@@ -55,6 +55,27 @@ export default function AlbumScreen({navigation}) {
   const notificationListener = useRef();
   const [nickname, setNickname] = useState('');
 
+  const filterImages = () => {
+    // console.log("선택한 태그:", selectedTags);
+    if (selectedTags.length === 0) {
+      // console.log("@@@@@@@ 정렬된 데이따", albumList.sort((a, b) => b.photoId - a.photoId));
+      return albumList.sort((a, b) => b.photoId - a.photoId);
+    }
+    const filteredImages = albumList.filter((item) => {
+      const hasMatchingTag = selectedTags.every((tag) =>
+        item.photoTags.includes(tag)
+      );
+      // console.log(`Item ${item.photoId} - hasMatchingTag: ${hasMatchingTag}`);
+      return hasMatchingTag;
+    });
+    // 내림차순 정렬
+    const sortedImages = filteredImages.sort((a, b) => b.photoId - a.photoId);
+    // console.log("@@@@@@@ 정렬된 데이따", sortedImages);
+    return sortedImages;
+  };
+
+  const dataWithUploadButton = [{isUploadButton: true}, ...filterImages()];
+
   useEffect(() => {
     async function fetchNickname() {
       const nick = await AsyncStorage.getItem("nickname");
@@ -227,24 +248,7 @@ export default function AlbumScreen({navigation}) {
     });
     // console.log("선택한 태그:", selectedTags);
   };
-  const filterImages = () => {
-    // console.log("선택한 태그:", selectedTags);
-    if (selectedTags.length === 0) {
-      // console.log("@@@@@@@ 정렬된 데이따", albumList.sort((a, b) => b.photoId - a.photoId));
-      return albumList.sort((a, b) => b.photoId - a.photoId);
-    }
-    const filteredImages = albumList.filter((item) => {
-      const hasMatchingTag = selectedTags.every((tag) =>
-        item.photoTags.includes(tag)
-      );
-      // console.log(`Item ${item.photoId} - hasMatchingTag: ${hasMatchingTag}`);
-      return hasMatchingTag;
-    });
-    // 내림차순 정렬
-    const sortedImages = filteredImages.sort((a, b) => b.photoId - a.photoId);
-    // console.log("@@@@@@@ 정렬된 데이따", sortedImages);
-    return sortedImages;
-  };
+
   useEffect(() => {
     // console.log("선택한 태그 (useEffect):", selectedTags);
   }, [selectedTags]);
@@ -375,51 +379,69 @@ export default function AlbumScreen({navigation}) {
           </View>
           <FlatList
             numColumns={4}
-            data={filterImages()}
-            keyExtractor={(item) => item.photoId.toString()}
-            renderItem={({item}) => (
-              <View style={styles.imageContainer}>
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate("ImageDetailForm", {
-                      photoInfo: {
-                        photoId: item.photoId,
-                        createAt: item.createAt,
-                        photoKey: item.photoKey,
-                        photoTags: item.photoTags,
-                        description: item.description,
-                        writer: item.writer,
-                        comments: item.comments,
-                      },
-                      albumList: albumList,
-                      nickname: nickname,
-                    })
-                  }
-                >
-                  <ExpoFastImage
-                    uri={item.photoKey}
-                    cacheKey={item.photoId.toString()}
-                    style={styles.image}
-                    resizeMode="cover"
-                  />
-                </TouchableOpacity>
-              </View>
-            )}
+            data={dataWithUploadButton}
+            keyExtractor={(item, index) => item.isUploadButton ? 'uploadButton' : item.photoId.toString()}
+            renderItem={({item}) => {
+              if (item.isUploadButton) {
+                // 업로드 버튼 렌더링
+                return (
+                  <View style={styles.imageContainer}>
+                    <TouchableOpacity
+                      style={styles.image}
+                      onPress={modalOpen}
+                    >
+                      <Image
+                        source={require('../assets/img/upload.png')}
+                        style={styles.image}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                );
+              } else {
+                // 일반 이미지 렌더링
+                return (
+                  <View style={styles.imageContainer}>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("ImageDetailForm", {
+                        photoInfo: {
+                          photoId: item.photoId,
+                          createAt: item.createAt,
+                          photoKey: item.photoKey,
+                          photoTags: item.photoTags,
+                          description: item.description,
+                          writer: item.writer,
+                          comments: item.comments,
+                        },
+                        albumList: albumList,
+                        nickname: nickname,
+                      })}
+                    >
+                      <ExpoFastImage
+                        uri={item.photoKey}
+                        cacheKey={item.photoId.toString()}
+                        style={styles.image}
+                        resizeMode="cover"
+                      />
+                    </TouchableOpacity>
+                  </View>
+                );
+              }
+            }}
             contentContainerStyle={styles.flatListContentContainer}
           />
-          <TouchableOpacity
-            style={styles.imagePlusContainer}
-            onPress={modalOpen}
-          >
-            <Image
-              source={require("../assets/img/plus.png")}
-              style={{
-                width: SCREEN_WIDTH * 0.13,
-                height: SCREEN_WIDTH * 0.13,
-                resizeMode: "contain",
-              }}
-            />
-          </TouchableOpacity>
+          {/*<TouchableOpacity*/}
+          {/*  style={styles.imagePlusContainer}*/}
+          {/*  onPress={modalOpen}*/}
+          {/*>*/}
+          {/*  <Image*/}
+          {/*    source={require("../assets/img/plus.png")}*/}
+          {/*    style={{*/}
+          {/*      width: SCREEN_WIDTH * 0.13,*/}
+          {/*      height: SCREEN_WIDTH * 0.13,*/}
+          {/*      resizeMode: "contain",*/}
+          {/*    }}*/}
+          {/*  />*/}
+          {/*</TouchableOpacity>*/}
         </Fragment>
       ) : (
         <ImageUploadForm

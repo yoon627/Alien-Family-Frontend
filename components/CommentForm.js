@@ -69,7 +69,7 @@ export default function CommentForm({photoId, nickname}) {
 
         const data = await response.json();
         setComments(data.data);
-        console.log(data.data);
+        // console.log(data.data);
       } catch (error) {
         console.error("댓글을 가져오는 중에 오류가 발생했습니다.", error);
       }
