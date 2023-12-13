@@ -1,5 +1,15 @@
 import React, {useState} from "react";
-import {Alert, Dimensions, Modal, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {
+  Alert,
+  Dimensions,
+  KeyboardAvoidingView,
+  Modal,
+  Platform, ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from "react-native";
 import Swiper from "react-native-web-swiper";
 import ExpoFastImage from "expo-fast-image";
 import CommentForm from "../components/CommentForm";
@@ -46,173 +56,180 @@ export default function ImageDetailForm({route, navigation}) {
   };
 
   return (
-    <View style={styles.container}>
-      <Swiper controlsEnabled={false} from={index}>
-        {albumList.map((item, index) => {
-          const nowYear = new Date().getFullYear();
-          const createDate = new Date(item.createAt);
-          const year = createDate.getFullYear();
-          const month = createDate.getMonth() + 1;
-          const day = createDate.getDate().toString();
-          const hours = createDate.getHours();
-          const minutes = createDate.getMinutes();
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : null}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0} // Adjust the offset as needed
+      style={{flex: 1}}
+    >
+      <View style={styles.container}>
+        <Swiper controlsEnabled={false} from={index}>
+          {albumList.map((item, index) => {
+            const nowYear = new Date().getFullYear();
+            const createDate = new Date(item.createAt);
+            const year = createDate.getFullYear();
+            const month = createDate.getMonth() + 1;
+            const day = createDate.getDate().toString();
+            const hours = createDate.getHours();
+            const minutes = createDate.getMinutes();
 
-          const formattedDate = `${month}월 ${day}일 ${hours}:${minutes}`;
+            const formattedDate = `${month}월 ${day}일 ${hours}:${minutes}`;
 
-          return (
-            <View key={index}>
-              <TouchableOpacity
-                style={{
-                  alignItems: "flex-start",
-                  paddingHorizontal: "4%",
-                  marginTop: "3%",
-                }}
-                onPress={() => navigation.pop()}
-              >
-                <Ionicons name="chevron-back" size={28} color="#603D9B"/>
-              </TouchableOpacity>
-
-              <View style={styles.slide}>
-                <View
-                  style={{
-                    width: '100%',
-                    marginBottom: 10,
-                  }}
-                >
-                  <View
+            return (
+              <View key={index}>
+                <ScrollView>
+                  <TouchableOpacity
                     style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      paddingHorizontal: '5%',
+                      alignItems: "flex-start",
+                      paddingHorizontal: "4%",
+                      marginTop: "3%",
                     }}
+                    onPress={() => navigation.pop()}
                   >
-                    <View style={{
-                      flexDirection: 'row',
-                      justifyContent: 'flex-start',
-                      alignItems: "center",
-                    }}>
-                      <AlienType writer={item.writer}/>
-                      <Text style={styles.writer}>{item.writer}</Text>
-                    </View>
-                    {item.writer === nickname ? (
-                      <View style={{flexDirection: "row", alignItems: "center",}}>
-                        <TouchableOpacity
-                          onPress={() => downloadAndSaveImage(item.photoKey)}
-                        >
-                          {/*{downStatus &&*/}
-                          {/*  <Alert w="100%" status="success" colorScheme="secondary" variant="outline-light">*/}
-                          {/*    <Text fontSize="md" fontWeight="medium" color="coolGray.800">*/}
-                          {/*      이미지 다운로드 성공!*/}
-                          {/*    </Text>*/}
-                          {/*  </Alert>*/}
-                          {/*}*/}
-                          <Ionicons
-                            style={{
-                              textAlign: 'right',
-                              paddingRight: 5,
-                            }}
-                            name="ios-arrow-down-circle-outline"
-                            size={26}
-                            color="black"
-                          />
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={toggleModal}>
-                          <MaterialIcons
-                            name="more-horiz"
-                            size={25}
-                            color="black"
-                          />
-                        </TouchableOpacity></View>
-                    ) : (
-                      <TouchableOpacity
-                        onPress={() => downloadAndSaveImage(item.photoKey)}
+                    <Ionicons name="chevron-back" size={28} color="#603D9B"/>
+                  </TouchableOpacity>
+
+                  <View style={styles.slide}>
+                    <View
+                      style={{
+                        width: '100%',
+                        marginBottom: 10,
+                      }}
+                    >
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          paddingHorizontal: '5%',
+                        }}
                       >
-                        <Ionicons
-                          name="ios-arrow-down-circle-outline"
-                          size={26}
-                          color="black"
-                        />
-                      </TouchableOpacity>
+                        <View style={{
+                          flexDirection: 'row',
+                          justifyContent: 'flex-start',
+                          alignItems: "center",
+                        }}>
+                          <AlienType writer={item.writer}/>
+                          <Text style={styles.writer}>{item.writer}</Text>
+                        </View>
+                        {item.writer === nickname ? (
+                          <View style={{flexDirection: "row", alignItems: "center",}}>
+                            <TouchableOpacity
+                              onPress={() => downloadAndSaveImage(item.photoKey)}
+                            >
+                              {/*{downStatus &&*/}
+                              {/*  <Alert w="100%" status="success" colorScheme="secondary" variant="outline-light">*/}
+                              {/*    <Text fontSize="md" fontWeight="medium" color="coolGray.800">*/}
+                              {/*      이미지 다운로드 성공!*/}
+                              {/*    </Text>*/}
+                              {/*  </Alert>*/}
+                              {/*}*/}
+                              <Ionicons
+                                style={{
+                                  textAlign: 'right',
+                                  paddingRight: 5,
+                                }}
+                                name="ios-arrow-down-circle-outline"
+                                size={26}
+                                color="black"
+                              />
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={toggleModal}>
+                              <MaterialIcons
+                                name="more-horiz"
+                                size={25}
+                                color="black"
+                              />
+                            </TouchableOpacity></View>
+                        ) : (
+                          <TouchableOpacity
+                            onPress={() => downloadAndSaveImage(item.photoKey)}
+                          >
+                            <Ionicons
+                              name="ios-arrow-down-circle-outline"
+                              size={26}
+                              color="black"
+                            />
+                          </TouchableOpacity>
+                        )}
+
+                        <Modal
+                          presentationStyle="formSheet"
+                          animationType="slide"
+                          visible={isModalVisible}
+                          onRequestClose={toggleModal}
+                        >
+                          <View style={styles.centeredView}>
+                            <View style={styles.modalView}>
+                              <TouchableOpacity style={[styles.button, styles.buttonWrite]}>
+                                <Text style={{...styles.textStyle, color: "#fff"}}>
+                                  수정
+                                </Text>
+                              </TouchableOpacity>
+                              <TouchableOpacity style={[styles.button, styles.buttonClose]}>
+                                <Text style={{...styles.textStyle, color: "#555456"}}>
+                                  삭제
+                                </Text>
+                              </TouchableOpacity>
+                              <TouchableOpacity onPress={toggleModal}>
+                                <Ionicons name="close" size={24} color="black"/>
+                              </TouchableOpacity>
+                            </View>
+                          </View>
+                        </Modal>
+                      </View>
+                    </View>
+
+                    <View style={{borderTopWidth: 1, borderTopColor: '#DEDDDD'}}>
+                      <ExpoFastImage
+                        uri={item.photoKey}
+                        cacheKey={item.photoId.toString()}
+                        style={styles.uploadImage}
+                        resizeMode="contain"
+                      />
+                    </View>
+
+                    {item.photoTags.length !== 0 && (
+                      <View style={styles.tagButtonsContainer}>
+                        {item.photoTags.map((tag, index) => (
+                          <View key={tag}
+                                style={[styles.tagButton, index !== item.photoTags.length - 1 && {marginRight: 10,}]}>
+                            <Text
+                              style={{fontWeight: "bold"}}>
+                              {tag}
+                            </Text>
+                          </View>
+                        ))}
+                      </View>
                     )}
 
-                    <Modal
-                      presentationStyle="formSheet"
-                      animationType="slide"
-                      visible={isModalVisible}
-                      onRequestClose={toggleModal}
-                    >
-                      <View style={styles.centeredView}>
-                        <View style={styles.modalView}>
-                          <TouchableOpacity style={[styles.button, styles.buttonWrite]}>
-                            <Text style={{...styles.textStyle, color: "#fff"}}>
-                              수정
-                            </Text>
-                          </TouchableOpacity>
-                          <TouchableOpacity style={[styles.button, styles.buttonClose]}>
-                            <Text style={{...styles.textStyle, color: "#555456"}}>
-                              삭제
-                            </Text>
-                          </TouchableOpacity>
-                          <TouchableOpacity onPress={toggleModal}>
-                            <Ionicons name="close" size={24} color="black"/>
-                          </TouchableOpacity>
-                        </View>
-                      </View>
-                    </Modal>
-                  </View>
-                </View>
-
-                <View style={{borderTopWidth: 1, borderTopColor: '#DEDDDD'}}>
-                  <ExpoFastImage
-                    uri={item.photoKey}
-                    cacheKey={item.photoId.toString()}
-                    style={styles.uploadImage}
-                    resizeMode="contain"
-                  />
-                </View>
-
-                {item.photoTags.length !== 0 && (
-                  <View style={styles.tagButtonsContainer}>
-                    {item.photoTags.map((tag, index) => (
-                      <View key={tag}
-                            style={[styles.tagButton, index !== item.photoTags.length - 1 && {marginRight: 10,}]}>
-                        <Text
-                          style={{fontWeight: "bold"}}>
-                          {tag}
+                    {item.description ? (
+                      <View
+                        style={{paddingHorizontal: "7%", flexDirection: "row", paddingTop: 5,}}>
+                        <Text style={{...styles.writer, fontSize: 16,}}>{item.writer}</Text>
+                        <Text style={styles.description}>
+                          {item.description}
                         </Text>
                       </View>
-                    ))}
+                    ) : null
+                    }
+                    <View style={{paddingHorizontal: "7%",}}>
+                      <Text style={styles.date}>
+                        {nowYear === year ? formattedDate : year + formattedDate}
+                      </Text>
+                    </View>
+                    <CommentForm
+                      photoId={item.photoId}
+                      nickname={nickname}
+                    />
                   </View>
-                )}
-
-                {item.description ? (
-                  <View
-                    style={{paddingHorizontal: "7%", flexDirection: "row", paddingTop: 5,}}>
-                    <Text style={{...styles.writer, fontSize: 16,}}>{item.writer}</Text>
-                    <Text style={styles.description}>
-                      {item.description}
-                    </Text>
-                  </View>
-                ) : null
-                }
-
-                <View style={{paddingHorizontal: "7%",}}>
-                  <Text style={styles.date}>
-                    {nowYear === year ? formattedDate : year + formattedDate}
-                  </Text>
-                </View>
-
-                <CommentForm
-                  photoId={item.photoId}
-                  nickname={nickname}
-                />
+                </ScrollView>
               </View>
-            </View>
-          );
-        })}
-      </Swiper>
-    </View>
+            )
+              ;
+          })}
+        </Swiper>
+      </View>
+    </KeyboardAvoidingView>
   )
     ;
 }

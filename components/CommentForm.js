@@ -13,6 +13,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AlienType from "./AlienType";
 import {Ionicons} from "@expo/vector-icons";
+import axios from "axios";
 
 export default function CommentForm({photoId, nickname}) {
   const [comment, setComment] = useState('');
@@ -199,25 +200,21 @@ export default function CommentForm({photoId, nickname}) {
         </TouchableOpacity>
       ) : (
         <View>
-          <FlatList
-            data={comments}
-            keyExtractor={(item) => item.commentId.toString()}
-            renderItem={({item}) => (
-              <View
-                key={item.commentId}
-                style={{
-                  paddingHorizontal: '7%',
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginVertical: 2,
-                }}
-              >
-                <Text style={{fontWeight: "bold", paddingRight: 5,}}>{item.writer}</Text>
-                <Text>{item.content}</Text>
-                <Text style={{color: "gray",}}>{`   ${calculateDaysAgo(item.createAt)}`}</Text>
-              </View>
-            )}
-          />
+          {comments.map((item) => (
+            <View
+              key={item.commentId}
+              style={{
+                paddingHorizontal: '7%',
+                flexDirection: "row",
+                alignItems: "center",
+                marginVertical: 2,
+              }}
+            >
+              <Text style={{fontWeight: "bold", paddingRight: 5,}}>{item.writer}</Text>
+              <Text>{item.content}</Text>
+              <Text style={{color: "gray",}}>{`   ${calculateDaysAgo(item.createAt)}`}</Text>
+            </View>
+          ))}
         </View>
       )}
       <View
@@ -240,6 +237,7 @@ export default function CommentForm({photoId, nickname}) {
         </TouchableOpacity>
         {uploadingComment && <ActivityIndicator style={{paddingLeft: 10, top: 10}} size="small" color="gray"/>}
       </View>
+      <View style={{marginBottom: 20}}/>
 
       <Modal
         presentationStyle="formSheet"
@@ -290,6 +288,7 @@ export default function CommentForm({photoId, nickname}) {
                   </View>
                 </View>
               )}
+              numColumns={1}
             />
 
             <View

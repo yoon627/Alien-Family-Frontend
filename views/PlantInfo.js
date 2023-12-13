@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, {useState, useEffect, useCallback, useRef} from "react";
 import {
   ScrollView,
   TouchableOpacity,
@@ -14,11 +14,10 @@ import {
   Platform,
 } from "react-native";
 import axios from "axios";
-import { useFocusEffect } from "@react-navigation/native";
+import {useFocusEffect} from "@react-navigation/native";
 import AlienType from "../components/AlienType";
 import {MaterialIcons} from '@expo/vector-icons';
-import {deleteAlbumsAsync} from "expo-media-library";
-import { AnimatedCircularProgress } from "react-native-circular-progress";
+import {AnimatedCircularProgress} from "react-native-circular-progress";
 import * as Notifications from "expo-notifications";
 import LottieView from "lottie-react-native";
 
@@ -30,7 +29,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
 
 const missionImages = {
   "사진 찍어서 올리기": require("../assets/img/missionIcon/camera.png"),
@@ -48,7 +47,7 @@ const missionNav = {
   "캘린더에 일정 등록하기": "Calendar",
 };
 
-export default function PlantInfo({ navigation }) {
+export default function PlantInfo({navigation}) {
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const [familyPoint, setFamilyPoint] = useState([]);
@@ -79,9 +78,8 @@ export default function PlantInfo({ navigation }) {
       // 3초 후에 말풍선을 숨김
       setTimeout(() => {
         setIsVisible(false);
-      }, 1000);
-    }, 2000);
-
+      }, 10000);
+    }, 15000);
     // 컴포넌트 언마운트 시에 타이머 클리어
     return () => clearInterval(interval);
   }, []);
@@ -231,12 +229,23 @@ export default function PlantInfo({ navigation }) {
               zIndex: 1,
             }}
           >
-            <ImageBackground
+            {Platform.OS === 'ios' ? (
+              <View style={{justifyContent: "flex-start", marginTop: "20%"}}>
+              <ImageBackground
               source={require("../assets/img/bubble.png")}
               style={styles.textBubble}
             >
               <Text style={styles.text}>{randomMessage()}</Text>
             </ImageBackground>
+              </View>) : (<View style={{justifyContent: "flex-start", marginTop: "-10%"}}>
+              <ImageBackground
+                source={require("../assets/img/bubble.png")}
+                style={styles.textBubble}
+              >
+                <Text style={styles.text}>{randomMessage()}</Text>
+              </ImageBackground>
+            </View>)}
+
           </View>
         )}
       </View>
@@ -335,7 +344,7 @@ export default function PlantInfo({ navigation }) {
         setTodayMission(todayMissions[randomIndex]);
         await AsyncStorage.setItem(
           "todayMission",
-          JSON.stringify({ [str_today]: todayMissions[randomIndex] })
+          JSON.stringify({[str_today]: todayMissions[randomIndex]})
         );
         await AsyncStorage.setItem("todayMissionClear", "false");
         await AsyncStorage.setItem("dailyMissionClear", "false");
@@ -345,7 +354,7 @@ export default function PlantInfo({ navigation }) {
       setTodayMission(todayMissions[randomIndex]);
       await AsyncStorage.setItem(
         "todayMission",
-        JSON.stringify({ [str_today]: todayMissions[randomIndex] })
+        JSON.stringify({[str_today]: todayMissions[randomIndex]})
       );
       await AsyncStorage.setItem("todayMissionClear", "false");
       await AsyncStorage.setItem("dailyMissionClear", "false");
@@ -500,7 +509,7 @@ export default function PlantInfo({ navigation }) {
             setTodayMission(todayMissions[randomIndex]);
             await AsyncStorage.setItem(
               "todayMission",
-              JSON.stringify({ [str_today]: todayMissions[randomIndex] })
+              JSON.stringify({[str_today]: todayMissions[randomIndex]})
             );
             await AsyncStorage.setItem("todayMissionClear", "false");
             await AsyncStorage.setItem("dailyMissionClear", "false");
@@ -510,7 +519,7 @@ export default function PlantInfo({ navigation }) {
           setTodayMission(todayMissions[randomIndex]);
           await AsyncStorage.setItem(
             "todayMission",
-            JSON.stringify({ [str_today]: todayMissions[randomIndex] })
+            JSON.stringify({[str_today]: todayMissions[randomIndex]})
           );
           await AsyncStorage.setItem("todayMissionClear", "false");
           await AsyncStorage.setItem("dailyMissionClear", "false");
@@ -524,8 +533,8 @@ export default function PlantInfo({ navigation }) {
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#fff" }}>
-      <StatusBar barStyle="light-content" backgroundColor="#000000" />
+    <View style={{flex: 1, backgroundColor: "#fff"}}>
+      <StatusBar barStyle="light-content" backgroundColor="#000000"/>
       <View style={styles.topContainer}>
         <View style={styles.box}>
           <Text
@@ -534,7 +543,7 @@ export default function PlantInfo({ navigation }) {
               fontFamily: "doss",
               paddingVertical: 8,
               textShadowColor: "#B1B0B0",
-              textShadowOffset: { width: 1, height: 1 },
+              textShadowOffset: {width: 1, height: 1},
               textShadowRadius: 5,
             }}
           >
@@ -565,13 +574,13 @@ export default function PlantInfo({ navigation }) {
                   >
                     <Text style={styles.rankText}>{index + 1}.</Text>
 
-                    <AlienType writer={family.split(":")[0]} />
+                    <AlienType writer={family.split(":")[0]}/>
 
-                    <View style={{ marginLeft: -7 }}>
+                    <View style={{marginLeft: -7}}>
                       <Text style={styles.ranker}>{family.split(":")[0]}</Text>
 
                       <View
-                        style={{ flexDirection: "row", alignItems: "center" }}
+                        style={{flexDirection: "row", alignItems: "center"}}
                       >
                         <Image
                           style={{
@@ -598,12 +607,12 @@ export default function PlantInfo({ navigation }) {
                     onPress={() => TingleFamily(family.split(":")[0])}
                   >
                     <Image
-                      style={{ width: 25, height: 25, resizeMode: "contain" }}
+                      style={{width: 25, height: 25, resizeMode: "contain"}}
                       source={require("../assets/img/tingle2.png")}
                     />
                   </TouchableOpacity>
                 </View>
-                <View style={styles.line} />
+                <View style={styles.line}/>
               </View>
             ))}
           </ScrollView>
@@ -634,7 +643,6 @@ export default function PlantInfo({ navigation }) {
                 </TouchableOpacity>
               </View>
             </View>
-
             {todayMissionClear ? (
               <View>
                 <Text
@@ -748,8 +756,8 @@ export default function PlantInfo({ navigation }) {
         >
           {(fill) => (
             <View style={{}}>
-              <View style={{ top: 75 }}>
-                <View style={styles.bottomCircle} />
+              <View style={{top: 75}}>
+                <View style={styles.bottomCircle}/>
                 <View
                   style={{
                     position: "absolute",
@@ -764,10 +772,10 @@ export default function PlantInfo({ navigation }) {
                 >
                   <View>{renderChat()}</View>
                   <View style={styles.plantContainer}>{renderFlower()}</View>
-                    <Text style={styles.plantText}>
-                      {plantName}
-                      {"\n"}Lv.{plantLevel}
-                    </Text>
+                  <Text style={styles.plantText}>
+                    {plantName}
+                    {"\n"}Lv.{plantLevel}
+                  </Text>
                 </View>
               </View>
             </View>
@@ -789,7 +797,7 @@ export default function PlantInfo({ navigation }) {
       </View>
       <View style={{flexDirection: "row", justifyContent: "space-between"}}>
         <View
-          style={{ alignItems: "flex-start", paddingLeft: 35, paddingTop: 5 }}
+          style={{alignItems: "flex-start", paddingLeft: 35, paddingTop: 5}}
         >
           <TouchableOpacity
             onPress={async () => {
@@ -843,7 +851,7 @@ export default function PlantInfo({ navigation }) {
           </TouchableOpacity>
         </View>
         <View
-          style={{ alignItems: "flex-end", paddingRight: 30, paddingTop: 0 }}
+          style={{alignItems: "flex-end", paddingRight: 30, paddingTop: 0}}
         >
           <TouchableOpacity onPress={() => navigation.pop()}>
             <Image
@@ -865,7 +873,7 @@ const styles = StyleSheet.create({
   topContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: Platform.OS === "ios" ? 10 : 30,
+    marginTop: Platform.OS === "ios" ? 10 : 45,
     paddingHorizontal: Platform.OS === "ios" ? 12 : 15,
   },
   box: {
@@ -883,7 +891,7 @@ const styles = StyleSheet.create({
     color: "#1B1A1A",
     marginRight: 1,
   },
-  rankName: {
+  ranker: {
     fontSize: Platform.OS === "ios" ? 16 : 18,
     fontFamily: "wooju",
     paddingBottom: 3,
@@ -912,6 +920,7 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
   bottomCircle: {
+    marginTop: Platform.OS === 'ios' ? 0 : 35,
     width: SCREEN_WIDTH * 0.9,
     height: SCREEN_WIDTH,
     left: SCREEN_WIDTH * 0.05,
@@ -921,8 +930,8 @@ const styles = StyleSheet.create({
     // backgroundColor: "#F5F2F2",
   },
   textBubble: {
-    width: SCREEN_WIDTH * 0.4,
-    height: SCREEN_HEIGHT * 0.2,
+    width: SCREEN_WIDTH * 0.35,
+    height: SCREEN_HEIGHT * 0.15,
     resizeMode: "contain",
     justifyContent: "center",
     alignItems: "center",
@@ -930,12 +939,11 @@ const styles = StyleSheet.create({
   },
   text: {
     position: "absolute",
-    top: 30,
     paddingHorizontal: 10,
-    paddingVertical: Platform.OS === "android" ? 5 : null,
     lineHeight: 22,
     fontFamily: "doss",
-    fontSize: Platform.OS === "ios" ? 18 : 20,
+    fontSize: Platform.OS === "ios" ? 14 : 18,
+    top: "20%",
   },
   plantContainer: {
     justifyContent: "flex-end",
