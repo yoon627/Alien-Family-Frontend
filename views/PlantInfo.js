@@ -14,6 +14,8 @@ import {
 import axios from "axios";
 import {useFocusEffect} from "@react-navigation/native";
 import AlienType from "../components/AlienType";
+import {MaterialIcons} from '@expo/vector-icons';
+import {deleteAlbumsAsync} from "expo-media-library";
 
 const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
 
@@ -42,6 +44,19 @@ export default function PlantInfo({navigation}) {
   const [todayMission, setTodayMission] = useState("");
   const [todayMissionClear, setTodayMissionClear] = useState(false);
   const [dailyMissionClear, setDailyMissionClear] = useState(false);
+  const [isDayMission, setDayMission] = useState(false);
+  const [isTodayMission, setIsTodayMission] = useState(true);
+
+  const handleDayMission = () => {
+    setDayMission(true);
+    setIsTodayMission(false);
+    console.log(isDayMission);
+  }
+
+  const handleTodayMission = () => {
+    setDayMission(false);
+    setIsTodayMission(true);
+  }
 
   useEffect(() => {
     // 타이머를 사용하여 5초마다 말풍선을 표시
@@ -105,16 +120,16 @@ export default function PlantInfo({navigation}) {
   };
 
   const TingleFamily = async (nickname) => {
-    try{
+    try {
       const myDB = await AsyncStorage.getItem("myDB");
-      console.log("마이디비~~", myDB);
+      // console.log("마이디비~~", myDB);
       const data = JSON.parse(myDB);
 
       const memberId = Object.values(data)
         .filter((user) => user.nickname === nickname)
         .map((user) => user.memberId)[0];
 
-      console.log("memberId:", memberId);
+      // console.log("memberId:", memberId);
 
       if (memberId) {
         const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
@@ -417,52 +432,118 @@ export default function PlantInfo({navigation}) {
           </ScrollView>
         </View>
 
-        <View style={styles.box}>
-          <Text style={{
-            ...styles.missionText,
-            fontFamily: "doss",
-            paddingTop: 5,
-            textShadowColor: '#B1B0B0',
-            textShadowOffset: {width: 1, height: 1},
-            textShadowRadius: 5,
-          }}>
-            오늘의{'\n'}랜덤 미션
-          </Text>
-          <View style={styles.missionImageContainer}>
-            <Image
-              style={styles.missionImage}
-              source={missionImages[todayMission]}
-            />
-          </View>
-          {todayMissionClear ? (
-            <View>
-              <Text
-                style={{
-                  ...styles.missionText,
-                  fontSize: 19,
-                  ...todayMissionClear ? styles.crossedText : null,
-                }}
-              >
-                {todayMission}
-              </Text>
+        {isTodayMission &&
+          <View style={styles.box}>
+            <Text style={{
+              ...styles.missionText,
+              fontFamily: "doss",
+              paddingTop: 5,
+              textShadowColor: '#B1B0B0',
+              textShadowOffset: {width: 1, height: 1},
+              textShadowRadius: 5,
+            }}>
+              오늘의{'\n'}랜덤 미션
+            </Text>
+            <View style={styles.missionImageContainer}>
+              <View style={{
+                flexDirection: "row",
+                alignItems: "center",
+              }}>
+                <Image
+                  style={{...styles.missionImage, marginLeft: 35, marginRight: 10}}
+                  source={missionImages[todayMission]}
+                />
+                <TouchableOpacity onPress={handleDayMission}>
+                  <MaterialIcons style={{}} name="navigate-next" size={28} color="#555456"/>
+                </TouchableOpacity>
+              </View>
             </View>
-          ) : (
-            <TouchableOpacity
-              onPress={() => navigation.navigate(missionNav[todayMission])}
-            >
-              <Text
-                style={{
-                  ...styles.missionText,
-                  fontSize: 19,
-                  ...todayMissionClear ? styles.crossedText : null,
-                }}
-              >
-                {todayMission}
-              </Text>
-            </TouchableOpacity>
-          )}
 
-        </View>
+            {todayMissionClear ? (
+              <View>
+                <Text
+                  style={{
+                    ...styles.missionText,
+                    fontSize: 19,
+                    ...todayMissionClear ? styles.crossedText : null,
+                  }}
+                >
+                  {todayMission}
+                </Text>
+              </View>
+            ) : (
+              <TouchableOpacity
+                onPress={() => navigation.navigate(missionNav[todayMission])}
+              >
+                <Text
+                  style={{
+                    ...styles.missionText,
+                    fontSize: 19,
+                    ...todayMissionClear ? styles.crossedText : null,
+                  }}
+                >
+                  {todayMission}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        }
+
+        {isDayMission &&
+          <View style={styles.box}>
+            <Text style={{
+              ...styles.missionText,
+              fontFamily: "doss",
+              paddingVertical: 8,
+              textShadowColor: '#B1B0B0',
+              textShadowOffset: {width: 1, height: 1},
+              textShadowRadius: 5,
+            }}>
+              일일 미션
+            </Text>
+            <View style={styles.missionImageContainer}>
+              <View style={{
+                flexDirection: "row",
+                alignItems: "center",
+              }}>
+                <TouchableOpacity onPress={handleTodayMission}>
+                  <MaterialIcons name="navigate-before" size={28} color="#555456"/>
+                </TouchableOpacity>
+                <Image
+                  style={{...styles.missionImage, marginRight: 40, marginLeft: 15,}}
+                  source={require('../assets/img/tmi.png')}
+                />
+              </View>
+            </View>
+            {dailyMissionClear ? (
+              <View>
+                <Text
+                  style={{
+                    ...styles.missionText,
+                    fontSize: 19,
+                    ...dailyMissionClear ? styles.crossedText : null,
+                  }}
+                >
+                  오늘의 TMI 작성하기
+                </Text>
+              </View>
+            ) : (
+              <TouchableOpacity
+                onPress={() => navigation.navigate(missionNav[todayMission])}
+              >
+                <Text
+                  style={{
+                    ...styles.missionText,
+                    fontSize: 19,
+                    ...dailyMissionClear ? styles.crossedText : null,
+                  }}
+                >
+                  오늘의 TMI 작성하기
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        }
       </View>
 
       <View style={styles.bottomCircle}/>
@@ -485,18 +566,6 @@ export default function PlantInfo({navigation}) {
           </Text>
         </View>
       </View>
-
-      {/*    <View style={{flexDirection: "row"}}>*/}
-      {/*      <Text style={styles.missionText}>일일 미션:</Text>*/}
-      {/*      <Text*/}
-      {/*        style={[*/}
-      {/*          styles.missionText,*/}
-      {/*          dailyMissionClear ? styles.crossedText : null,*/}
-      {/*        ]}*/}
-      {/*      >*/}
-      {/*        TMI 작성하기*/}
-      {/*      </Text>*/}
-      {/*    </View>*/}
 
       <View style={{flexDirection: "row", justifyContent: "space-between"}}>
         <View
@@ -602,7 +671,7 @@ const styles = StyleSheet.create({
   missionImageContainer: {
     alignItems: "center",
     marginVertical: 15,
-    marginBottom: 15,
+    marginBottom: 20,
   },
   missionImage: {
     width: 70,
