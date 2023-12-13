@@ -257,14 +257,14 @@ export default function CalendarScreen({navigation}) {
 
   const renderEvents = () => {
     return events[selected]?.map((event, index) => (
-      <TouchableOpacity key={index} onPress={() => openEditModal(event)}>
+      <Pressable key={index} onPress={() => openEditModal(event)}>
         <View style={{...styles.event, paddingVertical: 9}}>
           <Ionicons name={"person"} size={17} color={getRandomColor(index)}/>
           <Text style={{fontSize: 17, fontWeight: "bold", paddingLeft: 10}}>
             {event.name} : {event.title}
           </Text>
         </View>
-      </TouchableOpacity>
+      </Pressable>
     ));
   };
 
@@ -348,11 +348,11 @@ export default function CalendarScreen({navigation}) {
       const str_today = JSON.stringify(ktc).toString().slice(1, 11);
       const test = JSON.parse(await AsyncStorage.getItem("todayMission"));
       const todayMissions = [
-        "사진 찍어서 올리기",
-        "내 갤러리 사진 등록하기",
+        // "사진 찍어서 올리기",
+        // "내 갤러리 사진 등록하기",
         "사진에 댓글 달기",
-        "가족들과 채팅으로 인사하기",
-        "캘린더에 일정 등록하기",
+        // "가족들과 채팅으로 인사하기",
+        // "캘린더에 일정 등록하기",
       ];
       if (test) {
         if (test && typeof test === "object" && str_today in test) {
@@ -618,7 +618,7 @@ export default function CalendarScreen({navigation}) {
   const customHeader = () => {
     return (
       <View>
-        <TouchableOpacity
+        <Pressable
           onPress={() => (
             <DateTimePicker
               value={selected}
@@ -636,7 +636,7 @@ export default function CalendarScreen({navigation}) {
               alignItems: "center",
             }}
           >{`${currentMonth}`}</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     );
   };
@@ -699,7 +699,7 @@ export default function CalendarScreen({navigation}) {
               : dayjs().format("YYYY년 M월 D일 (dd)")
             : null}
         </Text>
-        <TouchableOpacity
+        <Pressable
           // onPress={toggleAddOrEditModal}
           onPress={() => {
             setNewEventModalVisible(true);
@@ -709,7 +709,7 @@ export default function CalendarScreen({navigation}) {
         >
           <MaterialCommunityIcons name="plus" size={24} color="black"/>
           <Text style={{fontSize: 18, marginLeft: 10}}>새로운 이벤트</Text>
-        </TouchableOpacity>
+        </Pressable>
         {selected && events[selected] ? renderEvents() : null}
       </ScrollView>
 
@@ -808,14 +808,14 @@ export default function CalendarScreen({navigation}) {
               color="#555456"
             />
           </Pressable>
-          <TouchableOpacity
+          <Pressable
               onPress={handleEditEvent}>
             <Octicons
                 name="check-circle-fill"
                 size={56}
                 color="#B2B6DB"
             />
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </Modal>
 
@@ -924,14 +924,14 @@ export default function CalendarScreen({navigation}) {
               작성을 취소할래요
             </Text>
           </Pressable>
-          <TouchableOpacity
+          <Pressable
               onPress={addNewEvent}>
             <Octicons
                 name="check-circle-fill"
                 size={56}
                 color="#B2B6DB"
             />
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </Modal>
 

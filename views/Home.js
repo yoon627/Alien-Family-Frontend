@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState, useCallback} from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import {
   Alert,
   Animated,
@@ -13,16 +13,17 @@ import {
   Text,
   TextInput,
   View,
+  TouchableOpacity,
 } from "react-native";
 import styled from "styled-components/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MarqueeText from "react-native-marquee";
 import axios from "axios";
 import * as Notifications from "expo-notifications";
-import {TouchableOpacity} from "react-native-gesture-handler";
-import {useFocusEffect} from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import * as Permissions from "expo-permissions";
 import ExpoFastImage from "expo-fast-image";
+import { Bold } from "lucide-react-native";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -32,7 +33,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const fontRatio = SCREEN_HEIGHT / 800;
 
 const Container = styled.View`
@@ -41,7 +42,7 @@ const Container = styled.View`
   align-items: center;
 `;
 
-export default function Home({navigation, fonts}) {
+export default function Home({ navigation, fonts }) {
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
@@ -55,6 +56,7 @@ export default function Home({navigation, fonts}) {
   const [plantName, setPlantName] = useState(null);
   const [plantPoint, setPlantPoint] = useState(0);
   const [plantModal, setPlantModal] = useState(false);
+  const [levelUp, setLevelUp] = useState(false);
   const openModal = () => {
     setTMI(""); // 모달 열릴 때 tmi 초기화
     setModalVisible(true);
@@ -99,7 +101,7 @@ export default function Home({navigation, fonts}) {
       outputRange: [-1, 1],
     });
     return (
-      <Animated.View style={{transform: [{translateX: interpolated}]}}>
+      <View>
         <TouchableOpacity onPress={() => navigation.navigate("Mini Games")}>
           {alienType === "BASIC" ? (
             <ExpoFastImage
@@ -193,17 +195,17 @@ export default function Home({navigation, fonts}) {
             />
           )}
         </TouchableOpacity>
-      </Animated.View>
+      </View>
     );
   };
 
   async function fetchData() {
     const todayMissions = [
-      "사진 찍어서 올리기",
-      "내 갤러리 사진 등록하기",
+      // "사진 찍어서 올리기",
+      // "내 갤러리 사진 등록하기",
       "사진에 댓글 달기",
-      "가족들과 채팅으로 인사하기",
-      "캘린더에 일정 등록하기",
+      // "가족들과 채팅으로 인사하기",
+      // "캘린더에 일정 등록하기",
     ];
     const ktc = new Date();
     ktc.setHours(ktc.getHours() + 9);
@@ -217,7 +219,7 @@ export default function Home({navigation, fonts}) {
         const randomIndex = Math.floor(Math.random() * todayMissions.length);
         await AsyncStorage.setItem(
           "todayMission",
-          JSON.stringify({[str_today]: todayMissions[randomIndex]})
+          JSON.stringify({ [str_today]: todayMissions[randomIndex] })
         );
         await AsyncStorage.setItem("todayMissionClear", "false");
         await AsyncStorage.setItem("dailyMissionClear", "false");
@@ -226,7 +228,7 @@ export default function Home({navigation, fonts}) {
       const randomIndex = Math.floor(Math.random() * todayMissions.length);
       await AsyncStorage.setItem(
         "todayMission",
-        JSON.stringify({[str_today]: todayMissions[randomIndex]})
+        JSON.stringify({ [str_today]: todayMissions[randomIndex] })
       );
       await AsyncStorage.setItem("todayMissionClear", "false");
       await AsyncStorage.setItem("dailyMissionClear", "false");
@@ -279,7 +281,8 @@ export default function Home({navigation, fonts}) {
       // Handle the notification payload here
       // console.log(notification);
       const screenName = notification.notification.request.content.title;
-
+      const tmp = screenName;
+      console.log(tmp);
       if (screenName) {
         if (screenName === "Calendar") {
           navigation.navigate("Calendar");
@@ -287,10 +290,12 @@ export default function Home({navigation, fonts}) {
           navigation.navigate("Attendance");
         } else if (screenName === "Photo") {
           navigation.navigate("AlbumScreen");
-        } else if (screenName === "Plant") {
+        } else if (screenName === "PlantInfo") {
           navigation.navigate("Home");
         } else if (screenName === "Family") {
           navigation.navigate("FamilyInfo");
+        } else if (screenName.split(" ")[1] === "찌릿통신을") {
+          navigation.navigate("Home");
         } else {
           navigation.navigate("Chatting");
         }
@@ -322,11 +327,25 @@ export default function Home({navigation, fonts}) {
         headers: {
           Authorization: "Bearer: " + UserServerAccessToken,
         },
-      }).then((resp) => {
+      }).then(async (resp) => {
         const tmpPlant = resp.data.data;
-        setPlantLevel(tmpPlant.level);
-        setPlantName(tmpPlant.name);
-        setPlantPoint(tmpPlant.point);
+        const originLevel = await AsyncStorage.getItem("plantLevel");
+        if (originLevel) {
+          if (originLevel !== tmpPlant.level.toString()) {
+            setLevelUp(true);
+            AsyncStorage.setItem("levelUp", "true");
+          } else {
+            AsyncStorage.setItem("plantLevel", tmpPlant.level.toString());
+            setPlantLevel(tmpPlant.level);
+            setPlantName(tmpPlant.name);
+            setPlantPoint(tmpPlant.point);
+          }
+        } else {
+          AsyncStorage.setItem("plantLevel", tmpPlant.level.toString());
+          setPlantLevel(tmpPlant.level);
+          setPlantName(tmpPlant.name);
+          setPlantPoint(tmpPlant.point);
+        }
       });
     } catch (error) {
       console.error("Error getMsg:", error);
@@ -375,6 +394,13 @@ export default function Home({navigation, fonts}) {
             style={styles.plant}
           />
         );
+        case 5:
+          return (
+            <ExpoFastImage
+              source={require("../assets/img/level_5.png")}
+              style={styles.plant}
+            />
+          );
       // 추가 레벨에 따른 이미지 케이스
       default:
         return (
@@ -474,59 +500,34 @@ export default function Home({navigation, fonts}) {
             </TouchableOpacity>
           </View>
           <View
-            style={{flex: 1, justifyContent: "center", alignItems: "center"}}
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
           ></View>
           <View style={styles.alien}>{movingObject()}</View>
-          <View style={styles.bottomContainer}>
-            <TouchableOpacity onPress={() => navigation.navigate("PlantInfo")}>
-              {renderFlower()}
-            </TouchableOpacity>
-            <Modal
-              animationType="none"
-              transparent={true}
-              visible={plantModal}
-              onRequestClose={() => {
-                // Handle modal close
+          {levelUp ? (
+            <Text
+              style={{
+                fontSize: 60,
+                fontWeight: "900",
+                color: "red",
+                justifyContent: "center",
+                alignItems: "center",
+                left: 195,
+                top: 490,
+                position: "absolute",
               }}
             >
-              <View style={styles.modalOverlay}>
-                <View style={styles.modalView}>
-                  {/* Modal content */}
-                  <Text
-                    style={{
-                      ...styles.modalText,
-                      fontFamily: "dnf",
-                      fontSize: 20,
-                    }}
-                  >
-                    {plantName}
-                  </Text>
-                  <Text
-                    style={{
-                      ...styles.modalText,
-                      fontWeight: "bold",
-                      fontSize: 16,
-                    }}
-                  >
-                    level 🏆 {plantLevel}
-                  </Text>
-                  <Text style={{...styles.modalText, fontWeight: "bold"}}>
-                    {plantPoint} p
-                  </Text>
-                  {/* Close button */}
-                  <Pressable
-                    style={[
-                      styles.button,
-                      styles.buttonClose,
-                      {backgroundColor: "#CBCFC9"},
-                    ]}
-                    onPress={() => setPlantModal(false)}
-                  >
-                    <Text style={styles.textStyle}>닫기</Text>
-                  </Pressable>
-                </View>
-              </View>
-            </Modal>
+              !
+            </Text>
+          ) : null}
+          <View style={styles.bottomContainer}>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("PlantInfo");
+                setLevelUp(false);
+              }}
+            >
+              {renderFlower()}
+            </TouchableOpacity>
           </View>
           <View
             style={{
@@ -564,7 +565,7 @@ export default function Home({navigation, fonts}) {
                         textAlign: "center",
                       }}
                     />
-                    <View style={{flexDirection: "row", marginVertical: 10}}>
+                    <View style={{ flexDirection: "row", marginVertical: 10 }}>
                       <Pressable
                         style={[styles.button, styles.buttonWrite]}
                         onPress={async () => {
@@ -595,6 +596,7 @@ export default function Home({navigation, fonts}) {
                                   "dailyMissionClear",
                                   "true"
                                 );
+                                getplantInfo();
                                 // if (firstCome) {
                                 //   setFirstCome(false);
                                 //   navigation.navigate("Attendance");
@@ -607,7 +609,7 @@ export default function Home({navigation, fonts}) {
                           }
                         }}
                       >
-                        <Text style={{...styles.textStyle, color: "#fff"}}>
+                        <Text style={{ ...styles.textStyle, color: "#fff" }}>
                           작성
                         </Text>
                       </Pressable>
@@ -618,7 +620,7 @@ export default function Home({navigation, fonts}) {
                           setModalVisible(!modalVisible);
                         }}
                       >
-                        <Text style={{...styles.textStyle, color: "#555456"}}>
+                        <Text style={{ ...styles.textStyle, color: "#555456" }}>
                           취소
                         </Text>
                       </Pressable>
@@ -708,7 +710,7 @@ const styles = StyleSheet.create({
     overflow: "hidden", // 영역을 벗어난 부분 숨기기
   },
   marqueeText: {
-    marginTop: Platform.OS === 'ios' ? 5 : 9,
+    marginTop: Platform.OS === "ios" ? 5 : 9,
     fontSize: 20,
   },
   container: {
@@ -777,8 +779,9 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     position: "absolute",
-    flex: 1,
     bottom: 40,
+    // backgroundColor: "green",
+    height: 140,
   },
   plant: {
     width: SCREEN_WIDTH * 0.23,

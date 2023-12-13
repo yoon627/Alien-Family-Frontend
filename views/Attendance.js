@@ -173,7 +173,7 @@ export default function Attendance({navigation}) {
       <View>
         <Text style={{...styles.month, paddingTop: 30, paddingBottom: 0, fontSize: 40,}}>TMI 히스토리</Text>
         <Text style={styles.month}>{new Date().getMonth() + 1}월</Text>
-        <ScrollView style={{marginBottom: 100,}}>
+        <ScrollView style={{marginBottom: 200,}}>
           {week.map((day, index) => (
             <View
               key={day}

@@ -31,6 +31,7 @@ import ImageUploadForm from "./views/ImageUploadForm";
 import Greet from "./views/Greet";
 import PlantInfo from "./views/PlantInfo";
 import CalendarScreen from "./views/CalendarScreen";
+import Lab from "./views/Lab"
 // import { AppLoading } from 'expo';
 import {
   MD3LightTheme as DefaultTheme,
@@ -147,6 +148,7 @@ export default function App() {
               <Stack.Screen name="Feed" component={Feed}/>
               <Stack.Screen name="FamilyInfo" component={FamilyInfo}/>
               <Stack.Screen name="PlantInfo" component={PlantInfo}/>
+              <Stack.Screen name="Lab" component={Lab}/>
             </Stack.Navigator>
           </NavigationContainer>
         </PaperProvider>

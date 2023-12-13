@@ -16,8 +16,8 @@ import {
 import axios from "axios";
 import { useFocusEffect } from "@react-navigation/native";
 import AlienType from "../components/AlienType";
-import {MaterialIcons} from '@expo/vector-icons';
-import {deleteAlbumsAsync} from "expo-media-library";
+import { MaterialIcons } from "@expo/vector-icons";
+import { deleteAlbumsAsync } from "expo-media-library";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import * as Notifications from "expo-notifications";
 import LottieView from "lottie-react-native";
@@ -65,12 +65,12 @@ export default function PlantInfo({ navigation }) {
   const handleDayMission = () => {
     setDayMission(true);
     setIsTodayMission(false);
-  }
+  };
 
   const handleTodayMission = () => {
     setDayMission(false);
     setIsTodayMission(true);
-  }
+  };
 
   useEffect(() => {
     // 타이머를 사용하여 5초마다 말풍선을 표시
@@ -124,6 +124,13 @@ export default function PlantInfo({ navigation }) {
         return (
           <Image
             source={require("../assets/img/level_4.png")}
+            style={styles.plantImage}
+          />
+        );
+      case 5:
+        return (
+          <Image
+            source={require("../assets/img/level_5.png")}
             style={styles.plantImage}
           />
         );
@@ -265,14 +272,16 @@ export default function PlantInfo({ navigation }) {
         setPlantPoint(tmpPlant.point);
         setProgressBar((tmpPlant.point / levelPoint[tmpPlant.level]) * 100);
         const originLevel = await AsyncStorage.getItem("plantLevel");
-        if (originLevel != tmpPlant.level.toString()) {
+        const lvup = await AsyncStorage.getItem("levelUp");
+        if (originLevel != tmpPlant.level.toString() || lvup === "true") {
           AsyncStorage.setItem("plantLevel", tmpPlant.level.toString());
+          AsyncStorage.setItem("levelUp", "false");
           setIsVisible(false);
           setPlayLottie(true);
           const timeoutId = setTimeout(() => {
             setPlayLottie(false);
             setIsVisible(true);
-          }, 2000);
+          }, 1900);
           return () => {
             clearTimeout(timeoutId);
           };
@@ -311,11 +320,11 @@ export default function PlantInfo({ navigation }) {
     const str_today = JSON.stringify(ktc).toString().slice(1, 11);
     const test = JSON.parse(await AsyncStorage.getItem("todayMission"));
     const todayMissions = [
-      "사진 찍어서 올리기",
-      "내 갤러리 사진 등록하기",
+      // "사진 찍어서 올리기",
+      // "내 갤러리 사진 등록하기",
       "사진에 댓글 달기",
-      "가족들과 채팅으로 인사하기",
-      "캘린더에 일정 등록하기",
+      // "가족들과 채팅으로 인사하기",
+      // "캘린더에 일정 등록하기",
     ];
 
     if (test) {
@@ -351,42 +360,6 @@ export default function PlantInfo({ navigation }) {
       await AsyncStorage.setItem("dailyMissionClear", "false");
     }
   };
-  // const checkLevel = async () => {
-  //   const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
-  //   const UserServerAccessToken = await AsyncStorage.getItem(
-  //     "UserServerAccessToken"
-  //   );
-  //   const originLevel = await AsyncStorage.getItem("plantLevel");
-  //   console.log("originlevel:", originLevel);
-  //   if (originLevel) {
-  //     await axios({
-  //       method: "GET",
-  //       url: SERVER_ADDRESS + "/plant",
-  //       headers: {
-  //         Authorization: "Bearer: " + UserServerAccessToken,
-  //       },
-  //     }).then((resp) => {
-  //       const currLevel = resp.data.data.level.toString();
-  //       console.log("currlevel:", currLevel);
-  //       if (originLevel != currLevel) {
-  //         AsyncStorage.setItem("plantLevel", currLevel);
-  //         setIsVisible(false);
-  //         setPlayLottie(true);
-  //         const timeoutId = setTimeout(() => {
-  //           setPlayLottie(false);
-  //           setIsVisible(true);
-  //         }, 2000);
-  //         return () => {
-  //           clearTimeout(timeoutId);
-  //         };
-  //       }
-  //     });
-  //   }
-  // };
-  // useEffect(() => {
-  //   console.log("plantlevel useEffect");
-  //   getPlantInfo();
-  // }, [plantLevel]);
 
   useEffect(() => {
     getFamilyScore();
@@ -476,11 +449,11 @@ export default function PlantInfo({ navigation }) {
         const str_today = JSON.stringify(ktc).toString().slice(1, 11);
         const test = JSON.parse(await AsyncStorage.getItem("todayMission"));
         const todayMissions = [
-          "사진 찍어서 올리기",
-          "내 갤러리 사진 등록하기",
+          // "사진 찍어서 올리기",
+          // "내 갤러리 사진 등록하기",
           "사진에 댓글 달기",
-          "가족들과 채팅으로 인사하기",
-          "캘린더에 일정 등록하기",
+          // "가족들과 채팅으로 인사하기",
+          // "캘린더에 일정 등록하기",
         ];
 
         if (test) {
@@ -596,7 +569,12 @@ export default function PlantInfo({ navigation }) {
                     </View>
                   </View>
                   <TouchableOpacity
-                    onPress={() => TingleFamily(family.split(":")[0])}
+                    onPress={() => {
+                      TingleFamily(family.split(":")[0]);
+                      Alert.alert(
+                        `${family.split(":")[0]}님께 찌릿 통신을 보냈습니다!`
+                      );
+                    }}
                   >
                     <Image
                       style={{ width: 25, height: 25, resizeMode: "contain" }}
@@ -609,29 +587,42 @@ export default function PlantInfo({ navigation }) {
             ))}
           </ScrollView>
         </View>
-        {isTodayMission &&
+        {isTodayMission && (
           <View style={styles.box}>
-            <Text style={{
-              ...styles.missionText,
-              fontFamily: "doss",
-              paddingTop: 5,
-              textShadowColor: '#B1B0B0',
-              textShadowOffset: {width: 1, height: 1},
-              textShadowRadius: 5,
-            }}>
-              오늘의{'\n'}랜덤 미션
+            <Text
+              style={{
+                ...styles.missionText,
+                fontFamily: "doss",
+                paddingTop: 5,
+                textShadowColor: "#B1B0B0",
+                textShadowOffset: { width: 1, height: 1 },
+                textShadowRadius: 5,
+              }}
+            >
+              오늘의{"\n"}랜덤 미션
             </Text>
             <View style={styles.missionImageContainer}>
-              <View style={{
-                flexDirection: "row",
-                alignItems: "center",
-              }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
                 <Image
-                  style={{...styles.missionImage, marginLeft: 35, marginRight: 10}}
+                  style={{
+                    ...styles.missionImage,
+                    marginLeft: 35,
+                    marginRight: 10,
+                  }}
                   source={missionImages[todayMission]}
                 />
                 <TouchableOpacity onPress={handleDayMission}>
-                  <MaterialIcons style={{}} name="navigate-next" size={28} color="#555456"/>
+                  <MaterialIcons
+                    style={{}}
+                    name="navigate-next"
+                    size={28}
+                    color="#555456"
+                  />
                 </TouchableOpacity>
               </View>
             </View>
@@ -642,7 +633,7 @@ export default function PlantInfo({ navigation }) {
                   style={{
                     ...styles.missionText,
                     fontSize: 19,
-                    ...todayMissionClear ? styles.crossedText : null,
+                    ...(todayMissionClear ? styles.crossedText : null),
                   }}
                 >
                   {todayMission}
@@ -656,7 +647,7 @@ export default function PlantInfo({ navigation }) {
                   style={{
                     ...styles.missionText,
                     fontSize: 19,
-                    ...todayMissionClear ? styles.crossedText : null,
+                    ...(todayMissionClear ? styles.crossedText : null),
                   }}
                 >
                   {todayMission}
@@ -664,31 +655,43 @@ export default function PlantInfo({ navigation }) {
               </TouchableOpacity>
             )}
           </View>
-        }
+        )}
 
-        {isDayMission &&
+        {isDayMission && (
           <View style={styles.box}>
-            <Text style={{
-              ...styles.missionText,
-              fontFamily: "doss",
-              paddingVertical: 8,
-              textShadowColor: '#B1B0B0',
-              textShadowOffset: {width: 1, height: 1},
-              textShadowRadius: 5,
-            }}>
+            <Text
+              style={{
+                ...styles.missionText,
+                fontFamily: "doss",
+                paddingVertical: 8,
+                textShadowColor: "#B1B0B0",
+                textShadowOffset: { width: 1, height: 1 },
+                textShadowRadius: 5,
+              }}
+            >
               일일 미션
             </Text>
             <View style={styles.missionImageContainer}>
-              <View style={{
-                flexDirection: "row",
-                alignItems: "center",
-              }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
                 <TouchableOpacity onPress={handleTodayMission}>
-                  <MaterialIcons name="navigate-before" size={28} color="#555456"/>
+                  <MaterialIcons
+                    name="navigate-before"
+                    size={28}
+                    color="#555456"
+                  />
                 </TouchableOpacity>
                 <Image
-                  style={{...styles.missionImage, marginRight: 40, marginLeft: 15,}}
-                  source={require('../assets/img/tmi.png')}
+                  style={{
+                    ...styles.missionImage,
+                    marginRight: 40,
+                    marginLeft: 15,
+                  }}
+                  source={require("../assets/img/tmi.png")}
                 />
               </View>
             </View>
@@ -698,7 +701,7 @@ export default function PlantInfo({ navigation }) {
                   style={{
                     ...styles.missionText,
                     fontSize: 19,
-                    ...dailyMissionClear ? styles.crossedText : null,
+                    ...(dailyMissionClear ? styles.crossedText : null),
                   }}
                 >
                   오늘의 TMI 작성하기
@@ -712,7 +715,7 @@ export default function PlantInfo({ navigation }) {
                   style={{
                     ...styles.missionText,
                     fontSize: 19,
-                    ...dailyMissionClear ? styles.crossedText : null,
+                    ...(dailyMissionClear ? styles.crossedText : null),
                   }}
                 >
                   오늘의 TMI 작성하기
@@ -720,7 +723,7 @@ export default function PlantInfo({ navigation }) {
               </TouchableOpacity>
             )}
           </View>
-        }
+        )}
       </View>
       <View
         style={{
@@ -765,10 +768,10 @@ export default function PlantInfo({ navigation }) {
                 >
                   <View>{renderChat()}</View>
                   <View style={styles.plantContainer}>{renderFlower()}</View>
-                    <Text style={styles.plantText}>
-                      {plantName}
-                      {"\n"}Lv.{plantLevel}
-                    </Text>
+                  <Text style={styles.plantText}>
+                    {plantName}
+                    {"\n"}Lv.{plantLevel}
+                  </Text>
                 </View>
               </View>
             </View>
@@ -788,7 +791,6 @@ export default function PlantInfo({ navigation }) {
           />
         )}
       </View>
-
 
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <View
@@ -881,7 +883,7 @@ const styles = StyleSheet.create({
     color: "#1B1A1A",
     marginRight: 1,
   },
-  rankName: {
+  ranker: {
     fontSize: Platform.OS === "ios" ? 16 : 18,
     fontFamily: "wooju",
     paddingBottom: 3,
