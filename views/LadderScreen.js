@@ -57,7 +57,7 @@ function LadderScreen() {
         flex: 1,
         alignItems: "center",
         top: "10%",
-        backgroundColor: "grey",
+        backgroundColor: "white",
       }}
     >
       <Text style={{ fontSize: 20, fontFamily: "dnf" }}>사다리 게임 </Text>

@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, {useState, useEffect, useCallback} from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   ScrollView,
   TouchableOpacity,
@@ -9,53 +9,58 @@ import {
   Dimensions,
   View,
   StatusBar,
-  ImageBackground, Alert, Platform,
+  ImageBackground,
+  Alert,
+  Platform,
 } from "react-native";
 import axios from "axios";
-import {useFocusEffect} from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import AlienType from "../components/AlienType";
+import { AnimatedCircularProgress } from "react-native-circular-progress";
+import * as Notifications from "expo-notifications";
+import LottieView from "lottie-react-native";
 
-const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
+
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const missionImages = {
-  "사진 찍어서 올리기": require('../assets/img/missionIcon/camera.png'),
-  "내 갤러리 사진 등록하기": require('../assets/img/missionIcon/gallery.png'),
-  "사진에 댓글 달기": require('../assets/img/missionIcon/comment.png'),
-  "가족들과 채팅으로 인사하기": require('../assets/img/missionIcon/chat.png'),
-  "캘린더에 일정 등록하기": require('../assets/img/missionIcon/calendar.png'),
+  "사진 찍어서 올리기": require("../assets/img/missionIcon/camera.png"),
+  "내 갤러리 사진 등록하기": require("../assets/img/missionIcon/gallery.png"),
+  "사진에 댓글 달기": require("../assets/img/missionIcon/comment.png"),
+  "가족들과 채팅으로 인사하기": require("../assets/img/missionIcon/chat.png"),
+  "캘린더에 일정 등록하기": require("../assets/img/missionIcon/calendar.png"),
 };
 
 const missionNav = {
-  "사진 찍어서 올리기": 'AlbumScreen',
-  "내 갤러리 사진 등록하기": 'AlbumScreen',
-  "사진에 댓글 달기": 'AlbumScreen',
-  "가족들과 채팅으로 인사하기": 'Chat',
-  "캘린더에 일정 등록하기": 'Calendar',
+  "사진 찍어서 올리기": "AlbumScreen",
+  "내 갤러리 사진 등록하기": "AlbumScreen",
+  "사진에 댓글 달기": "AlbumScreen",
+  "가족들과 채팅으로 인사하기": "Chat",
+  "캘린더에 일정 등록하기": "Calendar",
 };
 
-export default function PlantInfo({navigation}) {
+export default function PlantInfo({ navigation }) {
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
   const [familyPoint, setFamilyPoint] = useState([]);
-  const [plantLevel, setPlantLevel] = useState(null);
+  const [plantLevel, setPlantLevel] = useState(0);
   const [plantName, setPlantName] = useState(null);
   const [plantPoint, setPlantPoint] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [todayMission, setTodayMission] = useState("");
   const [todayMissionClear, setTodayMissionClear] = useState(false);
   const [dailyMissionClear, setDailyMissionClear] = useState(false);
-
-  useEffect(() => {
-    // 타이머를 사용하여 5초마다 말풍선을 표시
-    const interval = setInterval(() => {
-      setIsVisible(true);
-      // 3초 후에 말풍선을 숨김
-      setTimeout(() => {
-        setIsVisible(false);
-      }, 1000);
-    }, 2000);
-
-    // 컴포넌트 언마운트 시에 타이머 클리어
-    return () => clearInterval(interval);
-  }, []);
+  const levelPoint = [20, 30, 50, 60, 70, 80, 90, 100, 900, 1500, 2000];
+  const [progressBar, setProgressBar] = useState(0);
+  const [playLottie, setPlayLottie] = useState(false);
+  const [levelUp, setLevelUp] = useState(false);
 
   const renderFlower = () => {
     switch (plantLevel) {
@@ -105,7 +110,7 @@ export default function PlantInfo({navigation}) {
   };
 
   const TingleFamily = async (nickname) => {
-    try{
+    try {
       const myDB = await AsyncStorage.getItem("myDB");
       console.log("마이디비~~", myDB);
       const data = JSON.parse(myDB);
@@ -128,11 +133,10 @@ export default function PlantInfo({navigation}) {
           headers: {
             Authorization: "Bearer " + UserServerAccessToken,
           },
-        })
-          .then((resp) => {
-            const tmp = resp.data;
-            console.log(tmp);
-          });
+        }).then((resp) => {
+          const tmp = resp.data;
+          console.log(tmp);
+        });
       } else {
         console.log("해당 닉네임을 가진 사용자를 찾을 수 없습니다.");
       }
@@ -192,17 +196,18 @@ export default function PlantInfo({navigation}) {
           <View
             style={{
               left: SCREEN_WIDTH * 0.1,
-              bottom: Platform.OS === 'ios' ? SCREEN_HEIGHT * 0.15 : SCREEN_HEIGHT * 0.2,
+              bottom:
+                Platform.OS === "ios"
+                  ? SCREEN_HEIGHT * 0.15
+                  : SCREEN_HEIGHT * 0.2,
               zIndex: 1,
             }}
           >
             <ImageBackground
-              source={require('../assets/img/bubble.png')}
+              source={require("../assets/img/bubble.png")}
               style={styles.textBubble}
             >
-              <Text style={styles.text}>
-                {randomMessage()}
-              </Text>
+              <Text style={styles.text}>{randomMessage()}</Text>
             </ImageBackground>
           </View>
         )}
@@ -210,80 +215,210 @@ export default function PlantInfo({navigation}) {
     );
   };
 
-  useEffect(() => {
-    getFamilyScore();
-    const getMission = async () => {
-      try {
-        const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
-        const UserServerAccessToken = await AsyncStorage.getItem(
-          "UserServerAccessToken"
-        );
-        await axios({
-          method: "GET",
-          url: SERVER_ADDRESS + "/plant",
-          headers: {
-            Authorization: "Bearer: " + UserServerAccessToken,
-          },
-        }).then((resp) => {
-          const tmpPlant = resp.data.data;
-          setPlantLevel(tmpPlant.level);
-          setPlantName(tmpPlant.name);
-          setPlantPoint(tmpPlant.point);
-        });
-      } catch (error) {
-        console.error("Error getMsg:", error);
-      }
-      const ktc = new Date();
-      ktc.setHours(ktc.getHours() + 9);
-      const str_today = JSON.stringify(ktc).toString().slice(1, 11);
-      const test = JSON.parse(await AsyncStorage.getItem("todayMission"));
-      const todayMissions = [
-        "사진 찍어서 올리기",
-        "내 갤러리 사진 등록하기",
-        "사진에 댓글 달기",
-        "가족들과 채팅으로 인사하기",
-        "캘린더에 일정 등록하기",
-      ];
+  const getPlantInfo = async () => {
+    try {
+      const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
+      const UserServerAccessToken = await AsyncStorage.getItem(
+        "UserServerAccessToken"
+      );
+      await axios({
+        method: "GET",
+        url: SERVER_ADDRESS + "/plant",
+        headers: {
+          Authorization: "Bearer: " + UserServerAccessToken,
+        },
+      }).then(async (resp) => {
+        const tmpPlant = resp.data.data;
+        if (plantLevel < tmpPlant.level) {
+          setProgressBar(100);
+        }
+        setPlantLevel(tmpPlant.level);
+        setPlantName(tmpPlant.name);
+        setPlantPoint(tmpPlant.point);
+        setProgressBar((tmpPlant.point / levelPoint[tmpPlant.level]) * 100);
+        const originLevel = await AsyncStorage.getItem("plantLevel");
+        if (originLevel != tmpPlant.level.toString()) {
+          AsyncStorage.setItem("plantLevel", tmpPlant.level.toString());
+          setIsVisible(false);
+          setPlayLottie(true);
+          const timeoutId = setTimeout(() => {
+            setPlayLottie(false);
+            setIsVisible(true);
+          }, 2000);
+          return () => {
+            clearTimeout(timeoutId);
+          };
+        }
+      });
+    } catch (error) {
+      console.error("Error getMsg:", error);
+    }
+  };
 
-      if (test) {
-        // console.log(test);
-        if (test && typeof test === "object" && str_today in test) {
-          setTodayMission(test[str_today]);
-          const tmp_TMC = await AsyncStorage.getItem("todayMissionClear");
-          if (tmp_TMC === "true") {
-            setTodayMissionClear(true);
-          }
-          const tmp_DMC = await AsyncStorage.getItem("dailyMissionClear");
-          if (tmp_DMC === "true") {
-            setDailyMissionClear(true);
-          }
-        } else {
-          const randomIndex = Math.floor(Math.random() * todayMissions.length);
-          setTodayMission(todayMissions[randomIndex]);
-          await AsyncStorage.setItem(
-            "todayMission",
-            JSON.stringify({[str_today]: todayMissions[randomIndex]})
-          );
-          await AsyncStorage.setItem("todayMissionClear", "false");
-          await AsyncStorage.setItem("dailyMissionClear", "false");
+  const getMission = async () => {
+    try {
+      const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
+      const UserServerAccessToken = await AsyncStorage.getItem(
+        "UserServerAccessToken"
+      );
+      await axios({
+        method: "GET",
+        url: SERVER_ADDRESS + "/plant",
+        headers: {
+          Authorization: "Bearer: " + UserServerAccessToken,
+        },
+      }).then((resp) => {
+        const tmpPlant = resp.data.data;
+        // setPlantLevel(tmpPlant.level);
+        setPlantName(tmpPlant.name);
+        setPlantPoint(tmpPlant.point);
+        setProgressBar((tmpPlant.point / levelPoint[tmpPlant.level]) * 100);
+        AsyncStorage.setItem("plantLevel", tmpPlant.level.toString());
+      });
+    } catch (error) {
+      console.error("Error getMsg:", error);
+    }
+    const ktc = new Date();
+    ktc.setHours(ktc.getHours() + 9);
+    const str_today = JSON.stringify(ktc).toString().slice(1, 11);
+    const test = JSON.parse(await AsyncStorage.getItem("todayMission"));
+    const todayMissions = [
+      "사진 찍어서 올리기",
+      "내 갤러리 사진 등록하기",
+      "사진에 댓글 달기",
+      "가족들과 채팅으로 인사하기",
+      "캘린더에 일정 등록하기",
+    ];
+
+    if (test) {
+      // console.log(test);
+      if (test && typeof test === "object" && str_today in test) {
+        setTodayMission(test[str_today]);
+        const tmp_TMC = await AsyncStorage.getItem("todayMissionClear");
+        if (tmp_TMC === "true") {
+          setTodayMissionClear(true);
+        }
+        const tmp_DMC = await AsyncStorage.getItem("dailyMissionClear");
+        if (tmp_DMC === "true") {
+          setDailyMissionClear(true);
         }
       } else {
         const randomIndex = Math.floor(Math.random() * todayMissions.length);
         setTodayMission(todayMissions[randomIndex]);
         await AsyncStorage.setItem(
           "todayMission",
-          JSON.stringify({[str_today]: todayMissions[randomIndex]})
+          JSON.stringify({ [str_today]: todayMissions[randomIndex] })
         );
         await AsyncStorage.setItem("todayMissionClear", "false");
         await AsyncStorage.setItem("dailyMissionClear", "false");
       }
-    };
+    } else {
+      const randomIndex = Math.floor(Math.random() * todayMissions.length);
+      setTodayMission(todayMissions[randomIndex]);
+      await AsyncStorage.setItem(
+        "todayMission",
+        JSON.stringify({ [str_today]: todayMissions[randomIndex] })
+      );
+      await AsyncStorage.setItem("todayMissionClear", "false");
+      await AsyncStorage.setItem("dailyMissionClear", "false");
+    }
+  };
+  // const checkLevel = async () => {
+  //   const SERVER_ADDRESS = await AsyncStorage.getItem("ServerAddress");
+  //   const UserServerAccessToken = await AsyncStorage.getItem(
+  //     "UserServerAccessToken"
+  //   );
+  //   const originLevel = await AsyncStorage.getItem("plantLevel");
+  //   console.log("originlevel:", originLevel);
+  //   if (originLevel) {
+  //     await axios({
+  //       method: "GET",
+  //       url: SERVER_ADDRESS + "/plant",
+  //       headers: {
+  //         Authorization: "Bearer: " + UserServerAccessToken,
+  //       },
+  //     }).then((resp) => {
+  //       const currLevel = resp.data.data.level.toString();
+  //       console.log("currlevel:", currLevel);
+  //       if (originLevel != currLevel) {
+  //         AsyncStorage.setItem("plantLevel", currLevel);
+  //         setIsVisible(false);
+  //         setPlayLottie(true);
+  //         const timeoutId = setTimeout(() => {
+  //           setPlayLottie(false);
+  //           setIsVisible(true);
+  //         }, 2000);
+  //         return () => {
+  //           clearTimeout(timeoutId);
+  //         };
+  //       }
+  //     });
+  //   }
+  // };
+  useEffect(() => {
+    getPlantInfo();
+  }, [plantLevel]);
+
+  useEffect(() => {
+    getFamilyScore();
     getMission();
+    getPlantInfo();
+    // 타이머를 사용하여 5초마다 말풍선을 표시
+    const interval = setInterval(() => {
+      setIsVisible(true);
+      // 3초 후에 말풍선을 숨김
+      setTimeout(() => {
+        setIsVisible(false);
+      }, 1000);
+    }, 2000);
+
+    // 컴포넌트 언마운트 시에 타이머 클리어
+    return () => {
+      clearInterval(interval);
+    };
   }, []);
+
+  useEffect(() => {
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        setNotification(notification);
+        getFamilyScore();
+        getPlantInfo();
+      });
+
+    const foregroundNotificationHandler = async (notification) => {
+      const screenName = notification.notification.request.content.title;
+      if (screenName) {
+        if (screenName === "Calendar") {
+          navigation.navigate("Calendar");
+        } else if (screenName === "TMI") {
+          navigation.navigate("Attendance");
+        } else if (screenName === "Photo") {
+          navigation.navigate("AlbumScreen");
+        } else if (screenName === "Plant") {
+          navigation.navigate("Home");
+        } else if (screenName === "Family") {
+          navigation.navigate("FamilyInfo");
+        } else {
+          navigation.navigate("Chatting");
+        }
+      }
+    };
+    const foregroundNotificationSubscription =
+      Notifications.addNotificationResponseReceivedListener(
+        foregroundNotificationHandler
+      );
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+      foregroundNotificationSubscription.remove();
+    };
+  }, [notification]);
 
   useFocusEffect(
     useCallback(() => {
-      // 여기에 다른 포커스를 받았을 때 실행하고 싶은 작업들을 추가할 수 있습니다.
+      getPlantInfo();
       getFamilyScore();
       const getMission = async () => {
         try {
@@ -302,6 +437,7 @@ export default function PlantInfo({navigation}) {
             setPlantLevel(tmpPlant.level);
             setPlantName(tmpPlant.name);
             setPlantPoint(tmpPlant.point);
+            AsyncStorage.setItem("plantLevel", tmpPlant.level.toString());
           });
         } catch (error) {
           console.error("Error getMsg:", error);
@@ -319,7 +455,6 @@ export default function PlantInfo({navigation}) {
         ];
 
         if (test) {
-          // console.log(test);
           if (test && typeof test === "object" && str_today in test) {
             setTodayMission(test[str_today]);
             const tmp_TMC = await AsyncStorage.getItem("todayMissionClear");
@@ -337,7 +472,7 @@ export default function PlantInfo({navigation}) {
             setTodayMission(todayMissions[randomIndex]);
             await AsyncStorage.setItem(
               "todayMission",
-              JSON.stringify({[str_today]: todayMissions[randomIndex]})
+              JSON.stringify({ [str_today]: todayMissions[randomIndex] })
             );
             await AsyncStorage.setItem("todayMissionClear", "false");
             await AsyncStorage.setItem("dailyMissionClear", "false");
@@ -347,7 +482,7 @@ export default function PlantInfo({navigation}) {
           setTodayMission(todayMissions[randomIndex]);
           await AsyncStorage.setItem(
             "todayMission",
-            JSON.stringify({[str_today]: todayMissions[randomIndex]})
+            JSON.stringify({ [str_today]: todayMissions[randomIndex] })
           );
           await AsyncStorage.setItem("todayMissionClear", "false");
           await AsyncStorage.setItem("dailyMissionClear", "false");
@@ -361,72 +496,103 @@ export default function PlantInfo({navigation}) {
   );
 
   return (
-    <View style={{flex: 1, backgroundColor: "#fff"}}>
-      <StatusBar barStyle="light-content" backgroundColor="#000000"/>
+    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+      <StatusBar barStyle="light-content" backgroundColor="#000000" />
       <View style={styles.topContainer}>
         <View style={styles.box}>
-          <Text style={{
-            ...styles.missionText,
-            fontFamily: "doss",
-            paddingVertical: 8,
-            textShadowColor: '#B1B0B0',
-            textShadowOffset: {width: 1, height: 1},
-            textShadowRadius: 5,
-          }}>
+          <Text
+            style={{
+              ...styles.missionText,
+              fontFamily: "doss",
+              paddingVertical: 8,
+              textShadowColor: "#B1B0B0",
+              textShadowOffset: { width: 1, height: 1 },
+              textShadowRadius: 5,
+            }}
+          >
             가족 랭킹
           </Text>
-          <ScrollView style={{maxHeight: SCREEN_HEIGHT * 0.3}}>
+          <ScrollView
+            style={{
+              maxHeight: SCREEN_HEIGHT * 0.3,
+              borderTopWidth: 1,
+              borderTopColor: "#DBDBDB",
+            }}
+          >
             {familyPoint.map((family, index) => (
               <View key={index}>
-                <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
-                  <View style={{flexDirection: "row", paddingVertical: 10, alignItems: "center",}}>
-                    <Text style={styles.rankText}>
-                      {index + 1}.
-                    </Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      paddingVertical: 10,
+                      alignItems: "center",
+                    }}
+                  >
+                    <Text style={styles.rankText}>{index + 1}.</Text>
 
-                    <AlienType writer={family.split(':')[0]}/>
+                    <AlienType writer={family.split(":")[0]} />
 
-                    <View style={{marginLeft: -7,}}>
-                      <Text style={styles.ranker}>
-                        {family.split(':')[0]}
-                      </Text>
+                    <View style={{ marginLeft: -7 }}>
+                      <Text style={styles.ranker}>{family.split(":")[0]}</Text>
 
-                      <View style={{flexDirection: "row", alignItems: "center",}}>
+                      <View
+                        style={{ flexDirection: "row", alignItems: "center" }}
+                      >
                         <Image
-                          style={{width: 20, height: 20, resizeMode: "contain"}}
-                          source={require('../assets/img/missionIcon/coin.png')}
+                          style={{
+                            width: 20,
+                            height: 20,
+                            resizeMode: "contain",
+                          }}
+                          source={require("../assets/img/missionIcon/coin.png")}
                         />
-                        <Text style={{fontFamily: "doss", color: "#FF9D3A", paddingLeft: 5, fontSize: 18,}}>
-                          {family.split(':')[1]}
+                        <Text
+                          style={{
+                            fontFamily: "doss",
+                            color: "#FF9D3A",
+                            paddingLeft: 5,
+                            fontSize: 18,
+                          }}
+                        >
+                          {family.split(":")[1]}
                         </Text>
                       </View>
                     </View>
                   </View>
                   <TouchableOpacity
-                    onPress={() => TingleFamily(family.split(':')[0])}
+                    onPress={() => TingleFamily(family.split(":")[0])}
                   >
                     <Image
-                      style={{width: 25, height: 25, resizeMode: "contain"}}
-                      source={require('../assets/img/tingle2.png')}
+                      style={{ width: 25, height: 25, resizeMode: "contain" }}
+                      source={require("../assets/img/tingle2.png")}
                     />
                   </TouchableOpacity>
                 </View>
-                <View style={styles.line}/>
+                <View style={styles.line} />
               </View>
             ))}
           </ScrollView>
         </View>
 
         <View style={styles.box}>
-          <Text style={{
-            ...styles.missionText,
-            fontFamily: "doss",
-            paddingTop: 5,
-            textShadowColor: '#B1B0B0',
-            textShadowOffset: {width: 1, height: 1},
-            textShadowRadius: 5,
-          }}>
-            오늘의{'\n'}랜덤 미션
+          <Text
+            style={{
+              ...styles.missionText,
+              fontFamily: "doss",
+              paddingTop: 5,
+              textShadowColor: "#B1B0B0",
+              textShadowOffset: { width: 1, height: 1 },
+              textShadowRadius: 5,
+            }}
+          >
+            오늘의{"\n"}랜덤 미션
           </Text>
           <View style={styles.missionImageContainer}>
             <Image
@@ -439,8 +605,8 @@ export default function PlantInfo({navigation}) {
               <Text
                 style={{
                   ...styles.missionText,
-                  fontSize: 19,
-                  ...todayMissionClear ? styles.crossedText : null,
+                  fontSize: Platform.OS === "ios" ? 19 : 23,
+                  ...(todayMissionClear ? styles.crossedText : null),
                 }}
               >
                 {todayMission}
@@ -453,39 +619,84 @@ export default function PlantInfo({navigation}) {
               <Text
                 style={{
                   ...styles.missionText,
-                  fontSize: 19,
-                  ...todayMissionClear ? styles.crossedText : null,
+                  fontSize: Platform.OS === "ios" ? 19 : 23,
+                  ...(todayMissionClear ? styles.crossedText : null),
                 }}
               >
                 {todayMission}
               </Text>
             </TouchableOpacity>
           )}
-
         </View>
       </View>
-
-      <View style={styles.bottomCircle}/>
-
       <View
         style={{
-          position: "absolute",
+          justifyContent: "center",
           alignItems: "center",
-          bottom: Platform.OS === 'ios' ? SCREEN_HEIGHT * 0.1 : SCREEN_HEIGHT * 0.13,
-          left: 0,
-          right: 0,
+          marginTop: 20,
         }}
       >
-        <View>{renderChat()}</View>
-        <View style={styles.plantContainer}>{renderFlower()}</View>
-
-        <View style={{alignItems: "center"}}>
-          <Text style={styles.plantText}>
-            {plantName}{'\n'}Lv.{plantLevel}
-          </Text>
-        </View>
+        <AnimatedCircularProgress
+          size={390}
+          width={10}
+          backgroundWidth={5}
+          fill={progressBar}
+          tintColor="#9ACD32"
+          // onAnimationComplete={() => console.log("onAnimationComplete")}
+          arcSweepAngle={360}
+          rotation={180}
+          lineCap="round"
+          backgroundColor="#DBDBDB"
+          style={{
+            backgroundColor: "#F5F2F2",
+            borderRadius: 390,
+            width: 390,
+            height: 390,
+          }}
+        >
+          {(fill) => (
+            <View style={{}}>
+              <View style={{ top: 75 }}>
+                <View style={styles.bottomCircle} />
+                <View
+                  style={{
+                    position: "absolute",
+                    alignItems: "center",
+                    bottom:
+                      Platform.OS === "ios"
+                        ? SCREEN_HEIGHT * 0.11
+                        : SCREEN_HEIGHT * 0.15,
+                    left: 0,
+                    right: 0,
+                  }}
+                >
+                  <View>{renderChat()}</View>
+                  <View style={styles.plantContainer}>{renderFlower()}</View>
+                  <View style={{ alignItems: "center" }}>
+                    <Text style={styles.plantText}>
+                      {plantName}
+                      {"\n"}Lv.{plantLevel}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+          )}
+        </AnimatedCircularProgress>
+        {playLottie && (
+          <LottieView
+            source={require("../assets/json/evolution.json")}
+            autoPlay={playLottie}
+            loop={false}
+            style={{
+              position: "absolute", // Ensure it overlays other components
+              width: SCREEN_WIDTH * 0.8,
+              height: SCREEN_HEIGHT * 0.8,
+              zIndex: 2,
+            }}
+          />
+        )}
       </View>
-
       {/*    <View style={{flexDirection: "row"}}>*/}
       {/*      <Text style={styles.missionText}>일일 미션:</Text>*/}
       {/*      <Text*/}
@@ -498,11 +709,17 @@ export default function PlantInfo({navigation}) {
       {/*      </Text>*/}
       {/*    </View>*/}
 
-      <View style={{flexDirection: "row", justifyContent: "space-between"}}>
+      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <View
-          style={{alignItems: "flex-start", paddingLeft: 35, paddingTop: 35,}}>
+          style={{ alignItems: "flex-start", paddingLeft: 35, paddingTop: 5 }}
+        >
           <TouchableOpacity
             onPress={async () => {
+              // const tmpPlantPoint = plantPoint + 1;
+              // setPlantPoint(tmpPlantPoint);
+              // setProgressBar((tmpPlantPoint / levelPoint[plantLevel]) * 100);
+              // console.log(progressBar);
+              // console.log((plantPoint / levelPoint[plantLevel]) * 100);
               const SERVER_ADDRESS = await AsyncStorage.getItem(
                 "ServerAddress"
               );
@@ -528,7 +745,7 @@ export default function PlantInfo({navigation}) {
                       },
                     })
                       .then((resp) => {
-                        getplantInfo();
+                        getPlantInfo();
                         Alert.alert(resp.data.message);
                       })
                       .catch((e) => console.log(e));
@@ -539,36 +756,43 @@ export default function PlantInfo({navigation}) {
           >
             <Image
               source={require("../assets/img/wateringCan3.png")}
-              style={{width: SCREEN_WIDTH * 0.17, height: SCREEN_WIDTH * 0.17, resizeMode: "contain",}}
+              style={{
+                width: SCREEN_WIDTH * 0.17,
+                height: SCREEN_WIDTH * 0.17,
+                resizeMode: "contain",
+              }}
             />
           </TouchableOpacity>
         </View>
         <View
-          style={{alignItems: "flex-end", paddingRight: 30, paddingTop: 30,}}>
-          <TouchableOpacity
-            onPress={() => navigation.pop()}>
+          style={{ alignItems: "flex-end", paddingRight: 30, paddingTop: 0 }}
+        >
+          <TouchableOpacity onPress={() => navigation.pop()}>
             <Image
               source={require("../assets/img/missionIcon/exit.png")}
-              style={{width: SCREEN_WIDTH * 0.13, height: SCREEN_WIDTH * 0.15, resizeMode: "contain",}}
+              style={{
+                width: SCREEN_WIDTH * 0.13,
+                height: SCREEN_WIDTH * 0.15,
+                resizeMode: "contain",
+              }}
             />
           </TouchableOpacity>
         </View>
       </View>
     </View>
-  )
-    ;
+  );
 }
 
 const styles = StyleSheet.create({
   topContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 30,
-    paddingHorizontal: Platform.OS === 'ios' ? 12 : 15,
+    marginTop: Platform.OS === "ios" ? 30 : 50,
+    paddingHorizontal: Platform.OS === "ios" ? 12 : 15,
   },
   box: {
     paddingVertical: 15,
-    paddingHorizontal: 15,
+    paddingHorizontal: Platform.OS === "ios" ? 10 : 20,
     width: SCREEN_WIDTH * 0.45,
     height: SCREEN_HEIGHT * 0.3,
     borderColor: "#F5F2F2",
@@ -581,8 +805,8 @@ const styles = StyleSheet.create({
     color: "#1B1A1A",
     marginRight: 1,
   },
-  ranker: {
-    fontSize: 16,
+  rankName: {
+    fontSize: Platform.OS === "ios" ? 16 : 18,
     fontFamily: "wooju",
     paddingBottom: 3,
     paddingLeft: 3,
@@ -601,8 +825,8 @@ const styles = StyleSheet.create({
   },
   missionImageContainer: {
     alignItems: "center",
-    marginVertical: 15,
-    marginBottom: 15,
+    // marginVertical: 17,
+    marginBottom: Platform.OS === "ios" ? 15 : 0,
   },
   missionImage: {
     width: 70,
@@ -615,24 +839,25 @@ const styles = StyleSheet.create({
     left: SCREEN_WIDTH * 0.05,
     right: SCREEN_WIDTH * 0.05,
     top: SCREEN_WIDTH * 0.05,
-    borderRadius: SCREEN_WIDTH / 2,
-    backgroundColor: "#F5F2F2",
+    // borderRadius: SCREEN_WIDTH / 2,
+    // backgroundColor: "#F5F2F2",
   },
   textBubble: {
     width: SCREEN_WIDTH * 0.4,
     height: SCREEN_HEIGHT * 0.2,
     resizeMode: "contain",
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative',
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
   },
   text: {
     position: "absolute",
     top: 30,
     paddingHorizontal: 10,
+    paddingVertical: Platform.OS === "android" ? 5 : null,
     lineHeight: 22,
     fontFamily: "doss",
-    fontSize: 18,
+    fontSize: Platform.OS === "ios" ? 18 : 20,
   },
   plantContainer: {
     justifyContent: "flex-end",
@@ -646,7 +871,7 @@ const styles = StyleSheet.create({
     zIndex: 0,
   },
   plantText: {
-    paddingTop: Platform.OS === 'ios' ? null : 5,
+    paddingTop: Platform.OS === "ios" ? null : 5,
     fontSize: 22,
     fontFamily: "doss",
   },
@@ -676,6 +901,6 @@ const styles = StyleSheet.create({
   crossedText: {
     textDecorationLine: "line-through",
     textDecorationStyle: "solid",
-    color: 'gray',
+    color: "gray",
   },
 });
