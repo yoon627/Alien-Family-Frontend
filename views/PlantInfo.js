@@ -60,6 +60,16 @@ export default function PlantInfo({navigation}) {
   const [dailyMissionClear, setDailyMissionClear] = useState(false);
   const [isDayMission, setDayMission] = useState(false);
   const [isTodayMission, setIsTodayMission] = useState(true);
+  const [myNickname, setMyNickname] = useState('');
+
+  useEffect(() => {
+    async function fetchNickname() {
+      const nick = await AsyncStorage.getItem("nickname");
+      setMyNickname(nick);
+    }
+
+    fetchNickname();
+  }, []);
 
   const handleDayMission = () => {
     setDayMission(true);
@@ -238,12 +248,12 @@ export default function PlantInfo({navigation}) {
           >
             {Platform.OS === 'ios' ? (
               <View style={{justifyContent: "flex-start", marginTop: "20%"}}>
-              <ImageBackground
-              source={require("../assets/img/bubble.png")}
-              style={styles.textBubble}
-            >
-              <Text style={styles.text}>{randomMessage()}</Text>
-            </ImageBackground>
+                <ImageBackground
+                  source={require("../assets/img/bubble.png")}
+                  style={styles.textBubble}
+                >
+                  <Text style={styles.text}>{randomMessage()}</Text>
+                </ImageBackground>
               </View>) : (<View style={{justifyContent: "flex-start", marginTop: "-10%"}}>
               <ImageBackground
                 source={require("../assets/img/bubble.png")}
@@ -577,19 +587,17 @@ export default function PlantInfo({navigation}) {
                       </View>
                     </View>
                   </View>
-                  <TouchableOpacity
-                    onPress={() => {
-                      TingleFamily(family.split(":")[0]);
-                      Alert.alert(
-                        `${family.split(":")[0]}님께 찌릿 통신을 보냈습니다!`
-                      );
-                    }}
-                  >
-                    <Image
-                      style={{width: 25, height: 25, resizeMode: "contain"}}
-                      source={require("../assets/img/tingle2.png")}
-                    />
-                  </TouchableOpacity>
+
+                  {myNickname !== family.split(":")[0] &&
+                    <TouchableOpacity
+                      onPress={() => TingleFamily(family.split(":")[0])}
+                    >
+                      <Image
+                        style={{width: 25, height: 25, resizeMode: "contain"}}
+                        source={require("../assets/img/tingle2.png")}
+                      />
+                    </TouchableOpacity>
+                  }
                 </View>
                 <View style={styles.line}/>
               </View>
@@ -667,16 +675,14 @@ export default function PlantInfo({navigation}) {
 
         {isDayMission && (
           <View style={styles.box}>
-            <Text
-              style={{
-                ...styles.missionText,
-                fontFamily: "doss",
-                paddingVertical: 8,
-                textShadowColor: "#B1B0B0",
-                textShadowOffset: { width: 1, height: 1 },
-                textShadowRadius: 5,
-              }}
-            >
+            <Text style={{
+              ...styles.missionText,
+              fontFamily: "doss",
+              paddingVertical: 8,
+              textShadowColor: '#B1B0B0',
+              textShadowOffset: {width: 1, height: 1},
+              textShadowRadius: 5,
+            }}>
               일일 미션
             </Text>
             <View style={styles.missionImageContainer}>
@@ -717,7 +723,7 @@ export default function PlantInfo({navigation}) {
               </View>
             ) : (
               <TouchableOpacity
-                onPress={() => navigation.navigate(missionNav[todayMission])}
+                // onPress={() => navigation.navigate(missionNav[todayMission])}
               >
                 <Text
                   style={{
@@ -866,7 +872,8 @@ export default function PlantInfo({navigation}) {
         </View>
       </View>
     </View>
-  );
+  )
+    ;
 }
 
 const styles = StyleSheet.create({
