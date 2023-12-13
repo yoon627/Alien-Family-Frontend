@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import {
   Alert,
-  Button,
   Modal,
   ScrollView,
   StyleSheet,
@@ -356,7 +355,7 @@ export default function CalendarScreen({navigation}) {
       ];
       if (test) {
         if (test && typeof test === "object" && str_today in test) {
-          if (test[str_today] === "캘린더에 일정 추가하기") {
+          if (test[str_today] === "캘린더에 일정 등록하기") {
             await AsyncStorage.setItem("todayMissionClear", "true");
             await axios({
               method: "GET",
@@ -374,7 +373,7 @@ export default function CalendarScreen({navigation}) {
             "todayMission",
             JSON.stringify({[str_today]: todayMissions[randomIndex]})
           );
-          if (test[str_today] === "캘린더에 일정 추가하기") {
+          if (test[str_today] === "캘린더에 일정 등록하기") {
             await AsyncStorage.setItem("todayMissionClear", "true");
             await AsyncStorage.setItem("dailyMissionClear", "false");
             await axios({
@@ -397,7 +396,7 @@ export default function CalendarScreen({navigation}) {
           "todayMission",
           JSON.stringify({[str_today]: todayMissions[randomIndex]})
         );
-        if (test[str_today] === "캘린더에 일정 추가하기") {
+        if (test[str_today] === "캘린더에 일정 등록하기") {
           await AsyncStorage.setItem("todayMissionClear", "true");
           await AsyncStorage.setItem("dailyMissionClear", "false");
           await axios({

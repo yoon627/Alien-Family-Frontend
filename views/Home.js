@@ -3,7 +3,6 @@ import {
   Alert,
   Animated,
   Dimensions,
-  Image,
   ImageBackground,
   KeyboardAvoidingView,
   Modal,
@@ -103,7 +102,7 @@ export default function Home({ navigation, fonts }) {
     return (
       <View>
         <TouchableOpacity onPress={() => navigation.navigate("Mini Games")}>
-          {alienType === "BASIC" ? (
+          {alienType.trim() === "BASIC" ? (
             <ExpoFastImage
               source={require(`../assets/img/character/BASIC.png`)}
               style={{
