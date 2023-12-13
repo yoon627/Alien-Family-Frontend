@@ -355,9 +355,10 @@ export default function PlantInfo({ navigation }) {
   //     });
   //   }
   // };
-  useEffect(() => {
-    getPlantInfo();
-  }, [plantLevel]);
+  // useEffect(() => {
+  //   console.log("plantlevel useEffect");
+  //   getPlantInfo();
+  // }, [plantLevel]);
 
   useEffect(() => {
     getFamilyScore();
