@@ -71,18 +71,18 @@ export default function PlantInfo({navigation}) {
     setIsTodayMission(true);
   };
 
-  useEffect(() => {
-    // 타이머를 사용하여 5초마다 말풍선을 표시
-    const interval = setInterval(() => {
-      setIsVisible(true);
-      // 3초 후에 말풍선을 숨김
-      setTimeout(() => {
-        setIsVisible(false);
-      }, 10000);
-    }, 15000);
-    // 컴포넌트 언마운트 시에 타이머 클리어
-    return () => clearInterval(interval);
-  }, []);
+  // useEffect(() => {
+  //   // 타이머를 사용하여 5초마다 말풍선을 표시
+  //   const interval = setInterval(() => {
+  //     setIsVisible(true);
+  //     // 3초 후에 말풍선을 숨김
+  //     setTimeout(() => {
+  //       setIsVisible(false);
+  //     }, 5000);
+  //   }, 10000);
+  //   // 컴포넌트 언마운트 시에 타이머 클리어
+  //   return () => clearInterval(interval);
+  // }, []);
   const levelPoint = [20, 30, 50, 60, 70, 80, 90, 100, 900, 1500, 2000];
   const [progressBar, setProgressBar] = useState(0);
   const [playLottie, setPlayLottie] = useState(false);
@@ -135,7 +135,7 @@ export default function PlantInfo({navigation}) {
       default:
         return (
           <Image
-            source={require("../assets/img/level_4.png")}
+            source={require("../assets/img/level_5.png")}
             style={styles.plantImage}
           />
         );
@@ -289,7 +289,7 @@ export default function PlantInfo({navigation}) {
           setPlayLottie(true);
           const timeoutId = setTimeout(() => {
             setPlayLottie(false);
-            setIsVisible(true);
+            setIsVisible(false);
           }, 1900);
           return () => {
             clearTimeout(timeoutId);
@@ -380,8 +380,8 @@ export default function PlantInfo({navigation}) {
       // 3초 후에 말풍선을 숨김
       setTimeout(() => {
         setIsVisible(false);
-      }, 1000);
-    }, 2000);
+      }, 5000);
+    }, 10000);
 
     // 컴포넌트 언마운트 시에 타이머 클리어
     return () => {
