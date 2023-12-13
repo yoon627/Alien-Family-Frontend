@@ -60,6 +60,7 @@ export default function PlantInfo({navigation}) {
   const [dailyMissionClear, setDailyMissionClear] = useState(false);
   const [isDayMission, setDayMission] = useState(false);
   const [isTodayMission, setIsTodayMission] = useState(true);
+  const [myNickname, setMyNickname] = useState('');
 
   const handleDayMission = () => {
     setDayMission(true);
@@ -162,6 +163,8 @@ export default function PlantInfo({navigation}) {
         }).then((resp) => {
           const tmp = resp.data;
           console.log(tmp);
+          setMyNickname(nickname);
+          // console.log(nickname);
         });
       } else {
         console.log("해당 닉네임을 가진 사용자를 찾을 수 없습니다.");
@@ -605,6 +608,9 @@ export default function PlantInfo({navigation}) {
                   </View>
                   <TouchableOpacity
                     onPress={() => TingleFamily(family.split(":")[0])}
+                    style={{
+                      ...(myNickname === family.split(":")[0] && { display: 'none' }),
+                    }}
                   >
                     <Image
                       style={{width: 25, height: 25, resizeMode: "contain"}}
