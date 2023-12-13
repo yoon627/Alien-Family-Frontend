@@ -62,6 +62,15 @@ export default function PlantInfo({navigation}) {
   const [isTodayMission, setIsTodayMission] = useState(true);
   const [myNickname, setMyNickname] = useState('');
 
+  useEffect(() => {
+    async function fetchNickname() {
+      const nick = await AsyncStorage.getItem("nickname");
+      setMyNickname(nick);
+    }
+
+    fetchNickname();
+  }, []);
+
   const handleDayMission = () => {
     setDayMission(true);
     setIsTodayMission(false);
@@ -163,8 +172,6 @@ export default function PlantInfo({navigation}) {
         }).then((resp) => {
           const tmp = resp.data;
           console.log(tmp);
-          setMyNickname(nickname);
-          // console.log(nickname);
         });
       } else {
         console.log("해당 닉네임을 가진 사용자를 찾을 수 없습니다.");
@@ -234,12 +241,12 @@ export default function PlantInfo({navigation}) {
           >
             {Platform.OS === 'ios' ? (
               <View style={{justifyContent: "flex-start", marginTop: "20%"}}>
-              <ImageBackground
-              source={require("../assets/img/bubble.png")}
-              style={styles.textBubble}
-            >
-              <Text style={styles.text}>{randomMessage()}</Text>
-            </ImageBackground>
+                <ImageBackground
+                  source={require("../assets/img/bubble.png")}
+                  style={styles.textBubble}
+                >
+                  <Text style={styles.text}>{randomMessage()}</Text>
+                </ImageBackground>
               </View>) : (<View style={{justifyContent: "flex-start", marginTop: "-10%"}}>
               <ImageBackground
                 source={require("../assets/img/bubble.png")}
@@ -606,24 +613,25 @@ export default function PlantInfo({navigation}) {
                       </View>
                     </View>
                   </View>
-                  <TouchableOpacity
-                    onPress={() => TingleFamily(family.split(":")[0])}
-                    style={{
-                      ...(myNickname === family.split(":")[0] && { display: 'none' }),
-                    }}
-                  >
-                    <Image
-                      style={{width: 25, height: 25, resizeMode: "contain"}}
-                      source={require("../assets/img/tingle2.png")}
-                    />
-                  </TouchableOpacity>
+
+                  {myNickname !== family.split(":")[0] &&
+                    <TouchableOpacity
+                      onPress={() => TingleFamily(family.split(":")[0])}
+                    >
+                      <Image
+                        style={{width: 25, height: 25, resizeMode: "contain"}}
+                        source={require("../assets/img/tingle2.png")}
+                      />
+                    </TouchableOpacity>
+                  }
                 </View>
                 <View style={styles.line}/>
               </View>
             ))}
           </ScrollView>
         </View>
-        {isTodayMission &&
+        {
+          isTodayMission &&
           <View style={styles.box}>
             <Text style={{
               ...styles.missionText,
@@ -679,7 +687,8 @@ export default function PlantInfo({navigation}) {
           </View>
         }
 
-        {isDayMission &&
+        {
+          isDayMission &&
           <View style={styles.box}>
             <Text style={{
               ...styles.missionText,
@@ -688,6 +697,7 @@ export default function PlantInfo({navigation}) {
               textShadowColor: '#B1B0B0',
               textShadowOffset: {width: 1, height: 1},
               textShadowRadius: 5,
+              paddingBottom: 20,
             }}>
               일일 미션
             </Text>
@@ -719,7 +729,7 @@ export default function PlantInfo({navigation}) {
               </View>
             ) : (
               <TouchableOpacity
-                onPress={() => navigation.navigate(missionNav[todayMission])}
+                // onPress={() => navigation.navigate(missionNav[todayMission])}
               >
                 <Text
                   style={{
@@ -872,7 +882,8 @@ export default function PlantInfo({navigation}) {
         </View>
       </View>
     </View>
-  );
+  )
+    ;
 }
 
 const styles = StyleSheet.create({
