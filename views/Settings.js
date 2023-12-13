@@ -46,6 +46,34 @@ export default function Settings({ navigation }) {
               가족코드 복사
             </Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            onPress={async () => {
+              try {
+                AsyncStorage.setItem("todayMissionClear","false")
+              } catch (error) {
+                console.error("Error copying to clipboard:", error);
+              }
+            }}
+            style={{
+              alignItems: "center",
+              justifyContent: "center",
+              color: "black",
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 20,
+                color: "white",
+                marginHorizontal: 20,
+                marginVertical: 15,
+                alignItems: "center",
+                justifyContent: "center",
+                fontWeight: "bold",
+              }}
+            >
+              미션 초기화
+            </Text>
+          </TouchableOpacity>
         </ImageBackground>
       </View>
     </View>
