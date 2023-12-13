@@ -147,7 +147,7 @@ export default function AlbumScreen({navigation}) {
   const imagePickerOption = {
     mediaTypes: ImagePicker.MediaTypeOptions.All,
     allowsEditing: false,
-    quality: 0.5,
+    quality: 0.2,
     aspect: [1, 1],
     includeBase64: Platform.OS === "android",
   };
@@ -366,7 +366,7 @@ export default function AlbumScreen({navigation}) {
               >
                 <Text
                   style={{
-                    color: "black",
+                    color: selectedTags.includes(tag) ? "black" : "#555456",
                     fontWeight: selectedTags.includes(tag)
                       ? "bold"
                       : "normal",
@@ -493,8 +493,8 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
   },
   selectedTagItem: {
-    borderColor: "#E0EBF2",
-    backgroundColor: "#E0EBF2",
+    borderColor: "#CFD3F6",
+    backgroundColor: "#CFD3F6",
   },
   flatListContentContainer: {
     paddingLeft: 5,

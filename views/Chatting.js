@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {
   Dimensions,
   ScrollView,
@@ -8,9 +8,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Client } from "@stomp/stompjs";
+import {Client} from "@stomp/stompjs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Ionicons } from "@expo/vector-icons";
+import {Ionicons} from "@expo/vector-icons";
 import AlienType from "../components/AlienType";
 import axios from "axios";
 
@@ -21,7 +21,7 @@ Object.assign("global", {
   TextDecoder: TextEncodingPolyfill.TextDecoder,
 });
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
 
 const ChatRoom = () => {
   const [stompClient, setStompClient] = useState(null);
@@ -86,7 +86,7 @@ const ChatRoom = () => {
             client.subscribe("/sub/chat/room/" + chatroomId, (message) => {
               const receivedMessage = JSON.parse(message.body);
               setMessages((prevMessages) => [...prevMessages, receivedMessage]);
-              scrollViewRef.current?.scrollToEnd({ animated: true }); // 여기에 스크롤 로직 추가
+              scrollViewRef.current?.scrollToEnd({animated: true}); // 여기에 스크롤 로직 추가
             });
           },
           onStompError: (frame) => {
@@ -178,7 +178,7 @@ const ChatRoom = () => {
           const randomIndex = Math.floor(Math.random() * todayMissions.length);
           await AsyncStorage.setItem(
             "todayMission",
-            JSON.stringify({ [str_today]: todayMissions[randomIndex] })
+            JSON.stringify({[str_today]: todayMissions[randomIndex]})
           );
           if (test[str_today] === "가족들과 채팅으로 인사하기") {
             await AsyncStorage.setItem("todayMissionClear", "true");
@@ -201,7 +201,7 @@ const ChatRoom = () => {
         const randomIndex = Math.floor(Math.random() * todayMissions.length);
         await AsyncStorage.setItem(
           "todayMission",
-          JSON.stringify({ [str_today]: todayMissions[randomIndex] })
+          JSON.stringify({[str_today]: todayMissions[randomIndex]})
         );
         if (test[str_today] === "가족들과 채팅으로 인사하기") {
           await AsyncStorage.setItem("todayMissionClear", "true");
@@ -231,7 +231,7 @@ const ChatRoom = () => {
         stompClient.subscribe("/sub/chat/room/" + roomNumber, (message) => {
           const receivedMessage = JSON.parse(message.body);
           setMessages((prevMessages) => [...prevMessages, receivedMessage]);
-          scrollViewRef.current?.scrollToEnd({ animated: true }); // 여기에 스크롤 로직 추가
+          scrollViewRef.current?.scrollToEnd({animated: true}); // 여기에 스크롤 로직 추가
         });
       };
     }
@@ -266,12 +266,12 @@ const ChatRoom = () => {
   }
 
   return (
-    <View style={{ flex: 1, padding: 10, backgroundColor: "#fff" }}>
+    <View style={{flex: 1, padding: 10, backgroundColor: "#ECE1DB"}}>
       <ScrollView
-        style={{ flex: 1, marginHorizontal: 5 }}
+        style={{flex: 1, marginHorizontal: 5}}
         ref={scrollViewRef}
         onContentSizeChange={() => {
-          scrollViewRef.current?.scrollToEnd({ animated: true });
+          scrollViewRef.current?.scrollToEnd({animated: true});
         }}
       >
         {messages.map((msg, index) => (
@@ -286,10 +286,10 @@ const ChatRoom = () => {
               {msg.sender !== myName && (
                 <View style={{justifyContent: "center",}}>
                   <Text style={styles.senderName}>{msg.sender}</Text>
-                  <AlienType writer={msg.sender} />
+                  <AlienType writer={msg.sender}/>
                 </View>
               )}
-              <View style={{ flex: 1 }}>
+              <View style={{flex: 1}}>
                 <View
                   style={[
                     styles.messageBubble,
@@ -321,10 +321,12 @@ const ChatRoom = () => {
           style={styles.input}
           value={message}
           onChangeText={setMessage}
-          placeholder="Type a message"
+          placeholder="대화 입력..."
         />
         <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
-          <Ionicons name="send" size={24} color="white" />
+          <Text style={{
+            fontWeight: "bold",
+          }}>보내기</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -334,7 +336,7 @@ const ChatRoom = () => {
 const styles = StyleSheet.create({
   messageBubble: {
     paddingHorizontal: 14,
-    paddingVertical: 10,
+    paddingVertical: 12,
     marginVertical: 4,
     maxWidth: "75%",
     minWidth: "20%",
@@ -343,7 +345,7 @@ const styles = StyleSheet.create({
   },
   myMessage: {
     alignSelf: "flex-end",
-    backgroundColor: "#603D9B",
+    backgroundColor: "#CBF9D2",
     marginRight: 7,
     borderTopLeftRadius: 18,
     borderBottomLeftRadius: 18,
@@ -351,7 +353,7 @@ const styles = StyleSheet.create({
   },
   otherMessage: {
     alignSelf: "flex-start",
-    backgroundColor: "#B9A9D3",
+    backgroundColor: "#FAF6F3",
     marginLeft: 8,
     borderTopRightRadius: 18,
     borderBottomRightRadius: 18,
@@ -366,7 +368,7 @@ const styles = StyleSheet.create({
   },
   messageText: {
     fontSize: 18,
-    color: "white",
+    color: "black",
   },
   inputRow: {
     flexDirection: "row",
@@ -375,19 +377,26 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: "gray",
+    borderColor: "#FAF9F7",
+    backgroundColor: "#FAF9F7",
     flex: 1,
-    marginRight: 10,
-    paddingHorizontal: 10,
-    borderRadius: 20,
-    height: 40, // 높이 조정
+    marginHorizontal: 10,
+    paddingHorizontal: 15,
+    borderRadius: 50,
+    height: 45,
+    opacity: 0.8
   },
   sendButton: {
-    backgroundColor: "#603D9B",
+    backgroundColor: "#FAF9F7",
     padding: 10,
+    paddingHorizontal: 15,
+    height: 45,
     borderRadius: 50,
+    marginRight: 5,
     justifyContent: "center",
     alignItems: "center",
+    elevation: 5,
+    opacity: 0.8,
   },
   profilePic: {
     width: SCREEN_WIDTH * 0.1,
@@ -395,7 +404,7 @@ const styles = StyleSheet.create({
     borderRadius: (SCREEN_WIDTH * 0.1) / 2, // 원형으로 만들기
     marginRight: 10, // 메시지 버블과의 간격,
     resizeMode: "contain",
-    backgroundColor: "#FFEEC3",
+    backgroundColor: "#FAF9F7",
   },
   timeTextRight: {
     fontSize: 12,

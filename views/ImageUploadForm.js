@@ -269,7 +269,7 @@ export default function ImageUploadForm({ uri, onUploadComplete }) {
             style={[styles.button, styles.buttonClose]}
             onPress={onUploadComplete}
           >
-            <Text style={{ ...styles.textStyle, color: "#727272" }}>취소</Text>
+            <Text style={{ ...styles.textStyle, color: "#555456" }}>취소</Text>
           </TouchableOpacity>
         </View>
         {isLoading && (
@@ -318,11 +318,11 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   buttonWrite: {
-    backgroundColor: "#603D9B",
+    backgroundColor: "#B2B6DB",
     marginHorizontal: 10,
   },
   buttonClose: {
-    backgroundColor: "#DED1DF",
+    backgroundColor: "#F0F2FF",
     marginHorizontal: 10,
   },
   textStyle: {
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 13,
     paddingVertical: 10,
-    borderRadius: 10,
+    borderRadius: 30,
     borderWidth: 1,
     borderColor: "#E0EBF2",
   },
