@@ -65,7 +65,6 @@ export default function PlantInfo({ navigation }) {
   const handleDayMission = () => {
     setDayMission(true);
     setIsTodayMission(false);
-    console.log(isDayMission);
   }
 
   const handleTodayMission = () => {
@@ -765,12 +764,10 @@ export default function PlantInfo({ navigation }) {
                 >
                   <View>{renderChat()}</View>
                   <View style={styles.plantContainer}>{renderFlower()}</View>
-                  <View style={{ alignItems: "center" }}>
                     <Text style={styles.plantText}>
                       {plantName}
                       {"\n"}Lv.{plantLevel}
                     </Text>
-                  </View>
                 </View>
               </View>
             </View>
@@ -868,7 +865,7 @@ const styles = StyleSheet.create({
   topContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: Platform.OS === "ios" ? 30 : 50,
+    marginTop: Platform.OS === "ios" ? 10 : 30,
     paddingHorizontal: Platform.OS === "ios" ? 12 : 15,
   },
   box: {
@@ -955,6 +952,7 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === "ios" ? null : 5,
     fontSize: 22,
     fontFamily: "doss",
+    textAlign: "center",
   },
   plantSay0: {
     marginTop: 200,
