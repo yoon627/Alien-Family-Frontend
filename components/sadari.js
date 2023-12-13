@@ -47,7 +47,7 @@ const Sadari = ({ cnt, name, familyInfo }) => {
   const columnWidth = windowWidth / (1 * cnt);
   const ladderHeight = windowHeight * 0.5;
 
-  const [userTexts, setUserTexts] = useState(Array(cnt).fill("걸림ㅋ"));
+  const [userTexts, setUserTexts] = useState(Array(cnt).fill("꽝"));
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -129,7 +129,7 @@ const Sadari = ({ cnt, name, familyInfo }) => {
       }
       setUserTexts((prevTexts) => {
         const newTexts = [...prevTexts];
-        newTexts[i + 1] = "생존";
+        newTexts[i + 1] = "통과";
         return newTexts;
       });
     }

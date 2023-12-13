@@ -161,7 +161,7 @@ const RouletteGame = ({cnt}) => {
       </View>
 
       <Text
-        style={{marginTop: 20}}
+        style={{ marginTop: 20 }}
       >{`${name[selectedIndex]} 당첨!`}</Text>
 
       {/* 섹터 이름 편집 부분 */}
