@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import {
-  Dimensions,
+  Dimensions, KeyboardAvoidingView, Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -266,74 +266,86 @@ const ChatRoom = () => {
   }
 
   return (
-    <View style={{flex: 1, padding: 10, backgroundColor: "#ECE1DB"}}>
-      <ScrollView
-        style={{flex: 1, marginHorizontal: 5}}
-        ref={scrollViewRef}
-        onContentSizeChange={() => {
-          scrollViewRef.current?.scrollToEnd({animated: true});
-        }}
-      >
-        {messages.map((msg, index) => (
-          <View key={index}>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "flex-end",
-                marginBottom: 15,
-              }}
-            >
-              {msg.sender !== myName && (
-                <View style={{justifyContent: "center",}}>
-                  <Text style={styles.senderName}>{msg.sender}</Text>
-                  <AlienType writer={msg.sender}/>
-                </View>
-              )}
-              <View style={{flex: 1}}>
-                <View
-                  style={[
-                    styles.messageBubble,
-                    msg.sender === myName
-                      ? styles.myMessage
-                      : styles.otherMessage,
-                  ]}
-                >
-                  <Text style={styles.messageText}>{msg.content}</Text>
-                </View>
-
-                {msg.sender === myName && (
-                  <Text style={styles.timeTextRight}>
-                    {formatTime(msg.createAt)}
-                  </Text>
-                )}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : null}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0} // Adjust the offset as needed
+      style={{flex: 1}}
+    >
+      <View style={styles.container}>
+        <ScrollView
+          style={{flex: 1, marginHorizontal: 5,}}
+          ref={scrollViewRef}
+          onContentSizeChange={() => {
+            scrollViewRef.current?.scrollToEnd({animated: true});
+          }}
+        >
+          {messages.map((msg, index) => (
+            <View key={index}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "flex-end",
+                  marginBottom: 15,
+                }}
+              >
                 {msg.sender !== myName && (
-                  <Text style={styles.timeTextLeft}>
-                    {formatTime(msg.createAt)}
-                  </Text>
+                  <View style={{justifyContent: "center",}}>
+                    <Text style={styles.senderName}>{msg.sender}</Text>
+                    <AlienType writer={msg.sender}/>
+                  </View>
                 )}
+                <View style={{flex: 1}}>
+                  <View
+                    style={[
+                      styles.messageBubble,
+                      msg.sender === myName
+                        ? styles.myMessage
+                        : styles.otherMessage,
+                    ]}
+                  >
+                    <Text style={styles.messageText}>{msg.content}</Text>
+                  </View>
+
+                  {msg.sender === myName && (
+                    <Text style={styles.timeTextRight}>
+                      {formatTime(msg.createAt)}
+                    </Text>
+                  )}
+                  {msg.sender !== myName && (
+                    <Text style={styles.timeTextLeft}>
+                      {formatTime(msg.createAt)}
+                    </Text>
+                  )}
+                </View>
               </View>
             </View>
-          </View>
-        ))}
-      </ScrollView>
-      <View style={styles.inputRow}>
-        <TextInput
-          style={styles.input}
-          value={message}
-          onChangeText={setMessage}
-          placeholder="대화 입력..."
-        />
-        <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
-          <Text style={{
-            fontWeight: "bold",
-          }}>보내기</Text>
-        </TouchableOpacity>
+          ))}
+        </ScrollView>
+        <View style={styles.inputRow}>
+          <TextInput
+            style={styles.input}
+            value={message}
+            onChangeText={setMessage}
+            placeholder="대화 입력..."
+          />
+          <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
+            <Text style={{
+              fontWeight: "bold",
+            }}>보내기</Text>
+          </TouchableOpacity>
+          <View style={{paddingBottom: 10,}}/>
+        </View>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 10,
+    backgroundColor: "#ECE1DB",
+  },
   messageBubble: {
     paddingHorizontal: 14,
     paddingVertical: 12,
@@ -346,7 +358,6 @@ const styles = StyleSheet.create({
   myMessage: {
     alignSelf: "flex-end",
     backgroundColor: "#CBF9D2",
-    marginRight: 7,
     borderTopLeftRadius: 18,
     borderBottomLeftRadius: 18,
     borderBottomRightRadius: 2,
@@ -354,7 +365,6 @@ const styles = StyleSheet.create({
   otherMessage: {
     alignSelf: "flex-start",
     backgroundColor: "#FAF6F3",
-    marginLeft: 8,
     borderTopRightRadius: 18,
     borderBottomRightRadius: 18,
     borderBottomLeftRadius: 2,
