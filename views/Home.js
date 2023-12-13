@@ -101,7 +101,7 @@ export default function Home({navigation, fonts}) {
     return (
       <Animated.View style={{transform: [{translateX: interpolated}]}}>
         <TouchableOpacity onPress={() => navigation.navigate("Mini Games")}>
-          {alienType === "BASIC" ? (
+          {alienType.trim() === "BASIC" ? (
             <ExpoFastImage
               source={require(`../assets/img/character/BASIC.png`)}
               style={{

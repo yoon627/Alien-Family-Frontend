@@ -634,7 +634,6 @@ export default function PlantInfo({ navigation }) {
                 </TouchableOpacity>
               </View>
             </View>
-
             {todayMissionClear ? (
               <View>
                 <Text
@@ -883,7 +882,7 @@ const styles = StyleSheet.create({
     color: "#1B1A1A",
     marginRight: 1,
   },
-  rankName: {
+  ranker: {
     fontSize: Platform.OS === "ios" ? 16 : 18,
     fontFamily: "wooju",
     paddingBottom: 3,
