@@ -265,7 +265,7 @@ const ChatRoom = () => {
   }
 
   return (
-    <View style={{ flex: 1, padding: 10, backgroundColor: "#fff" }}>
+    <View style={{ flex: 1, padding: 10, backgroundColor: "#ECE1DB" }}>
       <ScrollView
         style={{ flex: 1, marginHorizontal: 5 }}
         ref={scrollViewRef}
@@ -320,10 +320,11 @@ const ChatRoom = () => {
           style={styles.input}
           value={message}
           onChangeText={setMessage}
-          placeholder="Type a message"
+          placeholder="대화 입력..."
         />
         <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
-          <Ionicons name="send" size={24} color="white" />
+          <Text style={{fontWeight: "bold",
+            }}>보내기</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -333,7 +334,7 @@ const ChatRoom = () => {
 const styles = StyleSheet.create({
   messageBubble: {
     paddingHorizontal: 14,
-    paddingVertical: 10,
+    paddingVertical: 12,
     marginVertical: 4,
     maxWidth: "75%",
     minWidth: "20%",
@@ -342,7 +343,7 @@ const styles = StyleSheet.create({
   },
   myMessage: {
     alignSelf: "flex-end",
-    backgroundColor: "#603D9B",
+    backgroundColor: "#CBF9D2",
     marginRight: 7,
     borderTopLeftRadius: 18,
     borderBottomLeftRadius: 18,
@@ -350,7 +351,7 @@ const styles = StyleSheet.create({
   },
   otherMessage: {
     alignSelf: "flex-start",
-    backgroundColor: "#B9A9D3",
+    backgroundColor: "#FAF6F3",
     marginLeft: 8,
     borderTopRightRadius: 18,
     borderBottomRightRadius: 18,
@@ -365,7 +366,7 @@ const styles = StyleSheet.create({
   },
   messageText: {
     fontSize: 18,
-    color: "white",
+    color: "black",
   },
   inputRow: {
     flexDirection: "row",
@@ -374,19 +375,26 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: "gray",
+    borderColor: "#FAF9F7",
+    backgroundColor: "#FAF9F7",
     flex: 1,
-    marginRight: 10,
-    paddingHorizontal: 10,
-    borderRadius: 20,
-    height: 40, // 높이 조정
+    marginHorizontal: 10,
+    paddingHorizontal: 15,
+    borderRadius: 50,
+    height: 45,
+    opacity: 0.8
   },
   sendButton: {
-    backgroundColor: "#603D9B",
+    backgroundColor: "#FAF9F7",
     padding: 10,
+    paddingHorizontal: 15,
+    height: 45,
     borderRadius: 50,
+    marginRight: 5,
     justifyContent: "center",
     alignItems: "center",
+    elevation: 5,
+    opacity: 0.8,
   },
   profilePic: {
     width: SCREEN_WIDTH * 0.1,
@@ -394,7 +402,7 @@ const styles = StyleSheet.create({
     borderRadius: (SCREEN_WIDTH * 0.1) / 2, // 원형으로 만들기
     marginRight: 10, // 메시지 버블과의 간격,
     resizeMode: "contain",
-    backgroundColor: "#FFEEC3",
+    backgroundColor: "#FAF9F7",
   },
   timeTextRight: {
     fontSize: 12,

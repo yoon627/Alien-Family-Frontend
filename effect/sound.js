@@ -33,9 +33,13 @@ const SoundPlayer = () => {
     };
 
     return (
-        <View>
+        <View style={{marginTop: "5%"}}>
             <TouchableOpacity onPress={handlePress}>
-                {isPlaying ? 'Pause Sound' : (<Image source={require('../assets/img/soundUp.png')} />)}
+                {isPlaying ? <Text>Pause Sound</Text> : (
+                  <Image
+                    style={{width:20, height:20, resizeMode: "contain"}}
+                    source={require('../assets/img/soundUp.png')} />
+                )}
 
             </TouchableOpacity>
         </View>

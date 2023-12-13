@@ -31,7 +31,6 @@ export default function ImageDetailForm({route, navigation}) {
         remoteUrl,
         FileSystem.documentDirectory + `${photoInfo.photoId}.jpg`
       );
-
       const asset = await MediaLibrary.createAssetAsync(uri);
       await MediaLibrary.saveToLibraryAsync(asset);
       console.log("이미지 다운로드, 저장 성공!!!");
@@ -151,7 +150,7 @@ export default function ImageDetailForm({route, navigation}) {
                             </Text>
                           </TouchableOpacity>
                           <TouchableOpacity style={[styles.button, styles.buttonClose]}>
-                            <Text style={{...styles.textStyle, color: "#727272"}}>
+                            <Text style={{...styles.textStyle, color: "#555456"}}>
                               삭제
                             </Text>
                           </TouchableOpacity>
@@ -255,11 +254,11 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   buttonWrite: {
-    backgroundColor: "#603D9B",
+    backgroundColor: "#BF67BD",
     marginHorizontal: 10,
   },
   buttonClose: {
-    backgroundColor: "#DED1DF",
+    backgroundColor: "#E2D4E1",
     marginHorizontal: 10,
   },
   textStyle: {
