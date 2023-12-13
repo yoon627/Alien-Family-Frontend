@@ -3,13 +3,13 @@ import {
   Alert,
   Button,
   Modal,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
   View,
   Platform,
+  Pressable,
 } from "react-native";
 import {TouchableOpacity} from "react-native-gesture-handler";
 import {Calendar} from "react-native-calendars";
@@ -533,7 +533,7 @@ export default function CalendarScreen({navigation}) {
     if (selected && !marked[selected]) {
       marked[selected] = {
         selected: true,
-        selectedColor: "#B9A9D3",
+        selectedColor: "#E2D4E1",
         disableTouchEvent: true,
       };
     }
@@ -589,16 +589,15 @@ export default function CalendarScreen({navigation}) {
     selectedDayBackgroundColor: "#ff7f50", // Coral color for the selected day
     selectedDayTextColor: "#ffffff",
     todayBackgroundColor: "rgba(161, 161, 161, 0.2)",
-    // todayTextColor: "#ff4500", // Orange Red color for the current day
+    // todayTextColor: "#555456", // Orange Red color for the current day
     dayTextColor: "#2d4150",
     textDisabledColor: "#d9e1e8",
-    dotColor: "#00adf5",
+    dotColor: "#555456",
     selectedDotColor: "#ffffff",
     arrowColor: "gray", // Arrows for switching months
     disabledArrowColor: "#d9e1e8",
     monthTextColor: "purple", // Color for the month's title
     indicatorColor: "blue",
-    // textDayFontWeight: "bold",
     textMonthFontWeight: "bold",
     textDayHeaderFontWeight: "300",
     textDayFontSize: 16,
@@ -632,7 +631,7 @@ export default function CalendarScreen({navigation}) {
         >
           <Text
             style={{
-              fontFamily: "jamsil3",
+              // fontFamily: "jamsil3",
               fontSize: 32,
               alignItems: "center",
             }}
@@ -722,18 +721,18 @@ export default function CalendarScreen({navigation}) {
         animationType="slide"
       >
         <View style={styles.eventContainer}>
-          {Platform.OS === 'ios' && (
+          {Platform.OS === 'ios' &&
             <View style={{alignItems: "center"}}>
               <View style={styles.separator}/>
-            </View>
-          )}
+            </View>}
 
-          <Pressable
-            style={{position: "absolute", right: 0, marginTop: 20}}
-            onPress={() => setModalVisible(false)}
-          >
-            <Ionicons name="close" size={24} color="black"/>
-          </Pressable>
+          {Platform.OS === 'android' &&
+            <Pressable
+              style={{position: "absolute", right: 0, marginTop: 20}}
+              onPress={() => setModalVisible(false)}
+            >
+              <Ionicons name="close" size={24} color="black"/>
+            </Pressable>}
 
           <TextInput
             style={styles.title}
@@ -805,16 +804,18 @@ export default function CalendarScreen({navigation}) {
             <Ionicons
               style={{paddingRight: 20}}
               name="ios-trash-outline"
-              size={30}
-              color="gray"
+              size={32}
+              color="#555456"
             />
           </Pressable>
-          <Octicons
-            name="check-circle-fill"
-            size={56}
-            color="black"
-            onPress={handleEditEvent}
-          />
+          <TouchableOpacity
+              onPress={handleEditEvent}>
+            <Octicons
+                name="check-circle-fill"
+                size={56}
+                color="#B2B6DB"
+            />
+          </TouchableOpacity>
         </View>
       </Modal>
 
@@ -918,25 +919,27 @@ export default function CalendarScreen({navigation}) {
         </View>
 
         <View style={styles.check}>
-          <TouchableOpacity onPress={handleDelete}>
-            <Text style={{paddingRight: 20, color: "gray"}}>
+          <Pressable onPress={handleDelete}>
+            <Text style={{paddingRight: 20, color: "#555456", fontSize: 18,}}>
               작성을 취소할래요
             </Text>
+          </Pressable>
+          <TouchableOpacity
+              onPress={addNewEvent}>
+            <Octicons
+                name="check-circle-fill"
+                size={56}
+                color="#B2B6DB"
+            />
           </TouchableOpacity>
-          <Octicons
-            name="check-circle-fill"
-            size={56}
-            color="black"
-            onPress={addNewEvent}
-          />
         </View>
       </Modal>
 
       <Modal
         visible={isLocalCalendarModalVisible}
         onRequestClose={() => setIsLocalCalendarModalVisible(false)}
-        transparent={true}
         animationType="slide"
+        presentationStyle="formSheet"
       >
         <View
           style={{
@@ -949,28 +952,23 @@ export default function CalendarScreen({navigation}) {
             style={{
               backgroundColor: "white",
               padding: 20,
-              borderRadius: 10,
+              borderRadius: 25,
               shadowOpacity: 0.25,
               shadowRadius: 3.84,
               elevation: 5,
-              width: "50%", // 너비 조정
-              height: "50%", // 높이 조정
+              width: "90%", // 너비 조정
+              height: "90%", // 높이 조정
             }}
           >
-            <TouchableOpacity
+            <Pressable
               style={{alignItems: "flex-end"}}
               onPress={() => toggleLocalCalendarModal()}
             >
-              <Ionicons name="close" size={24} color="black"/>
-            </TouchableOpacity>
+              <Ionicons name="close" size={30} color="black"/>
+            </Pressable>
             <ChoseCalendar
               closeModal={setIsLocalCalendarModalVisible}
               closeAddModal={setNewEventModalVisible}
-            />
-            <Button
-              title="취소"
-              onPress={() => toggleLocalCalendarModal()}
-              color="red"
             />
           </View>
         </View>
@@ -1025,7 +1023,7 @@ const styles = StyleSheet.create({
   tagText: {
     paddingHorizontal: 16,
     paddingVertical: 10,
-    fontSize: 16,
+    fontSize: 18,
   },
   memo: {
     marginTop: 40,

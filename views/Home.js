@@ -22,6 +22,7 @@ import * as Notifications from "expo-notifications";
 import {TouchableOpacity} from "react-native-gesture-handler";
 import {useFocusEffect} from "@react-navigation/native";
 import * as Permissions from "expo-permissions";
+import ExpoFastImage from "expo-fast-image";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -101,7 +102,7 @@ export default function Home({navigation, fonts}) {
       <Animated.View style={{transform: [{translateX: interpolated}]}}>
         <TouchableOpacity onPress={() => navigation.navigate("Mini Games")}>
           {alienType === "BASIC" ? (
-            <Image
+            <ExpoFastImage
               source={require(`../assets/img/character/BASIC.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -110,7 +111,7 @@ export default function Home({navigation, fonts}) {
               }}
             />
           ) : alienType === "GLASSES" ? (
-            <Image
+            <ExpoFastImage
               source={require(`../assets/img/character/GLASSES.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -119,7 +120,7 @@ export default function Home({navigation, fonts}) {
               }}
             />
           ) : alienType === "GIRL" ? (
-            <Image
+            <ExpoFastImage
               source={require(`../assets/img/character/GIRL.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -128,7 +129,7 @@ export default function Home({navigation, fonts}) {
               }}
             />
           ) : alienType === "BAND_AID" ? (
-            <Image
+            <ExpoFastImage
               source={require(`../assets/img/character/BAND_AID.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -137,7 +138,7 @@ export default function Home({navigation, fonts}) {
               }}
             />
           ) : alienType === "RABBIT" ? (
-            <Image
+            <ExpoFastImage
               source={require(`../assets/img/character/RABBIT.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -146,7 +147,7 @@ export default function Home({navigation, fonts}) {
               }}
             />
           ) : alienType === "HEADBAND" ? (
-            <Image
+            <ExpoFastImage
               source={require(`../assets/img/character/HEADBAND.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -155,7 +156,7 @@ export default function Home({navigation, fonts}) {
               }}
             />
           ) : alienType === "TOMATO" ? (
-            <Image
+            <ExpoFastImage
               source={require(`../assets/img/character/TOMATO.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -164,7 +165,7 @@ export default function Home({navigation, fonts}) {
               }}
             />
           ) : alienType === "CHRISTMAS_TREE" ? (
-            <Image
+            <ExpoFastImage
               source={require(`../assets/img/character/CHRISTMAS_TREE.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -173,7 +174,7 @@ export default function Home({navigation, fonts}) {
               }}
             />
           ) : alienType === "SANTA" ? (
-            <Image
+            <ExpoFastImage
               source={require(`../assets/img/character/SANTA.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -182,7 +183,7 @@ export default function Home({navigation, fonts}) {
               }}
             />
           ) : (
-            <Image
+            <ExpoFastImage
               source={require(`../assets/img/character/PIRATE.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -337,7 +338,7 @@ export default function Home({navigation, fonts}) {
     switch (plantLevel) {
       case 0:
         return (
-          <Image
+          <ExpoFastImage
             source={require("../assets/img/level_0.png")}
             style={styles.plant}
           />
@@ -345,7 +346,7 @@ export default function Home({navigation, fonts}) {
 
       case 1:
         return (
-          <Image
+          <ExpoFastImage
             source={require("../assets/img/level_1.png")}
             style={styles.plant}
           />
@@ -353,7 +354,7 @@ export default function Home({navigation, fonts}) {
 
       case 2:
         return (
-          <Image
+          <ExpoFastImage
             source={require("../assets/img/level_2.png")}
             style={styles.plant}
           />
@@ -361,7 +362,7 @@ export default function Home({navigation, fonts}) {
 
       case 3:
         return (
-          <Image
+          <ExpoFastImage
             source={require("../assets/img/level_3.png")}
             style={styles.plant}
           />
@@ -369,7 +370,7 @@ export default function Home({navigation, fonts}) {
 
       case 4:
         return (
-          <Image
+          <ExpoFastImage
             source={require("../assets/img/level_4.png")}
             style={styles.plant}
           />
@@ -377,7 +378,7 @@ export default function Home({navigation, fonts}) {
       // 추가 레벨에 따른 이미지 케이스
       default:
         return (
-          <Image
+          <ExpoFastImage
             source={require("../assets/img/level_4.png")}
             style={styles.plant}
           />
@@ -432,7 +433,7 @@ export default function Home({navigation, fonts}) {
       >
         <Container>
           <View style={styles.tmiTool}>
-            <Image
+            <ExpoFastImage
               source={require("../assets/img/tmiTool.png")}
               style={{
                 width: SCREEN_WIDTH * 0.85,
@@ -557,7 +558,7 @@ export default function Home({navigation, fonts}) {
                       style={{
                         ...styles.input,
                         margin: 5,
-                        borderColor: "#D63CE3",
+                        borderColor: "#BF67BD",
                         height: 100,
                         width: 300,
                         textAlign: "center",
@@ -617,7 +618,7 @@ export default function Home({navigation, fonts}) {
                           setModalVisible(!modalVisible);
                         }}
                       >
-                        <Text style={{...styles.textStyle, color: "#727272"}}>
+                        <Text style={{...styles.textStyle, color: "#555456"}}>
                           취소
                         </Text>
                       </Pressable>
@@ -669,7 +670,7 @@ export default function Home({navigation, fonts}) {
                     .catch((e) => console.log(e));
                 }}
               >
-                <Image
+                <ExpoFastImage
                   source={require("../assets/img/wateringCan3.png")}
                   style={styles.wateringCan}
                 />
@@ -709,7 +710,6 @@ const styles = StyleSheet.create({
   marqueeText: {
     marginTop: Platform.OS === 'ios' ? 5 : 9,
     fontSize: 20,
-    fontFamily: "wooju",
   },
   container: {
     flex: 1,
@@ -747,11 +747,11 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
   },
   buttonWrite: {
-    backgroundColor: "#C336CF",
+    backgroundColor: "#BF67BD",
     marginHorizontal: 10,
   },
   buttonClose: {
-    backgroundColor: "#DED1DF",
+    backgroundColor: "#E2D4E1",
     marginHorizontal: 10,
   },
   textStyle: {
@@ -826,7 +826,7 @@ const styles = StyleSheet.create({
   plantTextStyle: {
     textAlign: "center",
     fontFamily: "dnf",
-    color: "#727272",
+    color: "#555456",
   },
   modalOverlay: {
     ...StyleSheet.absoluteFillObject,

@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, View, StyleSheet, Dimensions, Platform } from "react-native";
+import {Image, View, StyleSheet, Dimensions, Platform, TouchableOpacity} from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import AlbumScreen from "./AlbumScreen";
 import Home from "./Home";
@@ -14,6 +14,24 @@ import PlantInfo from "./PlantInfo";
 const Tab = createBottomTabNavigator();
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+
+const CustomTabBarButton = ({ accessibilityState, children, onPress }) => {
+    const focused = accessibilityState.selected;
+
+    return (
+        <TouchableOpacity
+            style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: focused ? "#F4F5FA" : "#fff",
+            }}
+            onPress={onPress}
+        >
+            {children}
+        </TouchableOpacity>
+    );
+};
 
 export default function MainScreen({ navigation, route }) {
   // const showFamilyInfo = route.params?.showFamilyInfo || false;
@@ -35,7 +53,7 @@ export default function MainScreen({ navigation, route }) {
           headerShown: false,
           tabBarIcon: () => (
             <Image
-              source={require("../assets/img/navbarIcon/home3.png")}
+              source={require("../assets/img/navbarIcon/home.png")}
               style={styles.icon}
             />
           ),
@@ -50,7 +68,7 @@ export default function MainScreen({ navigation, route }) {
           headerShown: false,
           tabBarIcon: () => (
             <Image
-              source={require("../assets/img/navbarIcon/album3.png")}
+              source={require("../assets/img/navbarIcon/album.png")}
               style={styles.icon}
             />
           ),
@@ -65,7 +83,7 @@ export default function MainScreen({ navigation, route }) {
           headerShown: false,
           tabBarIcon: () => (
             <Image
-              source={require("../assets/img/navbarIcon/chat3.png")}
+              source={require("../assets/img/navbarIcon/chat.png")}
               style={styles.chat}
             />
           ),
@@ -80,7 +98,7 @@ export default function MainScreen({ navigation, route }) {
           headerShown: false,
           tabBarIcon: () => (
             <Image
-              source={require("../assets/img/navbarIcon/calendar3.png")}
+              source={require("../assets/img/navbarIcon/calendar.png")}
               style={styles.icon}
             />
           ),
@@ -88,21 +106,21 @@ export default function MainScreen({ navigation, route }) {
           // tabBarActiveBackgroundColor: "gray",
         }}
       />
-      {/*<Tab.Screen*/}
-      {/*  name="Attendance"*/}
-      {/*  component={Attendance}*/}
-      {/*  options={{*/}
-      {/*    headerShown: false,*/}
-      {/*    tabBarIcon: () => (*/}
-      {/*      <Image*/}
-      {/*        source={require("../assets/img/navbarIcon/alarm3.png")}*/}
-      {/*        style={styles.icon}*/}
-      {/*      />*/}
-      {/*    ),*/}
-      {/*    tabBarShowLabel: false,*/}
-      {/*    // tabBarActiveBackgroundColor: "gray",*/}
-      {/*  }}*/}
-      {/*/>*/}
+      <Tab.Screen
+        name="Attendance"
+        component={Attendance}
+        options={{
+          headerShown: false,
+          tabBarIcon: () => (
+            <Image
+              source={require("../assets/img/navbarIcon/alarm.png")}
+              style={styles.icon}
+            />
+          ),
+          tabBarShowLabel: false,
+          // tabBarActiveBackgroundColor: "gray",
+        }}
+      />
       {/* <Tab.Screen
         name="Attendance"
         component={Attendance}
@@ -160,22 +178,23 @@ export default function MainScreen({ navigation, route }) {
 
 const styles = StyleSheet.create({
   icon: {
-    marginTop: 6,
+    // marginTop: 6,
     flex: 1,
-    width: SCREEN_WIDTH * 0.11,
+    width: SCREEN_WIDTH * 0.13,
     height: SCREEN_HEIGHT * 0.1,
     resizeMode: "contain",
   },
   chat: {
-    marginTop: 15,
-    marginLeft: 6,
+    paddingTop: 13,
+    marginLeft: 5,
     flex: 1,
-    width: SCREEN_WIDTH * 0.11,
-    height: SCREEN_HEIGHT * 0.1,
+    width: SCREEN_WIDTH * 0.19,
+    height: SCREEN_HEIGHT * 0.16,
     resizeMode: "contain",
   },
   tabBar: {
-    backgroundColor: "#8FB7D2", // 탭 바 색
-    height: Platform.OS === "ios" ? SCREEN_HEIGHT * 0.09 : SCREEN_HEIGHT * 0.09,
+    backgroundColor: "#fff",
+    height: Platform.OS === "ios" ? SCREEN_HEIGHT * 0.08 : SCREEN_HEIGHT * 0.09,
+    opacity: 0.8,
   },
 });
