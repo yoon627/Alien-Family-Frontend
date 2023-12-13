@@ -390,8 +390,8 @@ export default function PlantInfo({navigation}) {
       // 3초 후에 말풍선을 숨김
       setTimeout(() => {
         setIsVisible(false);
-      }, 5000);
-    }, 10000);
+      }, 3000);
+    }, 5000);
 
     // 컴포넌트 언마운트 시에 타이머 클리어
     return () => {
