@@ -698,17 +698,7 @@ export default function PlantInfo({ navigation }) {
           />
         )}
       </View>
-      {/*    <View style={{flexDirection: "row"}}>*/}
-      {/*      <Text style={styles.missionText}>일일 미션:</Text>*/}
-      {/*      <Text*/}
-      {/*        style={[*/}
-      {/*          styles.missionText,*/}
-      {/*          dailyMissionClear ? styles.crossedText : null,*/}
-      {/*        ]}*/}
-      {/*      >*/}
-      {/*        TMI 작성하기*/}
-      {/*      </Text>*/}
-      {/*    </View>*/}
+
 
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <View
@@ -716,11 +706,6 @@ export default function PlantInfo({ navigation }) {
         >
           <TouchableOpacity
             onPress={async () => {
-              // const tmpPlantPoint = plantPoint + 1;
-              // setPlantPoint(tmpPlantPoint);
-              // setProgressBar((tmpPlantPoint / levelPoint[plantLevel]) * 100);
-              // console.log(progressBar);
-              // console.log((plantPoint / levelPoint[plantLevel]) * 100);
               const SERVER_ADDRESS = await AsyncStorage.getItem(
                 "ServerAddress"
               );
