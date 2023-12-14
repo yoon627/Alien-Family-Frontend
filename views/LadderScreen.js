@@ -1,8 +1,8 @@
 import * as React from "react";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import {
   Alert,
-  Dimensions,
+  Dimensions, Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -14,7 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const windowWidth = Dimensions.get("screen").width;
 const windowHeight = Dimensions.get("screen").height;
 
-function LadderScreen() {
+function LadderScreen({navigation}) {
   const [cnt, onChangeCnt] = useState(2);
   const [showSadari, setShowSadari] = useState(false);
   const [name, setname] = useState([]);
@@ -52,30 +52,34 @@ function LadderScreen() {
     }
   };
   return (
-    <View
-      style={{
-        flex: 1,
-        alignItems: "center",
-        top: "10%",
-        backgroundColor: "white",
-      }}
-    >
-      <Text style={{ fontSize: 20, fontFamily: "dnf" }}>사다리 게임 </Text>
-
-      <View style={{ flexDirection: "row", justifyContent: "flex-start" }}>
+    <View style={styles.container}>
+      <Text style={styles.title}>사다리 게임 </Text>
+      <TouchableOpacity
+        style={{position: "absolute", left: "5%", top: "5%"}}
+        onPress={() => navigation.pop()}>
+        <Image
+          style={{width: 20, height: 20, resizeMode: "contain"}}
+          source={require('../assets/img/out.png')}/>
+      </TouchableOpacity>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "flex-start"
+        }}
+      >
         <TouchableOpacity style={styles.button} onPress={onPress2}>
-          <Text>--</Text>
+          <Text style={styles.btnText}>-</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.button} onPress={onPress}>
-          <Text>++</Text>
+          <Text style={styles.btnText}>+</Text>
         </TouchableOpacity>
-      </View>
       {!showSadari && (
-        <TouchableOpacity style={{ top: "10%" }} onPress={toggleSadari}>
-          <Text>참여할 사람을 선택하고 눌러주세요 !!!</Text>
+        <TouchableOpacity style={{position: "absolute", top: "10%"}} onPress={toggleSadari}>
+          <Text>선택 완료</Text>
         </TouchableOpacity>
       )}
+      </View>
 
       {/* 이름 목록 */}
       {!showSadari && (
@@ -107,11 +111,22 @@ function LadderScreen() {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    backgroundColor: "white",
+  },
+  title: {
+    fontSize: 20,
+    fontFamily: "dnf",
+    paddingTop: "10%",
+    paddingBottom: 10,
+  },
   button: {
-    backgroundColor: "#cd0beb", // 버튼 색상
-    paddingVertical: 10, // 세로 패딩
-    paddingHorizontal: 10, // 가로 패딩
-    borderRadius: 5, // 테두리 둥글게
+    backgroundColor: "#B9AAD3", // 버튼 색상
+    // paddingVertical: 10, // 세로 패딩
+    // paddingHorizontal: 10, // 가로 패딩
+    borderRadius: 50, // 테두리 둥글게
     alignItems: "center",
     marginVertical: 5, // 버튼 간의 수직 마진
     justifyContent: "space-between",
@@ -119,7 +134,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     width: (windowWidth - 50) / 5,
   },
-
+  btnText: {
+    fontFamily: "dnf",
+    fontSize: 25,
+    color: "white",
+  },
   bottomView: {
     position: "absolute", // 절대 위치 사용
     bottom: 100, // 화면의 바닥에 위치

@@ -81,7 +81,6 @@ export default function AlbumScreen({navigation}) {
       const nick = await AsyncStorage.getItem("nickname");
       setNickname(nick);
     }
-
     fetchNickname();
   }, [nickname]);
 
@@ -284,7 +283,7 @@ export default function AlbumScreen({navigation}) {
               // 받아온 이미지 데이터 상태에 저장
               setAlbumList(data.data);
               // console.log("받은 데이터!!!!!!!!!", data.data)
-              // console.log("👉🏻앨범 이미지 리스트: ", data.data.map(item => item.photoKey));
+              console.log("👉🏻앨범 이미지 리스트: ", data.data.map(item => item.photoKey));
             } catch (error) {
               console.error(
                 "이미지 url을 가져오는 중에 오류가 발생했습니다.",

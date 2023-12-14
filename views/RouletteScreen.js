@@ -48,9 +48,10 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   title: {
-    marginTop: 30,
-    fontFamily: "dnf",
     fontSize: 20,
+    fontFamily: "dnf",
+    paddingTop: "10%",
+    paddingBottom: 10,
   },
   button: {
     backgroundColor: "#B9AAD3", // 버튼 색상
