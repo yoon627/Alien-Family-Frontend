@@ -25,10 +25,10 @@ export default function MainDrawer({navigation, route}) {
     <PaperProvider>
       <Drawer.Navigator
         screenOptions={{
-          headerTintColor: "#0A0B0D",
+          headerTintColor: "#0B0B0B",
           drawerActiveBackgroundColor: "#F4F5FA",
           drawerActiveTintColor: "black",
-          drawerInactiveTintColor: "#484A61",
+          drawerInactiveTintColor: "#0B0B0B",
           headerTitleStyle: {
             color: "#fff",
           },

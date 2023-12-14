@@ -81,7 +81,6 @@ export default function AlbumScreen({navigation}) {
       const nick = await AsyncStorage.getItem("nickname");
       setNickname(nick);
     }
-
     fetchNickname();
   }, [nickname]);
 
@@ -284,7 +283,7 @@ export default function AlbumScreen({navigation}) {
               // 받아온 이미지 데이터 상태에 저장
               setAlbumList(data.data);
               // console.log("받은 데이터!!!!!!!!!", data.data)
-              // console.log("👉🏻앨범 이미지 리스트: ", data.data.map(item => item.photoKey));
+              console.log("👉🏻앨범 이미지 리스트: ", data.data.map(item => item.photoKey));
             } catch (error) {
               console.error(
                 "이미지 url을 가져오는 중에 오류가 발생했습니다.",
@@ -429,19 +428,6 @@ export default function AlbumScreen({navigation}) {
             }}
             contentContainerStyle={styles.flatListContentContainer}
           />
-          {/*<TouchableOpacity*/}
-          {/*  style={styles.imagePlusContainer}*/}
-          {/*  onPress={modalOpen}*/}
-          {/*>*/}
-          {/*  <Image*/}
-          {/*    source={require("../assets/img/plus.png")}*/}
-          {/*    style={{*/}
-          {/*      width: SCREEN_WIDTH * 0.13,*/}
-          {/*      height: SCREEN_WIDTH * 0.13,*/}
-          {/*      resizeMode: "contain",*/}
-          {/*    }}*/}
-          {/*  />*/}
-          {/*</TouchableOpacity>*/}
         </Fragment>
       ) : (
         <ImageUploadForm
@@ -493,8 +479,8 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
   },
   selectedTagItem: {
-    borderColor: "#CFD3F6",
-    backgroundColor: "#CFD3F6",
+    borderColor: "#E0EBF2",
+    backgroundColor: "#E0EBF2",
   },
   flatListContentContainer: {
     paddingLeft: 5,

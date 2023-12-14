@@ -1,5 +1,5 @@
 import React from "react";
-import {Image, View, StyleSheet, Dimensions, Platform, TouchableOpacity} from "react-native";
+import {View, StyleSheet, Dimensions, Platform, TouchableOpacity} from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import AlbumScreen from "./AlbumScreen";
 import Home from "./Home";
@@ -10,28 +10,13 @@ import LadderScreen from "./LadderScreen";
 import RouletteScreen from "./RouletteScreen";
 import NewGame from "./NewGame";
 import ChatRoom from "./Chatting";
-import PlantInfo from "./PlantInfo";
+import { Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
+import { Foundation } from '@expo/vector-icons';import PlantInfo from "./PlantInfo";
 const Tab = createBottomTabNavigator();
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
-
-const CustomTabBarButton = ({ accessibilityState, children, onPress }) => {
-    const focused = accessibilityState.selected;
-
-    return (
-        <TouchableOpacity
-            style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: focused ? "#F4F5FA" : "#fff",
-            }}
-            onPress={onPress}
-        >
-            {children}
-        </TouchableOpacity>
-    );
-};
 
 export default function MainScreen({ navigation, route }) {
   // const showFamilyInfo = route.params?.showFamilyInfo || false;
@@ -51,14 +36,12 @@ export default function MainScreen({ navigation, route }) {
         component={Home}
         options={{
           headerShown: false,
-          tabBarIcon: () => (
-            <Image
-              source={require("../assets/img/navbarIcon/home.png")}
-              style={styles.icon}
-            />
+          tabBarIcon: ({ color }) => (
+            <Foundation name="home" size={32} color={color} />
           ),
           tabBarShowLabel: false,
-          // tabBarActiveBackgroundColor: "gray",
+          tabBarActiveTintColor: "#0B0B0B",
+          tabBarInactiveTintColor: "#B1B1B1",
         }}
       />
       <Tab.Screen
@@ -66,14 +49,12 @@ export default function MainScreen({ navigation, route }) {
         component={AlbumScreen}
         options={{
           headerShown: false,
-          tabBarIcon: () => (
-            <Image
-              source={require("../assets/img/navbarIcon/album.png")}
-              style={styles.icon}
-            />
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name="image" size={32} color={color} />
           ),
           tabBarShowLabel: false,
-          // tabBarActiveBackgroundColor: "gray",
+          tabBarActiveTintColor: "#0B0B0B",
+          tabBarInactiveTintColor: "#B1B1B1",
         }}
       />
       <Tab.Screen
@@ -81,14 +62,12 @@ export default function MainScreen({ navigation, route }) {
         component={ChatRoom}
         options={{
           headerShown: false,
-          tabBarIcon: () => (
-            <Image
-              source={require("../assets/img/navbarIcon/chat.png")}
-              style={styles.chat}
-            />
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="chatbubbles" size={32} color={color} />
           ),
           tabBarShowLabel: false,
-          // tabBarActiveBackgroundColor: "gray",
+          tabBarActiveTintColor: "#0B0B0B",
+          tabBarInactiveTintColor: "#B1B1B1",
         }}
       />
       <Tab.Screen
@@ -96,14 +75,12 @@ export default function MainScreen({ navigation, route }) {
         component={CalendarScreen}
         options={{
           headerShown: false,
-          tabBarIcon: () => (
-            <Image
-              source={require("../assets/img/navbarIcon/calendar.png")}
-              style={styles.icon}
-            />
+          tabBarIcon: ({color}) => (
+            <MaterialCommunityIcons name="calendar-heart" size={32} color={color} />
           ),
           tabBarShowLabel: false,
-          // tabBarActiveBackgroundColor: "gray",
+          tabBarActiveTintColor: "#0B0B0B",
+          tabBarInactiveTintColor: "#B1B1B1",
         }}
       />
       <Tab.Screen
@@ -111,14 +88,12 @@ export default function MainScreen({ navigation, route }) {
         component={Attendance}
         options={{
           headerShown: false,
-          tabBarIcon: () => (
-            <Image
-              source={require("../assets/img/navbarIcon/alarm.png")}
-              style={styles.icon}
-            />
+          tabBarIcon: ({color}) => (
+            <Ionicons name="ios-planet" size={32} color={color} />
           ),
           tabBarShowLabel: false,
-          // tabBarActiveBackgroundColor: "gray",
+          tabBarActiveTintColor: "#0B0B0B",
+          tabBarInactiveTintColor: "#B1B1B1",
         }}
       />
       {/* <Tab.Screen
@@ -167,21 +142,6 @@ export default function MainScreen({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-  icon: {
-    // marginTop: 6,
-    flex: 1,
-    width: SCREEN_WIDTH * 0.13,
-    height: SCREEN_HEIGHT * 0.1,
-    resizeMode: "contain",
-  },
-  chat: {
-    paddingTop: 13,
-    marginLeft: 5,
-    flex: 1,
-    width: SCREEN_WIDTH * 0.19,
-    height: SCREEN_HEIGHT * 0.16,
-    resizeMode: "contain",
-  },
   tabBar: {
     backgroundColor: "#fff",
     height: Platform.OS === "ios" ? SCREEN_HEIGHT * 0.08 : SCREEN_HEIGHT * 0.09,

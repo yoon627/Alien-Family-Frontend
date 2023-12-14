@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, {useEffect, useRef, useState, useCallback} from "react";
 import {
   Alert,
   Animated,
-  Dimensions,
+  Dimensions, Image,
   ImageBackground,
   KeyboardAvoidingView,
   Modal,
@@ -19,10 +19,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import MarqueeText from "react-native-marquee";
 import axios from "axios";
 import * as Notifications from "expo-notifications";
-import { useFocusEffect } from "@react-navigation/native";
+import {useFocusEffect} from "@react-navigation/native";
 import * as Permissions from "expo-permissions";
 import ExpoFastImage from "expo-fast-image";
-import { Bold } from "lucide-react-native";
+import {Bold} from "lucide-react-native";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -32,7 +32,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
 const fontRatio = SCREEN_HEIGHT / 800;
 
 const Container = styled.View`
@@ -56,6 +56,25 @@ export default function Home({ navigation, fonts, route }) {
   const [plantPoint, setPlantPoint] = useState(0);
   const [plantModal, setPlantModal] = useState(false);
   const [levelUp, setLevelUp] = useState(false);
+  const [attendance, setAttendance] = useState(false);
+
+  const rotateAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.timing(rotateAnim, {
+        toValue: 1,
+        duration: 3500,
+        useNativeDriver: true,
+      })
+    ).start();
+  }, [rotateAnim]);
+
+  const rotate = rotateAnim.interpolate({
+    inputRange: [0, 0.5],
+    outputRange: ["0deg", "360deg"],
+  });
+
   const openModal = () => {
     setTMI(""); // 모달 열릴 때 tmi 초기화
     setModalVisible(true);
@@ -218,7 +237,7 @@ export default function Home({ navigation, fonts, route }) {
         const randomIndex = Math.floor(Math.random() * todayMissions.length);
         await AsyncStorage.setItem(
           "todayMission",
-          JSON.stringify({ [str_today]: todayMissions[randomIndex] })
+          JSON.stringify({[str_today]: todayMissions[randomIndex]})
         );
         await AsyncStorage.setItem("todayMissionClear", "false");
         await AsyncStorage.setItem("dailyMissionClear", "false");
@@ -227,7 +246,7 @@ export default function Home({ navigation, fonts, route }) {
       const randomIndex = Math.floor(Math.random() * todayMissions.length);
       await AsyncStorage.setItem(
         "todayMission",
-        JSON.stringify({ [str_today]: todayMissions[randomIndex] })
+        JSON.stringify({[str_today]: todayMissions[randomIndex]})
       );
       await AsyncStorage.setItem("todayMissionClear", "false");
       await AsyncStorage.setItem("dailyMissionClear", "false");
@@ -249,7 +268,7 @@ export default function Home({ navigation, fonts, route }) {
         const tmis = resp.data;
         var mytmi = "";
         for (let i = 0; i < tmis.length; i++) {
-          mytmi = mytmi + tmis[i].writer + ": " + tmis[i].content + "  ";
+          mytmi = mytmi + tmis[i].writer + " - " + tmis[i].content + " ,  ";
         }
         setTodayTMI(mytmi);
       })
@@ -395,13 +414,13 @@ export default function Home({ navigation, fonts, route }) {
             style={styles.plant}
           />
         );
-        case 5:
-          return (
-            <ExpoFastImage
-              source={require("../assets/img/level_5.png")}
-              style={styles.plant}
-            />
-          );
+      case 5:
+        return (
+          <ExpoFastImage
+            source={require("../assets/img/level_5.png")}
+            style={styles.plant}
+          />
+        );
       // 추가 레벨에 따른 이미지 케이스
       default:
         return (
@@ -471,7 +490,7 @@ export default function Home({ navigation, fonts, route }) {
         <Container>
           <View style={styles.tmiTool}>
             <ExpoFastImage
-              source={require("../assets/img/tmiTool.png")}
+              source={require("../assets/img/tmiTool2.png")}
               style={{
                 width: SCREEN_WIDTH * 0.85,
                 height: SCREEN_HEIGHT * 0.5,
@@ -511,24 +530,23 @@ export default function Home({ navigation, fonts, route }) {
             </TouchableOpacity>
           </View>
           <View
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            style={{flex: 1, justifyContent: "center", alignItems: "center"}}
           ></View>
           <View style={styles.alien}>{movingObject()}</View>
           {levelUp ? (
-            <Text
+            <View
               style={{
-                fontSize: 60,
-                fontWeight: "900",
-                color: "red",
-                justifyContent: "center",
-                alignItems: "center",
-                left: 195,
-                top: 490,
                 position: "absolute",
-              }}
-            >
-              !
-            </Text>
+                left: "19%",
+                top: "71%",
+              }}>
+              <Animated.View style={[{transform: [{rotate}]}]}>
+                <Image
+                  style={{width: 240, height: 240, resizeMode: "contain"}}
+                  source={require('../assets/img/halo.png')}
+                />
+              </Animated.View>
+            </View>
           ) : null}
           <View style={styles.bottomContainer}>
             <TouchableOpacity
@@ -576,7 +594,7 @@ export default function Home({ navigation, fonts, route }) {
                         textAlign: "center",
                       }}
                     />
-                    <View style={{ flexDirection: "row", marginVertical: 10 }}>
+                    <View style={{flexDirection: "row", marginVertical: 10}}>
                       <Pressable
                         style={[styles.button, styles.buttonWrite]}
                         onPress={async () => {
@@ -620,7 +638,7 @@ export default function Home({ navigation, fonts, route }) {
                           }
                         }}
                       >
-                        <Text style={{ ...styles.textStyle, color: "#fff" }}>
+                        <Text style={{...styles.textStyle, color: "#fff"}}>
                           작성
                         </Text>
                       </Pressable>
@@ -631,7 +649,7 @@ export default function Home({ navigation, fonts, route }) {
                           setModalVisible(!modalVisible);
                         }}
                       >
-                        <Text style={{ ...styles.textStyle, color: "#555456" }}>
+                        <Text style={{...styles.textStyle, color: "#555456"}}>
                           취소
                         </Text>
                       </Pressable>
@@ -649,6 +667,7 @@ export default function Home({ navigation, fonts, route }) {
             >
               <TouchableOpacity
                 onPress={async () => {
+                  setAttendance(true);
                   const SERVER_ADDRESS = await AsyncStorage.getItem(
                     "ServerAddress"
                   );
@@ -683,8 +702,20 @@ export default function Home({ navigation, fonts, route }) {
                     .catch((e) => console.log(e));
                 }}
               >
+                {!attendance &&
+                  <ExpoFastImage
+                    style={{width: 80, height: 80, resizeMode: "contain", bottom: -120,}}
+                    source={require('../assets/img/check.png')}
+                  />
+                }
+                {attendance &&
+                  <ExpoFastImage
+                    style={{width: 80, height: 80, resizeMode: "contain", bottom: -120,}}
+                    source={require('../assets/img/check_complete.png')}
+                  />
+                }
                 <ExpoFastImage
-                  source={require("../assets/img/wateringCan3.png")}
+                  source={require("../assets/img/wateringCan.png")}
                   style={styles.wateringCan}
                 />
               </TouchableOpacity>
@@ -717,12 +748,17 @@ const styles = StyleSheet.create({
   },
   marqueeWrapper: {
     alignItems: "center",
-    width: SCREEN_WIDTH * 0.7,
+    width: SCREEN_WIDTH * 0.8,
     overflow: "hidden", // 영역을 벗어난 부분 숨기기
   },
   marqueeText: {
-    marginTop: Platform.OS === "ios" ? 5 : 9,
-    fontSize: 20,
+    marginTop: Platform.OS === 'ios' ? 5 : 9,
+    fontSize: 28,
+    color: "#BDEDC8",
+    fontFamily: "neo",
+    textShadowColor: 'yellow',
+    textShadowOffset: {width: 0, height: 0},
+    textShadowRadius: 5,
   },
   container: {
     flex: 1,

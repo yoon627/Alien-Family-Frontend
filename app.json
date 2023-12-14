@@ -4,7 +4,7 @@
     "slug": "UFO-Front",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/img/loginScreen.png",
     "userInterfaceStyle": "automatic",
     "plugins": [
       [
@@ -25,7 +25,7 @@
       ]
     ],
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/img/loginScreen.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -65,7 +65,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "5c2d898c-1258-4e8d-8924-8dc561dc38b1"
+        "projectId": "c420dc44-45d7-4111-8e52-12f1bf4e79f7"
       }
     }
   }

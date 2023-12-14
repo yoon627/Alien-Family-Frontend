@@ -683,16 +683,15 @@ export default function PlantInfo({ navigation }) {
 
         {isDayMission && (
           <View style={styles.box}>
-            <Text
-              style={{
-                ...styles.missionText,
-                fontFamily: "doss",
-                paddingVertical: 8,
-                textShadowColor: "#B1B0B0",
-                textShadowOffset: { width: 1, height: 1 },
-                textShadowRadius: 5,
-              }}
-            >
+            <Text style={{
+              ...styles.missionText,
+              fontFamily: "doss",
+              paddingVertical: 8,
+              textShadowColor: '#B1B0 B0',
+              textShadowOffset: {width: 1, height: 1},
+              textShadowRadius: 5,
+              paddingBottom: 15,
+            }}>
               일일 미션
             </Text>
             <View style={styles.missionImageContainer}>
@@ -860,7 +859,7 @@ export default function PlantInfo({ navigation }) {
             }}
           >
             <Image
-              source={require("../assets/img/wateringCan3.png")}
+              source={require("../assets/img/wateringCan.png")}
               style={{
                 width: SCREEN_WIDTH * 0.17,
                 height: SCREEN_WIDTH * 0.17,
