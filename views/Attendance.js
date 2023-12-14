@@ -199,7 +199,7 @@ export default function Attendance({navigation}) {
                       )}
                   </View>
                   <ImageBackground
-                    source={require("../assets/img/img.png")}
+                    source={require("../assets/img/star.png")}
                     imageStyle={{resizeMode: "contain"}}
                     style={styles.big_star}
                   >
@@ -219,7 +219,7 @@ export default function Attendance({navigation}) {
                       {/* TMI */}
 
                       <View key={index} style={{flexDirection: "row",}}>
-                        <Text style={{...styles.tmi_txt, fontFamily: "jamsil2", fontSize: 19, paddingRight: 0,}}>
+                        <Text style={{...styles.tmi_txt, fontSize: 19, paddingRight: 0,}}>
                           {tmi.split(":")[0]}
                         </Text>
                         <View>
@@ -240,15 +240,6 @@ export default function Attendance({navigation}) {
           ))}
           <View style={{marginBottom: 70,}}></View>
         </ScrollView>
-        <View style={{position: "absolute", top: 30, left: 25}}>
-          <TouchableOpacity
-            onPress={() => navigation.pop()}>
-            <Image
-              style={styles.exit}
-              source={require('../assets/img/out.png')}
-            />
-          </TouchableOpacity>
-        </View>
       </View>
     </ImageBackground>
   );
@@ -257,19 +248,19 @@ export default function Attendance({navigation}) {
 const styles = StyleSheet.create({
   month: {
     color: "#fff",
-    fontSize: 30,
+    fontSize: 32,
     fontFamily: "doss",
     textAlign: "center",
     paddingTop: 7,
     paddingBottom: 10,
-    textShadowColor: '#FFFBEF',
-    textShadowOffset: {width: 1, height: 1},
-    textShadowRadius: 5,
+    // textShadowColor: '#FFFBEF',
+    // textShadowOffset: {width: 0, height: 0},
+    // textShadowRadius: 5,
   },
   attendance_container: {
     alignContent: "center",
     flexDirection: "row",
-    paddingTop: 20,
+    paddingTop: 5,
     alignItems: "center",
   },
   star_container: {
@@ -323,10 +314,5 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingRight: 20,
     maxWidth: SCREEN_WIDTH * 0.45,
-  },
-  exit: {
-    width: SCREEN_WIDTH * 0.06,
-    height: SCREEN_WIDTH * 0.06,
-    resizeMode: "contain",
   },
 });

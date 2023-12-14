@@ -429,19 +429,6 @@ export default function AlbumScreen({navigation}) {
             }}
             contentContainerStyle={styles.flatListContentContainer}
           />
-          {/*<TouchableOpacity*/}
-          {/*  style={styles.imagePlusContainer}*/}
-          {/*  onPress={modalOpen}*/}
-          {/*>*/}
-          {/*  <Image*/}
-          {/*    source={require("../assets/img/plus.png")}*/}
-          {/*    style={{*/}
-          {/*      width: SCREEN_WIDTH * 0.13,*/}
-          {/*      height: SCREEN_WIDTH * 0.13,*/}
-          {/*      resizeMode: "contain",*/}
-          {/*    }}*/}
-          {/*  />*/}
-          {/*</TouchableOpacity>*/}
         </Fragment>
       ) : (
         <ImageUploadForm
@@ -493,8 +480,8 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
   },
   selectedTagItem: {
-    borderColor: "#CFD3F6",
-    backgroundColor: "#CFD3F6",
+    borderColor: "#E0EBF2",
+    backgroundColor: "#E0EBF2",
   },
   flatListContentContainer: {
     paddingLeft: 5,
