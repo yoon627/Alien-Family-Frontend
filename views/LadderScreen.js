@@ -55,48 +55,38 @@ function LadderScreen({navigation}) {
     <View style={styles.container}>
       <Text style={styles.title}>사다리 게임 </Text>
       <TouchableOpacity
-        style={{position: "absolute", left: "5%", top: "5%"}}
+        style={{position: "absolute", left: "5%", top: "6%"}}
         onPress={() => navigation.pop()}>
         <Image
           style={{width: 20, height: 20, resizeMode: "contain"}}
           source={require('../assets/img/out.png')}/>
       </TouchableOpacity>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "flex-start"
-        }}
-      >
-        <TouchableOpacity style={styles.button} onPress={onPress2}>
-          <Text style={styles.btnText}>-</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.button} onPress={onPress}>
-          <Text style={styles.btnText}>+</Text>
-        </TouchableOpacity>
-      {!showSadari && (
-        <TouchableOpacity style={{position: "absolute", top: "10%"}} onPress={toggleSadari}>
-          <Text>선택 완료</Text>
-        </TouchableOpacity>
-      )}
-      </View>
 
       {/* 이름 목록 */}
       {!showSadari && (
-        <View style={styles.nameListContainer}>
-          {name.map((n, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[
-                styles.nameItem,
-                selectedNames.includes(n) ? styles.selectedItem : null,
-              ]}
-              onPress={() => toggleName(n)}
-            >
-              <Text>{n}</Text>
-            </TouchableOpacity>
-          ))}
+        <View style={{alignItems: "center", justifyContent: "center",}}>
+          <View style={styles.nameListContainer}>
+            {name.map((n, index) => (
+              <TouchableOpacity
+                key={index}
+                style={[
+                  styles.nameItem,
+                  selectedNames.includes(n) ? styles.selectedItem : null,
+                ]}
+                onPress={() => toggleName(n)}
+              >
+                <Text style={{ fontSize: 18, fontFamily: "wooju", color: selectedNames.includes(n) ? 'white' : 'black' }}>
+                  {n}
+                </Text>
+              </TouchableOpacity>
+
+            ))}
+          </View>
+          <TouchableOpacity style={{marginTop: "20%"}} onPress={toggleSadari}>
+            <Text style={{fontSize: 20, fontFamily: "dnf", color: "#3F3CF2"}}>선택 완료!</Text>
+          </TouchableOpacity>
         </View>
+
       )}
 
       {showSadari && (
@@ -117,18 +107,16 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   title: {
-    fontSize: 20,
+    fontSize: 28,
     fontFamily: "dnf",
-    paddingTop: "10%",
+    paddingTop: "12%",
     paddingBottom: 10,
   },
   button: {
-    backgroundColor: "#B9AAD3", // 버튼 색상
-    // paddingVertical: 10, // 세로 패딩
-    // paddingHorizontal: 10, // 가로 패딩
-    borderRadius: 50, // 테두리 둥글게
+    backgroundColor: "#B9AAD3",
+    borderRadius: 50,
     alignItems: "center",
-    marginVertical: 5, // 버튼 간의 수직 마진
+    marginVertical: 5,
     justifyContent: "space-between",
     marginHorizontal: 5,
     marginBottom: 20,
@@ -140,27 +128,31 @@ const styles = StyleSheet.create({
     color: "white",
   },
   bottomView: {
-    position: "absolute", // 절대 위치 사용
-    bottom: 100, // 화면의 바닥에 위치
-    width: "100%", // 너비를 화면 전체로 설정
+    position: "absolute",
+    bottom: 100,
+    width: "100%",
     alignItems: "center",
   },
   nameItem: {
-    padding: 10,
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#cd0beb",
-    margin: 5,
-    borderRadius: 5,
+    borderColor: "#ccc",
+    marginHorizontal: 5,
+    marginVertical: 5,
   },
   selectedItem: {
-    backgroundColor: "#cd0beb",
+    borderColor: "#B9AAD3",
+    backgroundColor: "#B9AAD3",
   },
   nameListContainer: {
-    flexDirection: "row", // 이름 목록을 가로 방향으로 나열
+    flexDirection: "row",
     flexWrap: "wrap", // 내용이 넘치면 다음 줄로 넘어가도록 설정
     alignItems: "center",
     justifyContent: "center",
-    top: "25%",
+    top: "10%",
   },
 });
 

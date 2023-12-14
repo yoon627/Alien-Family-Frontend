@@ -2,7 +2,8 @@ import React, {useEffect, useRef, useState, useCallback} from "react";
 import {
   Alert,
   Animated,
-  Dimensions, Image,
+  Dimensions,
+  Image,
   ImageBackground,
   KeyboardAvoidingView,
   Modal,
@@ -21,7 +22,6 @@ import axios from "axios";
 import * as Notifications from "expo-notifications";
 import {useFocusEffect} from "@react-navigation/native";
 import * as Permissions from "expo-permissions";
-import ExpoFastImage from "expo-fast-image";
 import {Bold} from "lucide-react-native";
 
 Notifications.setNotificationHandler({
@@ -55,7 +55,7 @@ export default function Home({navigation, fonts}) {
   const [plantName, setPlantName] = useState(null);
   const [plantPoint, setPlantPoint] = useState(0);
   const [plantModal, setPlantModal] = useState(false);
-  const [levelUp, setLevelUp] = useState(false);
+  const [levelUp, setLevelUp] = useState(true);
   const [attendance, setAttendance] = useState(false);
 
   const rotateAnim = useRef(new Animated.Value(0)).current;
@@ -122,7 +122,7 @@ export default function Home({navigation, fonts}) {
       <View>
         <TouchableOpacity onPress={() => navigation.navigate("Mini Games")}>
           {alienType.trim() === "BASIC" ? (
-            <ExpoFastImage
+            <Image
               source={require(`../assets/img/character/BASIC.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -131,7 +131,7 @@ export default function Home({navigation, fonts}) {
               }}
             />
           ) : alienType === "GLASSES" ? (
-            <ExpoFastImage
+            <Image
               source={require(`../assets/img/character/GLASSES.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -140,7 +140,7 @@ export default function Home({navigation, fonts}) {
               }}
             />
           ) : alienType === "GIRL" ? (
-            <ExpoFastImage
+            <Image
               source={require(`../assets/img/character/GIRL.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -149,7 +149,7 @@ export default function Home({navigation, fonts}) {
               }}
             />
           ) : alienType === "BAND_AID" ? (
-            <ExpoFastImage
+            <Image
               source={require(`../assets/img/character/BAND_AID.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -158,7 +158,7 @@ export default function Home({navigation, fonts}) {
               }}
             />
           ) : alienType === "RABBIT" ? (
-            <ExpoFastImage
+            <Image
               source={require(`../assets/img/character/RABBIT.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -167,7 +167,7 @@ export default function Home({navigation, fonts}) {
               }}
             />
           ) : alienType === "HEADBAND" ? (
-            <ExpoFastImage
+            <Image
               source={require(`../assets/img/character/HEADBAND.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -176,7 +176,7 @@ export default function Home({navigation, fonts}) {
               }}
             />
           ) : alienType === "TOMATO" ? (
-            <ExpoFastImage
+            <Image
               source={require(`../assets/img/character/TOMATO.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -185,7 +185,7 @@ export default function Home({navigation, fonts}) {
               }}
             />
           ) : alienType === "CHRISTMAS_TREE" ? (
-            <ExpoFastImage
+            <Image
               source={require(`../assets/img/character/CHRISTMAS_TREE.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -194,7 +194,7 @@ export default function Home({navigation, fonts}) {
               }}
             />
           ) : alienType === "SANTA" ? (
-            <ExpoFastImage
+            <Image
               source={require(`../assets/img/character/SANTA.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -203,7 +203,7 @@ export default function Home({navigation, fonts}) {
               }}
             />
           ) : (
-            <ExpoFastImage
+            <Image
               source={require(`../assets/img/character/PIRATE.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -375,7 +375,7 @@ export default function Home({navigation, fonts}) {
     switch (plantLevel) {
       case 0:
         return (
-          <ExpoFastImage
+          <Image
             source={require("../assets/img/level_0.png")}
             style={styles.plant}
           />
@@ -383,7 +383,7 @@ export default function Home({navigation, fonts}) {
 
       case 1:
         return (
-          <ExpoFastImage
+          <Image
             source={require("../assets/img/level_1.png")}
             style={styles.plant}
           />
@@ -391,7 +391,7 @@ export default function Home({navigation, fonts}) {
 
       case 2:
         return (
-          <ExpoFastImage
+          <Image
             source={require("../assets/img/level_2.png")}
             style={styles.plant}
           />
@@ -399,7 +399,7 @@ export default function Home({navigation, fonts}) {
 
       case 3:
         return (
-          <ExpoFastImage
+          <Image
             source={require("../assets/img/level_3.png")}
             style={styles.plant}
           />
@@ -407,14 +407,14 @@ export default function Home({navigation, fonts}) {
 
       case 4:
         return (
-          <ExpoFastImage
+          <Image
             source={require("../assets/img/level_4.png")}
             style={styles.plant}
           />
         );
       case 5:
         return (
-          <ExpoFastImage
+          <Image
             source={require("../assets/img/level_5.png")}
             style={styles.plant}
           />
@@ -422,7 +422,7 @@ export default function Home({navigation, fonts}) {
       // 추가 레벨에 따른 이미지 케이스
       default:
         return (
-          <ExpoFastImage
+          <Image
             source={require("../assets/img/level_4.png")}
             style={styles.plant}
           />
@@ -477,7 +477,7 @@ export default function Home({navigation, fonts}) {
       >
         <Container>
           <View style={styles.tmiTool}>
-            <ExpoFastImage
+            <Image
               source={require("../assets/img/tmiTool2.png")}
               style={{
                 width: SCREEN_WIDTH * 0.85,
@@ -487,7 +487,6 @@ export default function Home({navigation, fonts}) {
             />
             <View style={styles.tmiContainer}>
               <View style={styles.marqueeWrapper}>
-                <TouchableOpacity>
                   <MarqueeText
                     onPress={() => navigation.navigate("Attendance")}
                     style={styles.marqueeText}
@@ -498,7 +497,6 @@ export default function Home({navigation, fonts}) {
                   >
                     {todayTMI ? todayTMI : "오늘의 첫 TMI를 작성해주세요!"}
                   </MarqueeText>
-                </TouchableOpacity>
               </View>
             </View>
           </View>
@@ -525,8 +523,8 @@ export default function Home({navigation, fonts}) {
             <View
               style={{
                 position: "absolute",
-                left: "19%",
-                top: "71%",
+                left: "20%",
+                top: "72%",
               }}>
               <Animated.View style={[{transform: [{rotate}]}]}>
                 <Image
@@ -622,6 +620,7 @@ export default function Home({navigation, fonts}) {
                               .catch(function (error) {
                                 console.log("server error", error);
                               });
+                            Alert.alert("등록 완료!");
                             setModalVisible(!modalVisible);
                           }
                         }}
@@ -691,18 +690,18 @@ export default function Home({navigation, fonts}) {
                 }}
               >
                 {!attendance &&
-                  <ExpoFastImage
+                  <Image
                     style={{width: 80, height: 80, resizeMode: "contain", bottom: -120,}}
                     source={require('../assets/img/check.png')}
                   />
                 }
                 {attendance &&
-                  <ExpoFastImage
+                  <Image
                     style={{width: 80, height: 80, resizeMode: "contain", bottom: -120,}}
                     source={require('../assets/img/check_complete.png')}
                   />
                 }
-                <ExpoFastImage
+                <Image
                   source={require("../assets/img/wateringCan.png")}
                   style={styles.wateringCan}
                 />
@@ -736,7 +735,7 @@ const styles = StyleSheet.create({
   },
   marqueeWrapper: {
     alignItems: "center",
-    width: SCREEN_WIDTH * 0.8,
+    width: SCREEN_WIDTH * 0.7,
     overflow: "hidden", // 영역을 벗어난 부분 숨기기
   },
   marqueeText: {
@@ -814,8 +813,7 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     position: "absolute",
-    bottom: 40,
-    // backgroundColor: "green",
+    bottom: "10%",
     height: 140,
   },
   plant: {
@@ -825,7 +823,7 @@ const styles = StyleSheet.create({
   },
   alien: {
     position: "absolute",
-    bottom: "22%",
+    bottom: "25%",
   },
   plantModalContainer: {
     flex: 1,
