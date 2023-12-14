@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
   Dimensions,
   Image,
@@ -16,9 +16,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import LottieView from "lottie-react-native";
 import axios from "axios";
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
 
-export default function ImageUploadForm({ uri, onUploadComplete }) {
+export default function ImageUploadForm({uri, onUploadComplete}) {
   const [photoTags, setPhotoTags] = useState([]);
   const [description, setDescription] = useState("");
   const [tagList, setTagList] = useState([]);
@@ -159,7 +159,7 @@ export default function ImageUploadForm({ uri, onUploadComplete }) {
             );
             await AsyncStorage.setItem(
               "todayMission",
-              JSON.stringify({ [str_today]: todayMissions[randomIndex] })
+              JSON.stringify({[str_today]: todayMissions[randomIndex]})
             );
             if (
               test[str_today] === "사진 찍어서 올리기" ||
@@ -185,7 +185,7 @@ export default function ImageUploadForm({ uri, onUploadComplete }) {
           const randomIndex = Math.floor(Math.random() * todayMissions.length);
           await AsyncStorage.setItem(
             "todayMission",
-            JSON.stringify({ [str_today]: todayMissions[randomIndex] })
+            JSON.stringify({[str_today]: todayMissions[randomIndex]})
           );
           if (
             test[str_today] === "사진 찍어서 올리기" ||
@@ -225,10 +225,10 @@ export default function ImageUploadForm({ uri, onUploadComplete }) {
       <ScrollView contentContainerStyle={styles.container}>
         <Image
           style={styles.uploadImage}
-          source={{ uri: uri }}
+          source={{uri: uri}}
           resizeMode="contain"
         />
-        <View style={{ height: 20 }} />
+        <View style={{height: 20}}/>
         <View style={styles.tagButtonsContainer}>
           {tagList.map((tag, index) => (
             <Pressable
@@ -236,7 +236,7 @@ export default function ImageUploadForm({ uri, onUploadComplete }) {
               style={[
                 styles.tagButton,
                 photoTags.includes(tag) && styles.tagButtonSelected,
-                index !== tagList.length - 1 && { marginRight: 10 },
+                index !== tagList.length - 1 && {marginRight: 10},
               ]}
               onPress={() => toggleTag(tag)}
             >
@@ -258,18 +258,19 @@ export default function ImageUploadForm({ uri, onUploadComplete }) {
           placeholder="문구를 입력하세요..."
           multiline
         />
-        <View style={{ flexDirection: "row", marginVertical: 10 }}>
+        {/*<View style={{marginTop: 30}}/>*/}
+        <View style={{flexDirection: "row", marginVertical: 10}}>
           <TouchableOpacity
             style={[styles.button, styles.buttonWrite]}
             onPress={uploadToServer}
           >
-            <Text style={{ ...styles.textStyle, color: "#fff" }}>공유</Text>
+            <Text style={{...styles.textStyle, color: "#fff"}}>공유</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.button, styles.buttonClose]}
             onPress={onUploadComplete}
           >
-            <Text style={{ ...styles.textStyle, color: "#555456" }}>취소</Text>
+            <Text style={{...styles.textStyle, color: "#555456"}}>취소</Text>
           </TouchableOpacity>
         </View>
         {isLoading && (
@@ -299,7 +300,7 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    width: "85%",
+    width: "80%",
     borderColor: "#C1BABD",
     borderWidth: 1,
     borderRadius: 10,
