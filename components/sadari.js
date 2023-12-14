@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
   Animated,
   Dimensions,
@@ -16,28 +16,28 @@ import { Client } from "@stomp/stompjs";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height; // 디바이스의 높이
 const imageUriArray = [
-  { name: "BASIC", image: require("../assets/img/character/BASIC.png") },
-  { name: "GLASSES", image: require("../assets/img/character/GLASSES.png") },
-  { name: "GIRL", image: require("../assets/img/character/GIRL.png") },
+  {name: "BASIC", image: require("../assets/img/character/BASIC.png")},
+  {name: "GLASSES", image: require("../assets/img/character/GLASSES.png")},
+  {name: "GIRL", image: require("../assets/img/character/GIRL.png")},
   {
     name: "BAND_AID",
     image: require("../assets/img/character/BAND_AID.png"),
   },
-  { name: "RABBIT", image: require("../assets/img/character/RABBIT.png") },
+  {name: "RABBIT", image: require("../assets/img/character/RABBIT.png")},
   {
     name: "HEADBAND",
     image: require("../assets/img/character/HEADBAND.png"),
   },
-  { name: "TOMATO", image: require("../assets/img/character/TOMATO.png") },
+  {name: "TOMATO", image: require("../assets/img/character/TOMATO.png")},
   {
     name: "CHRISTMAS_TREE",
     image: require("../assets/img/character/CHRISTMAS_TREE.png"),
   },
-  { name: "SANTA", image: require("../assets/img/character/SANTA.png") },
-  { name: "PIRATE", image: require("../assets/img/character/PIRATE.png") },
+  {name: "SANTA", image: require("../assets/img/character/SANTA.png")},
+  {name: "PIRATE", image: require("../assets/img/character/PIRATE.png")},
 ];
 
-const Sadari = ({ cnt, name, familyInfo }) => {
+const Sadari = ({cnt, name, familyInfo}) => {
   const [positions, setPositions] = useState([]);
   const [horizontalLines, setHorizontalLines] = useState([]);
   const [columnsWithHorizontalLines, setColumnsWithHorizontalLines] = useState(
@@ -133,11 +133,26 @@ const Sadari = ({ cnt, name, familyInfo }) => {
           : "No result";
 
       return (
-        <View key={`result-${i}`} style={styles.resultRow}>
-          <Text>
-            {name[i]} ----> {resultText}
+        <View
+          key={`result-${i}`}
+          style={styles.resultRow}
+        >
+          <Text style={{fontSize: 18, fontFamily: "dnf", width: "40%"}}>
+            {name[i]}
+          </Text>
+          <View style={{width: "20%"}}>
+            <FontAwesome name="arrow-right" size={24} color="#4E4D4D"/>
+          </View>
+          <Text style={{
+            fontSize: 18,
+            fontFamily: "dnf",
+            width: "30%",
+            color: resultText === "꽝" ? "#CC1F34" : "#3C38DA",
+          }}>
+            {resultText}
           </Text>
         </View>
+
       );
     });
   };
@@ -145,7 +160,7 @@ const Sadari = ({ cnt, name, familyInfo }) => {
   useEffect(() => {
     const newPositions = Array(cnt)
       .fill()
-      .map(() => new Animated.ValueXY({ x: 0, y: 0 }));
+      .map(() => new Animated.ValueXY({x: 0, y: 0}));
     setPositions(newPositions);
 
     const newHorizontalLines = [];
@@ -182,7 +197,7 @@ const Sadari = ({ cnt, name, familyInfo }) => {
       }
       setUserTexts((prevTexts) => {
         const newTexts = [...prevTexts];
-        newTexts[i + 1] = "통과";
+        newTexts[i + 1] = "PASS";
         return newTexts;
       });
     }
@@ -291,8 +306,8 @@ const Sadari = ({ cnt, name, familyInfo }) => {
         style={{
           position: "absolute",
           width: columnWidth,
-          height: 10,
-          backgroundColor: "black",
+          height: 7,
+          backgroundColor: "#A86250",
           left: line.fromColumn === index ? columnWidth / 2 : -columnWidth / 2,
           top: line.yPosition,
           zIndex: 0,
@@ -351,7 +366,7 @@ const Sadari = ({ cnt, name, familyInfo }) => {
   };
 
   return (
-    <View style={{ flex: 1, flexDirection: "column" }}>
+    <View style={{flex: 1, flexDirection: "column"}}>
       <View
         style={{
           flexDirection: "row",
@@ -373,9 +388,9 @@ const Sadari = ({ cnt, name, familyInfo }) => {
             <View
               style={{
                 position: "absolute",
-                width: 10,
+                width: 7,
                 height: ladderHeight,
-                backgroundColor: "black",
+                backgroundColor: "#A86250",
                 left: columnWidth / 2 - 5,
                 top: 90,
                 zIndex: 0,
@@ -384,13 +399,13 @@ const Sadari = ({ cnt, name, familyInfo }) => {
 
             <TouchableOpacity
               onPress={() => moveImage(i)}
-              style={{ position: "absolute", zIndex: 100 }}
+              style={{position: "absolute", zIndex: 100}}
             >
               <Animated.View
                 style={{
                   transform: [
-                    { translateX: position.x },
-                    { translateY: position.y },
+                    {translateX: position.x},
+                    {translateY: position.y},
                   ],
                   zIndex: 100,
                 }}
@@ -398,8 +413,9 @@ const Sadari = ({ cnt, name, familyInfo }) => {
                 <Image
                   source={findImageByName(name[i])}
                   style={{
-                    width: 50,
-                    height: 50,
+                    width: 70,
+                    height: 70,
+                    resizeMode: "contain",
                     margin: 5,
                     zIndex: 100,
                   }}
@@ -409,13 +425,15 @@ const Sadari = ({ cnt, name, familyInfo }) => {
             <TextInput
               style={{
                 position: "absolute",
-                top: ladderHeight + 100,
-                left: columnWidth / 2 - 10,
+                top: ladderHeight + 130,
+                left: columnWidth / 2 - 15,
                 color: "black",
                 width: 100,
                 height: 40,
                 borderColor: "black",
                 borderWidth: 0,
+                fontWeight: "bold",
+                fontSize: 20,
               }}
               onChangeText={(text) => handleUserTextChange(text, i)}
               value={userTexts[i]}
@@ -424,23 +442,31 @@ const Sadari = ({ cnt, name, familyInfo }) => {
         ))}
       </View>
 
+      {}
       <View
         style={{
-          top: "65%",
           flex: 1,
-          flexDirection: "row",
+          justifyContent: "center",
+          alignItems: "center",
+          top: "60%"
         }}
       >
-        <View style={{ top: "65%", alignItems: "left", left: 50 }}>
-          <TouchableOpacity
-            onPress={moveAllImages}
-            style={{ marginTop: 20, left: 200 }}
-          >
-            <Text style={{ color: "black" }}>다같이 !!</Text>
+        <View style={styles.button}>
+          <TouchableOpacity onPress={openModal}>
+            <Text style={styles.btnText}>결과 보기</Text>
           </TouchableOpacity>
         </View>
+      </View>
 
-        <View style={{ top: "45%", alignItems: "left", left: 50 }}>
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+
+        <View style={{ top: "65%", alignItems: "left", left: 50 }}>
           <TouchableOpacity
             style={{ marginTop: 20 }}
             onPress={() => {
@@ -448,6 +474,7 @@ const Sadari = ({ cnt, name, familyInfo }) => {
               sendResultLadder();
             }}
           >
+
             <Text>결과 공개</Text>
           </TouchableOpacity>
         </View>
@@ -460,9 +487,11 @@ const Sadari = ({ cnt, name, familyInfo }) => {
         onRequestClose={() => setIsModalVisible(false)}
       >
         <View style={styles.modalContent}>
-          {renderModalContent()}
+          <View>
+            {renderModalContent()}
+          </View>
           <TouchableOpacity onPress={() => setIsModalVisible(false)}>
-            <Text>Close</Text>
+            <Text style={{fontSize: 18, fontWeight: "bold", paddingTop: 10,}}>닫기</Text>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -470,7 +499,13 @@ const Sadari = ({ cnt, name, familyInfo }) => {
       {coverLadder && (
         <View style={styles.overlay}>
           <View style={styles.hiddenContent}>
-            <Text>가림막</Text>
+            <View style={{position: "absolute", top: "40%", right: "45%"}}>
+              <TouchableOpacity
+                onPress={moveAllImages}
+              >
+                <Text style={{fontSize: 24, fontFamily: "dnf", color: "white"}}>Start!</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       )}
@@ -480,22 +515,26 @@ const Sadari = ({ cnt, name, familyInfo }) => {
 
 const styles = StyleSheet.create({
   modalContent: {
-    top: 100,
-    backgroundColor: "white",
-    padding: 20,
-    margin: 50,
-    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    top: "25%",
+    backgroundColor: "#FFFDFD",
+    borderWidth: 1,
+    borderColor: "gray",
+    paddingVertical: 30,
+    margin: 75,
+    borderRadius: 30,
   },
   hiddenContent: {
     width: "90%",
     height: "60%",
-    backgroundColor: "#753497",
+    backgroundColor: "#B9AAD3",
     padding: 20,
     borderRadius: 10,
   },
   overlay: {
     position: "absolute",
-    top: 0,
+    top: 15,
     left: 0,
     right: 0,
     bottom: "25%",
@@ -503,9 +542,25 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-
   resultRow: {
-    marginBottom: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  button: {
+    backgroundColor: "#BF67BD",
+    borderRadius: 50,
+    alignItems: "center",
+  },
+  btnText: {
+    textAlign: "center",
+    fontFamily: "dnf",
+    fontSize: 24,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    color: "white"
   },
 });
 

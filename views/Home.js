@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, {useEffect, useRef, useState, useCallback} from "react";
 import {
   Alert,
   Animated,
-  Dimensions, Image,
+  Dimensions,
+  Image,
   ImageBackground,
   KeyboardAvoidingView,
   Modal,
@@ -19,10 +20,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import MarqueeText from "react-native-marquee";
 import axios from "axios";
 import * as Notifications from "expo-notifications";
-import { useFocusEffect } from "@react-navigation/native";
+import {useFocusEffect} from "@react-navigation/native";
 import * as Permissions from "expo-permissions";
-import ExpoFastImage from "expo-fast-image";
-import { Bold } from "lucide-react-native";
+import {Bold} from "lucide-react-native";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -32,7 +32,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
 const fontRatio = SCREEN_HEIGHT / 800;
 
 const Container = styled.View`
@@ -41,7 +41,7 @@ const Container = styled.View`
   align-items: center;
 `;
 
-export default function Home({ navigation, fonts }) {
+export default function Home({navigation, fonts}) {
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
@@ -55,7 +55,26 @@ export default function Home({ navigation, fonts }) {
   const [plantName, setPlantName] = useState(null);
   const [plantPoint, setPlantPoint] = useState(0);
   const [plantModal, setPlantModal] = useState(false);
-  const [levelUp, setLevelUp] = useState(false);
+  const [levelUp, setLevelUp] = useState(true);
+  const [attendance, setAttendance] = useState(false);
+
+  const rotateAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.timing(rotateAnim, {
+        toValue: 1,
+        duration: 3500,
+        useNativeDriver: true,
+      })
+    ).start();
+  }, [rotateAnim]);
+
+  const rotate = rotateAnim.interpolate({
+    inputRange: [0, 0.5],
+    outputRange: ["0deg", "360deg"],
+  });
+
   const openModal = () => {
     setTMI(""); // 모달 열릴 때 tmi 초기화
     setModalVisible(true);
@@ -103,7 +122,7 @@ export default function Home({ navigation, fonts }) {
       <View>
         <TouchableOpacity onPress={() => navigation.navigate("Mini Games")}>
           {alienType.trim() === "BASIC" ? (
-            <ExpoFastImage
+            <Image
               source={require(`../assets/img/character/BASIC.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -112,7 +131,7 @@ export default function Home({ navigation, fonts }) {
               }}
             />
           ) : alienType === "GLASSES" ? (
-            <ExpoFastImage
+            <Image
               source={require(`../assets/img/character/GLASSES.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -121,7 +140,7 @@ export default function Home({ navigation, fonts }) {
               }}
             />
           ) : alienType === "GIRL" ? (
-            <ExpoFastImage
+            <Image
               source={require(`../assets/img/character/GIRL.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -130,7 +149,7 @@ export default function Home({ navigation, fonts }) {
               }}
             />
           ) : alienType === "BAND_AID" ? (
-            <ExpoFastImage
+            <Image
               source={require(`../assets/img/character/BAND_AID.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -139,7 +158,7 @@ export default function Home({ navigation, fonts }) {
               }}
             />
           ) : alienType === "RABBIT" ? (
-            <ExpoFastImage
+            <Image
               source={require(`../assets/img/character/RABBIT.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -148,7 +167,7 @@ export default function Home({ navigation, fonts }) {
               }}
             />
           ) : alienType === "HEADBAND" ? (
-            <ExpoFastImage
+            <Image
               source={require(`../assets/img/character/HEADBAND.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -157,7 +176,7 @@ export default function Home({ navigation, fonts }) {
               }}
             />
           ) : alienType === "TOMATO" ? (
-            <ExpoFastImage
+            <Image
               source={require(`../assets/img/character/TOMATO.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -166,7 +185,7 @@ export default function Home({ navigation, fonts }) {
               }}
             />
           ) : alienType === "CHRISTMAS_TREE" ? (
-            <ExpoFastImage
+            <Image
               source={require(`../assets/img/character/CHRISTMAS_TREE.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -175,7 +194,7 @@ export default function Home({ navigation, fonts }) {
               }}
             />
           ) : alienType === "SANTA" ? (
-            <ExpoFastImage
+            <Image
               source={require(`../assets/img/character/SANTA.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -184,7 +203,7 @@ export default function Home({ navigation, fonts }) {
               }}
             />
           ) : (
-            <ExpoFastImage
+            <Image
               source={require(`../assets/img/character/PIRATE.png`)}
               style={{
                 width: SCREEN_WIDTH * 0.22,
@@ -218,7 +237,7 @@ export default function Home({ navigation, fonts }) {
         const randomIndex = Math.floor(Math.random() * todayMissions.length);
         await AsyncStorage.setItem(
           "todayMission",
-          JSON.stringify({ [str_today]: todayMissions[randomIndex] })
+          JSON.stringify({[str_today]: todayMissions[randomIndex]})
         );
         await AsyncStorage.setItem("todayMissionClear", "false");
         await AsyncStorage.setItem("dailyMissionClear", "false");
@@ -227,7 +246,7 @@ export default function Home({ navigation, fonts }) {
       const randomIndex = Math.floor(Math.random() * todayMissions.length);
       await AsyncStorage.setItem(
         "todayMission",
-        JSON.stringify({ [str_today]: todayMissions[randomIndex] })
+        JSON.stringify({[str_today]: todayMissions[randomIndex]})
       );
       await AsyncStorage.setItem("todayMissionClear", "false");
       await AsyncStorage.setItem("dailyMissionClear", "false");
@@ -356,7 +375,7 @@ export default function Home({ navigation, fonts }) {
     switch (plantLevel) {
       case 0:
         return (
-          <ExpoFastImage
+          <Image
             source={require("../assets/img/level_0.png")}
             style={styles.plant}
           />
@@ -364,7 +383,7 @@ export default function Home({ navigation, fonts }) {
 
       case 1:
         return (
-          <ExpoFastImage
+          <Image
             source={require("../assets/img/level_1.png")}
             style={styles.plant}
           />
@@ -372,7 +391,7 @@ export default function Home({ navigation, fonts }) {
 
       case 2:
         return (
-          <ExpoFastImage
+          <Image
             source={require("../assets/img/level_2.png")}
             style={styles.plant}
           />
@@ -380,7 +399,7 @@ export default function Home({ navigation, fonts }) {
 
       case 3:
         return (
-          <ExpoFastImage
+          <Image
             source={require("../assets/img/level_3.png")}
             style={styles.plant}
           />
@@ -388,22 +407,22 @@ export default function Home({ navigation, fonts }) {
 
       case 4:
         return (
-          <ExpoFastImage
+          <Image
             source={require("../assets/img/level_4.png")}
             style={styles.plant}
           />
         );
-        case 5:
-          return (
-            <ExpoFastImage
-              source={require("../assets/img/level_5.png")}
-              style={styles.plant}
-            />
-          );
+      case 5:
+        return (
+          <Image
+            source={require("../assets/img/level_5.png")}
+            style={styles.plant}
+          />
+        );
       // 추가 레벨에 따른 이미지 케이스
       default:
         return (
-          <ExpoFastImage
+          <Image
             source={require("../assets/img/level_4.png")}
             style={styles.plant}
           />
@@ -458,7 +477,7 @@ export default function Home({ navigation, fonts }) {
       >
         <Container>
           <View style={styles.tmiTool}>
-            <ExpoFastImage
+            <Image
               source={require("../assets/img/tmiTool2.png")}
               style={{
                 width: SCREEN_WIDTH * 0.85,
@@ -468,7 +487,6 @@ export default function Home({ navigation, fonts }) {
             />
             <View style={styles.tmiContainer}>
               <View style={styles.marqueeWrapper}>
-                <TouchableOpacity>
                   <MarqueeText
                     onPress={() => navigation.navigate("Attendance")}
                     style={styles.marqueeText}
@@ -479,7 +497,6 @@ export default function Home({ navigation, fonts }) {
                   >
                     {todayTMI ? todayTMI : "오늘의 첫 TMI를 작성해주세요!"}
                   </MarqueeText>
-                </TouchableOpacity>
               </View>
             </View>
           </View>
@@ -499,24 +516,23 @@ export default function Home({ navigation, fonts }) {
             </TouchableOpacity>
           </View>
           <View
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            style={{flex: 1, justifyContent: "center", alignItems: "center"}}
           ></View>
           <View style={styles.alien}>{movingObject()}</View>
           {levelUp ? (
-            <Text
+            <View
               style={{
-                fontSize: 60,
-                fontWeight: "900",
-                color: "red",
-                justifyContent: "center",
-                alignItems: "center",
-                left: 195,
-                top: 490,
                 position: "absolute",
-              }}
-            >
-              !
-            </Text>
+                left: "20%",
+                top: "72%",
+              }}>
+              <Animated.View style={[{transform: [{rotate}]}]}>
+                <Image
+                  style={{width: 240, height: 240, resizeMode: "contain"}}
+                  source={require('../assets/img/halo.png')}
+                />
+              </Animated.View>
+            </View>
           ) : null}
           <View style={styles.bottomContainer}>
             <TouchableOpacity
@@ -564,7 +580,7 @@ export default function Home({ navigation, fonts }) {
                         textAlign: "center",
                       }}
                     />
-                    <View style={{ flexDirection: "row", marginVertical: 10 }}>
+                    <View style={{flexDirection: "row", marginVertical: 10}}>
                       <Pressable
                         style={[styles.button, styles.buttonWrite]}
                         onPress={async () => {
@@ -604,11 +620,12 @@ export default function Home({ navigation, fonts }) {
                               .catch(function (error) {
                                 console.log("server error", error);
                               });
+                            Alert.alert("등록 완료!");
                             setModalVisible(!modalVisible);
                           }
                         }}
                       >
-                        <Text style={{ ...styles.textStyle, color: "#fff" }}>
+                        <Text style={{...styles.textStyle, color: "#fff"}}>
                           작성
                         </Text>
                       </Pressable>
@@ -619,7 +636,7 @@ export default function Home({ navigation, fonts }) {
                           setModalVisible(!modalVisible);
                         }}
                       >
-                        <Text style={{ ...styles.textStyle, color: "#555456" }}>
+                        <Text style={{...styles.textStyle, color: "#555456"}}>
                           취소
                         </Text>
                       </Pressable>
@@ -637,6 +654,7 @@ export default function Home({ navigation, fonts }) {
             >
               <TouchableOpacity
                 onPress={async () => {
+                  setAttendance(true);
                   const SERVER_ADDRESS = await AsyncStorage.getItem(
                     "ServerAddress"
                   );
@@ -671,11 +689,19 @@ export default function Home({ navigation, fonts }) {
                     .catch((e) => console.log(e));
                 }}
               >
-                <ExpoFastImage
-                  style={{width:70, height: 70, resizeMode: "contain", bottom: -120,}}
-                  source={require('../assets/img/check.png')}
-                />
-                <ExpoFastImage
+                {!attendance &&
+                  <Image
+                    style={{width: 80, height: 80, resizeMode: "contain", bottom: -120,}}
+                    source={require('../assets/img/check.png')}
+                  />
+                }
+                {attendance &&
+                  <Image
+                    style={{width: 80, height: 80, resizeMode: "contain", bottom: -120,}}
+                    source={require('../assets/img/check_complete.png')}
+                  />
+                }
+                <Image
                   source={require("../assets/img/wateringCan.png")}
                   style={styles.wateringCan}
                 />
@@ -718,7 +744,7 @@ const styles = StyleSheet.create({
     color: "#BDEDC8",
     fontFamily: "neo",
     textShadowColor: 'yellow',
-    textShadowOffset: { width: 0, height: 0 },
+    textShadowOffset: {width: 0, height: 0},
     textShadowRadius: 5,
   },
   container: {
@@ -787,8 +813,7 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     position: "absolute",
-    bottom: 40,
-    // backgroundColor: "green",
+    bottom: "10%",
     height: 140,
   },
   plant: {
@@ -798,7 +823,7 @@ const styles = StyleSheet.create({
   },
   alien: {
     position: "absolute",
-    bottom: "22%",
+    bottom: "25%",
   },
   plantModalContainer: {
     flex: 1,

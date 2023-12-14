@@ -1,8 +1,8 @@
 import * as React from "react";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import {
   Alert,
-  Dimensions,
+  Dimensions, Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -14,7 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const windowWidth = Dimensions.get("screen").width;
 const windowHeight = Dimensions.get("screen").height;
 
-function LadderScreen() {
+function LadderScreen({navigation}) {
   const [cnt, onChangeCnt] = useState(2);
   const [showSadari, setShowSadari] = useState(false);
   const [name, setname] = useState([]);
@@ -52,47 +52,41 @@ function LadderScreen() {
     }
   };
   return (
-    <View
-      style={{
-        flex: 1,
-        alignItems: "center",
-        top: "10%",
-        backgroundColor: "white",
-      }}
-    >
-      <Text style={{ fontSize: 20, fontFamily: "dnf" }}>사다리 게임 </Text>
-
-      <View style={{ flexDirection: "row", justifyContent: "flex-start" }}>
-        <TouchableOpacity style={styles.button} onPress={onPress2}>
-          <Text>--</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.button} onPress={onPress}>
-          <Text>++</Text>
-        </TouchableOpacity>
-      </View>
-      {!showSadari && (
-        <TouchableOpacity style={{ top: "10%" }} onPress={toggleSadari}>
-          <Text>참여할 사람을 선택하고 눌러주세요 !!!</Text>
-        </TouchableOpacity>
-      )}
+    <View style={styles.container}>
+      <Text style={styles.title}>사다리 게임 </Text>
+      <TouchableOpacity
+        style={{position: "absolute", left: "5%", top: "6%"}}
+        onPress={() => navigation.pop()}>
+        <Image
+          style={{width: 20, height: 20, resizeMode: "contain"}}
+          source={require('../assets/img/out.png')}/>
+      </TouchableOpacity>
 
       {/* 이름 목록 */}
       {!showSadari && (
-        <View style={styles.nameListContainer}>
-          {name.map((n, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[
-                styles.nameItem,
-                selectedNames.includes(n) ? styles.selectedItem : null,
-              ]}
-              onPress={() => toggleName(n)}
-            >
-              <Text>{n}</Text>
-            </TouchableOpacity>
-          ))}
+        <View style={{alignItems: "center", justifyContent: "center",}}>
+          <View style={styles.nameListContainer}>
+            {name.map((n, index) => (
+              <TouchableOpacity
+                key={index}
+                style={[
+                  styles.nameItem,
+                  selectedNames.includes(n) ? styles.selectedItem : null,
+                ]}
+                onPress={() => toggleName(n)}
+              >
+                <Text style={{ fontSize: 18, fontFamily: "wooju", color: selectedNames.includes(n) ? 'white' : 'black' }}>
+                  {n}
+                </Text>
+              </TouchableOpacity>
+
+            ))}
+          </View>
+          <TouchableOpacity style={{marginTop: "20%"}} onPress={toggleSadari}>
+            <Text style={{fontSize: 20, fontFamily: "dnf", color: "#3F3CF2"}}>선택 완료!</Text>
+          </TouchableOpacity>
         </View>
+
       )}
 
       {showSadari && (
@@ -107,41 +101,58 @@ function LadderScreen() {
 }
 
 const styles = StyleSheet.create({
-  button: {
-    backgroundColor: "#cd0beb", // 버튼 색상
-    paddingVertical: 10, // 세로 패딩
-    paddingHorizontal: 10, // 가로 패딩
-    borderRadius: 5, // 테두리 둥글게
+  container: {
+    flex: 1,
     alignItems: "center",
-    marginVertical: 5, // 버튼 간의 수직 마진
+    backgroundColor: "white",
+  },
+  title: {
+    fontSize: 28,
+    fontFamily: "dnf",
+    paddingTop: "12%",
+    paddingBottom: 10,
+  },
+  button: {
+    backgroundColor: "#B9AAD3",
+    borderRadius: 50,
+    alignItems: "center",
+    marginVertical: 5,
     justifyContent: "space-between",
     marginHorizontal: 5,
     marginBottom: 20,
     width: (windowWidth - 50) / 5,
   },
-
+  btnText: {
+    fontFamily: "dnf",
+    fontSize: 25,
+    color: "white",
+  },
   bottomView: {
-    position: "absolute", // 절대 위치 사용
-    bottom: 100, // 화면의 바닥에 위치
-    width: "100%", // 너비를 화면 전체로 설정
+    position: "absolute",
+    bottom: 100,
+    width: "100%",
     alignItems: "center",
   },
   nameItem: {
-    padding: 10,
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#cd0beb",
-    margin: 5,
-    borderRadius: 5,
+    borderColor: "#ccc",
+    marginHorizontal: 5,
+    marginVertical: 5,
   },
   selectedItem: {
-    backgroundColor: "#cd0beb",
+    borderColor: "#B9AAD3",
+    backgroundColor: "#B9AAD3",
   },
   nameListContainer: {
-    flexDirection: "row", // 이름 목록을 가로 방향으로 나열
+    flexDirection: "row",
     flexWrap: "wrap", // 내용이 넘치면 다음 줄로 넘어가도록 설정
     alignItems: "center",
     justifyContent: "center",
-    top: "25%",
+    top: "10%",
   },
 });
 

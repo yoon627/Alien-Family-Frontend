@@ -679,9 +679,10 @@ export default function PlantInfo({navigation}) {
               ...styles.missionText,
               fontFamily: "doss",
               paddingVertical: 8,
-              textShadowColor: '#B1B0B0',
+              textShadowColor: '#B1B0 B0',
               textShadowOffset: {width: 1, height: 1},
               textShadowRadius: 5,
+              paddingBottom: 15,
             }}>
               일일 미션
             </Text>

@@ -44,6 +44,21 @@ export default function Logout({navigation}) {
           ]);
         }}
       />
+
+      <Button
+        title="이미지 캐시 삭제"
+        onPress={() => {
+          Alert.alert("캐시를 비우시겠습니까?", "정말로요?", [
+            {
+              text: "네!",
+              onPress: async () => {
+                await CacheManager.clearAllCache();   // 탈퇴 시 캐시 삭제
+              },
+            },
+            {text: "아니오"},
+          ]);
+        }}
+      />
     </View>
   );
 }

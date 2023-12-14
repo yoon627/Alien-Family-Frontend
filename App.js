@@ -116,22 +116,22 @@ export default function App() {
               <Stack.Screen
                 name="AlbumScreen"
                 component={AlbumScreen}
-                options={{headerShown: false}}
+                // options={{headerShown: false}}
               />
               <Stack.Screen
                 name="ImageUploadForm"
                 component={ImageUploadForm}
-                options={{headerShown: false}}
+                // options={{headerShown: false}}
               />
               <Stack.Screen
                 name="ImageDetailForm"
                 component={ImageDetailForm}
-                options={{headerShown: false}}
+                // options={{headerShown: false}}
               />
               <Stack.Screen
                 name="MainDrawer"
                 component={MainDrawer}
-                options={{headerShown: false}}
+                // options={{headerShown: false}}
               />
               <Stack.Screen name="FirstStart" component={FirstStart}/>
               <Stack.Screen
