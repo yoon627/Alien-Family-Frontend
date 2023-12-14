@@ -48,9 +48,9 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   title: {
-    fontSize: 20,
+    fontSize: 28,
     fontFamily: "dnf",
-    paddingTop: "10%",
+    paddingTop: "12%",
     paddingBottom: 10,
   },
   button: {

@@ -55,7 +55,7 @@ export default function Home({navigation, fonts}) {
   const [plantName, setPlantName] = useState(null);
   const [plantPoint, setPlantPoint] = useState(0);
   const [plantModal, setPlantModal] = useState(false);
-  const [levelUp, setLevelUp] = useState(false);
+  const [levelUp, setLevelUp] = useState(true);
   const [attendance, setAttendance] = useState(false);
 
   const rotateAnim = useRef(new Animated.Value(0)).current;
@@ -523,8 +523,8 @@ export default function Home({navigation, fonts}) {
             <View
               style={{
                 position: "absolute",
-                left: "19%",
-                top: "71%",
+                left: "20%",
+                top: "72%",
               }}>
               <Animated.View style={[{transform: [{rotate}]}]}>
                 <Image
@@ -735,7 +735,7 @@ const styles = StyleSheet.create({
   },
   marqueeWrapper: {
     alignItems: "center",
-    width: SCREEN_WIDTH * 0.8,
+    width: SCREEN_WIDTH * 0.7,
     overflow: "hidden", // 영역을 벗어난 부분 숨기기
   },
   marqueeText: {
@@ -813,8 +813,7 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     position: "absolute",
-    bottom: 40,
-    // backgroundColor: "green",
+    bottom: "10%",
     height: 140,
   },
   plant: {
@@ -824,7 +823,7 @@ const styles = StyleSheet.create({
   },
   alien: {
     position: "absolute",
-    bottom: "22%",
+    bottom: "25%",
   },
   plantModalContainer: {
     flex: 1,
