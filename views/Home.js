@@ -58,10 +58,23 @@ export default function Home({navigation, fonts}) {
   const [levelUp, setLevelUp] = useState(false);
   const [attendance, setAttendance] = useState(false);
 
-  const handleCheck = () => {
-    setAttendance(true);
-    console.log(attendance);
-  }
+  const rotateAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.timing(rotateAnim, {
+        toValue: 1,
+        duration: 3500,
+        useNativeDriver: true,
+      })
+    ).start();
+  }, [rotateAnim]);
+
+  const rotate = rotateAnim.interpolate({
+    inputRange: [0, 0.5],
+    outputRange: ["0deg", "360deg"],
+  });
+
   const openModal = () => {
     setTMI(""); // 모달 열릴 때 tmi 초기화
     setModalVisible(true);
@@ -509,20 +522,19 @@ export default function Home({navigation, fonts}) {
           ></View>
           <View style={styles.alien}>{movingObject()}</View>
           {levelUp ? (
-            <Text
+            <View
               style={{
-                fontSize: 60,
-                fontWeight: "900",
-                color: "red",
-                justifyContent: "center",
-                alignItems: "center",
-                left: 195,
-                top: 490,
                 position: "absolute",
-              }}
-            >
-              !
-            </Text>
+                left: "19%",
+                top: "71%",
+              }}>
+              <Animated.View style={[{transform: [{rotate}]}]}>
+                <Image
+                  style={{width: 240, height: 240, resizeMode: "contain"}}
+                  source={require('../assets/img/halo.png')}
+                />
+              </Animated.View>
+            </View>
           ) : null}
           <View style={styles.bottomContainer}>
             <TouchableOpacity
