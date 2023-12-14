@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState, useCallback} from "react";
 import {
   Alert,
   Animated,
-  Dimensions,
+  Dimensions, Image,
   ImageBackground,
   KeyboardAvoidingView,
   Modal,
@@ -247,7 +247,7 @@ export default function Home({navigation, fonts}) {
         const tmis = resp.data;
         var mytmi = "";
         for (let i = 0; i < tmis.length; i++) {
-          mytmi = mytmi + tmis[i].writer + ": " + tmis[i].content + "  ";
+          mytmi = mytmi + tmis[i].writer + " - " + tmis[i].content + " ,  ";
         }
         setTodayTMI(mytmi);
       })
@@ -433,7 +433,7 @@ export default function Home({navigation, fonts}) {
         <Container>
           <View style={styles.tmiTool}>
             <ExpoFastImage
-              source={require("../assets/img/tmiTool.png")}
+              source={require("../assets/img/tmiTool2.png")}
               style={{
                 width: SCREEN_WIDTH * 0.85,
                 height: SCREEN_HEIGHT * 0.5,
@@ -670,7 +670,11 @@ export default function Home({navigation, fonts}) {
                 }}
               >
                 <ExpoFastImage
-                  source={require("../assets/img/wateringCan3.png")}
+                  style={{width:70, height: 70, resizeMode: "contain", bottom: -120,}}
+                  source={require('../assets/img/check.png')}
+                />
+                <ExpoFastImage
+                  source={require("../assets/img/wateringCan.png")}
                   style={styles.wateringCan}
                 />
               </TouchableOpacity>
@@ -708,7 +712,12 @@ const styles = StyleSheet.create({
   },
   marqueeText: {
     marginTop: Platform.OS === 'ios' ? 5 : 9,
-    fontSize: 20,
+    fontSize: 28,
+    color: "#BDEDC8",
+    fontFamily: "neo",
+    textShadowColor: 'yellow',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 5,
   },
   container: {
     flex: 1,

@@ -66,6 +66,7 @@ export default function App() {
     jamsil1: require("./assets/font/TheJamsilOTF1Thin.otf"),
     jamsil2: require("./assets/font/TheJamsilOTF2Light.otf"),
     jamsil3: require("./assets/font/TheJamsilOTF3Regular.otf"),
+    neo: require("./assets/font/NeoDunggeunmoPro-Regular.ttf"),
   });
 
   // if (!fontsLoaded) {

@@ -4,7 +4,7 @@
     "slug": "UFO-Front",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/img/loginScreen.png",
     "userInterfaceStyle": "automatic",
     "plugins": [
       [
@@ -25,7 +25,7 @@
       ]
     ],
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/img/loginScreen.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

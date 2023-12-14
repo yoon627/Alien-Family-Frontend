@@ -857,7 +857,7 @@ export default function PlantInfo({navigation}) {
             }}
           >
             <Image
-              source={require("../assets/img/wateringCan3.png")}
+              source={require("../assets/img/wateringCan.png")}
               style={{
                 width: SCREEN_WIDTH * 0.17,
                 height: SCREEN_WIDTH * 0.17,
