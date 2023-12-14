@@ -249,9 +249,9 @@ export default function AlbumScreen({navigation}) {
     // console.log("선택한 태그:", selectedTags);
   };
 
-  useEffect(() => {
-    // console.log("선택한 태그 (useEffect):", selectedTags);
-  }, [selectedTags]);
+  // useEffect(() => {
+  //   // console.log("선택한 태그 (useEffect):", selectedTags);
+  // }, [selectedTags]);
 
   useEffect(() => {
     notificationListener.current =

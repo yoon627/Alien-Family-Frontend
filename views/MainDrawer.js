@@ -61,11 +61,11 @@ export default function MainDrawer({navigation, route}) {
           component={Logout}
           options={{title: "회원 탈퇴"}}
         />
-        {/* <Drawer.Screen
+        <Drawer.Screen
           name="Lab"
           component={Lab}
           options={{ title: "Lab" }}
-        /> */}
+        />
       </Drawer.Navigator>
     </PaperProvider>
   );

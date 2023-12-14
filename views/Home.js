@@ -41,7 +41,7 @@ const Container = styled.View`
   align-items: center;
 `;
 
-export default function Home({ navigation, fonts }) {
+export default function Home({ navigation, fonts, route }) {
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
@@ -100,7 +100,7 @@ export default function Home({ navigation, fonts }) {
       outputRange: [-1, 1],
     });
     return (
-      <View>
+      <Animated.View style={{ transform: [{ translateX: interpolated }] }}>
         <TouchableOpacity onPress={() => navigation.navigate("Mini Games")}>
           {alienType.trim() === "BASIC" ? (
             <ExpoFastImage
@@ -194,7 +194,7 @@ export default function Home({ navigation, fonts }) {
             />
           )}
         </TouchableOpacity>
-      </View>
+      </Animated.View>
     );
   };
 
@@ -293,6 +293,8 @@ export default function Home({ navigation, fonts }) {
           navigation.navigate("Home");
         } else if (screenName === "Family") {
           navigation.navigate("FamilyInfo");
+        } else if (screenName === "Comment") {
+          navigation.navigate("AlbumScreen");
         } else if (screenName.split(" ")[1] === "찌릿통신을") {
           navigation.navigate("Home");
         } else {
@@ -447,6 +449,16 @@ export default function Home({ navigation, fonts }) {
       backgroundNotificationSubscription.remove();
     };
   }, []);
+  useEffect(()=>{
+    const checkTmiMission = async()=>{
+      const tmiMission = await AsyncStorage.getItem("tmiMission")
+      if (tmiMission === "true"){
+        setModalVisible(true);
+        AsyncStorage.setItem("tmiMission","false");
+      }
+    }
+    checkTmiMission();
+  },[]);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}

@@ -50,6 +50,7 @@ export default function Settings({ navigation }) {
             onPress={async () => {
               try {
                 AsyncStorage.setItem("todayMissionClear","false")
+                AsyncStorage.setItem("dailyMissionClear","false")
               } catch (error) {
                 console.error("Error copying to clipboard:", error);
               }

@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, {useState, useEffect, useCallback, useRef} from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   ScrollView,
   TouchableOpacity,
@@ -14,10 +14,10 @@ import {
   Platform,
 } from "react-native";
 import axios from "axios";
-import {useFocusEffect} from "@react-navigation/native";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
 import AlienType from "../components/AlienType";
-import {MaterialIcons} from '@expo/vector-icons';
-import {AnimatedCircularProgress} from "react-native-circular-progress";
+import { MaterialIcons } from "@expo/vector-icons";
+import { AnimatedCircularProgress } from "react-native-circular-progress";
 import * as Notifications from "expo-notifications";
 import LottieView from "lottie-react-native";
 
@@ -29,7 +29,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const missionImages = {
   "사진 찍어서 올리기": require("../assets/img/missionIcon/camera.png"),
@@ -43,11 +43,12 @@ const missionNav = {
   "사진 찍어서 올리기": "AlbumScreen",
   "내 갤러리 사진 등록하기": "AlbumScreen",
   "사진에 댓글 달기": "AlbumScreen",
-  "가족들과 채팅으로 인사하기": "Chat",
+  "가족들과 채팅으로 인사하기": "Chatting",
   "캘린더에 일정 등록하기": "Calendar",
 };
 
-export default function PlantInfo({navigation}) {
+export default function PlantInfo({ navigation }) {
+  const route = useRoute();
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const [familyPoint, setFamilyPoint] = useState([]);
@@ -60,7 +61,7 @@ export default function PlantInfo({navigation}) {
   const [dailyMissionClear, setDailyMissionClear] = useState(false);
   const [isDayMission, setDayMission] = useState(false);
   const [isTodayMission, setIsTodayMission] = useState(true);
-  const [myNickname, setMyNickname] = useState('');
+  const [myNickname, setMyNickname] = useState("");
 
   useEffect(() => {
     async function fetchNickname() {
@@ -246,23 +247,25 @@ export default function PlantInfo({navigation}) {
               zIndex: 1,
             }}
           >
-            {Platform.OS === 'ios' ? (
-              <View style={{justifyContent: "flex-start", marginTop: "20%"}}>
+            {Platform.OS === "ios" ? (
+              <View style={{ justifyContent: "flex-start", marginTop: "20%" }}>
                 <ImageBackground
                   source={require("../assets/img/bubble.png")}
                   style={styles.textBubble}
                 >
                   <Text style={styles.text}>{randomMessage()}</Text>
                 </ImageBackground>
-              </View>) : (<View style={{justifyContent: "flex-start", marginTop: "-10%"}}>
-              <ImageBackground
-                source={require("../assets/img/bubble.png")}
-                style={styles.textBubble}
-              >
-                <Text style={styles.text}>{randomMessage()}</Text>
-              </ImageBackground>
-            </View>)}
-
+              </View>
+            ) : (
+              <View style={{ justifyContent: "flex-start", marginTop: "-10%" }}>
+                <ImageBackground
+                  source={require("../assets/img/bubble.png")}
+                  style={styles.textBubble}
+                >
+                  <Text style={styles.text}>{randomMessage()}</Text>
+                </ImageBackground>
+              </View>
+            )}
           </View>
         )}
       </View>
@@ -363,7 +366,7 @@ export default function PlantInfo({navigation}) {
         setTodayMission(todayMissions[randomIndex]);
         await AsyncStorage.setItem(
           "todayMission",
-          JSON.stringify({[str_today]: todayMissions[randomIndex]})
+          JSON.stringify({ [str_today]: todayMissions[randomIndex] })
         );
         await AsyncStorage.setItem("todayMissionClear", "false");
         await AsyncStorage.setItem("dailyMissionClear", "false");
@@ -373,7 +376,7 @@ export default function PlantInfo({navigation}) {
       setTodayMission(todayMissions[randomIndex]);
       await AsyncStorage.setItem(
         "todayMission",
-        JSON.stringify({[str_today]: todayMissions[randomIndex]})
+        JSON.stringify({ [str_today]: todayMissions[randomIndex] })
       );
       await AsyncStorage.setItem("todayMissionClear", "false");
       await AsyncStorage.setItem("dailyMissionClear", "false");
@@ -493,7 +496,7 @@ export default function PlantInfo({navigation}) {
             setTodayMission(todayMissions[randomIndex]);
             await AsyncStorage.setItem(
               "todayMission",
-              JSON.stringify({[str_today]: todayMissions[randomIndex]})
+              JSON.stringify({ [str_today]: todayMissions[randomIndex] })
             );
             await AsyncStorage.setItem("todayMissionClear", "false");
             await AsyncStorage.setItem("dailyMissionClear", "false");
@@ -503,7 +506,7 @@ export default function PlantInfo({navigation}) {
           setTodayMission(todayMissions[randomIndex]);
           await AsyncStorage.setItem(
             "todayMission",
-            JSON.stringify({[str_today]: todayMissions[randomIndex]})
+            JSON.stringify({ [str_today]: todayMissions[randomIndex] })
           );
           await AsyncStorage.setItem("todayMissionClear", "false");
           await AsyncStorage.setItem("dailyMissionClear", "false");
@@ -517,8 +520,8 @@ export default function PlantInfo({navigation}) {
   );
 
   return (
-    <View style={{flex: 1, backgroundColor: "#fff"}}>
-      <StatusBar barStyle="light-content" backgroundColor="#000000"/>
+    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+      <StatusBar barStyle="light-content" backgroundColor="#000000" />
       <View style={styles.topContainer}>
         <View style={styles.box}>
           <Text
@@ -527,7 +530,7 @@ export default function PlantInfo({navigation}) {
               fontFamily: "doss",
               paddingVertical: 8,
               textShadowColor: "#B1B0B0",
-              textShadowOffset: {width: 1, height: 1},
+              textShadowOffset: { width: 1, height: 1 },
               textShadowRadius: 5,
             }}
           >
@@ -558,13 +561,13 @@ export default function PlantInfo({navigation}) {
                   >
                     <Text style={styles.rankText}>{index + 1}.</Text>
 
-                    <AlienType writer={family.split(":")[0]}/>
+                    <AlienType writer={family.split(":")[0]} />
 
-                    <View style={{marginLeft: -7}}>
+                    <View style={{ marginLeft: -7 }}>
                       <Text style={styles.ranker}>{family.split(":")[0]}</Text>
 
                       <View
-                        style={{flexDirection: "row", alignItems: "center"}}
+                        style={{ flexDirection: "row", alignItems: "center" }}
                       >
                         <Image
                           style={{
@@ -588,18 +591,23 @@ export default function PlantInfo({navigation}) {
                     </View>
                   </View>
 
-                  {myNickname !== family.split(":")[0] &&
+                  {myNickname !== family.split(":")[0] && (
                     <TouchableOpacity
-                      onPress={() => TingleFamily(family.split(":")[0])}
+                      onPress={() => {
+                        TingleFamily(family.split(":")[0]);
+                        Alert.alert(
+                          `${family.split(":")[0]}님께 찌릿통신을 보내셨습니다!`
+                        );
+                      }}
                     >
                       <Image
-                        style={{width: 25, height: 25, resizeMode: "contain"}}
+                        style={{ width: 25, height: 25, resizeMode: "contain" }}
                         source={require("../assets/img/tingle2.png")}
                       />
                     </TouchableOpacity>
-                  }
+                  )}
                 </View>
-                <View style={styles.line}/>
+                <View style={styles.line} />
               </View>
             ))}
           </ScrollView>
@@ -675,14 +683,16 @@ export default function PlantInfo({navigation}) {
 
         {isDayMission && (
           <View style={styles.box}>
-            <Text style={{
-              ...styles.missionText,
-              fontFamily: "doss",
-              paddingVertical: 8,
-              textShadowColor: '#B1B0B0',
-              textShadowOffset: {width: 1, height: 1},
-              textShadowRadius: 5,
-            }}>
+            <Text
+              style={{
+                ...styles.missionText,
+                fontFamily: "doss",
+                paddingVertical: 8,
+                textShadowColor: "#B1B0B0",
+                textShadowOffset: { width: 1, height: 1 },
+                textShadowRadius: 5,
+              }}
+            >
               일일 미션
             </Text>
             <View style={styles.missionImageContainer}>
@@ -723,7 +733,10 @@ export default function PlantInfo({navigation}) {
               </View>
             ) : (
               <TouchableOpacity
-                // onPress={() => navigation.navigate(missionNav[todayMission])}
+                onPress={() => {
+                  navigation.navigate("Home");
+                  AsyncStorage.setItem("tmiMission", "true");
+                }}
               >
                 <Text
                   style={{
@@ -766,8 +779,8 @@ export default function PlantInfo({navigation}) {
         >
           {(fill) => (
             <View style={{}}>
-              <View style={{top: 75}}>
-                <View style={styles.bottomCircle}/>
+              <View style={{ top: 75 }}>
+                <View style={styles.bottomCircle} />
                 <View
                   style={{
                     position: "absolute",
@@ -808,7 +821,7 @@ export default function PlantInfo({navigation}) {
 
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <View
-          style={{alignItems: "flex-start", paddingLeft: 35, paddingTop: 5}}
+          style={{ alignItems: "flex-start", paddingLeft: 35, paddingTop: 5 }}
         >
           <TouchableOpacity
             onPress={async () => {
@@ -857,7 +870,7 @@ export default function PlantInfo({navigation}) {
           </TouchableOpacity>
         </View>
         <View
-          style={{alignItems: "flex-end", paddingRight: 30, paddingTop: 0}}
+          style={{ alignItems: "flex-end", paddingRight: 30, paddingTop: 0 }}
         >
           <TouchableOpacity onPress={() => navigation.pop()}>
             <Image
@@ -872,8 +885,7 @@ export default function PlantInfo({navigation}) {
         </View>
       </View>
     </View>
-  )
-    ;
+  );
 }
 
 const styles = StyleSheet.create({
@@ -927,7 +939,7 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
   bottomCircle: {
-    marginTop: Platform.OS === 'ios' ? 0 : 35,
+    marginTop: Platform.OS === "ios" ? 0 : 35,
     width: SCREEN_WIDTH * 0.9,
     height: SCREEN_WIDTH,
     left: SCREEN_WIDTH * 0.05,
