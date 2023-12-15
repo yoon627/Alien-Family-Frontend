@@ -179,7 +179,7 @@ export default function PlantInfo({ navigation }) {
           },
         }).then((resp) => {
           const tmp = resp.data;
-          console.log(tmp);
+          // console.log(tmp);
         });
       } else {
         console.log("해당 닉네임을 가진 사용자를 찾을 수 없습니다.");
@@ -528,13 +528,13 @@ export default function PlantInfo({ navigation }) {
             style={{
               ...styles.missionText,
               fontFamily: "doss",
-              paddingVertical: 8,
+              paddingVertical: 5,
               textShadowColor: "#B1B0B0",
               textShadowOffset: { width: 1, height: 1 },
               textShadowRadius: 5,
             }}
           >
-            가족 랭킹
+            오늘의 랭킹
           </Text>
           <ScrollView
             style={{
@@ -596,7 +596,7 @@ export default function PlantInfo({ navigation }) {
                       onPress={() => {
                         TingleFamily(family.split(":")[0]);
                         Alert.alert(
-                          `${family.split(":")[0]}님께 찌릿통신을 보내셨습니다!`
+                          '⚡찌릿⚡',`${family.split(":")[0]}님께 찌릿통신을 보내셨습니다!`
                         );
                       }}
                     >
@@ -839,7 +839,7 @@ export default function PlantInfo({ navigation }) {
               })
                 .then(async (resp) => {
                   if (resp.data.message != "오늘의 tmi를 작성했습니다.") {
-                    Alert.alert("출석을 위해 TMI를 작성해주세요!");
+                    Alert.alert(" ","출석을 위해 TMI를 작성해주세요!");
                   } else {
                     await axios({
                       method: "GET",
@@ -850,7 +850,7 @@ export default function PlantInfo({ navigation }) {
                     })
                       .then((resp) => {
                         getPlantInfo();
-                        Alert.alert(resp.data.message);
+                        Alert.alert(" ",resp.data.message);
                       })
                       .catch((e) => console.log(e));
                   }

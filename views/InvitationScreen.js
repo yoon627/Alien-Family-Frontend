@@ -125,7 +125,7 @@ const InvitationScreen = ({ navigation }) => {
                       "ServerAddress"
                     );
                     if (!InvitationCode) {
-                      Alert.alert("초대코드를 입력해주세요");
+                      Alert.alert(" ","초대코드를 입력해주세요");
                     } else {
                       // console.log(InvitationCode);
                       await axios({
@@ -171,7 +171,7 @@ const InvitationScreen = ({ navigation }) => {
                               // .then(() => console.log("hi"))
                               .catch((e) => console.log(e));
                           } else {
-                            Alert.alert("유효하지 않은 초대코드입니다");
+                            Alert.alert(" ","유효하지 않은 초대코드입니다");
                           }
                         })
                         .catch((e) => console.log(e));

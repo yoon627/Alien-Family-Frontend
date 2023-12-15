@@ -45,7 +45,7 @@ function LadderScreen({navigation}) {
       setSelectedNames(selectedNames.filter((name) => name !== n));
     } else {
       if (selectedNames.length >= 10) {
-        Alert.alert("최대 10개까지만 선택 가능합니다.");
+        Alert.alert(" ","최대 10개까지만 선택 가능합니다.");
         return;
       }
       setSelectedNames([...selectedNames, n]);

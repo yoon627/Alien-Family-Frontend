@@ -218,13 +218,13 @@ const FirstRegister = ({ route, navigation }) => {
                     );
                     await AsyncStorage.setItem("familyRole", familyRole);
                     if (!name) {
-                      Alert.alert("이름을 적어주세요");
+                      Alert.alert(" ","이름을 적어주세요");
                     } else if (
                       formatYYYYMMDD(birthday) === formatYYYYMMDD(new Date())
                     ) {
-                      Alert.alert("생일을 알려주세요");
+                      Alert.alert(" ","생일을 알려주세요");
                     } else if (!familyRole) {
-                      Alert.alert("호칭을 알려주세요");
+                      Alert.alert(" ","호칭을 알려주세요");
                     } else {
                       const SERVER_ADDRESS = await AsyncStorage.getItem(
                         "ServerAddress"

@@ -174,9 +174,9 @@ const FirstStart = ({ navigation }) => {
                       await AsyncStorage.setItem("plantName", plantName);
                       await AsyncStorage.setItem("ufoName", ufoName);
                       if (!plantName) {
-                        Alert.alert("새싹이 이름을 지어주세요");
+                        Alert.alert(" ","새싹이 이름을 지어주세요");
                       } else if (!ufoName) {
-                        Alert.alert("우주선 이름을 지어주세요");
+                        Alert.alert(" ","우주선 이름을 지어주세요");
                       } else {
                         const roleArr = [
                           "DAD",

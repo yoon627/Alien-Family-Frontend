@@ -22,7 +22,7 @@ const AlienModal = ({visible, onClose, alienInfo}) => {
 
   useEffect(() => {
     if (alienInfo) {
-      console.log("Modal Alien Info:", alienInfo);
+      // console.log("Modal Alien Info:", alienInfo);
     }
     // alienInfo가 변경될 때마다 실행됩니다.
   }, [alienInfo]);

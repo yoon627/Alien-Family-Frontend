@@ -55,7 +55,7 @@ export default function Home({ navigation, fonts, route }) {
   const [plantName, setPlantName] = useState(null);
   const [plantPoint, setPlantPoint] = useState(0);
   const [plantModal, setPlantModal] = useState(false);
-  const [levelUp, setLevelUp] = useState(true);
+  const [levelUp, setLevelUp] = useState(false);
   const [attendance, setAttendance] = useState(false);
 
   const rotateAnim = useRef(new Animated.Value(0)).current;
@@ -300,7 +300,7 @@ export default function Home({ navigation, fonts, route }) {
       // console.log(notification);
       const screenName = notification.notification.request.content.title;
       const tmp = screenName;
-      console.log(tmp);
+      // console.log(tmp);
       if (screenName) {
         if (screenName === "Calendar") {
           navigation.navigate("Calendar");
@@ -351,6 +351,8 @@ export default function Home({ navigation, fonts, route }) {
         const tmpPlant = resp.data.data;
         const originLevel = await AsyncStorage.getItem("plantLevel");
         if (originLevel) {
+          // console.log("originLevel",originLevel);
+          // console.log("tmpPlant",tmpPlant.level);
           if (originLevel !== tmpPlant.level.toString()) {
             setLevelUp(true);
             AsyncStorage.setItem("levelUp", "true");
@@ -361,6 +363,7 @@ export default function Home({ navigation, fonts, route }) {
             setPlantPoint(tmpPlant.point);
           }
         } else {
+          // console.log("tmpPlant",tmpPlant.level);
           AsyncStorage.setItem("plantLevel", tmpPlant.level.toString());
           setPlantLevel(tmpPlant.level);
           setPlantName(tmpPlant.name);
@@ -425,7 +428,7 @@ export default function Home({ navigation, fonts, route }) {
       default:
         return (
           <Image
-            source={require("../assets/img/level_4.png")}
+            source={require("../assets/img/level_0.png")}
             style={styles.plant}
           />
         );
@@ -597,7 +600,7 @@ export default function Home({ navigation, fonts, route }) {
                         style={[styles.button, styles.buttonWrite]}
                         onPress={async () => {
                           if (!TMI) {
-                            Alert.alert("TMI를 작성해주세요!");
+                            Alert.alert(" ","TMI를 작성해주세요!");
                           } else {
                             const SERVER_ADDRESS = await AsyncStorage.getItem(
                               "ServerAddress"
@@ -632,7 +635,7 @@ export default function Home({ navigation, fonts, route }) {
                               .catch(function (error) {
                                 console.log("server error", error);
                               });
-                            Alert.alert("등록 완료!");
+                            Alert.alert(" ","등록 완료!");
                             setModalVisible(!modalVisible);
                           }
                         }}
@@ -682,7 +685,7 @@ export default function Home({ navigation, fonts, route }) {
                   })
                     .then(async (resp) => {
                       if (resp.data.message != "오늘의 tmi를 작성했습니다.") {
-                        Alert.alert("출석을 위해 TMI를 작성해주세요!");
+                        Alert.alert(" ","출석을 위해 TMI를 작성해주세요!");
                       } else {
                         await axios({
                           method: "GET",
@@ -693,7 +696,7 @@ export default function Home({ navigation, fonts, route }) {
                         })
                           .then((resp) => {
                             getplantInfo();
-                            Alert.alert(resp.data.message);
+                            Alert.alert(" ",resp.data.message);
                           })
                           .catch((e) => console.log(e));
                       }
@@ -747,7 +750,7 @@ const styles = StyleSheet.create({
   },
   marqueeWrapper: {
     alignItems: "center",
-    width: SCREEN_WIDTH * 0.7,
+    width: SCREEN_WIDTH * 0.8,
     overflow: "hidden", // 영역을 벗어난 부분 숨기기
   },
   marqueeText: {

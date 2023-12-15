@@ -26,7 +26,7 @@ export default function CommentForm({photoId, nickname}) {
     const currentDate = new Date();
 
     if (isNaN(createDate.getTime())) {
-      console.log("날짜 형식 잘못됨", createDate);
+      // console.log("날짜 형식 잘못됨", createDate);
     }
 
     const timeDiff = currentDate - createDate;
@@ -99,7 +99,7 @@ export default function CommentForm({photoId, nickname}) {
         },
       });
       if (response.ok) {
-        console.log("👂🏻 댓글 서버로 보내짐~~~~");
+        // console.log("👂🏻 댓글 서버로 보내짐~~~~");
 
         const newComment = {commentId: comments.length + 1, writer: writer, content: comment, createAt: Date.now()};
         setComments([...comments, newComment]);
@@ -233,7 +233,7 @@ export default function CommentForm({photoId, nickname}) {
           placeholder="댓글..."
         />
         <TouchableOpacity onPress={sendToComment}>
-          <Text style={{paddingLeft: 10}}>작성</Text>
+          <Text style={{paddingLeft: 10, fontSize:20, fontFamily: "wooju"}}>작성</Text>
         </TouchableOpacity>
         {uploadingComment && <ActivityIndicator style={{paddingLeft: 10, top: 10}} size="small" color="gray"/>}
       </View>
@@ -307,7 +307,7 @@ export default function CommentForm({photoId, nickname}) {
                 placeholder="댓글 달기..."
               />
               <TouchableOpacity onPress={sendToComment}>
-                <Text style={{paddingLeft: 10}}>작성</Text>
+                <Text style={{paddingLeft: 10 ,fontSize:20,fontFamily: "wooju"}}>작성</Text>
               </TouchableOpacity>
               {uploadingComment && <ActivityIndicator style={{paddingLeft: 10}} size="small" color="gray"/>}
             </View>

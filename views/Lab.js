@@ -37,7 +37,6 @@ async function sendPushNotification(devicePushToken) {
       },
     }),
   })
-    .then((resp) => console.log("axios response: " + resp))
     .catch((e) => console.log(e));
 }
 
@@ -68,7 +67,7 @@ async function registerForPushNotificationsAsync() {
     token = await Notifications.getExpoPushTokenAsync({
       projectId: Constants.expoConfig.extra.eas.projectId,
     });
-    console.log(token.data);
+    // console.log(token.data);
   } else {
     alert("Must use physical device for Push Notifications");
   }
@@ -91,7 +90,7 @@ export default function Lab() {
       Notifications.addNotificationReceivedListener((notification) => {
         setNotification(notification);
         const screenName = notification.request.content.title;
-        console.log(screenName.split(" ")[2]);
+        // console.log(screenName.split(" ")[2]);
         // console.log(notification.request);
         // console.log(notification.request.content);
         // console.log(notification.request.content.data);

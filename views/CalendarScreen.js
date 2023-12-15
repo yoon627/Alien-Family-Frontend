@@ -364,7 +364,6 @@ export default function CalendarScreen({navigation}) {
                 Authorization: "Bearer " + UserServerAccessToken,
               },
             })
-              .then((resp) => console.log(resp))
               .catch((e) => console.log(e));
           }
         } else {
@@ -383,7 +382,6 @@ export default function CalendarScreen({navigation}) {
                 Authorization: "Bearer " + UserServerAccessToken,
               },
             })
-              .then((resp) => console.log(resp))
               .catch((e) => console.log(e));
           } else {
             await AsyncStorage.setItem("todayMissionClear", "false");
@@ -406,7 +404,6 @@ export default function CalendarScreen({navigation}) {
               Authorization: "Bearer " + UserServerAccessToken,
             },
           })
-            .then((resp) => console.log(resp))
             .catch((e) => console.log(e));
         } else {
           await AsyncStorage.setItem("todayMissionClear", "false");

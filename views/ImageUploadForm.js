@@ -150,7 +150,6 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
                   Authorization: "Bearer " + UserServerAccessToken,
                 },
               })
-                .then((resp) => console.log(resp))
                 .catch((e) => console.log(e));
             }
           } else {
@@ -174,7 +173,6 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
                   Authorization: "Bearer " + UserServerAccessToken,
                 },
               })
-                .then((resp) => console.log(resp))
                 .catch((e) => console.log(e));
             } else {
               await AsyncStorage.setItem("todayMissionClear", "false");
@@ -200,7 +198,6 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
                 Authorization: "Bearer " + UserServerAccessToken,
               },
             })
-              .then((resp) => console.log(resp))
               .catch((e) => console.log(e));
           } else {
             await AsyncStorage.setItem("todayMissionClear", "false");

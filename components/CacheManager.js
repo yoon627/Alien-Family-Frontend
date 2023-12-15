@@ -14,7 +14,7 @@ class CacheManager {
         await FileSystem.deleteAsync(filePath, {idempotent: true});
       }));
 
-      console.log('캐시 밀기 성공!!!');
+      // console.log('캐시 밀기 성공!!!');
     } catch (error) {
       console.error('❌ 캐시 클리어 실패', error);
     }

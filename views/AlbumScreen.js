@@ -195,7 +195,7 @@ export default function AlbumScreen({navigation}) {
           // console.log("🌄 저장한 이미지 -> ", chosenImage);
           setShowUploadForm(true);
         } else {
-          console.log("No assets found!");
+          // console.log("No assets found!");
         }
       }
     } catch (error) {
@@ -228,7 +228,7 @@ export default function AlbumScreen({navigation}) {
           setChosenImage(chosenImage);
           setShowUploadForm(true);
         } else {
-          console.log("No assets found!");
+          // console.log("No assets found!");
         }
       }
     } catch (error) {
@@ -283,7 +283,7 @@ export default function AlbumScreen({navigation}) {
               // 받아온 이미지 데이터 상태에 저장
               setAlbumList(data.data);
               // console.log("받은 데이터!!!!!!!!!", data.data)
-              console.log("👉🏻앨범 이미지 리스트: ", data.data.map(item => item.photoKey));
+              // console.log("👉🏻앨범 이미지 리스트: ", data.data.map(item => item.photoKey));
             } catch (error) {
               console.error(
                 "이미지 url을 가져오는 중에 오류가 발생했습니다.",
@@ -377,7 +377,7 @@ export default function AlbumScreen({navigation}) {
             ))}
           </View>
           <FlatList
-            numColumns={4}
+            numColumns={3}
             data={dataWithUploadButton}
             keyExtractor={(item, index) => item.isUploadButton ? 'uploadButton' : item.photoId.toString()}
             renderItem={({item}) => {
@@ -452,8 +452,8 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   image: {
-    width: SCREEN_WIDTH / 4 - 7, // 이미지의 가로 크기 (한 행에 4개씩 배치하고 간격 조절)
-    height: SCREEN_WIDTH / 4 - 7, // 이미지의 세로 크기
+    width: SCREEN_WIDTH / 3 - 7, // 이미지의 가로 크기 (한 행에 4개씩 배치하고 간격 조절)
+    height: SCREEN_WIDTH / 3 - 7, // 이미지의 세로 크기
   },
   imagePlusContainer: {
     position: "absolute",
