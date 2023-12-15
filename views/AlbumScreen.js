@@ -377,7 +377,7 @@ export default function AlbumScreen({navigation}) {
             ))}
           </View>
           <FlatList
-            numColumns={4}
+            numColumns={3}
             data={dataWithUploadButton}
             keyExtractor={(item, index) => item.isUploadButton ? 'uploadButton' : item.photoId.toString()}
             renderItem={({item}) => {
@@ -452,8 +452,8 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   image: {
-    width: SCREEN_WIDTH / 4 - 7, // 이미지의 가로 크기 (한 행에 4개씩 배치하고 간격 조절)
-    height: SCREEN_WIDTH / 4 - 7, // 이미지의 세로 크기
+    width: SCREEN_WIDTH / 3 - 7, // 이미지의 가로 크기 (한 행에 4개씩 배치하고 간격 조절)
+    height: SCREEN_WIDTH / 3 - 7, // 이미지의 세로 크기
   },
   imagePlusContainer: {
     position: "absolute",
