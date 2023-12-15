@@ -195,7 +195,7 @@ export default function AlbumScreen({navigation}) {
           // console.log("🌄 저장한 이미지 -> ", chosenImage);
           setShowUploadForm(true);
         } else {
-          console.log("No assets found!");
+          // console.log("No assets found!");
         }
       }
     } catch (error) {
@@ -228,7 +228,7 @@ export default function AlbumScreen({navigation}) {
           setChosenImage(chosenImage);
           setShowUploadForm(true);
         } else {
-          console.log("No assets found!");
+          // console.log("No assets found!");
         }
       }
     } catch (error) {
@@ -248,9 +248,9 @@ export default function AlbumScreen({navigation}) {
     // console.log("선택한 태그:", selectedTags);
   };
 
-  useEffect(() => {
-    // console.log("선택한 태그 (useEffect):", selectedTags);
-  }, [selectedTags]);
+  // useEffect(() => {
+  //   // console.log("선택한 태그 (useEffect):", selectedTags);
+  // }, [selectedTags]);
 
   useEffect(() => {
     notificationListener.current =
@@ -283,7 +283,7 @@ export default function AlbumScreen({navigation}) {
               // 받아온 이미지 데이터 상태에 저장
               setAlbumList(data.data);
               // console.log("받은 데이터!!!!!!!!!", data.data)
-              console.log("👉🏻앨범 이미지 리스트: ", data.data.map(item => item.photoKey));
+              // console.log("👉🏻앨범 이미지 리스트: ", data.data.map(item => item.photoKey));
             } catch (error) {
               console.error(
                 "이미지 url을 가져오는 중에 오류가 발생했습니다.",

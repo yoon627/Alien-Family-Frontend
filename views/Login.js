@@ -111,7 +111,7 @@ const Login = ({ navigation }) => {
                   })
                     .then(async (resp) => {
                       if (resp.data.code === 12345) {
-                        Alert.alert("Wrong Code");
+                        Alert.alert(" ","Wrong Code");
                       } else {
                         const t = resp.data.data.tokenInfo.accessToken;
                         await axios({

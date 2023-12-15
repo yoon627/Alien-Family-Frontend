@@ -171,7 +171,6 @@ const ChatRoom = () => {
                 Authorization: "Bearer " + UserServerAccessToken,
               },
             })
-              .then((resp) => console.log(resp))
               .catch((e) => console.log(e));
           }
         } else {
@@ -190,7 +189,6 @@ const ChatRoom = () => {
                 Authorization: "Bearer " + UserServerAccessToken,
               },
             })
-              .then((resp) => console.log(resp))
               .catch((e) => console.log(e));
           } else {
             await AsyncStorage.setItem("todayMissionClear", "false");
@@ -213,7 +211,6 @@ const ChatRoom = () => {
               Authorization: "Bearer " + UserServerAccessToken,
             },
           })
-            .then((resp) => console.log(resp))
             .catch((e) => console.log(e));
         } else {
           await AsyncStorage.setItem("todayMissionClear", "false");

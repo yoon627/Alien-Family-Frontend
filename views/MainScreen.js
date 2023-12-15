@@ -14,6 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Foundation } from '@expo/vector-icons';import PlantInfo from "./PlantInfo";
+import ImageDetailForm from "./ImageDetailForm";
 const Tab = createBottomTabNavigator();
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -137,6 +138,16 @@ export default function MainScreen({ navigation, route }) {
           tabBarVisible: false,
         }}
       />
+      {/* <Tab.Screen
+        name="ImageDetailForm"
+        component={ImageDetailForm}
+        options={{
+          headerShown: false,
+          tabBarShowLabel: false,
+          tabBarButton: () => <View style={{ width: 0, height: 0 }}></View>,
+          tabBarVisible: false,
+        }}
+      /> */}
     </Tab.Navigator>
   );
 }

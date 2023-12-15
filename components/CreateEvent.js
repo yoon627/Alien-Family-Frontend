@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const CreateCalendarEvent = async () => {
   try {
     const token = await AsyncStorage.getItem("KakaoAccessToken");
-    console.log("kakao token", token);
+    // console.log("kakao token", token);
     const response = await fetch(
       "https://kapi.kakao.com/v2/api/calendar/events?calendar_id=primary&from=2023-11-01T00:00:00Z&to=2023-11-30T00:00:00Z",
       // "https://kapi.kakao.com/v2/api/calendar/calendars",
@@ -33,7 +33,7 @@ const CreateCalendarEvent = async () => {
     }
 
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
   } catch (error) {
     console.error("There was an error create event:", error);
   }

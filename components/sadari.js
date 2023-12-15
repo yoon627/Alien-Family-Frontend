@@ -107,7 +107,7 @@ const Sadari = ({ cnt, name, familyInfo }) => {
             Authorization: token,
           },
           onConnect: () => {
-            console.log("Connected to the WebSocket server");
+            // console.log("Connected to the WebSocket server");
           },
           onStompError: (frame) => {
             console.error("Broker reported error:", frame.headers["message"]);
@@ -363,7 +363,7 @@ const Sadari = ({ cnt, name, familyInfo }) => {
   };
 
   const sendResultLadder = () => {
-    console.log("결과전송");
+    // console.log("결과전송");
     let results = [];
     const now = new Date();
     now.setHours(now.getHours() + 9); // 현재 시간에 9시간을 더함

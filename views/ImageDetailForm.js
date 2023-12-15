@@ -43,8 +43,8 @@ export default function ImageDetailForm({route, navigation}) {
       );
       const asset = await MediaLibrary.createAssetAsync(uri);
       await MediaLibrary.saveToLibraryAsync(asset);
-      console.log("이미지 다운로드, 저장 성공!!!");
-      Alert.alert("다운 성공~");
+      // console.log("이미지 다운로드, 저장 성공!!!");
+      Alert.alert(" ","다운 성공~");
       // setDownStatus(true);
 
       // setTimeout(() => {
