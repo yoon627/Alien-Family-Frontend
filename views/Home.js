@@ -55,7 +55,7 @@ export default function Home({navigation, fonts}) {
   const [plantName, setPlantName] = useState(null);
   const [plantPoint, setPlantPoint] = useState(0);
   const [plantModal, setPlantModal] = useState(false);
-  const [levelUp, setLevelUp] = useState(true);
+  const [levelUp, setLevelUp] = useState(false);
   const [attendance, setAttendance] = useState(false);
 
   const rotateAnim = useRef(new Animated.Value(0)).current;
