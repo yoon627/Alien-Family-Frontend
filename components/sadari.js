@@ -13,6 +13,8 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Client } from "@stomp/stompjs";
 import { FontAwesome } from "@expo/vector-icons";
+import SoundPlayer from "../effect/sound";
+import {Audio} from "expo-av";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height; // 디바이스의 높이
@@ -56,6 +58,36 @@ const Sadari = ({ cnt, name, familyInfo }) => {
   const [stompClient, setStompClient] = useState(null);
   const [myName, setMyName] = useState(null);
   const [roomNumber, setRoomNumber] = useState(null);
+
+  const [sound, setSound] = useState();
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  useEffect(() => {
+    loadSound();
+
+    return () => {
+      if (sound) {
+        sound.unloadAsync();
+      }
+    };
+  }, []);
+
+  async function loadSound() {
+    const loadedSound = await Audio.Sound.createAsync(
+      require('../assets/Circus.mp3')
+    );
+    setSound(loadedSound.sound);
+  }
+
+  const handlePress = async () => {
+    if (isPlaying) {
+      await sound.pauseAsync();
+    } else {
+      await sound.playAsync();
+    }
+    setIsPlaying(!isPlaying);
+  };
+
   //결과 전송을 위한
   useEffect(() => {
     const connection = async () => {
@@ -308,7 +340,7 @@ const Sadari = ({ cnt, name, familyInfo }) => {
           height: 7,
           backgroundColor: "#A86250",
           left: line.fromColumn === index ? columnWidth / 2 : -columnWidth / 2,
-          top: line.yPosition,
+          top: line.yPosition + 27,
           zIndex: 0,
         }}
       />
@@ -455,6 +487,7 @@ const Sadari = ({ cnt, name, familyInfo }) => {
             onPress={() => {
               openModal();
               sendResultLadder();
+              handlePress();
             }}
           >
             <Text style={styles.btnText}>결과 보기</Text>
@@ -490,7 +523,8 @@ const Sadari = ({ cnt, name, familyInfo }) => {
         <View style={styles.overlay}>
           <View style={styles.hiddenContent}>
             <View style={{ position: "absolute", top: "40%", right: "45%" }}>
-              <TouchableOpacity onPress={moveAllImages}>
+              <TouchableOpacity onPress={()=>{moveAllImages();
+              handlePress();}}>
                 <Text
                   style={{ fontSize: 24, fontFamily: "dnf", color: "white" }}
                 >

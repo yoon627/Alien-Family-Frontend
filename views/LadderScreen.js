@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import Sadari from "../components/sadari";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import SoundPlayer from "../effect/sound";
 
 const windowWidth = Dimensions.get("screen").width;
 const windowHeight = Dimensions.get("screen").height;
@@ -53,6 +54,7 @@ function LadderScreen({navigation}) {
   };
   return (
     <View style={styles.container}>
+      <SoundPlayer/>
       <Text style={styles.title}>사다리 게임 </Text>
       <TouchableOpacity
         style={{position: "absolute", left: "5%", top: "6%"}}
