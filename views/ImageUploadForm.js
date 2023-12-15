@@ -258,7 +258,7 @@ export default function ImageUploadForm({uri, onUploadComplete}) {
           placeholder="문구를 입력하세요..."
           multiline
         />
-        {/*<View style={{marginTop: 30}}/>*/}
+        <View style={{marginTop: 60}}/>
         <View style={{flexDirection: "row", marginVertical: 10}}>
           <TouchableOpacity
             style={[styles.button, styles.buttonWrite]}
