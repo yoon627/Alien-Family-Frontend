@@ -1,5 +1,9 @@
-# Alien Family Frontend
-Alien Family는 가족의 일상을 공유하는 미션을 수행하며 함께 새싹이라는 식물캐릭터를 키우는 Expo로 빌드한 React Native앱입니다.
+# Alien Family (Frontend)
+가족의 일상을 공유하는 미션을 수행하며 
+<br/>
+함께 새싹이라는 식물캐릭터를 키우는 
+<br/>
+Expo로 빌드한 React Native앱입니다.
 
 <br/>
 
